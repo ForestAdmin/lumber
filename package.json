@@ -1,0 +1,20 @@
+{
+  "name": "generator",
+  "version": "0.0.1",
+  "description": "Forest Admin generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sandro Munda",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "commander": "^2.9.0",
+    "lodash": "^4.16.4",
+    "mysql": "^2.11.1",
+    "pg": "^6.1.0",
+    "prompt": "^1.0.0",
+    "sequelize": "^3.24.5"
+  }
+}

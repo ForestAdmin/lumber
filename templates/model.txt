@@ -1,0 +1,26 @@
+'use strict';
+
+module.exports = (sequelize, DataTypes) => {
+  let models = sequelize.models;
+
+  var Model = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
+    <%= field.name %>: {
+      type: DataTypes.<%= field.type %>,<% if (field.primaryKey) { %>
+      primaryKey: true <% } %>
+    },<% }) %>
+  }, {
+    classMethods: {
+      associate: () => {<% _.each(references, (reference) => { %>
+        Model.belongsTo(models.<%= reference.ref %>, {
+          as: '<%= reference.as %>'
+        });
+        <% }); %>
+      }
+    },
+    <% if (underscored) { %>underscored: true,<% } %>
+    <% if (!timestamps) { %>timestamps: false,<% } %>
+  });
+
+  return Model;
+};
+
