@@ -1,0 +1,7 @@
+
+router.post('/actions/<%= actionName %>', liana.ensureAuthenticated,
+  (req, res) => {
+    res.send({
+      success: 'It works! You can now implement the action business logic :)'
+    });
+  });

@@ -1,24 +1,19 @@
+#! /usr/bin/env node
 'use strict';
-var P = require('bluebird');
-var OptionParser = require('./services/options-parser');
-var DB = require('./services/db');
-var TableAnalyzer = require('./services/table-analyzer');
-var Dumper = require('./services/dumper');
 
-OptionParser
-  .parse()
-  .then((options) => new DB().connect(options))
-  .then((db) => {
-    let queryInterface = db.getQueryInterface();
-    let tableAnalyzer = new TableAnalyzer(queryInterface);
-    let dumper = new Dumper();
+//     __    _____ _____ _____ _____ _____
+//    |  |  |  |  |     | __  |   __| __  |
+//    |  |__|  |  | | | | __ -|   __|    -|
+//    |_____|_____|_|_|_|_____|_____|__|__|
 
-    return P
-      .map(queryInterface.showAllTables(), (table) => {
-        return tableAnalyzer
-          .analyzeTable(table)
-          .spread((fields, references) => {
-            dumper.dump(table, fields, references);
-          });
-      });
-  });
+
+const program = require('commander');
+
+program
+  .version('1.0.1')
+  .command('generate', 'generate your admin microservice')
+  .command('action', 'create a new action')
+  .command('user', 'show your current logged user')
+  .command('login', 'sign in to your account')
+  .command('logout', 'sign out of your account')
+  .parse(process.argv);

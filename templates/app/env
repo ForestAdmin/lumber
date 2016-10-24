@@ -1,0 +1,5 @@
+DATABASE_URL=<%= databaseUrl %>
+FOREST_SECRET_KEY=<%= forestSecretKey %>
+FOREST_AUTH_KEY=<%= forestAuthKey %>
+#SSL_DATABASE=true
+<% if (forestUrl) {%>FOREST_URL=<%= forestUrl %><% } %>

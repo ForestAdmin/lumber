@@ -1,14 +1,24 @@
 'use strict';
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
+const logger = require('./logger');
 
 function Database() {
   this.connect = function (options) {
-    return new Sequelize(options.database, options.user, options.password, {
-      dialect: options.dialect,
-      hostname: options.hostname,
-      port: options.port,
-      logging: false
-    });
+    let db = new Sequelize(options.dbName, options.dbUser,
+      options.dbPassword, {
+        dialect: options.dbDialect,
+        hostname: options.dbHostname,
+        port: options.dbPort,
+        logging: false
+      });
+
+    return db.authenticate()
+      .then(() => db)
+      .catch(() => {
+        logger.error('💀  Ouch, cannot connect to the database 💀');
+        process.exit(1);
+      });
+
   };
 }
 

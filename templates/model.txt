@@ -12,11 +12,14 @@ module.exports = (sequelize, DataTypes) => {
     classMethods: {
       associate: () => {<% _.each(references, (reference) => { %>
         Model.belongsTo(models.<%= reference.ref %>, {
-          as: '<%= reference.as %>'
+          foreignKey: '<%= reference.foreignKey %>',
+          <% if (reference.targetKey) { %>targetKey: '<%= reference.targetKey %>',<% } %>
+          <% if (reference.as) { %>as: '<%= reference.as %>',<% } %>
         });
         <% }); %>
       }
     },
+    tableName: '<%= table %>',
     <% if (underscored) { %>underscored: true,<% } %>
     <% if (!timestamps) { %>timestamps: false,<% } %>
   });

@@ -1,0 +1,8 @@
+'use strict';
+var liana = require('forest-express-sequelize');
+
+liana.collection('<%= collectionName %>', {
+  actions: [
+    { name: '<%= actionName %>' },
+  ]
+});

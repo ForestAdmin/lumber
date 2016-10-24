@@ -13,6 +13,7 @@ function TableAnalyzer(queryInterface) {
     switch (queryInterface.sequelize.options.dialect) {
       case 'postgres':
         query = `SELECT tc.constraint_name, tc.table_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name FROM information_schema.table_constraints AS tc JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='${table}';`;
+        break;
       case 'mysql':
         query = `SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = 'spendesk_dev' AND REFERENCED_TABLE_NAME = '${table}';`;
         break;
@@ -53,8 +54,6 @@ function TableAnalyzer(queryInterface) {
       case 'TIMESTAMP WITH TIME ZONE':
       case 'TIMESTAMP WITHOUT TIME ZONE':
         return 'DATE';
-      default:
-        console.log(type);
     }
   }
 
@@ -66,15 +65,22 @@ function TableAnalyzer(queryInterface) {
         var references = [];
 
         _.each(schema, (value, key) => {
-          var type = getType(value.type);
+          // jshint camelcase: false
+          let type = getType(value.type);
+          let foreignKey = _.find(foreignKeys, { 'column_name': key });
 
-          var foreignKey = _.find(foreignKeys, { 'column_name': key });
           if (foreignKey) {
-            references.push({
-              // jshint camelcase: false
+            let ref = {
               ref: foreignKey.foreign_table_name,
-              as: foreignKey.column_name.slice(0, -2)
-            });
+              foreignKey: foreignKey.column_name,
+              as: `rel${foreignKey.foreign_table_name}`
+            };
+
+            if (foreignKey.foreign_column_name !== 'id') {
+              ref.targetKey = foreignKey.foreign_column_name;
+            }
+
+            references.push(ref);
           } else if (type && key !== 'id') {
             var opts = { name: key, type: type, primaryKey: value.primaryKey };
             fields.push(opts);

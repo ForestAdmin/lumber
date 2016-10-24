@@ -1,0 +1,13 @@
+'use strict';
+var express = require('express');
+var router = express.Router();
+var liana = require('forest-express-sequelize');
+
+router.post('/actions/<%= actionName %>', liana.ensureAuthenticated,
+  (req, res) => {
+    res.send({
+      success: 'It works! You can now implement the action business logic :)'
+    });
+  });
+
+module.exports = router;
