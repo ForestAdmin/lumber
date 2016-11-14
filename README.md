@@ -66,7 +66,7 @@ Syntax:
       // ...
     ));
 
-Available options can be find in the [Sequelize
+Available options can be found in the [Sequelize
 documentation](http://docs.sequelizejs.com/en/v3/api/associations/#belongstotarget-options).
 
 Example:
@@ -104,7 +104,7 @@ Syntax:
       // ...
     ));
 
-Available options can be find in the [Sequelize
+Available options can be found in the [Sequelize
 documentation](http://docs.sequelizejs.com/en/v3/api/associations/#hasmanytarget-options).
 
 
