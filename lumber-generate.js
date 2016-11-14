@@ -22,11 +22,12 @@ function isDirectoryExist(path) {
 
 program
   .description('Generate an admin microservice that serves a REST API hooked directly into your database.')
+  .option('--ssl', 'Enable SSL database connection')
   .parse(process.argv);
 
 console.log('Enter your database connection details and then your admin interface will be automatically generated.\n');
 
-let envConfig = {};
+let envConfig = { ssl: program.ssl };
 
 if (process.env.SERVER_HOST) {
   envConfig.serverHost = process.env.SERVER_HOST;

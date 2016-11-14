@@ -7,9 +7,12 @@ function Database() {
     let db = new Sequelize(options.dbName, options.dbUser,
       options.dbPassword, {
         dialect: options.dbDialect,
-        hostname: options.dbHostname,
+        host: options.dbHostname,
         port: options.dbPort,
-        logging: false
+        logging: false,
+        dialectOptions: {
+          ssl: options.ssl
+        }
       });
 
     return db.authenticate()

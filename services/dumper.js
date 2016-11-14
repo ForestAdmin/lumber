@@ -88,7 +88,8 @@ function Dumper(project, config) {
       forestSecretKey: project.environments[0].secretKey,
       forestAuthKey: authKey,
       databaseUrl: `${config.dbDialect}://${config.dbUser}:${config.dbPassword}@${config.dbHostname}:${config.dbPort}/${config.dbName}`,
-      forestUrl: process.env.FOREST_URL
+      forestUrl: process.env.FOREST_URL,
+      ssl: config.ssl
     };
 
     fs.writeFileSync(`${path}/.env`, template(settings));

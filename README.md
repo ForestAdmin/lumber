@@ -23,6 +23,9 @@ NOTICE: You may need to use `sudo` depending on your platform.
 ### Quickstart
 `$ lumber generate`
 
+NOTICE: You may need to use the option `--ssl` if your database uses a SSL
+connection.
+
 ![Example](/assets/console.gif "Example")
 
 ### Commands
