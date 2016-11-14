@@ -2,7 +2,7 @@
 var _ = require('lodash');
 var P = require('bluebird');
 
-function TableAnalyzer(queryInterface) {
+function TableAnalyzer(queryInterface, config) {
   function analyzeFields(table) {
     return queryInterface.describeTable(table);
   }
@@ -15,7 +15,7 @@ function TableAnalyzer(queryInterface) {
         query = `SELECT tc.constraint_name, tc.table_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name FROM information_schema.table_constraints AS tc JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='${table}';`;
         break;
       case 'mysql':
-        query = `SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = 'spendesk_dev' AND REFERENCED_TABLE_NAME = '${table}';`;
+        query = `SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = '${config.dbName}' AND REFERENCED_TABLE_NAME = '${table}';`;
         break;
     }
 
