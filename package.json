@@ -1,6 +1,6 @@
 {
   "name": "lumber-cli",
-  "version": "1.0.0-rc.10",
+  "version": "1.0.1",
   "description": "Generate the admin micro-service of your application",
   "main": "index.js",
   "scripts": {
