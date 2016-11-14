@@ -180,7 +180,7 @@ inquirer.prompt(prompts).then((config) => {
     .connect(config)
     .then((db) => {
       let queryInterface = db.getQueryInterface();
-      let tableAnalyzer = new TableAnalyzer(queryInterface);
+      let tableAnalyzer = new TableAnalyzer(queryInterface, config);
       let promise = null;
 
       if (config.authToken) {
