@@ -71,25 +71,25 @@ documentation](http://docs.sequelizejs.com/en/v3/api/associations/#belongstotarg
 
 Example:
 
+```js
+module.exports = (sequelize, DataTypes) => {
+  let models = sequelize.models;
 
-	module.exports = (sequelize, DataTypes) => {
-	  let models = sequelize.models;
+  var Model = sequelize.define('users', {
+    // ...
+  }, {
+    classMethods: {
+      associate: () => {
+        // BelongsTo relationships
+        Model.belongsTo(models.addresses);
+      }
+    },
+    // ...
+  });
 
-	  var Model = sequelize.define('users', {
-	    // ...
-	  }, {
-	    classMethods: {
-	      associate: () => {
-	        // BelongsTo relationships
-	        Model.belongsTo(models.addresses);
-	      }
-	    },
-	    // ...
-	  });
-
-	  return Model;
-	};
-
+  return Model;
+};
+```
 
 
 **Adding inverse of relationships (`hasOne`, `hasMany`, …)**
@@ -98,38 +98,39 @@ Open the model file you want in the `models` directory and declare the
 `hasMany` (`hasOne` is very similar) relationship in the `associate` function.
 
 Syntax:
-
-    Model.hasMany(<targetModel>, {
-      // [options]
-      // ...
-    ));
+```js
+Model.hasMany(<targetModel>, {
+  // [options]
+  // ...
+));
+```
 
 Available options can be found in the [Sequelize
 documentation](http://docs.sequelizejs.com/en/v3/api/associations/#hasmanytarget-options).
 
 
+```js
+module.exports = (sequelize, DataTypes) => {
+  let models = sequelize.models;
 
-	module.exports = (sequelize, DataTypes) => {
-	  let models = sequelize.models;
+  var Model = sequelize.define('users', {
+    // ...
+  }, {
+    classMethods: {
+      associate: () => {
+        // hasMany relationships
+        Model.hasMany(models.books);
 
-	  var Model = sequelize.define('users', {
-	    // ...
-	  }, {
-	    classMethods: {
-	      associate: () => {
-	        // hasMany relationships
-	        Model.hasMany(models.books);
+        // hasOne relationships
+        Model.hasOne(models.car);
+      }
+    },
+    // ...
+  });
 
-	        // hasOne relationships
-	        Model.hasOne(models.car);
-	      }
-	    },
-	    // ...
-	  });
-
-	  return Model;
-	};
-
+  return Model;
+};
+```
 #### Actions
 
 Common actions such as CRUD, sort or search are implemented by default.
@@ -147,7 +148,7 @@ $ lumber action comments approve
 
 **Declaration:** `/forest/comments.js`
 
-```
+```js
 'use strict';
 var liana = require('forest-express-sequelize');
 
@@ -160,7 +161,7 @@ liana.collection('comments', {
 
 **Implementation:** `/routes/comments.js` (customize the business logic here).
 
-```
+```js
 'use strict';
 var express = require('express');
 var router = express.Router();
