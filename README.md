@@ -16,14 +16,18 @@ Forest, as per our Hacker plan.
 
 `$ npm install -g lumber-cli`
 
-NOTICE: You may need to use `sudo` depending on your platform.
+NOTICE:
+- You may need to use `sudo` depending on your platform.
 
 ## Usage
 
 ### Quickstart
 `$ lumber generate`
 
-NOTICE: You may need to use the option `--ssl` if your database uses a SSL
+NOTICE:
+
+- Your database credentials **are safe**. They are only stored in the Lumber generated microservice.
+- You may need to use the option `--ssl` if your database uses a SSL
 connection.
 
 ![Example](/assets/console.gif "Example")
