@@ -2,12 +2,12 @@
   "name": "lumber-cli",
   "version": "1.0.6",
   "description": "Generate the admin micro-service of your application",
-  "main": "index.js",
+  "main": "lumber.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "lumber": "index.js"
+    "lumber": "lumber.js"
   },
   "author": "Sandro Munda",
   "license": "GPL-3.0",
