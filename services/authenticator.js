@@ -24,6 +24,7 @@ function Authenticator() {
     return agent
       .post(`${config.serverHost}/api/projects`)
       .set('Authorization', `Bearer ${config.authToken}`)
+      .set('forest-origin', 'Lumber')
       .send(new ProjectSerializer({
         name: config.appName
       }))
