@@ -25,7 +25,8 @@ program
   .option('--ssl', 'Enable SSL database connection')
   .parse(process.argv);
 
-console.log('Enter your database connection details and then your admin interface will be automatically generated.\n');
+console.log('ℹ︎  Enter your database connection details and then your admin interface will be automatically generated.');
+console.log('ℹ︎  Your database credentials are safe. They are only stored in the Lumber generated microservice.\n');
 
 let envConfig = { ssl: program.ssl };
 
