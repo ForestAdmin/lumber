@@ -8,9 +8,10 @@
 
 
 const program = require('commander');
+const packagejson = require('./package.json');
 
 program
-  .version('1.0.1')
+  .version(packagejson.version)
   .command('generate', 'generate your admin microservice')
   .command('action', 'create a new action')
   .command('user', 'show your current logged user')
