@@ -80,6 +80,16 @@ function Dumper(project, config) {
     fs.writeFileSync(`${path}/.gitignore`, template({}));
   }
 
+  function getDatabaseUrl() {
+    let connectionString = `${config.dbDialect}://${config.dbUser}`;
+    if (config.dbPassword) {
+      connectionString += `:${config.dbPassword}`;
+    }
+
+    connectionString += `@${config.dbHostname}:${config.dbPort}/${config.dbName}`;
+    return connectionString;
+  }
+
   function writeDotEnv(path, authKey) {
     let templatePath = `${__dirname}/../templates/app/env`;
     let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
@@ -87,7 +97,7 @@ function Dumper(project, config) {
     let settings = {
       forestSecretKey: project.environments[0].secretKey,
       forestAuthKey: authKey,
-      databaseUrl: `${config.dbDialect}://${config.dbUser}:${config.dbPassword}@${config.dbHostname}:${config.dbPort}/${config.dbName}`,
+      databaseUrl: getDatabaseUrl(),
       forestUrl: process.env.FOREST_URL,
       ssl: config.ssl
     };
