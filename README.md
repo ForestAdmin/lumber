@@ -21,6 +21,11 @@ NOTICE:
 
 ## Usage
 
+- [Quickstart](#quickstart)
+- [List of commands](#commands)
+- [Adding relationships](#relationships)
+- [Creating actions](#actions)
+
 ### Quickstart
 `$ lumber generate`
 
@@ -185,3 +190,4 @@ module.exports = router;
 
 ## License
 [GPL](https://github.com/ForestAdmin/Lumber/blob/master/LICENSE)
+
