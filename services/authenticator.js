@@ -61,7 +61,9 @@ function Authenticator() {
     let guest = { email: config.email };
 
     return agent
-      .post(`${config.serverHost}/api/guests`, new GuestSerializer(guest))
+      .post(`${config.serverHost}/api/guests`)
+      .set('forest-origin', 'Lumber')
+      .send(new GuestSerializer(guest))
       .then((response) => new GuestDeserializer.deserialize(response.body))
       .then((guest) => {
         let user = {
