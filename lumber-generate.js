@@ -43,6 +43,12 @@ let prompts = [{
   choices: ['postgres', 'mysql']
 }];
 
+// NOTICE: use a rawlist on Windows because of this issue:
+// https://github.com/SBoudrias/Inquirer.js/issues/303
+if (/^win/.test(process.platform)) {
+  prompts[0].type = 'rawlist';
+}
+
 if (process.env.FOREST_DB_NAME) {
   envConfig.dbName = process.env.FOREST_DB_NAME;
 } else {
