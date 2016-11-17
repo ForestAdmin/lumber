@@ -3,7 +3,11 @@ var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
 function Environment(data) {
   return new JSONAPISerializer('environments', {
-    attributes: ['apiEndpoint']
+    attributes: ['name', 'apiEndpoint', 'project'],
+    project: {
+      ref: 'id',
+      included: false
+    }
   }).serialize(data);
 }
 

@@ -11,7 +11,7 @@ function Database() {
         port: options.dbPort,
         logging: false,
         dialectOptions: {
-          ssl: options.ssl
+          ssl: options.dbSSL || options.ssl
         }
       });
 
@@ -21,7 +21,6 @@ function Database() {
         logger.error('💀  Ouch, cannot connect to the database 💀');
         process.exit(1);
       });
-
   };
 }
 

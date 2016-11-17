@@ -25,6 +25,7 @@ NOTICE:
 - [List of commands](#commands)
 - [Adding relationships](#relationships)
 - [Creating actions](#actions)
+- [Deploy to production](#deploy-to-production)
 
 ### Quickstart
 `$ lumber generate`
@@ -41,10 +42,12 @@ connection.
 
 `$ lumber [command]`
 
-- `generate`    generate your admin microservice
-- `user`        show your current logged user
-- `login`       sign in to your account
-- `logout`      sign out of your account
+- `generate`      generate your admin microservice
+- `user`          show your current logged user
+- `login`         sign in to your account
+- `logout`        sign out of your account
+- `action`        create a new action button on your admin
+- `heroku-deploy` deploy your admin on production
 
 ### Advanced
 
@@ -187,6 +190,30 @@ router.post('/actions/approve', liana.ensureAuthenticated,
 
 module.exports = router;
 ```
+
+#### Deploy to production
+
+Lumber provides the command `heroku-deploy` to push your local admin interface
+to your Production environment.
+
+First, you need to create a new Github repository and push your generated admin code
+on it.
+
+```
+$ git init
+$ git add -A
+$ git commit -m "Generate my admin microservice"
+$ git remote add origin git@github.com:<YOUR_GITHUB_USER>/<YOUR_REPOSITORY_NAME>.git
+$ git push -u origin master
+```
+
+Second, you need to have a [Heroku](https://signup.heroku.com) account.
+
+Third, install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-command-line#download-and-install) and login using `$ heroku login`.
+
+Lastly you're ready to run `$ lumber heroku-deploy`. 🎉
+
+![heroku-deploy-img](/assets/heroku-deploy.png "heroku-deploy")
 
 ## License
 [GPL](https://github.com/ForestAdmin/Lumber/blob/master/LICENSE)
