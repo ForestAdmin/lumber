@@ -29,7 +29,9 @@ app.use(jwt({
 }));
 
 fs.readdirSync('./routes').forEach((file) => {
-  app.use('/forest', require(`./routes/${file}`));
+  if (file !== '.gitkeep') {
+    app.use('/forest', require(`./routes/${file}`));
+  }
 });
 
 app.use(require('forest-express-sequelize').init({
