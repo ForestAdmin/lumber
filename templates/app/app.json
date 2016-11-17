@@ -1,0 +1,24 @@
+{
+  "name": "<%= config.appName %>",
+  "description": "The admin microservice of <%= config.appname %>",
+  "website": "http://www.forestadmin.com/lumber",
+  "repository": "https://github.com/SeyZ/movies1611",
+  "env": {
+    "FOREST_AUTH_KEY": {
+      "description": "A random JWT signing key to protect your admin API",
+      "value": "<%= forestAuthKey %>"
+    },
+    "FOREST_SECRET_KEY": {
+      "description": "The Forest secret key",
+      "value": "<%= forestSecretKey %>"
+    },
+    "DATABASE_URL": {
+      "description": "The remote database connection URL",
+      "value": "<%= config.dbDialect %>://<user>:<password>@<host>:<port>/<databaseName>"
+    },
+    "SSL_DATABASE": {
+      "description": "Specify if a SSL database connection is required.",
+      "value": "true"
+    }
+  }
+}

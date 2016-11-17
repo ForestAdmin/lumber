@@ -2,6 +2,7 @@
 var fs = require('fs');
 var os = require('os');
 var P = require('bluebird');
+var chalk = require('chalk');
 var agent = require('superagent-promise')(require('superagent'), P);
 var GuestSerializer = require('../serializers/guest');
 var UserSerializer = require('../serializers/user');
@@ -9,6 +10,7 @@ var ProjectSerializer = require('../serializers/project');
 var EnvironmentSerializer = require('../serializers/environment');
 var GuestDeserializer = require('../deserializers/guest');
 var ProjectDeserializer = require('../deserializers/project');
+var EnvironmentDeserializer = require('../deserializers/environment');
 const logger = require('./logger');
 
 function Authenticator() {
@@ -31,7 +33,7 @@ function Authenticator() {
       .then((response) => new ProjectDeserializer.deserialize(response.body))
       .then((project) => {
         project.name = config.appName;
-        let environment = project.environments[0];
+        let environment = project.defaultEnvironment;
 
         // NOTICE: Update the project name.
         return agent
@@ -91,9 +93,10 @@ function Authenticator() {
               }))
               .end();
           })
+          .then((response) => new ProjectDeserializer.deserialize(response.body))
           .then((project) => {
-            let environment = guest.project.environments[0];
-            guest.project.name = project.body.data.attributes.name;
+            guest.project.name = project.name;
+            let environment = project.defaultEnvironment;
 
             // NOTICE: Update the apiEndpoint.
             return agent
@@ -103,12 +106,22 @@ function Authenticator() {
                 id: environment.id,
                 apiEndpoint: 'http://localhost:3000'
               }))
-              .end();
-          })
-          .then(() => guest.project);
+              .end()
+              .then((response) => new EnvironmentDeserializer.deserialize(response.body))
+              .then((environment) => {
+                project.defaultEnvironment = environment;
+                return project;
+              });
+          });
       })
-      .catch(() => {
-        logger.error('💀  Ouch, cannot create your account 💀');
+      .catch((err) => {
+        if (err.status === 409) {
+          logger.error('💀  Oops, this email already exists. Please, run ' +
+            chalk.bold('$ lumber login') + ' before 💀');
+        } else {
+          logger.error('💀  Ouch, cannot create your account 💀');
+        }
+
         process.exit(1);
       });
   };

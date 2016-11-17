@@ -80,6 +80,13 @@ function Dumper(project, config) {
     fs.writeFileSync(`${path}/.gitignore`, template({}));
   }
 
+  function writeDotGitKeep(routesPath) {
+    let templatePath = `${__dirname}/../templates/app/gitkeep`;
+    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    fs.writeFileSync(`${routesPath}/.gitkeep`, template({}));
+  }
+
   function getDatabaseUrl() {
     let connectionString = `${config.dbDialect}://${config.dbUser}`;
     if (config.dbPassword) {
@@ -95,7 +102,7 @@ function Dumper(project, config) {
     let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
     let settings = {
-      forestSecretKey: project.environments[0].secretKey,
+      forestSecretKey: project.defaultEnvironment.secretKey,
       forestAuthKey: authKey,
       databaseUrl: getDatabaseUrl(),
       forestUrl: process.env.FOREST_URL,
@@ -118,6 +125,20 @@ function Dumper(project, config) {
     });
 
     fs.writeFileSync(`${path}/models/${table}.js`, text);
+  }
+
+  function writeAppJson(path, authKey) {
+    let templatePath = `${__dirname}/../templates/app/app.json`;
+    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    let text = template({
+      config: config,
+      forestSecretKey: project.defaultEnvironment.secretKey,
+      forestAuthKey: authKey
+
+    });
+
+    fs.writeFileSync(`${path}/app.json`, text);
   }
 
   this.dump = function (table, fields, references) {
@@ -148,7 +169,9 @@ function Dumper(project, config) {
 
         writePackageJson(path);
         writeDotGitIgnore(path);
+        writeDotGitKeep(routesPath);
         writeDotEnv(path, authKey);
+        writeAppJson(path, authKey);
         writeModels(path, table, fields, references);
       });
   };
