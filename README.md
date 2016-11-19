@@ -37,6 +37,8 @@ connection.
 
 ![Example](/assets/console.gif "Example")
 
+Full demo video: https://www.youtube.com/watch?v=2cKSsBxrvR8
+
 ### Commands
 
 `$ lumber [command]`
