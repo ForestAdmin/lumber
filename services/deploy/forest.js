@@ -4,6 +4,7 @@ const os = require('os');
 const P = require('bluebird');
 const EnvironmentSerializer = require('../../serializers/environment');
 const EnvironmentDeserializer = require('../../deserializers/environment');
+const ProjectSerializer = require('../../serializers/project');
 const ProjectDeserializer = require('../../deserializers/project');
 const RenderingDeserializer = require('../../deserializers/rendering');
 const agent = require('superagent-promise')(require('superagent'), P);
@@ -46,6 +47,29 @@ function Forest(config) {
       }))
       .then((response) => {
         return new EnvironmentDeserializer.deserialize(response.body);
+      });
+  };
+
+  this.updateDefaultEnvironment = (environment) => {
+    let json = new ProjectSerializer({
+      name: config.project.name,
+      pictureUrl: config.project.pictureUrl,
+      defaultEnvironment: environment
+    });
+
+    console.log(require('util').inspect(json, { depth: null }));
+
+    return agent
+      .put(`${config.serverHost}/api/projects/${config.project.id}`)
+      .set('Authorization', `Bearer ${config.authToken}`)
+      .set('forest-origin', 'Lumber')
+      .send(new ProjectSerializer({
+        name: config.project.name,
+        pictureUrl: config.project.pictureUrl,
+        defaultEnvironment: environment
+      }))
+      .then((response) => {
+        return new ProjectDeserializer.deserialize(response.body);
       });
   };
 

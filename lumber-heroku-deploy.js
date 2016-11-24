@@ -280,9 +280,13 @@ commandExists('heroku', (err, commandExists) => {
                 .then(() => forest.createEnvironment(herokuResponse.apiEndpoint))
                 .then((environment) => {
                   bar.tick();
-                  heroku
-                    .updateForestSecretKey(herokuResponse.name,
-                      environment.secretKey)
+
+                  return forest.updateDefaultEnvironment(environment)
+                    .then(() => {
+                      bar.tick();
+                      return heroku.updateForestSecretKey(herokuResponse.name,
+                        environment.secretKey);
+                    })
                     .then(() => forest.getRendering(environment))
                     .then((rendering) => {
                       bar.tick();
