@@ -22,7 +22,7 @@ let prompts = [{
 }, {
   type: 'password',
   name: 'password',
-  message: 'Choose a password: ',
+  message: 'What\'s your password: ',
   validate: (password) => {
     if (password) {
       return true;

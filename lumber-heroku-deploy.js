@@ -28,7 +28,7 @@ program
 console.log('ℹ︎ Are you ready to push your admin on production?\n');
 console.log('ℹ︎ Requirements:');
 console.log('ℹ︎ - Your admin project needs to be hosted on Github (private repo recommended).');
-console.log('ℹ︎ - You must have an Heroku free account - https://signup.heroku.com');
+console.log('ℹ︎ - You must have a Heroku account (free) - https://signup.heroku.com');
 console.log('ℹ︎ - You must have Heroku CLI installed - https://devcenter.heroku.com/articles/heroku-command-line#download-and-install\n');
 
 let prompts = [];
