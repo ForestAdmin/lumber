@@ -5,6 +5,7 @@ const P = require('bluebird');
 const EnvironmentSerializer = require('../../serializers/environment');
 const EnvironmentDeserializer = require('../../deserializers/environment');
 const ProjectDeserializer = require('../../deserializers/project');
+const RenderingDeserializer = require('../../deserializers/rendering');
 const agent = require('superagent-promise')(require('superagent'), P);
 
 function Forest(config) {
@@ -46,6 +47,18 @@ function Forest(config) {
       .then((response) => {
         return new EnvironmentDeserializer.deserialize(response.body);
       });
+  };
+
+  this.getRendering = (environment) => {
+    return agent
+      .get(`${config.serverHost}/api/environments/${environment.id}/renderings`)
+      .set('Authorization', `Bearer ${config.authToken}`)
+      .set('forest-origin', 'Lumber')
+      .send()
+      .then((response) => {
+        return new RenderingDeserializer.deserialize(response.body);
+      })
+      .then((renderings) => renderings[0]);
   };
 }
 

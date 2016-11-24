@@ -31,17 +31,7 @@ console.log('ℹ︎ - Your admin project needs to be hosted on Github (private r
 console.log('ℹ︎ - You must have an Heroku free account - https://signup.heroku.com');
 console.log('ℹ︎ - You must have Heroku CLI installed - https://devcenter.heroku.com/articles/heroku-command-line#download-and-install\n');
 
-let prompts = [{
-  type: 'list',
-  name: 'dbDialect',
-  message: 'What\'s your production database type? ',
-  choices: ['postgres', 'mysql']
-}, {
-  type: 'confirm',
-  name: 'dbSSL',
-  message: 'Use a secure SSL database connection? ',
-  default: true
-}];
+let prompts = [];
 
 if (process.env.GITHUB_REPO) {
   envConfig.githubRepo = process.env.GITHUB_REPO;
@@ -49,7 +39,7 @@ if (process.env.GITHUB_REPO) {
   prompts.push({
     type: 'input',
     name: 'githubRepo',
-    message: 'What\'s the name of Github repository? (owner/repo)',
+    message: 'What\'s the name of your project Github repository? (owner/repo)',
     validate: (githubRepo) => {
       if (githubRepo) {
         if (/.+\/.+/.test(githubRepo)) {
@@ -97,6 +87,13 @@ if (process.env.GITHUB_PASSWORD) {
     }
   });
 }
+
+prompts.push({
+  type: 'list',
+  name: 'dbDialect',
+  message: 'What\'s your production database type? ',
+  choices: ['postgres', 'mysql']
+});
 
 if (process.env.FOREST_DB_NAME) {
   envConfig.dbName = process.env.FOREST_DB_NAME;
@@ -175,6 +172,13 @@ if (process.env.FOREST_DB_PASSWORD) {
     message: 'What\'s the production database password? [optional] '
   });
 }
+
+prompts.push({
+  type: 'confirm',
+  name: 'dbSSL',
+  message: 'Use a secure SSL database connection? ',
+  default: true
+});
 
 commandExists('heroku', (err, commandExists) => {
   if (!commandExists) {
@@ -273,10 +277,14 @@ commandExists('heroku', (err, commandExists) => {
                   heroku
                     .updateForestSecretKey(herokuResponse.name,
                       environment.secretKey)
-                    .then(() => {
+                    .then(() => forest.getRendering(environment))
+                    .then((rendering) => {
                       bar.tick();
                       console.log(chalk.green('\n👍  Hooray, Deployment ' +
                         'success! 👍\n'));
+
+                      console.log(chalk.cyan('🌳  Open your admin UI: ' +
+                      `https://app.forestadmin.com/${rendering.id} 🌳`));
                     });
                 });
             });

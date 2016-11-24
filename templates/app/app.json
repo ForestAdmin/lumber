@@ -1,8 +1,8 @@
 {
   "name": "<%= config.appName %>",
-  "description": "The admin microservice of <%= config.appname %>",
+  "description": "The admin microservice of <%= config.appName %>",
   "website": "http://www.forestadmin.com/lumber",
-  "repository": "https://github.com/SeyZ/movies1611",
+  "repository": "https://github.com/ForestAdmin/lumber",
   "env": {
     "FOREST_AUTH_KEY": {
       "description": "A random JWT signing key to protect your admin API",
