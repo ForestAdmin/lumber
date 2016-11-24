@@ -119,7 +119,13 @@ if (process.env.FOREST_DB_HOSTNAME) {
     type: 'input',
     name: 'dbHostname',
     message: 'What\'s the production database hostname?' ,
-    default: 'localhost'
+    validate: (dbHostname) => {
+      if (dbHostname) {
+        return true;
+      } else {
+        return '🔥  Hey, you need to specify the database hostname 🔥';
+      }
+    }
   });
 }
 
