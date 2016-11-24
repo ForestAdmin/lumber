@@ -8,6 +8,10 @@ Lumber is an opensource tool to generate an admin microservice.
 It serves a REST API hooked directly into your database (MySQL and Postgres for
 now).
 
+- [Install](#install)
+- [Usage](#usage)
+- [Deploy to production](#deploy-to-production)
+
 DISCLAIMER: Lumber is a project from [Forest](http://www.forestadmin.com).
 Your Lumber-generated app gives you a free pass to all the powerful features of
 Forest, as per our Hacker plan.
