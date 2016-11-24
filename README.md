@@ -201,7 +201,7 @@ module.exports = router;
 Lumber provides the command `heroku-deploy` to push your local admin interface
 to your Production environment.
 
-1. Create a new Github repository.
+1. [Create a new Github repository](https://help.github.com/articles/create-a-repo/).
 2. Push your generated admin microservice on your new Github repository.
 3. Ensure you have a [Heroku](https://signup.heroku.com) (free) account and the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-command-line#download-and-install) installed.
 4. Login to your Heroku account using the command-line: `$ heroku login`.
