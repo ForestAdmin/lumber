@@ -207,7 +207,7 @@ to your Production environment.
 4. Login to your Heroku account using the command-line: `$ heroku login`.
 5. 🎉 Deploy your admin microservice on production: `$ lumber heroku-deploy`. 🎉
 
-![heroku-deploy-img](/assets/heroku-deploy.png "heroku-deploy")
+[![heroku-deploy-video](https://img.youtube.com/vi/pEQ9Ro3UeKY/0.jpg)](https://www.youtube.com/watch?v=pEQ9Ro3UeKY)
 
 ## License
 [GPL](https://github.com/ForestAdmin/Lumber/blob/master/LICENSE)
