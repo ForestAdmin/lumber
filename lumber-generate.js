@@ -22,7 +22,8 @@ function isDirectoryExist(path) {
 
 program
   .description('Generate an admin microservice that serves a REST API hooked directly into your database.')
-  .option('--ssl', 'Enable SSL database connection')
+  .option('-s, --ssl', 'Enable SSL database connection')
+  .option('-c, --connection-url', 'Enter the database credentials with a connection URL')
   .parse(process.argv);
 
 console.log('ℹ︎  Enter your database connection details and then your admin interface will be automatically generated.');

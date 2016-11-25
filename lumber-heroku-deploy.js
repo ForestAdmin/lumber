@@ -23,6 +23,7 @@ if (process.env.SERVER_HOST) {
 
 program
   .description('Deploy your admin to a remote environment')
+  .option('-c, --connection-url', 'Enter the database credentials with a connection URL')
   .parse(process.argv);
 
 console.log('ℹ︎ Are you ready to push your admin on production?\n');
@@ -88,95 +89,110 @@ if (process.env.GITHUB_PASSWORD) {
   });
 }
 
-prompts.push({
-  type: 'list',
-  name: 'dbDialect',
-  message: 'What\'s your production database type? ',
-  choices: ['postgres', 'mysql']
-});
-
-if (process.env.FOREST_DB_NAME) {
-  envConfig.dbName = process.env.FOREST_DB_NAME;
-} else {
+if (program.connectionUrl) {
   prompts.push({
     type: 'input',
-    name: 'dbName',
-    message: 'What\'s the production database name?',
-    validate: (dbName) => {
-      if (dbName) {
+    name: 'dbConnectionUrl',
+    message: 'What\'s your production database connection URL? ',
+    validate: (dbConnectionUrl) => {
+      if (dbConnectionUrl) {
         return true;
       } else {
-        return '🔥  Hey, you need to specify the database name 🔥';
+        return '🔥  Hey, you need to specify the database connection URL 🔥';
       }
     }
   });
-}
-
-if (process.env.FOREST_DB_HOSTNAME) {
-  envConfig.dbHostname = process.env.FOREST_DB_HOSTNAME;
 } else {
   prompts.push({
-    type: 'input',
-    name: 'dbHostname',
-    message: 'What\'s the production database hostname?' ,
-    validate: (dbHostname) => {
-      if (dbHostname) {
-        return true;
-      } else {
-        return '🔥  Hey, you need to specify the database hostname 🔥';
-      }
-    }
+    type: 'list',
+    name: 'dbDialect',
+    message: 'What\'s your production database type? ',
+    choices: ['postgres', 'mysql']
   });
-}
 
-if (process.env.FOREST_DB_PORT) {
-  envConfig.dbPort = process.env.FOREST_DB_PORT;
-} else {
-  prompts.push({
-    type: 'input',
-    name: 'dbPort',
-    message: 'What\'s the production database port?',
-    default: (args) => {
-      if (args.dbDialect === 'postgres') {
-        return '5432';
-      } else if (args.dbDialect === 'mysql') {
-        return '3306';
+  if (process.env.FOREST_DB_NAME) {
+    envConfig.dbName = process.env.FOREST_DB_NAME;
+  } else {
+    prompts.push({
+      type: 'input',
+      name: 'dbName',
+      message: 'What\'s the production database name?',
+      validate: (dbName) => {
+        if (dbName) {
+          return true;
+        } else {
+          return '🔥  Hey, you need to specify the database name 🔥';
+        }
       }
-    },
-    validate: (port) => {
-      if (!/^\d+$/.test(port)) {
-        return '🔥  Oops, the port must be a number 🔥';
+    });
+  }
+
+  if (process.env.FOREST_DB_HOSTNAME) {
+    envConfig.dbHostname = process.env.FOREST_DB_HOSTNAME;
+  } else {
+    prompts.push({
+      type: 'input',
+      name: 'dbHostname',
+      message: 'What\'s the production database hostname?' ,
+      validate: (dbHostname) => {
+        if (dbHostname) {
+          return true;
+        } else {
+          return '🔥  Hey, you need to specify the database hostname 🔥';
+        }
       }
+    });
+  }
 
-      port = parseInt(port, 10);
-      if (port > 0 && port < 65536) {
-        return true;
-      } else {
-        return '🔥  Oops, this is not a valid port 🔥';
+  if (process.env.FOREST_DB_PORT) {
+    envConfig.dbPort = process.env.FOREST_DB_PORT;
+  } else {
+    prompts.push({
+      type: 'input',
+      name: 'dbPort',
+      message: 'What\'s the production database port?',
+      default: (args) => {
+        if (args.dbDialect === 'postgres') {
+          return '5432';
+        } else if (args.dbDialect === 'mysql') {
+          return '3306';
+        }
+      },
+      validate: (port) => {
+        if (!/^\d+$/.test(port)) {
+          return '🔥  Oops, the port must be a number 🔥';
+        }
+
+        port = parseInt(port, 10);
+        if (port > 0 && port < 65536) {
+          return true;
+        } else {
+          return '🔥  Oops, this is not a valid port 🔥';
+        }
       }
-    }
-  });
-}
+    });
+  }
 
-if (process.env.FOREST_DB_USER) {
-  envConfig.dbUser = process.env.FOREST_DB_USER;
-} else {
-  prompts.push({
-    type: 'input',
-    name: 'dbUser',
-    message: 'What\'s the production database user? ',
-    default: 'root'
-  });
-}
+  if (process.env.FOREST_DB_USER) {
+    envConfig.dbUser = process.env.FOREST_DB_USER;
+  } else {
+    prompts.push({
+      type: 'input',
+      name: 'dbUser',
+      message: 'What\'s the production database user? ',
+      default: 'root'
+    });
+  }
 
-if (process.env.FOREST_DB_PASSWORD) {
-  envConfig.dbPassword = process.env.FOREST_DB_PASSWORD;
-} else {
-  prompts.push({
-    type: 'password',
-    name: 'dbPassword',
-    message: 'What\'s the production database password? [optional] '
-  });
+  if (process.env.FOREST_DB_PASSWORD) {
+    envConfig.dbPassword = process.env.FOREST_DB_PASSWORD;
+  } else {
+    prompts.push({
+      type: 'password',
+      name: 'dbPassword',
+      message: 'What\'s the production database password? [optional] '
+    });
+  }
 }
 
 prompts.push({

@@ -5,13 +5,15 @@ const agent = require('superagent-promise')(require('superagent'), P);
 
 function Heroku(config) {
   function getDatabaseUrl(config) {
-    let connectionString = `${config.dbDialect}://${config.dbUser}`;
+    if (config.dbConnectionUrl) { return config.dbConnectionUrl; }
+
+    let connectionUrl = `${config.dbDialect}://${config.dbUser}`;
     if (config.dbPassword) {
-      connectionString += `:${config.dbPassword}`;
+      connectionUrl += `:${config.dbPassword}`;
     }
 
-    connectionString += `@${config.dbHostname}:${config.dbPort}/${config.dbName}`;
-    return connectionString;
+    connectionUrl += `@${config.dbHostname}:${config.dbPort}/${config.dbName}`;
+    return connectionUrl;
   }
 
   function pollApp(response) {

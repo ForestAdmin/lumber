@@ -51,14 +51,6 @@ function Forest(config) {
   };
 
   this.updateDefaultEnvironment = (environment) => {
-    let json = new ProjectSerializer({
-      name: config.project.name,
-      pictureUrl: config.project.pictureUrl,
-      defaultEnvironment: environment
-    });
-
-    console.log(require('util').inspect(json, { depth: null }));
-
     return agent
       .put(`${config.serverHost}/api/projects/${config.project.id}`)
       .set('Authorization', `Bearer ${config.authToken}`)

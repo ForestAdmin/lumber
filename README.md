@@ -205,7 +205,9 @@ to your Production environment.
 2. Push your generated admin microservice on your new Github repository.
 3. Ensure you have a [Heroku](https://signup.heroku.com) (free) account and the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-command-line#download-and-install) installed.
 4. Login to your Heroku account using the command-line: `$ heroku login`.
-5. 🎉 Deploy your admin microservice on production: `$ lumber heroku-deploy`. 🎉
+5. 🎉 Deploy your admin microservice on production: `$ lumber heroku-deploy -c`. 🎉
+
+### Watch video:
 
 [![heroku-deploy-video](https://img.youtube.com/vi/pEQ9Ro3UeKY/0.jpg)](https://www.youtube.com/watch?v=pEQ9Ro3UeKY)
 

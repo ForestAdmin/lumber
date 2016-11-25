@@ -4,16 +4,25 @@ const logger = require('./logger');
 
 function Database() {
   this.connect = function (options) {
-    let db = new Sequelize(options.dbName, options.dbUser,
-      options.dbPassword, {
-        dialect: options.dbDialect,
-        host: options.dbHostname,
-        port: options.dbPort,
-        logging: false,
-        dialectOptions: {
-          ssl: options.dbSSL || options.ssl
-        }
-      });
+    let db;
+
+    let connectionOpts = {
+      logging: false,
+      dialectOptions: {
+        ssl: options.dbSSL || options.ssl
+      }
+    };
+
+    if (options.dbConnectionUrl) {
+      db = new Sequelize(options.dbConnectionUrl, connectionOpts);
+    } else {
+      connectionOpts.host = options.dbHostname;
+      connectionOpts.port = options.dbPort;
+      connectionOpts.dialect = options.dbDialect;
+
+      db = new Sequelize(options.dbName, options.dbUser,
+        options.dbPassword, connectionOpts);
+    }
 
     return db.authenticate()
       .then(() => db)
