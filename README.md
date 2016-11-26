@@ -12,10 +12,6 @@ now).
 - [Usage](#usage)
 - [Deploy to production](#deploy-to-production)
 
-DISCLAIMER: Lumber is a project from [Forest](http://www.forestadmin.com).
-Your Lumber-generated app gives you a free pass to all the powerful features of
-Forest, as per our Hacker plan.
-
 ## Install
 
 `$ npm install -g lumber-cli`
