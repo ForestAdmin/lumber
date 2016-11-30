@@ -223,7 +223,8 @@ inquirer.prompt(prompts).then((config) => {
         'install', `--prefix=${config.appName}`, '--progress=true'
       ], {
         stdio: 'inherit',
-        stderr: 'inherit'
+        stderr: 'inherit',
+        shell: true
       });
 
       cmd.on('close', (code) => {
