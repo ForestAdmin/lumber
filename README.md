@@ -1,4 +1,4 @@
-# Lumber: The admin microservice generator
+# Lumber: The Admin Interface Framework
 
 <p align="center">
   <img src="https://github.com/ForestAdmin/Lumber/blob/master/assets/lumber-logo.png?raw=true" alt="Lumber logo">
