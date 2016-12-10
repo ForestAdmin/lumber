@@ -59,6 +59,8 @@ function Dumper(project, config) {
       dependencies.pg = '~6.1.0';
     } else if (config.dbDialect === 'mysql') {
       dependencies.mysql = '~2.12.0';
+    } else if (config.dbDialect === 'mssql') {
+      dependencies.tedious = '^1.14.0';
     }
 
     let pkg = {

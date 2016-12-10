@@ -107,7 +107,7 @@ if (program.connectionUrl) {
     type: 'list',
     name: 'dbDialect',
     message: 'What\'s your production database type? ',
-    choices: ['postgres', 'mysql']
+    choices: ['postgres', 'mysql', 'mssql']
   });
 
   if (process.env.FOREST_DB_NAME) {
@@ -156,6 +156,8 @@ if (program.connectionUrl) {
           return '5432';
         } else if (args.dbDialect === 'mysql') {
           return '3306';
+        } else if (args.dbDialect === 'mssql') {
+          return '1433';
         }
       },
       validate: (port) => {
