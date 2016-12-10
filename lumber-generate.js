@@ -41,7 +41,7 @@ let prompts = [{
   type: 'list',
   name: 'dbDialect',
   message: 'What\'s the database type? ',
-  choices: ['postgres', 'mysql']
+  choices: ['postgres', 'mysql', 'mssql']
 }];
 
 // NOTICE: use a rawlist on Windows because of this issue:
@@ -90,6 +90,8 @@ if (process.env.FOREST_DB_PORT) {
         return '5432';
       } else if (args.dbDialect === 'mysql') {
         return '3306';
+      } else if (args.dbDialect === 'mssql') {
+        return '1433';
       }
     },
     validate: (port) => {
