@@ -17,7 +17,7 @@ function TableAnalyzer(queryInterface, config) {
       case 'mysql':
         query = `SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = '${config.dbName}' AND REFERENCED_TABLE_NAME = '${table}';`;
       case 'mssql':
-        query = `SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = '${config.dbName}' AND REFERENCED_TABLE_NAME = '${table}';`;
+        query = `SELECT fk.name AS constraint_name, OBJECT_NAME(fk.parent_object_id) AS table_name, c1.name AS column_name, OBJECT_NAME(fk.referenced_object_id) AS foreign_table_name, c2.name AS FOREIGN_COLUMN_NAME FROM sys.foreign_keys fk INNER JOIN sys.foreign_key_columns fkc ON fkc.constraint_object_id = fk.object_id INNER JOIN sys.columns c1 ON fkc.parent_column_id = c1.column_id AND fkc.parent_object_id = c1.object_id INNER JOIN sys.columns c2 ON fkc.referenced_column_id = c2.column_id AND fkc.referenced_object_id = c2.object_id WHERE fk.parent_object_id = (SELECT object_id FROM sys.tables WHERE name = '${table}')`;
         break;
     }
 
