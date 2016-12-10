@@ -211,6 +211,7 @@ inquirer.prompt(prompts).then((config) => {
 
         return P
           .map(queryInterface.showAllTables(), (table) => {
+            if (typeof table === 'object') table = table.tableName;
             return tableAnalyzer
               .analyzeTable(table)
               .spread((fields, references) => {
