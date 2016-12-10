@@ -27,13 +27,17 @@ function TableAnalyzer(queryInterface, config) {
 
   function getType(type) {
     switch (type) {
+      case 'BIT':
       case 'BOOLEAN':
         return 'BOOLEAN';
       case 'CHARACTER VARYING':
       case 'TEXT':
+      case (type.match(/TEXT.*/i) || {}).input:
       case (type.match(/VARCHAR.*/i) || {}).input:
       case (type.match(/CHAR.*/i) || {}).input:
         return 'STRING';
+      case 'UNIQUEIDENTIFIER':
+        return 'UUID';
       case 'JSONB':
         return 'JSONB';
       case 'SMALLINT':
