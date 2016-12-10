@@ -52,6 +52,7 @@ function Dumper(project, config) {
       'dotenv': '~2.0.0',
       'chalk': '~1.1.3',
       'sequelize': '~3.24.8',
+      "tedious": "^1.14.0",
       'forest-express-sequelize': 'latest'
     };
 
