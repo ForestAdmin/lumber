@@ -211,7 +211,9 @@ inquirer.prompt(prompts).then((config) => {
 
         return P
           .map(queryInterface.showAllTables(), (table) => {
-            if (typeof table === 'object') table = table.tableName;
+            // NOTICE: MS SQL returns objects instead of strings.
+            if (typeof table === 'object') { table = table.tableName; }
+          
             return tableAnalyzer
               .analyzeTable(table)
               .spread((fields, references) => {
