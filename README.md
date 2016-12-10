@@ -5,7 +5,7 @@
 </p>
 
 Lumber is an opensource tool to generate an admin microservice.
-It serves a REST API hooked directly into your database (MySQL and Postgres for
+It serves a REST API hooked directly into your database (MySQL, Postgres and SQL Server for
 now).
 
 - [Install](#install)
