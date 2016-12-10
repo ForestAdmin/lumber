@@ -52,7 +52,6 @@ function Dumper(project, config) {
       'dotenv': '~2.0.0',
       'chalk': '~1.1.3',
       'sequelize': '~3.24.8',
-      "tedious": "^1.14.0",
       'forest-express-sequelize': 'latest'
     };
 
@@ -61,7 +60,7 @@ function Dumper(project, config) {
     } else if (config.dbDialect === 'mysql') {
       dependencies.mysql = '~2.12.0';
     } else if (config.dbDialect === 'mssql') {
-      dependencies.mssql = '~3.3.0';
+      dependencies.tedious = '^1.14.0';
     }
 
     let pkg = {
