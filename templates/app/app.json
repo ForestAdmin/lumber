@@ -4,13 +4,13 @@
   "website": "http://www.forestadmin.com/lumber",
   "repository": "https://github.com/ForestAdmin/lumber",
   "env": {
-    "FOREST_AUTH_KEY": {
-      "description": "A random JWT signing key to protect your admin API",
-      "value": "<%= forestAuthKey %>"
+    "FOREST_AUTH_SECRET": {
+      "description": "A random JWT signing secret to protect your admin API",
+      "value": "<%= forestAuthSecret %>"
     },
-    "FOREST_SECRET_KEY": {
-      "description": "The Forest secret key",
-      "value": "<%= forestSecretKey %>"
+    "FOREST_ENV_SECRET": {
+      "description": "The Forest environment secret",
+      "value": "<%= forestEnvSecret %>"
     },
     "DATABASE_URL": {
       "description": "The remote database connection URL",

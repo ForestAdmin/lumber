@@ -302,7 +302,7 @@ commandExists('heroku', (err, commandExists) => {
                   return forest.updateDefaultEnvironment(environment)
                     .then(() => {
                       bar.tick();
-                      return heroku.updateForestSecretKey(herokuResponse.name,
+                      return heroku.updateForestEnvSecret(herokuResponse.name,
                         environment.secretKey);
                     })
                     .then(() => forest.getRendering(environment))

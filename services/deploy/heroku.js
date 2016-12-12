@@ -66,13 +66,13 @@ function Heroku(config) {
       });
   };
 
-  this.updateForestSecretKey = (appName, secretKey) => {
+  this.updateForestEnvSecret = (appName, envSecret) => {
     return agent
       .patch(`https://api.heroku.com/apps/${appName}/config-vars`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/vnd.heroku+json; version=3')
       .set('Authorization', `Bearer ${config.herokuAuthToken}`)
-      .send({ FOREST_SECRET_KEY: secretKey });
+      .send({ FOREST_ENV_SECRET: envSecret });
   };
 }
 
