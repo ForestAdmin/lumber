@@ -24,7 +24,7 @@ app.use(cors({
 }));
 
 app.use(jwt({
-  secret: process.env.FOREST_AUTH_KEY,
+  secret: process.env.FOREST_AUTH_SECRET,
   credentialsRequired: false
 }));
 
@@ -36,8 +36,8 @@ fs.readdirSync('./routes').forEach((file) => {
 
 app.use(require('forest-express-sequelize').init({
   modelsDir: __dirname + '/models',
-  secretKey: process.env.FOREST_SECRET_KEY,
-  authKey: process.env.FOREST_AUTH_KEY,
+  envSecret: process.env.FOREST_ENV_SECRET,
+  authSecret: process.env.FOREST_AUTH_SECRET,
   sequelize: require('./models').sequelize
 }));
 

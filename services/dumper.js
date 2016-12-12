@@ -99,13 +99,13 @@ function Dumper(project, config) {
     return connectionString;
   }
 
-  function writeDotEnv(path, authKey) {
+  function writeDotEnv(path, authSecret) {
     let templatePath = `${__dirname}/../templates/app/env`;
     let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
     let settings = {
-      forestSecretKey: project.defaultEnvironment.secretKey,
-      forestAuthKey: authKey,
+      forestEnvSecret: project.defaultEnvironment.secretKey,
+      forestAuthSecret: authSecret,
       databaseUrl: getDatabaseUrl(),
       forestUrl: process.env.FOREST_URL,
       ssl: config.ssl
@@ -129,14 +129,14 @@ function Dumper(project, config) {
     fs.writeFileSync(`${path}/models/${table}.js`, text);
   }
 
-  function writeAppJson(path, authKey) {
+  function writeAppJson(path, authSecret) {
     let templatePath = `${__dirname}/../templates/app/app.json`;
     let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
     let text = template({
       config: config,
-      forestSecretKey: project.defaultEnvironment.secretKey,
-      forestAuthKey: authKey
+      forestEnvSecret: project.defaultEnvironment.secretKey,
+      forestAuthSecret: authSecret
 
     });
 
@@ -163,7 +163,7 @@ function Dumper(project, config) {
       .then(() => {
         return new KeyGenerator().generate();
       })
-      .then((authKey) => {
+      .then((authSecret) => {
         copyTemplate('bin/www', `${binPath}/www`);
         copyTemplate('models/index.js', `${path}/models/index.js`);
         copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
@@ -172,8 +172,8 @@ function Dumper(project, config) {
         writePackageJson(path);
         writeDotGitIgnore(path);
         writeDotGitKeep(routesPath);
-        writeDotEnv(path, authKey);
-        writeAppJson(path, authKey);
+        writeDotEnv(path, authSecret);
+        writeAppJson(path, authSecret);
         writeModels(path, table, fields, references);
       });
   };
