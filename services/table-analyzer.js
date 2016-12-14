@@ -32,6 +32,7 @@ function TableAnalyzer(queryInterface, config) {
         return 'BOOLEAN';
       case 'CHARACTER VARYING':
       case 'TEXT':
+      case 'USER-DEFINED':
       case (type.match(/TEXT.*/i) || {}).input:
       case (type.match(/VARCHAR.*/i) || {}).input:
       case (type.match(/CHAR.*/i) || {}).input:
