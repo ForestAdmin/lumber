@@ -184,43 +184,49 @@ if (!envConfig.authToken) {
 inquirer.prompt(prompts).then((config) => {
   config = _.merge(config, envConfig);
 
+  // NOTICE: Remove the dbPassword if there's no password for the DB
+  // connection.
   if (!config.dbPassword) { delete config.dbPassword; }
+
+  // NOTICE: Ensure the project directory doesn't exist yet.
+  let path = `${process.cwd()}/${config.appName}`;
+  if (isDirectoryExist(path)) {
+    console.log(`💀  Oops, the directory ${path} already exists.💀`);
+    process.exit(1);
+  }
 
   return new DB()
     .connect(config)
     .then((db) => {
       let queryInterface = db.getQueryInterface();
       let tableAnalyzer = new TableAnalyzer(queryInterface, config);
-      let promise = null;
+      let schema = {};
 
-      if (config.authToken) {
-        promise = authenticator.createProject(config);
-      } else {
-        promise = authenticator.register(config);
-      }
+      return P
+        .map(queryInterface.showAllTables(), (table) => {
+          // NOTICE: MS SQL returns objects instead of strings.
+          if (typeof table === 'object') { table = table.tableName; }
 
-      return promise.then((project) => {
-        let dumper = new Dumper(project, config);
-        let path = `${process.cwd()}/${config.appName}`;
-
-        if (isDirectoryExist(path)) {
-          console.log(`💀  Oops, the directory ${path} already exists.💀`);
-          process.exit(1);
-        }
-
-
-        return P
-          .map(queryInterface.showAllTables(), (table) => {
-            // NOTICE: MS SQL returns objects instead of strings.
-            if (typeof table === 'object') { table = table.tableName; }
-          
-            return tableAnalyzer
-              .analyzeTable(table)
-              .spread((fields, references) => {
-                return dumper.dump(table, fields, references);
-              });
+          return tableAnalyzer
+            .analyzeTable(table)
+            .spread((fields, references) => {
+              schema[table] = { fields: fields, references: references };
+            });
+        })
+        .then(() => {
+          if (config.authToken) {
+            return authenticator.createProject(config);
+          } else {
+            return authenticator.register(config);
+          }
+        })
+        .then((project) => {
+          let dumper = new Dumper(project, config);
+          return P.each(Object.keys(schema), (table) => {
+            return dumper.dump(table, schema[table].fields,
+              schema[table].references);
           });
-      });
+        });
     })
     .then(() => {
       console.log(chalk.green(`\ncd ${config.appName} && npm install...`));
