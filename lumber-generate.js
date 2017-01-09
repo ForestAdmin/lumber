@@ -214,6 +214,12 @@ inquirer.prompt(prompts).then((config) => {
             });
         })
         .then(() => {
+          if (_.isEmpty(schema)) {
+            console.log('💀  Oops, your database is empty. Please, ' +
+              'create some tables before running Lumber generate.💀');
+            process.exit(1);
+          }
+
           if (config.authToken) {
             return authenticator.createProject(config);
           } else {
