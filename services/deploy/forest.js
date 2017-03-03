@@ -43,6 +43,7 @@ function Forest(config) {
       .send(new EnvironmentSerializer({
         name: 'Production',
         apiEndpoint: apiEndpoint,
+        type: 'production',
         project: { id: config.project.id }
       }))
       .then((response) => {
