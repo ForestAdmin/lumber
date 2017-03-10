@@ -1,12 +1,17 @@
 'use strict';
-const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
-const mkdirpSync = require('mkdirp');
-const mkdirp = P.promisify(mkdirpSync);
+const mkdirp = require('mkdirp');
 const KeyGenerator = require('./key-generator');
 
 function Dumper(project, config) {
+  let path = `${process.cwd()}/${config.appName}`;
+  let binPath = `${path}/bin`;
+  let routesPath = `${path}/routes`;
+  let forestPath = `${path}/forest`;
+  let publicPath = `${path}/public`;
+  let modelsPath = `${path}/models`;
+
   function isUnderscored(fields) {
     let underscored = false;
 
@@ -143,40 +148,44 @@ function Dumper(project, config) {
     fs.writeFileSync(`${path}/app.json`, text);
   }
 
+  function writeAppJs(path) {
+    let templatePath = `${__dirname}/../templates/app/app.js`;
+    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    let text = template({ config: config });
+
+    fs.writeFileSync(`${path}/app.js`, text);
+  }
+
   this.dump = function (table, fields, references) {
-    let path = `${process.cwd()}/${config.appName}`;
-    let binPath = `${path}/bin`;
-    let routesPath = `${path}/routes`;
-    let forestPath = `${path}/forest`;
-    let publicPath = `${path}/public`;
-    let modelsPath = `${path}/models`;
-
-    return P
-      .all([
-        mkdirp(path),
-        mkdirp(binPath),
-        mkdirp(routesPath),
-        mkdirp(forestPath),
-        mkdirp(publicPath),
-        mkdirp(modelsPath)
-      ])
-      .then(() => {
-        return new KeyGenerator().generate();
-      })
-      .then((authSecret) => {
-        copyTemplate('bin/www', `${binPath}/www`);
-        copyTemplate('models/index.js', `${path}/models/index.js`);
-        copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
-        copyTemplate('app.js', `${path}/app.js`);
-
-        writePackageJson(path);
-        writeDotGitIgnore(path);
-        writeDotGitKeep(routesPath);
-        writeDotEnv(path, authSecret);
-        writeAppJson(path, authSecret);
-        writeModels(path, table, fields, references);
-      });
+    return writeModels(path, table, fields, references);
   };
+
+  mkdirp(path);
+  mkdirp(binPath);
+  mkdirp(routesPath);
+  mkdirp(forestPath);
+  mkdirp(publicPath);
+  if (config.dbDialect) { mkdirp(modelsPath); }
+
+  return new KeyGenerator().generate()
+    .then((authSecret) => {
+      copyTemplate('bin/www', `${binPath}/www`);
+      copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
+
+      if (config.dbDialect) {
+        copyTemplate('models/index.js', `${path}/models/index.js`);
+      }
+
+      writeAppJs(path);
+      writePackageJson(path);
+      writeDotGitIgnore(path);
+      writeDotGitKeep(routesPath);
+      writeDotEnv(path, authSecret);
+      writeAppJson(path, authSecret);
+    })
+    .then(() => {
+      return this;
+    });
 }
 
 module.exports = Dumper;

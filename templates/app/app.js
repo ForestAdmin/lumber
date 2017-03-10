@@ -30,15 +30,15 @@ app.use(jwt({
 
 fs.readdirSync('./routes').forEach((file) => {
   if (file !== '.gitkeep') {
-    app.use('/forest', require(`./routes/${file}`));
+    app.use('/forest', require('./routes/' + file));
   }
 });
 
 app.use(require('forest-express-sequelize').init({
-  modelsDir: __dirname + '/models',
+<% if (config.dbDialect) { %>modelsDir: __dirname + '/models',<% } %>
   envSecret: process.env.FOREST_ENV_SECRET,
   authSecret: process.env.FOREST_AUTH_SECRET,
-  sequelize: require('./models').sequelize
+<% if (config.dbDialect) { %>sequelize: require('./models').sequelize<% } %>
 }));
 
 module.exports = app;

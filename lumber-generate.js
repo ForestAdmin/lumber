@@ -24,10 +24,13 @@ program
   .description('Generate an admin microservice that serves a REST API hooked directly into your database.')
   .option('-s, --ssl', 'Enable SSL database connection')
   .option('-c, --connection-url', 'Enter the database credentials with a connection URL')
+  .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);
 
-console.log('ℹ︎  Enter your database connection details and then your admin interface will be automatically generated.');
-console.log('ℹ︎  Your database credentials are safe. They are only stored in the Lumber generated microservice.\n');
+if (program.db) {
+  console.log('ℹ︎  Enter your database connection details and then your admin interface will be automatically generated.');
+  console.log('ℹ︎  Your database credentials are safe. They are only stored in the Lumber generated microservice.\n');
+}
 
 let envConfig = { ssl: program.ssl };
 
@@ -37,97 +40,101 @@ if (process.env.SERVER_HOST) {
   envConfig.serverHost = 'https://forestadmin-server.herokuapp.com';
 }
 
-let prompts = [{
-  type: 'list',
-  name: 'dbDialect',
-  message: 'What\'s the database type? ',
-  choices: ['postgres', 'mysql', 'mssql']
-}];
+let prompts = [];
 
-// NOTICE: use a rawlist on Windows because of this issue:
-// https://github.com/SBoudrias/Inquirer.js/issues/303
-if (/^win/.test(process.platform)) {
-  prompts[0].type = 'rawlist';
-}
-
-if (process.env.FOREST_DB_NAME) {
-  envConfig.dbName = process.env.FOREST_DB_NAME;
-} else {
+if (program.db) {
   prompts.push({
-    type: 'input',
-    name: 'dbName',
-    message: 'What\'s the database name?',
-    validate: (dbName) => {
-      if (dbName) {
-        return true;
-      } else {
-        return '🔥  Hey, you need to specify the database name 🔥';
+    type: 'list',
+    name: 'dbDialect',
+    message: 'What\'s the database type? ',
+    choices: ['postgres', 'mysql', 'mssql']
+  });
+
+  // NOTICE: use a rawlist on Windows because of this issue:
+  // https://github.com/SBoudrias/Inquirer.js/issues/303
+  if (/^win/.test(process.platform)) {
+    prompts[0].type = 'rawlist';
+  }
+
+  if (process.env.FOREST_DB_NAME) {
+    envConfig.dbName = process.env.FOREST_DB_NAME;
+  } else {
+    prompts.push({
+      type: 'input',
+      name: 'dbName',
+      message: 'What\'s the database name?',
+      validate: (dbName) => {
+        if (dbName) {
+          return true;
+        } else {
+          return '🔥  Hey, you need to specify the database name 🔥';
+        }
       }
-    }
-  });
-}
+    });
+  }
 
-if (process.env.FOREST_DB_HOSTNAME) {
-  envConfig.dbHostname = process.env.FOREST_DB_HOSTNAME;
-} else {
-  prompts.push({
-    type: 'input',
-    name: 'dbHostname',
-    message: 'What\'s the database hostname?' ,
-    default: 'localhost'
-  });
-}
+  if (process.env.FOREST_DB_HOSTNAME) {
+    envConfig.dbHostname = process.env.FOREST_DB_HOSTNAME;
+  } else {
+    prompts.push({
+      type: 'input',
+      name: 'dbHostname',
+      message: 'What\'s the database hostname?' ,
+      default: 'localhost'
+    });
+  }
 
-if (process.env.FOREST_DB_PORT) {
-  envConfig.dbPort = process.env.FOREST_DB_PORT;
-} else {
-  prompts.push({
-    type: 'input',
-    name: 'dbPort',
-    message: 'What\'s the database port?',
-    default: (args) => {
-      if (args.dbDialect === 'postgres') {
-        return '5432';
-      } else if (args.dbDialect === 'mysql') {
-        return '3306';
-      } else if (args.dbDialect === 'mssql') {
-        return '1433';
+  if (process.env.FOREST_DB_PORT) {
+    envConfig.dbPort = process.env.FOREST_DB_PORT;
+  } else {
+    prompts.push({
+      type: 'input',
+      name: 'dbPort',
+      message: 'What\'s the database port?',
+      default: (args) => {
+        if (args.dbDialect === 'postgres') {
+          return '5432';
+        } else if (args.dbDialect === 'mysql') {
+          return '3306';
+        } else if (args.dbDialect === 'mssql') {
+          return '1433';
+        }
+      },
+      validate: (port) => {
+        if (!/^\d+$/.test(port)) {
+          return '🔥  Oops, the port must be a number 🔥';
+        }
+
+        port = parseInt(port, 10);
+        if (port > 0 && port < 65536) {
+          return true;
+        } else {
+          return '🔥  Oops, this is not a valid port 🔥';
+        }
       }
-    },
-    validate: (port) => {
-      if (!/^\d+$/.test(port)) {
-        return '🔥  Oops, the port must be a number 🔥';
-      }
+    });
+  }
 
-      port = parseInt(port, 10);
-      if (port > 0 && port < 65536) {
-        return true;
-      } else {
-        return '🔥  Oops, this is not a valid port 🔥';
-      }
-    }
-  });
-}
+  if (process.env.FOREST_DB_USER) {
+    envConfig.dbUser = process.env.FOREST_DB_USER;
+  } else {
+    prompts.push({
+      type: 'input',
+      name: 'dbUser',
+      message: 'What\'s the database user? ',
+      default: 'root'
+    });
+  }
 
-if (process.env.FOREST_DB_USER) {
-  envConfig.dbUser = process.env.FOREST_DB_USER;
-} else {
-  prompts.push({
-    type: 'input',
-    name: 'dbUser',
-    message: 'What\'s the database user? ',
-    default: 'root'
-  });
-}
-
-if (process.env.FOREST_DB_PASSWORD) {
-  envConfig.dbPassword = process.env.FOREST_DB_PASSWORD;
-} else {
-  prompts.push({
-    type: 'password',
-    name: 'dbPassword',
-    message: 'What\'s the database password? [optional] '
-  });
+  if (process.env.FOREST_DB_PASSWORD) {
+    envConfig.dbPassword = process.env.FOREST_DB_PASSWORD;
+  } else {
+    prompts.push({
+      type: 'password',
+      name: 'dbPassword',
+      message: 'What\'s the database password? [optional] '
+    });
+  }
 }
 
 if (process.env.FOREST_PROJECT) {
@@ -195,12 +202,15 @@ inquirer.prompt(prompts).then((config) => {
     process.exit(1);
   }
 
-  return new DB()
+  let promise = null;
+  let schema = {};
+
+  if (program.db) {
+    promise = new DB()
     .connect(config)
     .then((db) => {
       let queryInterface = db.getQueryInterface();
       let tableAnalyzer = new TableAnalyzer(queryInterface, config);
-      let schema = {};
 
       return P
         .map(queryInterface.showAllTables(), (table) => {
@@ -219,20 +229,28 @@ inquirer.prompt(prompts).then((config) => {
               'create some tables before running Lumber generate.💀');
             process.exit(1);
           }
-
-          if (config.authToken) {
-            return authenticator.createProject(config);
-          } else {
-            return authenticator.register(config);
-          }
-        })
-        .then((project) => {
-          let dumper = new Dumper(project, config);
-          return P.each(Object.keys(schema), (table) => {
-            return dumper.dump(table, schema[table].fields,
-              schema[table].references);
-          });
         });
+    });
+  } else {
+    promise = new P(function (resolve) { resolve(); });
+  }
+
+  promise
+    .then(() => {
+      if (config.authToken) {
+        return authenticator.createProject(config);
+      } else {
+        return authenticator.register(config);
+      }
+    })
+    .then((project) => {
+      return new Dumper(project, config);
+    })
+    .then((dumper) => {
+      return P.each(Object.keys(schema), (table) => {
+        return dumper.dump(table, schema[table].fields,
+          schema[table].references);
+      });
     })
     .then(() => {
       console.log(chalk.green(`\ncd ${config.appName} && npm install...`));
@@ -260,5 +278,5 @@ inquirer.prompt(prompts).then((config) => {
           process.exit(1);
         }
       });
-    });
+  });
 });
