@@ -1,4 +1,5 @@
 'use strict';
+const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
 const mkdirp = require('mkdirp');
@@ -160,14 +161,18 @@ function Dumper(project, config) {
     return writeModels(path, table, fields, references);
   };
 
-  mkdirp(path);
-  mkdirp(binPath);
-  mkdirp(routesPath);
-  mkdirp(forestPath);
-  mkdirp(publicPath);
-  if (config.dbDialect) { mkdirp(modelsPath); }
+  var dirs = [
+    mkdirp(path),
+    mkdirp(binPath),
+    mkdirp(routesPath),
+    mkdirp(forestPath),
+    mkdirp(publicPath)
+  ];
 
-  return new KeyGenerator().generate()
+  if (config.dbDialect) { dirs.push(mkdirp(modelsPath)); }
+  return P
+    .all(dirs)
+    .then(() => new KeyGenerator().generate())
     .then((authSecret) => {
       copyTemplate('bin/www', `${binPath}/www`);
       copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
