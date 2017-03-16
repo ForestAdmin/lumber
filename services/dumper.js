@@ -2,7 +2,8 @@
 const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
-const mkdirp = require('mkdirp');
+const mkdirpSync = require('mkdirp');
+const mkdirp = P.promisify(mkdirpSync);
 const KeyGenerator = require('./key-generator');
 
 function Dumper(project, config) {
