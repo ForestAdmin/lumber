@@ -38,6 +38,7 @@ function TableAnalyzer(queryInterface, config) {
       case (type.match(/CHAR.*/i) || {}).input:
         return 'STRING';
       case 'UNIQUEIDENTIFIER':
+      case 'UUID':
         return 'UUID';
       case 'JSONB':
         return 'JSONB';
@@ -77,7 +78,7 @@ function TableAnalyzer(queryInterface, config) {
           let type = getType(value.type);
           let foreignKey = _.find(foreignKeys, { 'column_name': key });
 
-          if (foreignKey) {
+          if (foreignKey && !value.primaryKey) {
             let ref = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
