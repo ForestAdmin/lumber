@@ -73,6 +73,24 @@ if (program.db) {
     });
   }
 
+  if (process.env.FOREST_DB_SCHEMA) {
+    envConfig.dbSchema = process.env.FOREST_DB_SCHEMA;
+  } else {
+    prompts.push({
+      type: 'input',
+      name: 'dbSchema',
+      message: 'What\'s the database schema? (optional)',
+      description: 'Leave blank by default',
+      default: (args) => {
+        if (args.dbDialect === 'postgres') {
+          return 'public';
+        } else {
+          return '';
+        }
+      }
+    });
+  }
+
   if (process.env.FOREST_DB_HOSTNAME) {
     envConfig.dbHostname = process.env.FOREST_DB_HOSTNAME;
   } else {
@@ -213,7 +231,9 @@ inquirer.prompt(prompts).then((config) => {
       let tableAnalyzer = new TableAnalyzer(queryInterface, config);
 
       return P
-        .map(queryInterface.showAllTables(), (table) => {
+        .map(queryInterface.showAllTables({
+          schema: config.dbSchema
+        }), (table) => {
           // NOTICE: MS SQL returns objects instead of strings.
           if (typeof table === 'object') { table = table.tableName; }
 

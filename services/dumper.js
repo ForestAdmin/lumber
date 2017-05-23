@@ -130,7 +130,8 @@ function Dumper(project, config) {
       fields: fields,
       references: references,
       underscored: isUnderscored(fields),
-      timestamps: hasTimestamps(fields)
+      timestamps: hasTimestamps(fields),
+      schema: config.dbSchema
     });
 
     fs.writeFileSync(`${path}/models/${table}.js`, text);

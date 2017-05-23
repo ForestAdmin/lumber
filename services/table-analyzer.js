@@ -4,7 +4,7 @@ var P = require('bluebird');
 
 function TableAnalyzer(queryInterface, config) {
   function analyzeFields(table) {
-    return queryInterface.describeTable(table);
+    return queryInterface.describeTable(table, { schema: config.dbSchema });
   }
 
   function analyzeForeignKeys(table) {
