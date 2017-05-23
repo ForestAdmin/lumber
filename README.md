@@ -197,6 +197,15 @@ module.exports = router;
 
 ## Deploy to production
 
+- [Deploying your admin to a custom server](#custom-server)
+- [Deploying your admin to Heroku](#heroku)
+
+### Deploying your admin to a custom server
+
+Simply run `$ lumber deploy -c` and follow the instructions.
+
+### Deploying your admin to Heroku
+
 Lumber provides the command `heroku-deploy` to push your local admin interface
 to your Production environment.
 

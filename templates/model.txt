@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     tableName: '<%= table %>',
     <% if (underscored) { %>underscored: true,<% } %>
     <% if (!timestamps) { %>timestamps: false,<% } %>
-    <% if (schema) { %>schema: '<%= schema %>',<% } %>
+    <% if (schema) { %>schema: process.env.DATABASE_SCHEMA,<% } %>
   });
 
   return Model;

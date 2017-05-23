@@ -22,7 +22,7 @@ if (process.env.SERVER_HOST) {
 }
 
 program
-  .description('Deploy your admin to a remote environment')
+  .description('Deploy your admin to your Heroku account')
   .option('-c, --connection-url', 'Enter the database credentials with a connection URL')
   .parse(process.argv);
 

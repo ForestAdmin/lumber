@@ -35,6 +35,13 @@ function Forest(config) {
       });
   };
 
+  this.deleteEnvironment = (environment) => {
+    return agent
+      .del(`${config.serverHost}/api/environments/${environment.id}`)
+      .set('Authorization', `Bearer ${config.authToken}`)
+      .send();
+  };
+
   this.createEnvironment = (apiEndpoint) => {
     return agent
       .post(`${config.serverHost}/api/environments`)
