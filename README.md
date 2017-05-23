@@ -220,7 +220,7 @@ to your Production environment.
 
 #### Watch video:
 
-[![heroku-deploy-video](https://img.youtube.com/vi/peq9ro3ueky/0.jpg)](https://www.youtube.com/watch?v=peq9ro3ueky)
+[![heroku-deploy-video](https://img.youtube.com/vi/pEQ9Ro3UeKY/0.jpg)](https://www.youtube.com/watch?v=pEQ9Ro3UeKY)
 
 ## License
 [GPL](https://github.com/ForestAdmin/Lumber/blob/master/LICENSE)
