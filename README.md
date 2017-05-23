@@ -204,6 +204,9 @@ module.exports = router;
 
 Simply run `$ lumber deploy -c` and follow the instructions.
 
+#### Watch video:
+[![deploy-to-production](https://img.youtube.com/vi/C5x30ixwQwA/0.jpg)](https://www.youtube.com/watch?v=C5x30ixwQwA)
+
 ### Deploying your admin to Heroku
 
 Lumber provides the command `heroku-deploy` to push your local admin interface
@@ -215,9 +218,9 @@ to your Production environment.
 4. Login to your Heroku account using the command-line: `$ heroku login`.
 5. 🎉 Deploy your admin microservice on production: `$ lumber heroku-deploy -c`. 🎉
 
-### Watch video:
+#### Watch video:
 
-[![heroku-deploy-video](https://img.youtube.com/vi/pEQ9Ro3UeKY/0.jpg)](https://www.youtube.com/watch?v=pEQ9Ro3UeKY)
+[![heroku-deploy-video](https://img.youtube.com/vi/peq9ro3ueky/0.jpg)](https://www.youtube.com/watch?v=peq9ro3ueky)
 
 ## License
 [GPL](https://github.com/ForestAdmin/Lumber/blob/master/LICENSE)
