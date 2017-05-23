@@ -44,10 +44,14 @@ if (process.env.SERVER_HOST) {
 
 if (program.hostname) {
   envConfig.appHostname = program.hostname;
+} else {
+  envConfig.appHostname = 'localhost';
 }
 
 if (program.port) {
   envConfig.appPort = program.port;
+} else {
+  envConfig.appPort = '3000';
 }
 
 let prompts = [];
