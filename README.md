@@ -5,8 +5,8 @@
 </p>
 
 Lumber is an opensource tool to generate an admin microservice.
-It serves a REST API hooked directly into your database (MySQL, Postgres and SQL Server for
-now).
+It serves a REST API hooked directly into your database (MySQL, Postgres and
+SQL Server for now).
 
 - [Install](#install)
 - [Usage](#usage)
@@ -31,9 +31,12 @@ NOTICE:
 
 NOTICE:
 
-- Your database credentials **are safe**. They are only stored in the Lumber generated microservice.
+- Your database credentials **are safe**. They are only stored in the Lumber
+  generated microservice.
 - You may need to use the option `--ssl` if your database uses a SSL
-connection.
+  connection.
+- You can specify the hostname and the port on which your admin will be running
+  by using the option `--hostname` and `--port`.
 
 ![Example](/assets/console.gif "Example")
 

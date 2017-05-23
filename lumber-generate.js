@@ -23,6 +23,8 @@ function isDirectoryExist(path) {
 program
   .description('Generate an admin microservice that serves a REST API hooked directly into your database.')
   .option('-s, --ssl', 'Enable SSL database connection')
+  .option('-h, --hostname <hostname>', 'Specify the hostname (or the IP) of the server where `lumber generate` is executed. (default: localhost)')
+  .option('-p, --port <port>', 'Specify the port on which your admin will be running. (default: 3000)')
   .option('-c, --connection-url', 'Enter the database credentials with a connection URL')
   .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);
@@ -38,6 +40,14 @@ if (process.env.SERVER_HOST) {
   envConfig.serverHost = process.env.SERVER_HOST;
 } else {
   envConfig.serverHost = 'https://forestadmin-server.herokuapp.com';
+}
+
+if (program.hostname) {
+  envConfig.appHostname = program.hostname;
+}
+
+if (program.port) {
+  envConfig.appPort = program.port;
 }
 
 let prompts = [];

@@ -51,7 +51,7 @@ function Authenticator() {
               .set('Authorization', `Bearer ${config.authToken}`)
               .send(new EnvironmentSerializer({
                 id: environment.id,
-                apiEndpoint: 'http://localhost:3000'
+                apiEndpoint: `http://${config.appHostname}:${config.appPort}`
               }))
               .end();
           })
@@ -104,7 +104,7 @@ function Authenticator() {
               .set('Authorization', `Bearer ${config.authToken}`)
               .send(new EnvironmentSerializer({
                 id: environment.id,
-                apiEndpoint: 'http://localhost:3000'
+                apiEndpoint: `http://${config.appHostname}:${config.appPort}`
               }))
               .end()
               .then((response) => new EnvironmentDeserializer.deserialize(response.body))
