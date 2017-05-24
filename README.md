@@ -197,8 +197,8 @@ module.exports = router;
 
 ## Deploy to production
 
-- [Deploying your admin to a custom server](#custom-server)
-- [Deploying your admin to Heroku](#heroku)
+- [Deploying your admin to a custom server](#deploying-your-admin-to-a-custom-server)
+- [Deploying your admin to Heroku](#deploying-your-admin-to-heroku)
 
 ### Deploying your admin to a custom server
 
