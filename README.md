@@ -66,7 +66,7 @@ need to add `hasMany` or `hasOne` relationships manually.
 
 The generated admin microservice uses the ORM
 [Sequelize](https://github.com/sequelize/sequelize). Check out their
-[documentation](http://docs.sequelizejs.com/en/latest/docs/models-definition)
+[documentation](http://docs.sequelizejs.com/manual/tutorial/models-definition.html)
 for advanced model customization.
 
 
