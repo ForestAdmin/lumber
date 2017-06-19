@@ -5,11 +5,16 @@ var Sequelize = require('sequelize');
 
 let databaseOptions = {
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
-  pool: { maxConnections: 10, minConnections: 1 }
+  pool: { maxConnections: 10, minConnections: 1 },
+  dialectOptions: {}
 };
 
 if (process.env.SSL_DATABASE) {
-  databaseOptions.dialectOptions = { ssl: true };
+  databaseOptions.dialectOptions.ssl = true;
+}
+
+if (process.env.ENCRYPT_DATABASE) {
+  databaseOptions.dialectOptions.encrypt = true;
 }
 
 let sequelize = new Sequelize(process.env.DATABASE_URL, databaseOptions);
@@ -39,4 +44,3 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
-

@@ -6,10 +6,14 @@ function Database() {
   this.connect = function (options) {
     let db;
 
+    const isSSL = options.dbSSL || options.ssl;
+    const needsEncryption = isSSL && (options.dbDialect === 'mssql');
+
     let connectionOpts = {
       logging: false,
       dialectOptions: {
-        ssl: options.dbSSL || options.ssl
+        ssl: isSSL,
+        encrypt: needsEncryption
       }
     };
 
