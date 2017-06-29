@@ -118,7 +118,7 @@ Syntax:
 Model.hasMany(<targetModel>, {
   // [options]
   // ...
-));
+});
 ```
 
 Available options can be found in the [Sequelize
