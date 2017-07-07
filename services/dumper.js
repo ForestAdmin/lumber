@@ -58,7 +58,7 @@ function Dumper(project, config) {
       'serve-favicon': '~2.3.0',
       'dotenv': '~2.0.0',
       'chalk': '~1.1.3',
-      'sequelize': '~3.24.8',
+      'sequelize': '3.30.4',
       'forest-express-sequelize': 'latest'
     };
 
@@ -116,6 +116,7 @@ function Dumper(project, config) {
       databaseUrl: getDatabaseUrl(),
       forestUrl: process.env.FOREST_URL,
       ssl: config.ssl,
+      encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema
     };
 
