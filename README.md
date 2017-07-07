@@ -80,7 +80,7 @@ Syntax:
     Model.belongsTo(<targetModel>, {
       foreignKey: '<foreignKey>',
       // ...
-    ));
+    });
 
 Available options can be found in the [Sequelize
 documentation](http://docs.sequelizejs.com/en/v3/api/associations/#belongstotarget-options).
@@ -118,7 +118,7 @@ Syntax:
 Model.hasMany(<targetModel>, {
   // [options]
   // ...
-));
+});
 ```
 
 Available options can be found in the [Sequelize
@@ -224,4 +224,3 @@ to your Production environment.
 
 ## License
 [GPL](https://github.com/ForestAdmin/Lumber/blob/master/LICENSE)
-

@@ -63,6 +63,7 @@ function TableAnalyzer(queryInterface, config) {
         return 'DOUBLE';
       case 'DATE':
       case 'DATETIME':
+      case 'TIMESTAMP':
       case 'TIMESTAMP WITH TIME ZONE':
       case 'TIMESTAMP WITHOUT TIME ZONE':
         return 'DATE';
