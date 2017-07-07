@@ -19,6 +19,10 @@
     "SSL_DATABASE": {
       "description": "Specify if a SSL database connection is required.",
       "value": "true"
+    },
+    "ENCRYPT_DATABASE": {
+      "description": "Specify if the database connection is encrypted.",
+      "value": "<%= config.ssl && config.dbDialect === 'mssql' %>"
     }
   }
 }
