@@ -50,7 +50,7 @@ function Dumper(project, config) {
     let dependencies = {
       'express': '~4.13.4',
       'express-jwt': '~5.1.0',
-      'express-cors': '0.0.3',
+      'express-cors': 'git://github.com/ForestAdmin/express-cors',
       'body-parser': '~1.15.1',
       'cookie-parser': '~1.4.3',
       'debug': '~2.2.0',
