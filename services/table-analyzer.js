@@ -1,6 +1,6 @@
 'use strict';
-var _ = require('lodash');
-var P = require('bluebird');
+const _ = require('lodash');
+const P = require('bluebird');
 
 function TableAnalyzer(queryInterface, config) {
   function analyzeFields(table) {
@@ -28,14 +28,17 @@ function TableAnalyzer(queryInterface, config) {
 
   function getType(type) {
     switch (type) {
+      case 'BIT': // MSSQL type
       case 'BOOLEAN':
         return 'BOOLEAN';
       case 'CHARACTER VARYING':
       case 'TEXT':
+      case 'NTEXT': // MSSQL type
       case 'USER-DEFINED':
       case (type.match(/TEXT.*/i) || {}).input:
       case (type.match(/VARCHAR.*/i) || {}).input:
       case (type.match(/CHAR.*/i) || {}).input:
+      case 'NVARCHAR': // MSSQL type
         return 'STRING';
       case 'UNIQUEIDENTIFIER':
       case 'UUID':
@@ -43,7 +46,6 @@ function TableAnalyzer(queryInterface, config) {
       case 'JSONB':
         return 'JSONB';
       case 'SMALLINT':
-      case 'BIT':
       case 'INTEGER':
       case 'SERIAL':
       case 'BIGSERIAL':
@@ -57,6 +59,7 @@ function TableAnalyzer(queryInterface, config) {
       case 'REAL':
       case 'DOUBLE PRECISION':
       case (type.match(/DECIMAL.*/i) || {}).input:
+      case 'MONEY': // MSSQL type
         return 'DOUBLE';
       case 'DATE':
       case 'DATETIME':
