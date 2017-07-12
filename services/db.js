@@ -30,8 +30,9 @@ function Database() {
 
     return db.authenticate()
       .then(() => db)
-      .catch(() => {
-        logger.error('💀  Ouch, cannot connect to the database 💀');
+      .catch((error) => {
+        logger.error('💀  Ouch, cannot connect to the database 💀  due to ' +
+          'the following error:\n', error);
         process.exit(1);
       });
   };
