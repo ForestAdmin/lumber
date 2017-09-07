@@ -6,26 +6,30 @@ function Database() {
   this.connect = function (options) {
     let db;
 
-    const isSSL = options.dbSSL || options.ssl;
-    const needsEncryption = isSSL && (options.dbDialect === 'mssql');
-
-    let connectionOpts = {
-      logging: false,
-      dialectOptions: {
-        ssl: isSSL,
-        encrypt: needsEncryption
-      }
-    };
-
-    if (options.dbConnectionUrl) {
-      db = new Sequelize(options.dbConnectionUrl, connectionOpts);
+    if (options.dbDialect === 'sqlite') {
+      db = new Sequelize('sqlite://' + options.dbStorage);
     } else {
-      connectionOpts.host = options.dbHostname;
-      connectionOpts.port = options.dbPort;
-      connectionOpts.dialect = options.dbDialect;
+      const isSSL = options.dbSSL || options.ssl;
+      const needsEncryption = isSSL && (options.dbDialect === 'mssql');
 
-      db = new Sequelize(options.dbName, options.dbUser,
-        options.dbPassword, connectionOpts);
+      let connectionOpts = {
+        logging: false,
+        dialectOptions: {
+          ssl: isSSL,
+          encrypt: needsEncryption
+        }
+      };
+
+      if (options.dbConnectionUrl) {
+        db = new Sequelize(options.dbConnectionUrl, connectionOpts);
+      } else {
+        connectionOpts.host = options.dbHostname;
+        connectionOpts.port = options.dbPort;
+        connectionOpts.dialect = options.dbDialect;
+
+        db = new Sequelize(options.dbName, options.dbUser,
+          options.dbPassword, connectionOpts);
+      }
     }
 
     return db.authenticate()

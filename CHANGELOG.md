@@ -1,7 +1,7 @@
 # Change Log
 
-## [Unreleased]
 ### Added
+- SQLite Support - Support SQLite databases.
 - Field Types - Support 'TIMESTAMP' column type (MySQL).
 - MSSQL Support - Support Lumber generation on a MSSQL database hosted on Windows Azure.
 - MSSQL Support - Support new database types (MONEY, NTEXT, NVARCHAR).

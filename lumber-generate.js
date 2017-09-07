@@ -6,6 +6,7 @@ const program = require('commander');
 const spawn = require('child_process').spawn;
 const chalk = require('chalk');
 const inquirer = require('inquirer');
+const expandHomeDir = require('expand-home-dir');
 const DB = require('./services/db');
 const TableAnalyzer = require('./services/table-analyzer');
 const Dumper = require('./services/dumper');
@@ -61,7 +62,7 @@ if (program.db) {
     type: 'list',
     name: 'dbDialect',
     message: 'What\'s the database type? ',
-    choices: ['postgres', 'mysql', 'mssql']
+    choices: ['sqlite', 'postgres', 'mysql', 'mssql']
   });
 
   // NOTICE: use a rawlist on Windows because of this issue:
@@ -77,6 +78,7 @@ if (program.db) {
       type: 'input',
       name: 'dbName',
       message: 'What\'s the database name?',
+      when: (answers) => answers.dbDialect !== 'sqlite',
       validate: (dbName) => {
         if (dbName) {
           return true;
@@ -95,6 +97,7 @@ if (program.db) {
       name: 'dbSchema',
       message: 'What\'s the database schema? (optional)',
       description: 'Leave blank by default',
+      when: (answers) => answers.dbDialect !== 'sqlite',
       default: (args) => {
         if (args.dbDialect === 'postgres') {
           return 'public';
@@ -112,6 +115,7 @@ if (program.db) {
       type: 'input',
       name: 'dbHostname',
       message: 'What\'s the database hostname?' ,
+      when: (answers) => answers.dbDialect !== 'sqlite',
       default: 'localhost'
     });
   }
@@ -123,6 +127,7 @@ if (program.db) {
       type: 'input',
       name: 'dbPort',
       message: 'What\'s the database port?',
+      when: (answers) => answers.dbDialect !== 'sqlite',
       default: (args) => {
         if (args.dbDialect === 'postgres') {
           return '5432';
@@ -154,6 +159,7 @@ if (program.db) {
       type: 'input',
       name: 'dbUser',
       message: 'What\'s the database user? ',
+      when: (answers) => answers.dbDialect !== 'sqlite',
       default: 'root'
     });
   }
@@ -164,7 +170,19 @@ if (program.db) {
     prompts.push({
       type: 'password',
       name: 'dbPassword',
+      when: (answers) => answers.dbDialect !== 'sqlite',
       message: 'What\'s the database password? [optional] '
+    });
+  }
+
+  if (process.env.FOREST_STORAGE) {
+    envConfig.dbStorage = process.env.FOREST_STORAGE;
+  } else {
+    prompts.push({
+      type: 'input',
+      name: 'dbStorage',
+      when: (answers) => answers.dbDialect === 'sqlite',
+      message: 'What\'s the full path of your SQLite file?'
     });
   }
 }
@@ -233,6 +251,9 @@ inquirer.prompt(prompts).then((config) => {
     console.log(`💀  Oops, the directory ${path} already exists.💀`);
     process.exit(1);
   }
+
+  // NOTICE: Expand the dbStorage ~ path.
+  if (config.dbStorage) { config.dbStorage = expandHomeDir(config.dbStorage); }
 
   let promise = null;
   let schema = {};

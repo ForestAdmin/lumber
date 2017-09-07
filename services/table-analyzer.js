@@ -20,6 +20,9 @@ function TableAnalyzer(queryInterface, config) {
       case 'mssql':
         query = `SELECT fk.name AS constraint_name, OBJECT_NAME(fk.parent_object_id) AS table_name, c1.name AS column_name, OBJECT_NAME(fk.referenced_object_id) AS foreign_table_name, c2.name AS foreign_column_name FROM sys.foreign_keys fk INNER JOIN sys.foreign_key_columns fkc ON fkc.constraint_object_id = fk.object_id INNER JOIN sys.columns c1 ON fkc.parent_column_id = c1.column_id AND fkc.parent_object_id = c1.object_id INNER JOIN sys.columns c2 ON fkc.referenced_column_id = c2.column_id AND fkc.referenced_object_id = c2.object_id WHERE fk.parent_object_id = (SELECT object_id FROM sys.tables WHERE name = '${table}')`;
         break;
+      case 'sqlite':
+        query = `PRAGMA foreign_key_list('${table}');`;
+        break;
     }
 
     return queryInterface.sequelize
@@ -72,7 +75,7 @@ function TableAnalyzer(queryInterface, config) {
 
   this.analyzeTable = function (table) {
     return new P
-      .all([analyzeFields(table), analyzeForeignKeys(table)])
+      .all([analyzeFields(table)])
       .spread((schema, foreignKeys) => {
         var fields = [];
         var references = [];

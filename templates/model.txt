@@ -1,29 +1,26 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  let models = sequelize.models;
-
   var Model = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
     <%= field.name %>: {
       type: DataTypes.<%= field.type %>,<% if (field.primaryKey) { %>
       primaryKey: true <% } %>
     },<% }) %>
   }, {
-    classMethods: {
-      associate: () => {<% _.each(references, (reference) => { %>
-        Model.belongsTo(models.<%= reference.ref %>, {
-          foreignKey: '<%= reference.foreignKey %>',
-          <% if (reference.targetKey) { %>targetKey: '<%= reference.targetKey %>',<% } %>
-          <% if (reference.as) { %>as: '<%= reference.as %>',<% } %>
-        });
-        <% }); %>
-      }
-    },
     tableName: '<%= table %>',
     <% if (underscored) { %>underscored: true,<% } %>
     <% if (!timestamps) { %>timestamps: false,<% } %>
     <% if (schema) { %>schema: process.env.DATABASE_SCHEMA,<% } %>
   });
+
+  Model.associate = (models) => {<% _.each(references, (reference) => { %>
+    Model.belongsTo(models.<%= reference.ref %>, {
+      foreignKey: '<%= reference.foreignKey %>',
+      <% if (reference.targetKey) { %>targetKey: '<%= reference.targetKey %>',<% } %>
+      <% if (reference.as) { %>as: '<%= reference.as %>',<% } %>
+    });
+    <% }); %>
+  };
 
   return Model;
 };

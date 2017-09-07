@@ -58,7 +58,7 @@ function Dumper(project, config) {
       'serve-favicon': '~2.3.0',
       'dotenv': '~2.0.0',
       'chalk': '~1.1.3',
-      'sequelize': '3.30.4',
+      'sequelize': '4.8.0',
       'forest-express-sequelize': 'latest'
     };
 
@@ -97,12 +97,19 @@ function Dumper(project, config) {
   }
 
   function getDatabaseUrl() {
-    let connectionString = `${config.dbDialect}://${config.dbUser}`;
-    if (config.dbPassword) {
-      connectionString += `:${config.dbPassword}`;
+    let connectionString;
+
+    if (config.dbDialect === 'sqlite') {
+      connectionString = `sqlite://${config.dbStorage}`;
+    } else {
+      connectionString = `${config.dbDialect}://${config.dbUser}`;
+      if (config.dbPassword) {
+        connectionString += `:${config.dbPassword}`;
+      }
+
+      connectionString += `@${config.dbHostname}:${config.dbPort}/${config.dbName}`;
     }
 
-    connectionString += `@${config.dbHostname}:${config.dbPort}/${config.dbName}`;
     return connectionString;
   }
 
@@ -161,6 +168,14 @@ function Dumper(project, config) {
     fs.writeFileSync(`${path}/app.js`, text);
   }
 
+  function writeModelsIndex(path) {
+    let templatePath = `${__dirname}/../templates/app/models/index.js`;
+    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    let text = template({ config: config });
+
+    fs.writeFileSync(`${path}/models/index.js`, text);
+  }
+
   this.dump = function (table, fields, references) {
     return writeModels(path, table, fields, references);
   };
@@ -182,7 +197,7 @@ function Dumper(project, config) {
       copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
 
       if (config.dbDialect) {
-        copyTemplate('models/index.js', `${path}/models/index.js`);
+        writeModelsIndex(path);
       }
 
       writeAppJs(path);
