@@ -1,5 +1,8 @@
 # Change Log
 
+### Fixed
+- Dependency - Add the package expand-home-dir.
+
 ### Added
 - SQLite Support - Support SQLite databases.
 - Field Types - Support 'TIMESTAMP' column type (MySQL).
