@@ -11,6 +11,8 @@ const DB = require('./services/db');
 const TableAnalyzer = require('./services/table-analyzer');
 const Dumper = require('./services/dumper');
 const authenticator = require('./services/authenticator');
+const zxcvbn = require('zxcvbn');//Password Strength Estimation module.
+const validator = require("email-validator"); //make sure passwords are valid, will prevent issues down the road.
 
 function isDirectoryExist(path) {
   try {
@@ -208,7 +210,7 @@ if (process.env.FOREST_PROJECT) {
     }
   });
 }
-
+//will add support for checking the email is both valid, and that it functions.
 envConfig.authToken = authenticator.getAuthToken();
 if (!envConfig.authToken) {
   prompts.push({
@@ -216,10 +218,11 @@ if (!envConfig.authToken) {
     name: 'email',
     message: 'What\'s your email address? ',
     validate: (email) => {
-      if (email) {
+    let Email = validator.validate(email)
+      if (Email) {
         return true;
       } else {
-        return '🔥  Please enter your email address 🔥';
+        return '🔥  Please enter a valid email! 🔥';
       }
     }
   });
@@ -229,11 +232,17 @@ if (!envConfig.authToken) {
     name: 'password',
     message: 'Choose a password: ',
     validate: (password) => {
+    var PasswordStrength = zxcvbn(password)
+    if (PasswordStrength.score >= 4){//4 is a strong password, any less is a weak one!
       if (password) {
-        return true;
+         return true;
       } else {
-        return '🔥  Oops, your password cannot be blank 🔥';
+        return  ' 🔥  Oops! A password is required. 🔥'//'🔥  Oops, your password cannot be blank 🔥';
       }
+    } else {
+      //feel free to add the "🔥" to your content, I'm just not a fan of them, so excluded them! Sorry.
+     return "Please choose a stronger password!"
+    }
     }
   });
 }
