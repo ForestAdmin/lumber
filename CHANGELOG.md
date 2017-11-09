@@ -1,5 +1,8 @@
 # Change Log
 
+### Changed
+- Security - Set a stronger password policy.
+
 ### Fixed
 - Dependency - Add the package expand-home-dir.
 

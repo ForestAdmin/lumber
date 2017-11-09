@@ -11,6 +11,7 @@ const DB = require('./services/db');
 const TableAnalyzer = require('./services/table-analyzer');
 const Dumper = require('./services/dumper');
 const authenticator = require('./services/authenticator');
+const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/;
 
 function isDirectoryExist(path) {
   try {
@@ -230,7 +231,15 @@ if (!envConfig.authToken) {
     message: 'Choose a password: ',
     validate: (password) => {
       if (password) {
-        return true;
+        if (FORMAT_PASSWORD.test(password)) {
+          return true;
+        } else {
+          return '🔓  Your password security is too weak 🔓\n' +
+            ' Please make sure it contains at least:\n' +
+            '    > 8 characters\n' +
+            '    > Upper and lower case letters\n' +
+            '    > Numbers';
+        }
       } else {
         return '🔥  Oops, your password cannot be blank 🔥';
       }
