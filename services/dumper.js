@@ -68,6 +68,8 @@ function Dumper(project, config) {
       dependencies.mysql2 = '~1.4.2';
     } else if (config.dbDialect === 'mssql') {
       dependencies.tedious = '^1.14.0';
+    } else if (config.dbDialect === 'sqlite') {
+      dependencies.sqlite3 = '~3.1.13';
     }
 
     let pkg = {
