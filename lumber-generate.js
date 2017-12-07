@@ -262,7 +262,10 @@ inquirer.prompt(prompts).then((config) => {
   }
 
   // NOTICE: Expand the dbStorage ~ path.
-  if (config.dbStorage) { config.dbStorage = expandHomeDir(config.dbStorage); }
+  if (config.dbStorage) {
+    config.dbStorage = expandHomeDir(config.dbStorage);
+    config.dbStorage = require('path').resolve(config.dbStorage);
+  }
 
   let promise = null;
   let schema = {};
