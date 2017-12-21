@@ -8,7 +8,7 @@ Lumber is an opensource tool to generate an admin microservice. It instantly pro
 
 - [Install](#install)
 - [Usage](#usage)
-- [Deploy to production](#deploy-to-production)
+- <a href="https://doc.forestadmin.com/developer-guide/lumber.html#deploying-to-production" target="_blank">Deploy to production</a>
 
 ## Install
 
