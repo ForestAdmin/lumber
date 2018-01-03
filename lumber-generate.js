@@ -25,8 +25,6 @@ function isDirectoryExist(path) {
 program
   .description('Generate an admin microservice that serves a REST API hooked directly into your database.')
   .option('-s, --ssl', 'Enable SSL database connection')
-  .option('-h, --hostname <hostname>', 'Specify the hostname (or the IP) of the server where `lumber generate` is executed. (default: localhost)')
-  .option('-p, --port <port>', 'Specify the port on which your admin will be running. (default: 3000)')
   .option('-c, --connection-url', 'Enter the database credentials with a connection URL')
   .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);
@@ -42,18 +40,6 @@ if (process.env.SERVER_HOST) {
   envConfig.serverHost = process.env.SERVER_HOST;
 } else {
   envConfig.serverHost = 'https://forestadmin-server.herokuapp.com';
-}
-
-if (program.hostname) {
-  envConfig.appHostname = program.hostname;
-} else {
-  envConfig.appHostname = 'localhost';
-}
-
-if (program.port) {
-  envConfig.appPort = program.port;
-} else {
-  envConfig.appPort = '3000';
 }
 
 let prompts = [];
@@ -186,6 +172,40 @@ if (program.db) {
       message: 'What\'s the full path of your SQLite file?'
     });
   }
+}
+
+if (process.env.FOREST_HOSTNAME) {
+  envConfig.hostname = process.env.FOREST_HOSTNAME;
+} else {
+  prompts.push({
+    type: 'input',
+    name: 'appHostname',
+    message: 'What\'s the IP/hostname on which your admin will be running? ',
+    default: 'localhost'
+  });
+}
+
+if (process.env.FOREST_PORT) {
+  envConfig.hostname = process.env.FOREST_PORT;
+} else {
+  prompts.push({
+    type: 'input',
+    name: 'appPort',
+    message: 'What\'s the port on which your admin will be running? ',
+    default: '3000',
+    validate: (port) => {
+      if (!/^\d+$/.test(port)) {
+        return '🔥  Oops, the port must be a number 🔥';
+      }
+
+      port = parseInt(port, 10);
+      if (port > 0 && port < 65536) {
+        return true;
+      } else {
+        return '🔥  Oops, this is not a valid port 🔥';
+      }
+    }
+  });
 }
 
 if (process.env.FOREST_PROJECT) {

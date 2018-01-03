@@ -32,8 +32,6 @@ NOTICE:
   generated microservice.
 - You may need to use the option `--ssl` if your database uses a SSL
   connection.
-- You can specify the hostname and the port on which your admin will be running
-  by using the option `--hostname` and `--port`.
 
 ![Example](/assets/console.gif "Example")
 
