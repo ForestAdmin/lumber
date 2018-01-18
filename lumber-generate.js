@@ -298,7 +298,7 @@ inquirer.prompt(prompts).then((config) => {
       let tableAnalyzer = new TableAnalyzer(queryInterface, config);
 
       return P
-        .map(queryInterface.showAllTables({
+        .mapSeries(queryInterface.showAllTables({
           schema: config.dbSchema
         }), (table) => {
           // NOTICE: MS SQL returns objects instead of strings.
