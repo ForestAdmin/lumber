@@ -24,7 +24,6 @@ function isDirectoryExist(path) {
 
 program
   .description('Generate an admin microservice that serves a REST API hooked directly into your database.')
-  .option('-s, --ssl', 'Enable SSL database connection')
   .option('-c, --connection-url', 'Enter the database credentials with a connection URL')
   .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);
@@ -34,7 +33,7 @@ if (program.db) {
   console.log('ℹ︎  Your database credentials are safe. They are only stored in the Lumber generated microservice.\n');
 }
 
-let envConfig = { ssl: program.ssl };
+let envConfig = {};
 
 if (process.env.SERVER_HOST) {
   envConfig.serverHost = process.env.SERVER_HOST;
@@ -162,6 +161,18 @@ if (program.db) {
     });
   }
 
+  if (process.env.FOREST_DB_SSL) {
+    envConfig.ssl = process.env.FOREST_DB_SSL;
+  } else {
+    prompts.push({
+      type: 'confirm',
+      name: 'ssl',
+      message: 'Does your database require a SSL connection?',
+      when: (answers) => answers.dbDialect !== 'sqlite',
+      default: false
+    });
+  }
+
   if (process.env.FOREST_STORAGE) {
     envConfig.dbStorage = process.env.FOREST_STORAGE;
   } else {
@@ -169,7 +180,6 @@ if (program.db) {
       type: 'input',
       name: 'dbStorage',
       when: (answers) => answers.dbDialect === 'sqlite',
-      message: 'What\'s the full path of your SQLite file?'
     });
   }
 }
