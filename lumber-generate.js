@@ -180,6 +180,14 @@ if (program.db) {
       type: 'input',
       name: 'dbStorage',
       when: (answers) => answers.dbDialect === 'sqlite',
+      message: 'What\'s the full path of your SQLite file?',
+      validate: (dbStorage) => {
+        if (dbStorage) {
+          return true;
+        } else {
+          return '🔥  Hey, you need to specify a database SQLite file 🔥';
+        }
+      }
     });
   }
 }
