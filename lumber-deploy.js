@@ -140,7 +140,7 @@ if (program.connectionUrl) {
 prompts.push({
   type: 'confirm',
   name: 'dbSSL',
-  message: 'Use a secure SSL database connection? ',
+  message: 'Does your database require a SSL connection? ',
   default: true
 });
 

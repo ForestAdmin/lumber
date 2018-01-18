@@ -167,7 +167,7 @@ if (program.db) {
     prompts.push({
       type: 'confirm',
       name: 'ssl',
-      message: 'Does your database require a SSL connection?',
+      message: 'Does your database require a SSL connection? ',
       when: (answers) => answers.dbDialect !== 'sqlite',
       default: false
     });
