@@ -30,8 +30,6 @@ NOTICE:
 
 - Your database credentials **are safe**. They are only stored in the Lumber
   generated microservice.
-- You may need to use the option `--ssl` if your database uses a SSL
-  connection.
 
 ![Example](/assets/console.gif "Example")
 
