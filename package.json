@@ -29,6 +29,7 @@
     "pg": "^6.1.0",
     "progress": "^1.1.8",
     "sequelize": "git://github.com/ForestAdmin/sequelize.git#feature/support-schema",
+    "sqlite3": "3.1.13",
     "superagent": "^2.3.0",
     "superagent-promise": "^1.1.0",
     "tedious": "^1.14.0",
