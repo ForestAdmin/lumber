@@ -89,7 +89,7 @@ function TableAnalyzer(queryInterface, config) {
             let ref = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
-              as: `rel${foreignKey.foreign_table_name}`
+              as: `_${foreignKey.column_name}`
             };
 
             if (foreignKey.foreign_column_name !== 'id') {
