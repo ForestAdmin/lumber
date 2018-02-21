@@ -85,7 +85,8 @@ function TableAnalyzer(queryInterface, config) {
           let type = getType(value.type);
           let foreignKey = _.find(foreignKeys, { 'column_name': key });
 
-          if (foreignKey && !value.primaryKey) {
+          if (foreignKey && foreignKey.foreign_table_name &&
+            foreignKey.column_name && !value.primaryKey) {
             let ref = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
