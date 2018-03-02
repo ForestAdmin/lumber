@@ -2,7 +2,7 @@
 
 module.exports = (sequelize, DataTypes) => {
   var Model = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
-    <%= field.name %>: {
+    '<%= field.name %>': {
       type: DataTypes.<%= field.type %>,<% if (field.primaryKey) { %>
       primaryKey: true <% } %>
     },<% }) %>
