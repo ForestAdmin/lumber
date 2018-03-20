@@ -193,7 +193,7 @@ if (program.db) {
 }
 
 if (process.env.FOREST_HOSTNAME) {
-  envConfig.hostname = process.env.FOREST_HOSTNAME;
+  envConfig.appHostname = process.env.FOREST_HOSTNAME;
 } else {
   prompts.push({
     type: 'input',
@@ -204,7 +204,7 @@ if (process.env.FOREST_HOSTNAME) {
 }
 
 if (process.env.FOREST_PORT) {
-  envConfig.hostname = process.env.FOREST_PORT;
+  envConfig.appPort = process.env.FOREST_PORT;
 } else {
   prompts.push({
     type: 'input',
