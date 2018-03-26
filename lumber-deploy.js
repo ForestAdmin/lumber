@@ -158,10 +158,23 @@ prompts.push({
 });
 
 prompts.push({
+  type: 'list',
+  name: 'appProtocol',
+  message: 'What\'s your production servers protocol? ',
+  choices: ['http', 'https']
+});
+
+prompts.push({
   type: 'input',
   name: 'appPort',
   message: 'On which port your admin will be running?',
-  default: 3000,
+  default: (args) => {
+    if (args.appProtocol === 'https') {
+      return '443';
+    } else if (args.appProtocol === 'http') {
+      return '3000'; 
+    }
+  },
   validate: (port) => {
     if (!/^\d+$/.test(port)) {
       return '🔥  Oops, the port must be a number 🔥';
@@ -226,8 +239,13 @@ return forest
       })
       .then((config) => {
         forest.setConfig(config);
-
-        return forest.createEnvironment(`http://${config.appHostname}:${config.appPort}`)
+        var envUrl = `${config.appProtocol}://${config.appHostname}`;
+        if ((config.appProtocol === 'https' && '443') || (config.appProtocol === 'http' && '80')){
+          //do not save default ports
+        }else{
+          envUrl = `${envUrl}://${config.appPort}`;
+        }
+        return forest.createEnvironment()
           .then((environment) => {
             return new KeyGenerator()
               .generate()
@@ -242,7 +260,7 @@ FOREST_ENV_SECRET=${environment.secretKey}
 SSL_DATABASE=${config.dbSSL}
     `);
 
-                console.log(chalk.bold('Run your admin microservice:'));
+                console.log(chalk.bold(`Run your admin microservice at ${envUrl}`));
 
                 console.log('4. Run your admin microservice: node ./bin/www');
                 console.log('5. Refresh your browser, you can now switch to your production environment!');
