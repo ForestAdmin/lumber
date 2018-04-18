@@ -20,8 +20,8 @@ NOTICE:
 ## Usage
 
 - [Quickstart](#quickstart)
-- [List of commands](#commands)
 - [Documentation](#documentation)
+- [List of commands](#commands)
 
 ### Quickstart
 `$ lumber generate`
@@ -35,6 +35,10 @@ NOTICE:
 
 Full demo video: https://www.youtube.com/watch?v=2cKSsBxrvR8
 
+### Documentation
+
+https://doc.forestadmin.com/developer-guide/lumber.html
+
 ### Commands
 
 `$ lumber [command]`
@@ -43,16 +47,6 @@ Full demo video: https://www.youtube.com/watch?v=2cKSsBxrvR8
 - `user`          show your current logged user
 - `login`         sign in to your account
 - `logout`        sign out of your account
-- `action`        create a new action button on your admin
-- `heroku-deploy` deploy your admin on production
-
-### Documentation
-
-https://doc.forestadmin.com/developer-guide/lumber.html
-
-#### Watch video:
-
-[![heroku-deploy-video](https://img.youtube.com/vi/pEQ9Ro3UeKY/0.jpg)](https://www.youtube.com/watch?v=pEQ9Ro3UeKY)
 
 ## License
 [GPL](https://github.com/ForestAdmin/Lumber/blob/master/LICENSE)
