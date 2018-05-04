@@ -106,7 +106,8 @@ function Dumper(project, config) {
     } else {
       connectionString = `${config.dbDialect}://${config.dbUser}`;
       if (config.dbPassword) {
-        connectionString += `:${config.dbPassword}`;
+        // NOTICE: Encode password string in case of special chars.
+        connectionString += `:${encodeURIComponent(config.dbPassword)}`;
       }
 
       connectionString += `@${config.dbHostname}:${config.dbPort}/${config.dbName}`;
