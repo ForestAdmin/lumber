@@ -1,4 +1,5 @@
 'use strict';
+const { getDatabaseUrl } = require('../utils');
 const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
@@ -98,24 +99,6 @@ function Dumper(project, config) {
     fs.writeFileSync(`${routesPath}/.gitkeep`, template({}));
   }
 
-  function getDatabaseUrl() {
-    let connectionString;
-
-    if (config.dbDialect === 'sqlite') {
-      connectionString = `sqlite://${config.dbStorage}`;
-    } else {
-      connectionString = `${config.dbDialect}://${config.dbUser}`;
-      if (config.dbPassword) {
-        // NOTICE: Encode password string in case of special chars.
-        connectionString += `:${encodeURIComponent(config.dbPassword)}`;
-      }
-
-      connectionString += `@${config.dbHostname}:${config.dbPort}/${config.dbName}`;
-    }
-
-    return connectionString;
-  }
-
   function writeDotEnv(path, authSecret) {
     let templatePath = `${__dirname}/../templates/app/env`;
     let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
@@ -123,7 +106,7 @@ function Dumper(project, config) {
     let settings = {
       forestEnvSecret: project.defaultEnvironment.secretKey,
       forestAuthSecret: authSecret,
-      databaseUrl: getDatabaseUrl(),
+      databaseUrl: getDatabaseUrl(config),
       forestUrl: process.env.FOREST_URL,
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',

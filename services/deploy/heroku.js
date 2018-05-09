@@ -1,20 +1,10 @@
 'use strict';
+const { getDatabaseUrl } = require('../../utils');
 const P = require('bluebird');
 const exec = require('child_process').exec;
 const agent = require('superagent-promise')(require('superagent'), P);
 
 function Heroku(config) {
-  function getDatabaseUrl(config) {
-    if (config.dbConnectionUrl) { return config.dbConnectionUrl; }
-
-    let connectionUrl = `${config.dbDialect}://${config.dbUser}`;
-    if (config.dbPassword) {
-      connectionUrl += `:${config.dbPassword}`;
-    }
-
-    connectionUrl += `@${config.dbHostname}:${config.dbPort}/${config.dbName}`;
-    return connectionUrl;
-  }
 
   function pollApp(response) {
     return agent
