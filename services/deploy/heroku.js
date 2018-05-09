@@ -1,8 +1,8 @@
 'use strict';
-const { getDatabaseUrl } = require('../../utils');
 const P = require('bluebird');
 const exec = require('child_process').exec;
 const agent = require('superagent-promise')(require('superagent'), P);
+const { getDatabaseUrl } = require('../../utils');
 
 function Heroku(config) {
 

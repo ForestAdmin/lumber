@@ -1,11 +1,11 @@
 'use strict';
-const { getDatabaseUrl } = require('../utils');
 const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
 const mkdirp = P.promisify(mkdirpSync);
 const KeyGenerator = require('./key-generator');
+const { getDatabaseUrl } = require('../utils');
 
 function Dumper(project, config) {
   let path = `${process.cwd()}/${config.appName}`;
