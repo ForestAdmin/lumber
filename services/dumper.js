@@ -48,14 +48,14 @@ function Dumper(project, config) {
 
   function writePackageJson(path) {
     let dependencies = {
-      'express': '~4.13.4',
-      'express-jwt': '~5.1.0',
+      'express': '~4.16.3',
+      'express-jwt': '~5.3.1',
       'express-cors': 'git://github.com/ForestAdmin/express-cors',
-      'body-parser': '~1.15.1',
+      'body-parser': '~1.18.2',
       'cookie-parser': '~1.4.3',
-      'debug': '~2.2.0',
-      'morgan': '~1.7.0',
-      'serve-favicon': '~2.3.0',
+      'debug': '~3.1.0',
+      'morgan': '~1.9.0',
+      'serve-favicon': '~2.5.0',
       'dotenv': '~2.0.0',
       'chalk': '~1.1.3',
       'sequelize': '4.8.0',
