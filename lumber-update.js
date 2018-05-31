@@ -68,4 +68,7 @@ program
       console.log(`   ${chalk.green('✔')} Field added: ${chalk.green(modelPath)}`);
     });
   });
+
+  console.log(chalk.green('Your admin is up to date.'));
+  process.exit(0);
 })();
