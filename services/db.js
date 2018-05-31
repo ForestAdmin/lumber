@@ -1,23 +1,24 @@
-'use strict';
 const Sequelize = require('sequelize');
 const logger = require('./logger');
 
 function Database() {
-  this.connect = function (options) {
+  this.connect = (options) => {
     let db;
 
     if (options.dbDialect === 'sqlite') {
-      db = new Sequelize('sqlite://' + options.dbStorage);
+      db = new Sequelize(`sqlite://${options.dbStorage}`, {
+        logging: false,
+      });
     } else {
       const isSSL = options.dbSSL || options.ssl;
       const needsEncryption = isSSL && (options.dbDialect === 'mssql');
 
-      let connectionOpts = {
+      const connectionOpts = {
         logging: false,
         dialectOptions: {
           ssl: isSSL,
-          encrypt: needsEncryption
-        }
+          encrypt: needsEncryption,
+        },
       };
 
       if (options.dbConnectionUrl) {
@@ -27,8 +28,10 @@ function Database() {
         connectionOpts.port = options.dbPort;
         connectionOpts.dialect = options.dbDialect;
 
-        db = new Sequelize(options.dbName, options.dbUser,
-          options.dbPassword, connectionOpts);
+        db = new Sequelize(
+          options.dbName, options.dbUser,
+          options.dbPassword, connectionOpts,
+        );
       }
     }
 
