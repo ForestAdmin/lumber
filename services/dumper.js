@@ -149,20 +149,6 @@ function Dumper(project, config) {
     fs.writeFileSync(`${path}/models/${table}.js`, text);
   }
 
-  function writeAppJson(path, authSecret) {
-    let templatePath = `${__dirname}/../templates/app/app.json`;
-    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-
-    let text = template({
-      config: config,
-      forestEnvSecret: project.defaultEnvironment.secretKey,
-      forestAuthSecret: authSecret
-
-    });
-
-    fs.writeFileSync(`${path}/app.json`, text);
-  }
-
   function writeAppJs(path) {
     let templatePath = `${__dirname}/../templates/app/app.js`;
     let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
@@ -208,7 +194,6 @@ function Dumper(project, config) {
       writeDotGitIgnore(path);
       writeDotGitKeep(routesPath);
       writeDotEnv(path, authSecret);
-      writeAppJson(path, authSecret);
     })
     .then(() => {
       return this;
