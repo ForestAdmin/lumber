@@ -36,6 +36,7 @@ program
     'dbPort',
     'dbUser',
     'dbPassword',
+    'ssl',
     'dbStorage',
     'appHostname',
     'appPort',
