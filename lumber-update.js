@@ -47,7 +47,7 @@ program
 
   if (_.isEmpty(schema)) {
     console.log('💀  Oops, your database is empty. Please, ' +
-      'create some tables before running Lumber generate.💀');
+      'create some tables before running Lumber update.💀');
     process.exit(1);
   }
 
