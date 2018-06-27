@@ -29,7 +29,25 @@ function TableAnalyzer(queryInterface, config) {
       .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT });
   }
 
-  function getType(type) {
+  function checkIfColumnIsTypeEnum(columnName) {
+    const query = `
+      SELECT i.udt_name
+      FROM pg_catalog.pg_type t
+      JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
+      JOIN pg_catalog.pg_enum e ON t.oid = e.enumtypid
+      JOIN information_schema.columns i ON t.typname = i.udt_name
+      WHERE i.column_name = '${columnName}'
+      GROUP BY i.udt_name;
+    `;
+
+    return queryInterface.sequelize
+      .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT })
+      .then((result) => !!result.length);
+  }
+
+  async function getType(columnInfo, columnName) {
+    const { type, special } = columnInfo;
+
     switch (type) {
       case 'BIT': // MSSQL type
       case 'BOOLEAN':
@@ -37,12 +55,15 @@ function TableAnalyzer(queryInterface, config) {
       case 'CHARACTER VARYING':
       case 'TEXT':
       case 'NTEXT': // MSSQL type
-      case 'USER-DEFINED':
       case (type.match(/TEXT.*/i) || {}).input:
       case (type.match(/VARCHAR.*/i) || {}).input:
       case (type.match(/CHAR.*/i) || {}).input:
       case 'NVARCHAR': // MSSQL type
         return 'STRING';
+      case 'USER-DEFINED':
+        const isEnum = await checkIfColumnIsTypeEnum(columnName);
+
+        return isEnum ? `ENUM('${special.join('\', \'')}')` : 'STRING';
       case 'UNIQUEIDENTIFIER':
       case 'UUID':
         return 'UUID';
@@ -76,17 +97,17 @@ function TableAnalyzer(queryInterface, config) {
   this.analyzeTable = function (table) {
     return new P
       .all([analyzeFields(table), analyzeForeignKeys(table)])
-      .spread((schema, foreignKeys) => {
+      .spread(async (schema, foreignKeys) => {
         var fields = [];
         var references = [];
 
-        _.each(schema, (value, key) => {
-          // jshint camelcase: false
-          let type = getType(value.type);
-          let foreignKey = _.find(foreignKeys, { 'column_name': key });
+        await P.each(Object.keys(schema), async (columnName) => {
+          const columnInfo = schema[columnName];
+          const type = await getType(columnInfo, columnName);
+          let foreignKey = _.find(foreignKeys, { 'column_name': columnName });
 
           if (foreignKey && foreignKey.foreign_table_name &&
-            foreignKey.column_name && !value.primaryKey) {
+            foreignKey.column_name && !columnInfo.primaryKey) {
             let ref = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
@@ -98,8 +119,8 @@ function TableAnalyzer(queryInterface, config) {
             }
 
             references.push(ref);
-          } else if (type && key !== 'id') {
-            var opts = { name: key, type: type, primaryKey: value.primaryKey };
+          } else if (type && columnName !== 'id') {
+            var opts = { name: columnName, type: type, primaryKey: columnInfo.primaryKey };
             fields.push(opts);
           }
         });
