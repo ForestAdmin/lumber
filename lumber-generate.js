@@ -42,7 +42,7 @@ program
     'appPort',
     'appName',
     'email',
-    'password',
+    'passwordCreate',
   ]);
 
   // NOTICE: Ensure the project directory doesn't exist yet.
