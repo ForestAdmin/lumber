@@ -24,4 +24,7 @@ program
       logger.error('💀  Oops, something went wrong.💀');
     }
   }
-})();
+})().catch((error) => {
+  logger.error('💀  Oops, operation aborted 💀 due to the following error: ', error);
+  process.exit(1);
+});
