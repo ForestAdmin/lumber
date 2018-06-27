@@ -4,7 +4,8 @@
   "description": "Generate the admin micro-service of your application",
   "main": "lumber.js",
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./assets ./deserializers ./serializers ./services ./test"
   },
   "bin": {
     "lumber": "lumber.js"
