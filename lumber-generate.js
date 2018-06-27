@@ -42,7 +42,7 @@ program
     'appPort',
     'appName',
     'email',
-    'password',
+    'passwordCreate',
   ]);
 
   // NOTICE: Ensure the project directory doesn't exist yet.
@@ -62,7 +62,7 @@ program
       schema: config.dbSchema,
     }), async (table) => {
       // NOTICE: MS SQL returns objects instead of strings.
-    // eslint-disable-next-line no-param-reassign
+      // eslint-disable-next-line no-param-reassign
       if (typeof table === 'object') { table = table.tableName; }
 
       const analysis = await tableAnalyzer.analyzeTable(table);
@@ -77,7 +77,16 @@ program
 
     let project;
     if (config.authToken) {
-      project = await authenticator.createProject(config);
+      try {
+        project = await authenticator.createProject(config);
+      } catch (error) {
+        if (error.message === 'Unauthorized') {
+          logger.error('💀  Oops, you are unauthorized to connect to forest. 💀 Try the "lumber logout && lumber login" command.');
+        } else {
+          logger.error('💀  Oops, authentication operation aborted 💀 due to the following error: ', error);
+        }
+        process.exit(1);
+      }
     } else {
       project = await authenticator.register(config);
     }
@@ -95,4 +104,7 @@ program
 
     process.exit(0);
   }
-})();
+})().catch((error) => {
+  logger.error('💀  Oops, operation aborted 💀 due to the following error: ', error);
+  process.exit(1);
+});

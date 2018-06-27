@@ -253,7 +253,7 @@ async function Prompter(program, requests) {
 
     envConfig.authToken = authenticator.getAuthToken();
 
-    if (isRequested('email') && isRequested('password')) {
+    if (isRequested('email')) {
       if (!envConfig.authToken) {
         prompts.push({
           type: 'input',
@@ -264,7 +264,11 @@ async function Prompter(program, requests) {
             return '🔥  Please enter your email address 🔥';
           },
         });
+      }
+    }
 
+    if (isRequested('passwordCreate')) {
+      if (!envConfig.authToken) {
         prompts.push({
           type: 'password',
           name: 'password',
@@ -273,16 +277,31 @@ async function Prompter(program, requests) {
             if (password) {
               if (FORMAT_PASSWORD.test(password)) { return true; }
               return '🔓  Your password security is too weak 🔓\n' +
-                ' Please make sure it contains at least:\n' +
-                '    > 8 characters\n' +
-                '    > Upper and lower case letters\n' +
-                '    > Numbers';
+              ' Please make sure it contains at least:\n' +
+              '    > 8 characters\n' +
+              '    > Upper and lower case letters\n' +
+              '    > Numbers';
             }
 
             return '🔥  Oops, your password cannot be blank 🔥';
           },
         });
       }
+    }
+
+    if (isRequested('password')) {
+      prompts.push({
+        type: 'password',
+        name: 'password',
+        message: 'What\'s your password: ',
+        validate: (password) => {
+          if (password) {
+            return true;
+          } else {
+            return '🔥  Oops, your password cannot be blank 🔥';
+          }
+        }
+      });
     }
   }
 
