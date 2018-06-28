@@ -48,6 +48,7 @@ function TableAnalyzer(queryInterface, config) {
 
   async function getType(columnInfo, columnName) {
     const { type, special } = columnInfo;
+    const mysqlEnumRegex = /ENUM\((.*)\)/i;
 
     switch (type) {
       case 'BIT': // MSSQL type
@@ -66,6 +67,8 @@ function TableAnalyzer(queryInterface, config) {
 
         return isEnum ? `ENUM('${special.join('\', \'')}')` : 'STRING';
       }
+      case (type.match(mysqlEnumRegex) || {}).input:
+        return type;
       case 'UNIQUEIDENTIFIER':
       case 'UUID':
         return 'UUID';
