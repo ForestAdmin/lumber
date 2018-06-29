@@ -30,7 +30,7 @@ function TableAnalyzer(queryInterface, config) {
       .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT });
   }
 
-  function checkIfColumnIsTypeEnum(columnName) {
+  function isColumnTypeEnum(columnName) {
     const query = `
       SELECT i.udt_name
       FROM pg_catalog.pg_type t
@@ -63,9 +63,12 @@ function TableAnalyzer(queryInterface, config) {
       case 'NVARCHAR': // MSSQL type
         return 'STRING';
       case 'USER-DEFINED': {
-        const isEnum = await checkIfColumnIsTypeEnum(columnName);
+        if (queryInterface.sequelize.options.dialect === 'postgres' &&
+          await isColumnTypeEnum(columnName)) {
+          return `ENUM('${special.join('\', \'')}')`;
+        }
 
-        return isEnum ? `ENUM('${special.join('\', \'')}')` : 'STRING';
+        return 'STRING';
       }
       case (type.match(mysqlEnumRegex) || {}).input:
         return type;
