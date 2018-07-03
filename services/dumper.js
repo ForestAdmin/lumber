@@ -128,6 +128,7 @@ function Dumper(project, config) {
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
+      port: config.appPort
     };
 
     fs.writeFileSync(`${path}/.env`, template(settings));

@@ -116,8 +116,9 @@ function Authenticator() {
       })
       .catch((err) => {
         if (err.status === 409) {
-          logger.error('💀  Oops, this email already exists. Please, run ' +
-            chalk.bold('$ lumber login') + ' before 💀');
+          // Account already exists
+          return this.login(config)
+            .then(() => this.createProject(config));
         } else {
           logger.error('💀  Ouch, cannot create your account 💀');
         }
@@ -137,6 +138,14 @@ function Authenticator() {
         config.authToken = auth.token;
         return fs.writeFileSync(`${os.homedir()}/.lumberrc`, auth.token);
       });
+  };
+
+  this.authenticateAndCreateProject = (config) => {
+    if (config.authToken) {
+      return this.createProject(config);
+    }
+
+    return this.register(config);
   };
 }
 
