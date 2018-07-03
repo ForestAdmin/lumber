@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+### Fixed
+- Generate - App port is set in .env file
+
 ## Release 1.10.0
 ### Changed
 - MySQL & PostgreSQL - Detect enum type for model generation.
