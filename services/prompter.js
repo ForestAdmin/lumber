@@ -16,7 +16,7 @@ async function Prompter(program, requests) {
   if (process.env.SERVER_HOST) {
     envConfig.serverHost = process.env.SERVER_HOST;
   } else {
-    envConfig.serverHost = 'https://forestadmin-server.herokuapp.com';
+    envConfig.serverHost = 'https://api.forestadmin.com';
   }
 
   if (program.sourceDirectory) {
