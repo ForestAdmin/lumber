@@ -1,13 +1,11 @@
-
 # Change Log
 
 ## Release 1.10.0
-
+### Changed
 - PostgreSQL - Detect enum type for model generation.
-- Technical - Use the "official" domain for the default server host
+- Technical - Use the "official" domain for the default server host.
 
 ## Release 1.9.0
-
 ### Changed
 - Security - Set a stronger password policy.
 
