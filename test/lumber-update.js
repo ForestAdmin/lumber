@@ -6,7 +6,7 @@ const Migrator = require('../services/migrator');
 const config = {
   dbDialect: 'sqlite',
   dbStorage: 'test/sample-project/chinook.sqlite',
-  serverHost: 'https://forestadmin-server.herokuapp.com',
+  serverHost: 'https://api.forestadmin.com',
   sourceDirectory: 'test/sample-project'
 };
 
