@@ -1,4 +1,3 @@
-'use strict';
 const _ = require('lodash');
 const P = require('bluebird');
 
@@ -23,26 +22,56 @@ function TableAnalyzer(queryInterface, config) {
       case 'sqlite':
         query = `PRAGMA foreign_key_list('${table}');`;
         break;
+      default:
+        break;
     }
 
     return queryInterface.sequelize
       .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT });
   }
 
-  function getType(type) {
+  function isColumnTypeEnum(columnName) {
+    const query = `
+      SELECT i.udt_name
+      FROM pg_catalog.pg_type t
+      JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
+      JOIN pg_catalog.pg_enum e ON t.oid = e.enumtypid
+      JOIN information_schema.columns i ON t.typname = i.udt_name
+      WHERE i.column_name = '${columnName}'
+      GROUP BY i.udt_name;
+    `;
+
+    return queryInterface.sequelize
+      .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT })
+      .then(result => !!result.length);
+  }
+
+  async function getType(columnInfo, columnName) {
+    const { type, special } = columnInfo;
+    const mysqlEnumRegex = /ENUM\((.*)\)/i;
+
     switch (type) {
-      case 'BIT': // MSSQL type
+      case 'BIT': // MSSQL type
       case 'BOOLEAN':
         return 'BOOLEAN';
       case 'CHARACTER VARYING':
       case 'TEXT':
-      case 'NTEXT': // MSSQL type
-      case 'USER-DEFINED':
+      case 'NTEXT': // MSSQL type
       case (type.match(/TEXT.*/i) || {}).input:
       case (type.match(/VARCHAR.*/i) || {}).input:
       case (type.match(/CHAR.*/i) || {}).input:
-      case 'NVARCHAR': // MSSQL type
+      case 'NVARCHAR': // MSSQL type
         return 'STRING';
+      case 'USER-DEFINED': {
+        if (queryInterface.sequelize.options.dialect === 'postgres' &&
+          await isColumnTypeEnum(columnName)) {
+          return `ENUM('${special.join('\', \'')}')`;
+        }
+
+        return 'STRING';
+      }
+      case (type.match(mysqlEnumRegex) || {}).input:
+        return type;
       case 'UNIQUEIDENTIFIER':
       case 'UUID':
         return 'UUID';
@@ -62,7 +91,7 @@ function TableAnalyzer(queryInterface, config) {
       case 'REAL':
       case 'DOUBLE PRECISION':
       case (type.match(/DECIMAL.*/i) || {}).input:
-      case 'MONEY': // MSSQL type
+      case 'MONEY': // MSSQL type
         return 'DOUBLE';
       case 'DATE':
       case 'DATETIME':
@@ -70,27 +99,28 @@ function TableAnalyzer(queryInterface, config) {
       case 'TIMESTAMP WITH TIME ZONE':
       case 'TIMESTAMP WITHOUT TIME ZONE':
         return 'DATE';
+      default:
+        return null;
     }
   }
 
-  this.analyzeTable = function (table) {
-    return new P
-      .all([analyzeFields(table), analyzeForeignKeys(table)])
-      .spread((schema, foreignKeys) => {
-        var fields = [];
-        var references = [];
+  this.analyzeTable = function analyzeTable(table) {
+    return P.all([analyzeFields(table), analyzeForeignKeys(table)])
+      .spread(async (schema, foreignKeys) => {
+        const fields = [];
+        const references = [];
 
-        _.each(schema, (value, key) => {
-          // jshint camelcase: false
-          let type = getType(value.type);
-          let foreignKey = _.find(foreignKeys, { 'column_name': key });
+        await P.each(Object.keys(schema), async (columnName) => {
+          const columnInfo = schema[columnName];
+          const type = await getType(columnInfo, columnName);
+          const foreignKey = _.find(foreignKeys, { column_name: columnName });
 
           if (foreignKey && foreignKey.foreign_table_name &&
-            foreignKey.column_name && !value.primaryKey) {
-            let ref = {
+            foreignKey.column_name && !columnInfo.primaryKey) {
+            const ref = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
-              as: `_${foreignKey.column_name}`
+              as: `_${foreignKey.column_name}`,
             };
 
             if (foreignKey.foreign_column_name !== 'id') {
@@ -98,8 +128,8 @@ function TableAnalyzer(queryInterface, config) {
             }
 
             references.push(ref);
-          } else if (type && key !== 'id') {
-            var opts = { name: key, type: type, primaryKey: value.primaryKey };
+          } else if (type && columnName !== 'id') {
+            const opts = { name: columnName, type, primaryKey: columnInfo.primaryKey };
             fields.push(opts);
           }
         });
