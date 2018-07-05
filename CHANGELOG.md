@@ -2,7 +2,7 @@
 
 ## Release 1.10.0
 ### Changed
-- PostgreSQL - Detect enum type for model generation.
+- MySQL & PostgreSQL - Detect enum type for model generation.
 - Technical - Use the "official" domain for the default server host.
 
 ## Release 1.9.0
