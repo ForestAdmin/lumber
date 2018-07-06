@@ -59,7 +59,7 @@ function Authenticator() {
       });
   };
 
-  this.register = (config) => {
+  this.registerAndCreateProject = (config) => {
     let guest = { email: config.email };
 
     return agent
@@ -116,7 +116,7 @@ function Authenticator() {
       })
       .catch((err) => {
         if (err.status === 409) {
-          // Account already exists
+          // NOTICE: Account already exists
           return this.login(config)
             .then(() => this.createProject(config));
         } else {
@@ -145,7 +145,7 @@ function Authenticator() {
       return this.createProject(config);
     }
 
-    return this.register(config);
+    return this.registerAndCreateProject(config);
   };
 }
 
