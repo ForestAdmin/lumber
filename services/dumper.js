@@ -127,7 +127,8 @@ function Dumper(project, config) {
       forestUrl: process.env.FOREST_URL,
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
-      dbSchema: config.dbSchema
+      dbSchema: config.dbSchema,
+      port: config.appPort
     };
 
     fs.writeFileSync(`${path}/.env`, template(settings));

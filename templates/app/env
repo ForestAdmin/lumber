@@ -5,3 +5,4 @@ FOREST_ENV_SECRET=<%= forestEnvSecret %>
 <% if (!encrypt) {%>#<% } %>ENCRYPT_DATABASE=true
 <% if (forestUrl) {%>FOREST_URL=<%= forestUrl %><% } %>
 <% if (dbSchema) {%>DATABASE_SCHEMA=<%= dbSchema %><% } %>
+<% if (port) {%>PORT=<%= port %><% } %>

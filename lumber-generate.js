@@ -76,19 +76,15 @@ program
     }
 
     let project;
-    if (config.authToken) {
-      try {
-        project = await authenticator.createProject(config);
-      } catch (error) {
-        if (error.message === 'Unauthorized') {
-          logger.error('💀  Oops, you are unauthorized to connect to forest. 💀 Try the "lumber logout && lumber login" command.');
-        } else {
-          logger.error('💀  Oops, authentication operation aborted 💀 due to the following error: ', error);
-        }
-        process.exit(1);
+    try {
+      project = await authenticator.authenticateAndCreateProject(config);
+    } catch (error) {
+      if (error.message === 'Unauthorized') {
+        logger.error('💀  Oops, you are unauthorized to connect to forest. 💀 Try the "lumber logout && lumber login" command.');
+      } else {
+        logger.error('💀  Oops, authentication operation aborted 💀 due to the following error: ', error);
       }
-    } else {
-      project = await authenticator.register(config);
+      process.exit(1);
     }
 
     const dumper = await new Dumper(project, config);
