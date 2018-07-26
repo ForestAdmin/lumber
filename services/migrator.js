@@ -2,6 +2,7 @@ const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
 const chalk = require('chalk');
+const logger = require('./logger');
 
 function Migrator(config) {
   function isUnderscored(fields) {
@@ -78,6 +79,12 @@ automatically. Please, add it manually to the file '${modelPath}'.`));
 
   this.detectNewTables = async (schema) => {
     const newTables = [];
+
+    const modelDir = `${config.sourceDirectory}/models`;
+    if (!fs.existsSync(modelDir)) {
+      logger.error(`💀  Cannot find the 'models/' directory. Please, ensure you're running this command inside a Lumber generated project. 💀`);
+      process.exit(1);
+    }
 
     await P.each(Object.keys(schema), async (table) => {
       const modelPath = `${config.sourceDirectory}/models/${table}.js`;
