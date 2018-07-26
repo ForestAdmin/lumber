@@ -28,7 +28,7 @@ program
 (async () => {
   const schema = {};
   const config = await Prompter(program, [
-    'dbCollectionUrl',
+    'dbConnectionUrl',
     'dbDialect',
     'dbName',
     'dbSchema',

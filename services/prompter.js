@@ -28,15 +28,19 @@ async function Prompter(program, requests) {
   const prompts = [];
 
   if (isRequested('dbConnectionUrl') && program.connectionUrl) {
-    prompts.push({
-      type: 'input',
-      name: 'dbConnectionUrl',
-      message: 'What\'s your database connection URL? ',
-      validate: (dbConnectionUrl) => {
-        if (dbConnectionUrl) { return true; }
-        return '🔥  Hey, you need to specify the database connection URL 🔥';
-      },
+    if (process.env.DATABASE_URL) {
+      envConfig.dbConnectionUrl = process.env.DATABASE_URL;
+    } else {
+      prompts.push({
+        type: 'input',
+        name: 'dbConnectionUrl',
+        message: 'What\'s your database connection URL? ',
+        validate: (dbConnectionUrl) => {
+          if (dbConnectionUrl) { return true; }
+          return '🔥  Hey, you need to specify the database connection URL 🔥';
+        },
     });
+    }
   } else {
     if (isRequested('dbDialect')) {
       prompts.push({

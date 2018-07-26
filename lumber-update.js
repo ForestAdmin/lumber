@@ -6,6 +6,8 @@ const DB = require('./services/db');
 const TableAnalyzer = require('./services/table-analyzer');
 const Migrator = require('./services/migrator');
 const Prompter = require('./services/prompter');
+const parseDbUrl = require("parse-database-url");
+const logger = require('./services/logger');
 
 program
   .description('Update your models\' definition according to your database schema')
@@ -14,8 +16,15 @@ program
   .parse(process.argv);
 
 (async () => {
+  // Load the environment variables from the .env to avoid always asking for the DB
+  // connection information.
+  require('dotenv').load();
+  if (process.env.DATABASE_URL) {
+    program.connectionUrl = true;
+  }
+
   const config = await Prompter(program, [
-    'dbCollectionUrl',
+    'dbConnectionUrl',
     'dbDialect',
     'dbName',
     'dbSchema',
