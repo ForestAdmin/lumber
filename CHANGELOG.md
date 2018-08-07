@@ -1,8 +1,10 @@
 # Change Log
 
 ## [Unreleased]
+
+## Release 1.10.3
 ### Fixed
-- Generate - App port is set in .env file
+- Command Update - Fix `lumber update` command execution.
 
 ## Release 1.10.0
 ### Changed

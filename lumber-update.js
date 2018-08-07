@@ -6,7 +6,6 @@ const DB = require('./services/db');
 const TableAnalyzer = require('./services/table-analyzer');
 const Migrator = require('./services/migrator');
 const Prompter = require('./services/prompter');
-const parseDbUrl = require("parse-database-url");
 const logger = require('./services/logger');
 
 program
