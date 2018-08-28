@@ -51,6 +51,8 @@ function TableAnalyzer(queryInterface, config) {
     const mysqlEnumRegex = /ENUM\((.*)\)/i;
 
     switch (type) {
+      case (type.match(/FLOAT.*/i) || {}).input:
+        return 'FLOAT';
       case 'BIT': // MSSQL type
       case 'BOOLEAN':
         return 'BOOLEAN';
