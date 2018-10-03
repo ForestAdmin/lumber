@@ -10,9 +10,7 @@ program
 
 (async () => {
   await authenticator
-  .logout({ log: false })
-  .then(() => {
-  });
+  .logout({ log: false });
 
   const config = await Prompter(program, [
     'email',
