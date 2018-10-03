@@ -241,7 +241,7 @@ async function Prompter(program, requests) {
         prompts.push({
           type: 'input',
           name: 'appName',
-          message: 'Choose a project name: ',
+          message: 'Choose a name for your back office: ',
           validate: (projectName) => {
             if (projectName) {
               if (/^([A-Za-z0-9-_]+)$/.test(projectName)) { return true; }

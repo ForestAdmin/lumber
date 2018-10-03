@@ -4,5 +4,6 @@ FOREST_ENV_SECRET=<%= forestEnvSecret %>
 <% if (!ssl) {%>#<% } %>SSL_DATABASE=true
 <% if (!encrypt) {%>#<% } %>ENCRYPT_DATABASE=true
 <% if (forestUrl) {%>FOREST_URL=<%= forestUrl %><% } %>
+<% if (renderingId) {%>RENDERING_ID=<%= renderingId %><% } %>
 <% if (dbSchema) {%>DATABASE_SCHEMA=<%= dbSchema %><% } %>
 <% if (port) {%>PORT=<%= port %><% } %>

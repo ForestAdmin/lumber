@@ -1,16 +1,17 @@
 'use strict';
-var fs = require('fs');
-var os = require('os');
-var P = require('bluebird');
-var chalk = require('chalk');
-var agent = require('superagent-promise')(require('superagent'), P);
-var GuestSerializer = require('../serializers/guest');
-var UserSerializer = require('../serializers/user');
-var ProjectSerializer = require('../serializers/project');
-var EnvironmentSerializer = require('../serializers/environment');
-var GuestDeserializer = require('../deserializers/guest');
-var ProjectDeserializer = require('../deserializers/project');
-var EnvironmentDeserializer = require('../deserializers/environment');
+const fs = require('fs');
+const os = require('os');
+const P = require('bluebird');
+const _ = require('lodash');
+const chalk = require('chalk');
+const agent = require('superagent-promise')(require('superagent'), P);
+const GuestSerializer = require('../serializers/guest');
+const UserSerializer = require('../serializers/user');
+const ProjectSerializer = require('../serializers/project');
+const EnvironmentSerializer = require('../serializers/environment');
+const GuestDeserializer = require('../deserializers/guest');
+const ProjectDeserializer = require('../deserializers/project');
+const EnvironmentDeserializer = require('../deserializers/environment');
 const logger = require('./logger');
 
 function Authenticator() {
@@ -61,12 +62,17 @@ function Authenticator() {
 
   this.registerAndCreateProject = (config) => {
     let guest = { email: config.email };
+    let rendering;
 
     return agent
       .post(`${config.serverHost}/api/guests`)
       .set('forest-origin', 'Lumber')
       .send(new GuestSerializer(guest))
       .then((response) => new GuestDeserializer.deserialize(response.body))
+      .then((guest) => {
+        rendering = guest.project.defaultEnvironment.renderings[0];
+        return guest;
+      })
       .then((guest) => {
         let user = {
           id: guest.user.id,
@@ -111,7 +117,11 @@ function Authenticator() {
               .then((environment) => {
                 project.defaultEnvironment = environment;
                 return project;
-              });
+              })
+              .then((project) => {
+                project.defaultEnvironment.renderings = [rendering];
+                return project;
+              })
           });
       })
       .catch((err) => {
@@ -121,6 +131,7 @@ function Authenticator() {
             .then(() => this.createProject(config));
         } else {
           logger.error('💀  Ouch, cannot create your account 💀');
+          console.error(err);
         }
 
         process.exit(1);
@@ -138,6 +149,32 @@ function Authenticator() {
         config.authToken = auth.token;
         return fs.writeFileSync(`${os.homedir()}/.lumberrc`, auth.token);
       });
+  };
+
+  this.logout = async (opts) => {
+    const path = `${os.homedir()}/.lumberrc`;
+
+    return new P((resolve, reject) => {
+      fs.stat(path, (err) => {
+        if (err === null) {
+          fs.unlinkSync(path);
+
+          if (opts.log) {
+            console.log(chalk.green('👍  You\'re now unlogged 👍 '));
+          }
+
+          resolve();
+        } else if (err.code === 'ENOENT') {
+          if (opts.log) {
+            logger.error('🔥  You\'re not logged 🔥');
+          }
+
+          resolve();
+        } else {
+          reject(err);
+        }
+      });
+    });
   };
 
   this.authenticateAndCreateProject = (config) => {

@@ -1,15 +1,15 @@
 'use strict';
-var fs = require('fs');
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var cors = require('express-cors');
-var jwt = require('express-jwt');
+const fs = require('fs');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const cors = require('express-cors');
+const jwt = require('express-jwt');
 
-var app = express();
+const app = express();
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
 app.use(logger('dev'));
@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  allowedOrigins: ['*.forestadmin.com'],
+  allowedOrigins: ['*.forestadmin.com', 'localhost:4200'],
   headers: ['Authorization', 'X-Requested-With', 'Content-Type']
 }));
 

@@ -1,7 +1,6 @@
-'use strict';
-var fs = require('fs');
-var path = require('path');
-var Sequelize = require('sequelize');
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
 
 let databaseOptions = {
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
