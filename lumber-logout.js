@@ -9,4 +9,6 @@ program
   .description('Sign out of your account.')
   .parse(process.argv);
 
-await authenticator.logout({ log: true });
+(async () => {
+  await authenticator.logout({ log: true });
+});
