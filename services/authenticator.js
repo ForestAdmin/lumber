@@ -62,19 +62,18 @@ function Authenticator() {
 
   this.registerAndCreateProject = (config) => {
     let guest = { email: config.email };
-    let rendering;
 
     return agent
       .post(`${config.serverHost}/api/guests`)
       .set('forest-origin', 'Lumber')
       .send(new GuestSerializer(guest))
-      .then((response) => new GuestDeserializer.deserialize(response.body))
+      .then(response => new GuestDeserializer.deserialize(response.body))
       .then((guest) => {
         rendering = guest.project.defaultEnvironment.renderings[0];
-        return guest;
+        return { guest, rendering };
       })
-      .then((guest) => {
-        let user = {
+      .then(({guest, rendering}) => {
+        const user = {
           id: guest.user.id,
           email: config.email,
           password: config.password,
@@ -82,7 +81,7 @@ function Authenticator() {
           projects: [{ id: guest.project.id }]
         };
 
-        let userPayload = new UserSerializer(user);
+        const userPayload = new UserSerializer(user);
 
         // NOTICE: Register the user.
         return agent
@@ -116,12 +115,9 @@ function Authenticator() {
               .then((response) => new EnvironmentDeserializer.deserialize(response.body))
               .then((environment) => {
                 project.defaultEnvironment = environment;
-                return project;
-              })
-              .then((project) => {
                 project.defaultEnvironment.renderings = [rendering];
                 return project;
-              })
+              });
           });
       })
       .catch((err) => {
