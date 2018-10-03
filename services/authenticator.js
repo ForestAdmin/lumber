@@ -69,7 +69,7 @@ function Authenticator() {
       .send(new GuestSerializer(guest))
       .then(response => new GuestDeserializer.deserialize(response.body))
       .then((guest) => {
-        rendering = guest.project.defaultEnvironment.renderings[0];
+        const rendering = guest.project.defaultEnvironment.renderings[0];
         return { guest, rendering };
       })
       .then(({guest, rendering}) => {
