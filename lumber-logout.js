@@ -10,5 +10,8 @@ program
   .parse(process.argv);
 
 (async () => {
-  await authenticator.logout({ log: true });
-});
+  await authenticator.logout({ log: true })
+    .catch((err) => {
+      console.error(err);
+    });
+})();
