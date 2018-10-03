@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  allowedOrigins: ['*.forestadmin.com', 'localhost:4200'],
+  allowedOrigins: ['*.forestadmin.com'],
   headers: ['Authorization', 'X-Requested-With', 'Content-Type']
 }));
 
