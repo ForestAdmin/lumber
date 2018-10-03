@@ -45,11 +45,13 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 
-  console.log(chalk.cyan('🌳  Open your admin UI: ' +
-    'http://app.forestadmin.com/' + process.env.RENDERING_ID + ' 🌳'));
+  console.log(chalk.cyan(`🌳  Your back office API is listening on ${bind}  🌳`));
+  console.log(chalk.cyan(`🌳  Access the UI: http://app.forestadmin.com  🌳`));
 
   try {
-    opn(`http://app.forestadmin.com/${process.env.RENDERING_ID}`);
+    if (process.env.DEV_RENDERING_ID) {
+      opn(`http://app.forestadmin.com/${process.env.DEV_RENDERING_ID}`);
+    }
   } catch (err) {
     // NOTICE: This err is not a big deal. For example, it cannot work on
     // production.
