@@ -47,7 +47,13 @@ function onListening() {
 
   console.log(chalk.cyan('🌳  Open your admin UI: ' +
     'http://app.forestadmin.com/' + process.env.RENDERING_ID + ' 🌳'));
-  opn(`http://app.forestadmin.com/${process.env.RENDERING_ID}`);
+
+  try {
+    opn(`http://app.forestadmin.com/${process.env.RENDERING_ID}`);
+  } catch (err) {
+    // NOTICE: This err is not a big deal. For example, it cannot work on
+    // production.
+  }
 }
 
 const port = normalizePort(process.env.PORT || '3000');
