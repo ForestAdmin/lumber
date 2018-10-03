@@ -44,7 +44,7 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
-  console.log(chalk.cyan('🌳  Open your admin UI: ' +
+  console.log(chalk.cyan('🌳  Open your back office: ' +
     'http://app.forestadmin.com 🌳'))
 }
 
