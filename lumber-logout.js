@@ -1,8 +1,4 @@
 const program = require('commander');
-const os = require('os');
-const fs = require('fs');
-const chalk = require('chalk');
-const logger = require('./services/logger');
 const authenticator = require('./services/authenticator');
 
 program
@@ -10,8 +6,5 @@ program
   .parse(process.argv);
 
 (async () => {
-  await authenticator.logout({ log: true })
-    .catch((err) => {
-      console.error(err);
-    });
+  await authenticator.logout({ log: true });
 })();
