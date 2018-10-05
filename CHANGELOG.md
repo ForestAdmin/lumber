@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## Release 1.11.0
+### Changed
+- On-boarding - Improve the on-boarding experience.
+
 ## Release 1.10.3
 ### Fixed
 - Command Update - Fix `lumber update` command execution.
