@@ -9,6 +9,9 @@ program
   .parse(process.argv);
 
 (async () => {
+  await authenticator
+    .logout({ log: false });
+
   const config = await Prompter(program, [
     'email',
     'password',

@@ -48,18 +48,19 @@ function Dumper(project, config) {
 
   function writePackageJson(path) {
     let dependencies = {
-      'express': '~4.13.4',
-      'express-jwt': '~5.1.0',
+      'express': '~4.16.3',
+      'express-jwt': '~5.3.1',
       'express-cors': 'git://github.com/ForestAdmin/express-cors',
-      'body-parser': '~1.15.1',
+      'body-parser': '~1.18.3',
       'cookie-parser': '~1.4.3',
-      'debug': '~2.2.0',
-      'morgan': '~1.7.0',
-      'serve-favicon': '~2.3.0',
+      'debug': '~4.0.1',
+      'morgan': '~1.9.1',
+      'serve-favicon': '~2.5.0',
       'dotenv': '~2.0.0',
       'chalk': '~1.1.3',
       'sequelize': '4.8.0',
-      'forest-express-sequelize': 'latest'
+      'forest-express-sequelize': 'latest',
+      'opn': '5.4.0'
     };
 
     if (config.dbDialect === 'postgres') {
@@ -125,6 +126,7 @@ function Dumper(project, config) {
       forestAuthSecret: authSecret,
       databaseUrl: getDatabaseUrl(),
       forestUrl: process.env.FOREST_URL,
+      devRenderingId: project.defaultEnvironment.renderings[0].id,
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
