@@ -63,7 +63,7 @@ function Migrator(config) {
     newContent = newContent.replace(/\n$/, '');
 
     const currentContent = fs.readFileSync(modelPath, 'utf-8');
-    const regexp = /(sequelize.define\('.*',\s*{)/;
+    const regexp = /(sequelize.define\(\s*'.*',\s*{)/;
 
     if (regexp.test(currentContent)) {
       newContent = currentContent.replace(regexp, `$1\n${newContent}`);
@@ -105,7 +105,7 @@ automatically. Please, add it manually to the file '${modelPath}'.`));
       const content = fs.readFileSync(modelPath, 'utf-8');
 
       await P.each(schema[table].fields, (field) => {
-        const regexp = new RegExp(`'${field.name}':\\s*{\\s*type:\\s*DataTypes..*[^}]*},?`);
+        const regexp = new RegExp(`['|"]?${field.name}['|"]?:\\s*{\\s*type:\\s*DataTypes..*[^}]*},?`);
         if (!regexp.test(content)) {
           newFields[table].push(field);
         }
