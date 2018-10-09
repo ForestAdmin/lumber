@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## Release 1.11.1
 ### Changed
 - Dependency - Upgrade dotenv.
 
