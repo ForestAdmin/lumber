@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Update - Improve the regexp to detect model and existing fields
 
 ## Release 1.11.0
 ### Changed
