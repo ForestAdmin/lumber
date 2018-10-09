@@ -1,8 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Dependency - Upgrade dotenv.
+
 ### Fixed
-- Command Update - Improve the regexp to detect model and existing fields
+- Command Update - Improve the regexp to detect model and existing fields.
 
 ## Release 1.11.0
 ### Changed

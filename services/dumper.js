@@ -56,7 +56,7 @@ function Dumper(project, config) {
       'debug': '~4.0.1',
       'morgan': '~1.9.1',
       'serve-favicon': '~2.5.0',
-      'dotenv': '~2.0.0',
+      'dotenv': '~6.1.0',
       'chalk': '~1.1.3',
       'sequelize': '4.8.0',
       'forest-express-sequelize': 'latest',
