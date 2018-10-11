@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Error handling - Catch properly the error when DATABASE_URL does not exist.
 
 ## Release 1.11.1
 ### Changed

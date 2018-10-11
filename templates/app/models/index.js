@@ -2,6 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 
+if (!process.env.DATABASE_URL) {
+  console.error('Cannot connect to the database. Please declare the DATABASE_URL environment variable with the correct database connection string.');
+  process.exit();
+}
+
 let databaseOptions = {
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   pool: { maxConnections: 10, minConnections: 1 },
