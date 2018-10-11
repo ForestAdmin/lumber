@@ -81,7 +81,7 @@ async function Prompter(program, requests) {
         prompts.push({
           type: 'input',
           name: 'dbSchema',
-          message: 'What\'s the database schema? (optional)',
+          message: 'What\'s the database schema? [optional]',
           description: 'Leave blank by default',
           when: answers => answers.dbDialect !== 'sqlite',
           default: (args) => {
