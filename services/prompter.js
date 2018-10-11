@@ -47,9 +47,7 @@ async function Prompter(program, requests) {
         type: 'list',
         name: 'dbDialect',
         message: 'What\'s the database type? ',
-        // NOTICE: sqlite3 has been removed due to this issue: https://github.com/mapbox/node-sqlite3/issues/973
-        // Waiting the new version to support Node > 10.x
-        choices: ['postgres', 'mysql', 'mssql'],
+        choices: ['postgres', 'mysql', 'mssql', 'sqlite'],
       });
 
       // NOTICE: use a rawlist on Windows because of this issue:

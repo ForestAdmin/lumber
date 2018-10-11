@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- SQLite Support - Re-enable the support of SQLite.
+
 ### Changed
 - Error handling - Catch properly the error when DATABASE_URL does not exist.
 

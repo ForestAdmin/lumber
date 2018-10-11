@@ -70,7 +70,7 @@ function Dumper(project, config) {
     } else if (config.dbDialect === 'mssql') {
       dependencies.tedious = '^1.14.0';
     } else if (config.dbDialect === 'sqlite') {
-      dependencies.sqlite3 = '~3.1.13';
+      dependencies.sqlite3 = '~4.0.2';
     }
 
     let pkg = {
