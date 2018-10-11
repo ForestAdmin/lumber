@@ -6,8 +6,8 @@
 
 Lumber generates automatically the back office of your web app. It is
 completely **backend agnostic** and use your SQL database schema to create a
-**REST API** that provides all common admin features such as CRUD, search &
-filters, analytics, user permissions as well as providing a user-friendly
+**REST API** that provides all common back office features such as CRUD, search
+& filters, analytics, user permissions as well as providing a user-friendly
 **UI**.
 
 Lumber has been designed with scalability in mind to fit requirements from **small projects** to **mature companies**.
@@ -48,7 +48,7 @@ Full demo video: https://www.youtube.com/watch?v=2cKSsBxrvR8
 
 `$ lumber [command]`
 
-- `generate`      generate your back office based on your database schema
+- `generate`      generate the back office of your web application based on the database schema
 - `update`        update your models's definition according to your database schema
 - `deploy`        deploy your back office application to production
 - `user`          show your current logged user
