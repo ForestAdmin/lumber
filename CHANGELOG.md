@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## Release 1.12.0
 ### Added
 - SQLite Support - Re-enable the support of SQLite.
 
