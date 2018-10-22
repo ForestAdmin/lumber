@@ -12,37 +12,14 @@ completely **backend agnostic** and use your SQL database schema to create a
 
 Lumber has been designed with scalability in mind to fit requirements from **small projects** to **mature companies**.
 
-- [Install](#install)
-- [Usage](#usage)
-- <a href="https://doc.forestadmin.com/developer-guide/lumber.html#deploying-to-production" target="_blank">Deploy to production</a>
+<p align="center" style="margin: 60px 0">
+  <img width="70%" src="https://github.com/ForestAdmin/Lumber/blob/master/assets/screenshot.png?raw=true" alt="Screenshot">
+</p>
 
-## Install
+### Getting started
 
-    npm install -g lumber-cli
+[https://forestadmin.gitbook.io/lumber](https://forestadmin.gitbook.io/lumber)
 
-NOTICE: You may need to use `sudo` depending on your platform.
-
-## Usage
-
-- [Quickstart](#quickstart)
-- [Documentation](#documentation)
-- [List of commands](#commands)
-
-### Quickstart
-    lumber generate
-
-NOTICE:
-
-- Your database credentials **are safe**. They are only stored in your
-  Lumber-generated back office.
-
-![Example](/assets/console.gif "Example")
-
-Full demo video: https://www.youtube.com/watch?v=2cKSsBxrvR8
-
-### Documentation
-
-[https://doc.forestadmin.com/developer-guide/lumber.html](https://doc.forestadmin.com/developer-guide/lumber.html)
 
 ### Commands
 
