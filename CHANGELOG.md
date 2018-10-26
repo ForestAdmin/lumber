@@ -1,6 +1,7 @@
 # Change Log
 
 ## [Unreleased]
+- Deploy - Change the documentation link.
 
 ## Release 1.12.0
 ### Added
