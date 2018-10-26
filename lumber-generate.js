@@ -26,7 +26,6 @@ program
   .parse(process.argv);
 
 (async () => {
-  const schema = {};
   const config = await Prompter(program, [
     'dbConnectionUrl',
     'dbDialect',
@@ -54,26 +53,7 @@ program
 
   if (program.db) {
     const db = await new DB().connect(config);
-    const queryInterface = db.getQueryInterface();
-    const tableAnalyzer = new TableAnalyzer(queryInterface, config);
-
-    // Build the db schema.
-    await P.mapSeries(queryInterface.showAllTables({
-      schema: config.dbSchema,
-    }), async (table) => {
-      // NOTICE: MS SQL returns objects instead of strings.
-      // eslint-disable-next-line no-param-reassign
-      if (typeof table === 'object') { table = table.tableName; }
-
-      const analysis = await tableAnalyzer.analyzeTable(table);
-      schema[table] = { fields: analysis[0], references: analysis[1] };
-    });
-
-    if (_.isEmpty(schema)) {
-      logger.error('💀  Oops, your database is empty. Please, ' +
-        'create some tables before running Lumber generate.💀');
-      process.exit(1);
-    }
+    let schema = await new TableAnalyzer(db, config).perform();
 
     let project;
     try {
@@ -88,6 +68,7 @@ program
     }
 
     const dumper = await new Dumper(project, config);
+
     await P.each(Object.keys(schema), async (table) => {
       await dumper.dump(table, schema[table].fields, schema[table].references);
     });
