@@ -4,9 +4,9 @@
   <img src="https://github.com/ForestAdmin/Lumber/blob/master/assets/lumber-logo.png?raw=true" alt="Lumber logo">
 </p>
 
-Lumber uses your SQL or MongoDB database to generates a modern Admin Interface (see the live demo) (see the [live demo](https://app.forestadmin.com/login?livedemo)) that is completely **backend agnostic** and highly flexible.
+Lumber uses your SQL or MongoDB database to generates a modern Admin Interface using Forest Admin (see the [live demo](https://app.forestadmin.com/login?livedemo)) that is completely **backend agnostic** and highly flexible.
 
-Lumber has been designed with scalability in mind to fit requirements from **small projects** to **mature companies**.
+Forest Admin has been designed with scalability in mind to fit requirements from **small projects** to **mature companies**.
 
 <p align="center" style="margin: 60px 0">
   <img width="70%" src="https://github.com/ForestAdmin/Lumber/blob/master/assets/screenshot.png?raw=true" alt="Screenshot">
@@ -50,7 +50,6 @@ Provide your operational team with a tool with which they can perform any action
 Anticipate/predict your customer needs before they're even able to formulate it for better lead nurturing, trial conversion, and upsells.
 
 <img width="300px" src="https://www.forestadmin.com/public/img/illustrations/home/forest-listen-data.svg" alt="Listen">
-
 
 ### Organize your application's data
 Backend architecture can be immensely complex. Forest will scan your ORM to retrieve the database models, and generate an admin REST API that will communicate directly with our back office interface.
