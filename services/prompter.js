@@ -39,7 +39,9 @@ async function Prompter(program, requests) {
           if (dbConnectionUrl) { return true; }
           return '🔥  Hey, you need to specify the database connection URL 🔥';
         },
-    });
+      });
+    }
+
     }
   } else {
     if (isRequested('dbDialect')) {
@@ -297,12 +299,9 @@ async function Prompter(program, requests) {
         name: 'password',
         message: 'What\'s your password: ',
         validate: (password) => {
-          if (password) {
-            return true;
-          } else {
-            return '🔥  Oops, your password cannot be blank 🔥';
-          }
-        }
+          if (password) { return true; }
+          return '🔥  Oops, your password cannot be blank 🔥';
+        },
       });
     }
   }
