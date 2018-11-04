@@ -42,6 +42,22 @@ async function Prompter(program, requests) {
       });
     }
 
+    if (isRequested('dbSchema')) {
+      if (process.env.DATABASE_SCHEMA) {
+        envConfig.dbSchema = process.env.DATABASE_SCHEMA;
+      } else {
+        prompts.push({
+          type: 'input',
+          name: 'dbSchema',
+          message: 'What\'s the database schema? [optional]',
+          description: 'Leave blank by default',
+          when: answers => answers.dbDialect !== 'sqlite',
+          default: (args) => {
+            if (args.dbDialect === 'postgres') { return 'public'; }
+            return '';
+          },
+        });
+      }
     }
   } else {
     if (isRequested('dbDialect')) {
