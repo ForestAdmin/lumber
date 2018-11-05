@@ -7,3 +7,4 @@ FOREST_ENV_SECRET=<%= forestEnvSecret %>
 <% if (devRenderingId) {%>DEV_RENDERING_ID=<%= devRenderingId %><% } %>
 <% if (dbSchema) {%>DATABASE_SCHEMA=<%= dbSchema %><% } %>
 <% if (port) {%>PORT=<%= port %><% } %>
+<% if (frontendHost) {%>FRONTEND_HOST=<%= frontendHost %><% } %>

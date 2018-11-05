@@ -19,6 +19,10 @@ async function Prompter(program, requests) {
     envConfig.serverHost = 'https://api.forestadmin.com';
   }
 
+  if (process.env.FRONTEND_HOST) {
+    envConfig.frontendHost = process.env.FRONTEND_HOST;
+  }
+
   if (program.sourceDirectory) {
     envConfig.sourceDirectory = program.sourceDirectory;
   } else {
