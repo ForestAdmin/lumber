@@ -3,6 +3,9 @@
 ## [Unreleased]
 - Deploy - Change the documentation link.
 
+### Fixed
+- Technical - Let Forest developers override the default url for the client app.
+
 ## Release 1.12.0
 ### Added
 - SQLite Support - Re-enable the support of SQLite.
