@@ -1,18 +1,18 @@
-'use strict';
 const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
-const mkdirp = P.promisify(mkdirpSync);
 const KeyGenerator = require('./key-generator');
 
+const mkdirp = P.promisify(mkdirpSync);
+
 function Dumper(project, config) {
-  let path = `${process.cwd()}/${config.appName}`;
-  let binPath = `${path}/bin`;
-  let routesPath = `${path}/routes`;
-  let forestPath = `${path}/forest`;
-  let publicPath = `${path}/public`;
-  let modelsPath = `${path}/models`;
+  const path = `${process.cwd()}/${config.appName}`;
+  const binPath = `${path}/bin`;
+  const routesPath = `${path}/routes`;
+  const forestPath = `${path}/forest`;
+  const publicPath = `${path}/public`;
+  const modelsPath = `${path}/models`;
 
   function isUnderscored(fields) {
     let underscored = false;
@@ -42,25 +42,25 @@ function Dumper(project, config) {
   }
 
   function copyTemplate(from, to) {
-    from = `${__dirname}/../templates/app/` + from;
-    fs.writeFileSync(to, fs.readFileSync(from, 'utf-8'));
+    const newFrom = `${__dirname}/../templates/app/${from}`;
+    fs.writeFileSync(to, fs.readFileSync(newFrom, 'utf-8'));
   }
 
-  function writePackageJson(path) {
-    let dependencies = {
-      'express': '~4.16.3',
+  function writePackageJson(pathDest) {
+    const dependencies = {
+      express: '~4.16.3',
       'express-jwt': '~5.3.1',
       'express-cors': 'git://github.com/ForestAdmin/express-cors',
       'body-parser': '~1.18.3',
       'cookie-parser': '~1.4.3',
-      'debug': '~4.0.1',
-      'morgan': '~1.9.1',
+      debug: '~4.0.1',
+      morgan: '~1.9.1',
       'serve-favicon': '~2.5.0',
-      'dotenv': '~6.1.0',
-      'chalk': '~1.1.3',
-      'sequelize': '4.8.0',
+      dotenv: '~6.1.0',
+      chalk: '~1.1.3',
+      sequelize: '4.8.0',
       'forest-express-sequelize': 'latest',
-      'opn': '5.4.0'
+      opn: '5.4.0',
     };
 
     if (config.dbDialect === 'postgres') {
@@ -79,30 +79,29 @@ function Dumper(project, config) {
       dependencies['forest-express-mongoose'] = 'latest';
     }
 
-    let pkg = {
+    const pkg = {
       name: config.appName,
       version: '0.0.1',
       private: true,
       scripts: { start: 'node ./bin/www' },
-      dependencies: dependencies
+      dependencies,
     };
 
-    fs.writeFileSync(`${path}/package.json`,
-      `${JSON.stringify(pkg, null, 2)}\n`);
+    fs.writeFileSync(`${pathDest}/package.json`, `${JSON.stringify(pkg, null, 2)}\n`);
   }
 
-  function writeDotGitIgnore(path) {
-    let templatePath = `${__dirname}/../templates/app/gitignore`;
-    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+  function writeDotGitIgnore(pathDest) {
+    const templatePath = `${__dirname}/../templates/app/gitignore`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
-    fs.writeFileSync(`${path}/.gitignore`, template({}));
+    fs.writeFileSync(`${pathDest}/.gitignore`, template({}));
   }
 
-  function writeDotGitKeep(routesPath) {
-    let templatePath = `${__dirname}/../templates/app/gitkeep`;
-    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+  function writeDotGitKeep(pathDest) {
+    const templatePath = `${__dirname}/../templates/app/gitkeep`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
-    fs.writeFileSync(`${routesPath}/.gitkeep`, template({}));
+    fs.writeFileSync(`${pathDest}/.gitkeep`, template({}));
   }
 
   function getDatabaseUrl() {
@@ -123,11 +122,11 @@ function Dumper(project, config) {
     return connectionString;
   }
 
-  function writeDotEnv(path, authSecret) {
-    let templatePath = `${__dirname}/../templates/app/env`;
-    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+  function writeDotEnv(pathDest, authSecret) {
+    const templatePath = `${__dirname}/../templates/app/env`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
-    let settings = {
+    const settings = {
       forestEnvSecret: project.defaultEnvironment.secretKey,
       forestAuthSecret: authSecret,
       databaseUrl: getDatabaseUrl(),
@@ -136,54 +135,52 @@ function Dumper(project, config) {
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
-      port: config.appPort
+      port: config.appPort,
     };
 
-    fs.writeFileSync(`${path}/.env`, template(settings));
+    fs.writeFileSync(`${pathDest}/.env`, template(settings));
   }
 
-  function writeModels(path, table, fields, references) {
-    let templatePath = `${__dirname}/../templates/model.txt`;
-    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+  function writeModels(pathDest, table, fields, references) {
+    const templatePath = `${__dirname}/../templates/model.txt`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
-    let text = template({
-      table: table,
-      fields: fields,
-      references: references,
+    const text = template({
+      table,
+      fields,
+      references,
       underscored: isUnderscored(fields),
       timestamps: hasTimestamps(fields),
-      schema: config.dbSchema
+      schema: config.dbSchema,
     });
 
-    fs.writeFileSync(`${path}/models/${table}.js`, text);
+    fs.writeFileSync(`${pathDest}/models/${table}.js`, text);
   }
 
-  function writeAppJs(path) {
-    let templatePath = `${__dirname}/../templates/app/app.js`;
-    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    let text = template({ config: config });
+  function writeAppJs(pathDest) {
+    const templatePath = `${__dirname}/../templates/app/app.js`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    const text = template({ config });
 
-    fs.writeFileSync(`${path}/app.js`, text);
+    fs.writeFileSync(`${pathDest}/app.js`, text);
   }
 
-  function writeModelsIndex(path) {
-    let templatePath = `${__dirname}/../templates/app/models/index.js`;
-    let template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    let text = template({ config: config });
+  function writeModelsIndex(pathDest) {
+    const templatePath = `${__dirname}/../templates/app/models/index.js`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    const text = template({ config });
 
-    fs.writeFileSync(`${path}/models/index.js`, text);
+    fs.writeFileSync(`${pathDest}/models/index.js`, text);
   }
 
-  this.dump = function (table, fields, references) {
-    return writeModels(path, table, fields, references);
-  };
+  this.dump = (table, fields, references) => writeModels(path, table, fields, references);
 
-  var dirs = [
+  const dirs = [
     mkdirp(path),
     mkdirp(binPath),
     mkdirp(routesPath),
     mkdirp(forestPath),
-    mkdirp(publicPath)
+    mkdirp(publicPath),
   ];
 
   if (config.dbDialect) { dirs.push(mkdirp(modelsPath)); }
@@ -204,9 +201,7 @@ function Dumper(project, config) {
       writeDotGitKeep(routesPath);
       writeDotEnv(path, authSecret);
     })
-    .then(() => {
-      return this;
-    });
+    .then(() => this);
 }
 
 module.exports = Dumper;

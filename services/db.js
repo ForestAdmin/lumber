@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient } = require('mongodb');
 const logger = require('./logger');
 
 function Database() {
@@ -8,6 +8,12 @@ function Database() {
     'the following error:\n', err);
 
     process.exit(1);
+  }
+
+  function sequelizeAuthenticate(db) {
+    return db.authenticate()
+      .then(() => db)
+      .catch(err => error(err));
   }
 
   this.connect = (options) => {
@@ -19,8 +25,7 @@ function Database() {
         logging: false,
       });
 
-      return sequelizeAuthenticate();
-
+      return sequelizeAuthenticate(db);
     } else if (options.dbDialect === 'mongodb') {
       let connectionUrl = 'mongodb://';
       if (options.dbUser) { connectionUrl += options.dbUser; }
@@ -62,14 +67,10 @@ function Database() {
         );
       }
 
-      return sequelizeAuthenticate();
+      return sequelizeAuthenticate(db);
     }
 
-    function sequelizeAuthenticate() {
-      return db.authenticate()
-        .then(() => db)
-        .catch(err => error(err));
-    }
+    return db;
   };
 }
 

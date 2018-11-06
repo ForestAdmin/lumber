@@ -82,7 +82,7 @@ automatically. Please, add it manually to the file '${modelPath}'.`));
 
     const modelDir = `${config.sourceDirectory}/models`;
     if (!fs.existsSync(modelDir)) {
-      logger.error(`💀  Cannot find the 'models/' directory. Please, ensure you're running this command inside a Lumber generated project. 💀`);
+      logger.error('💀  Cannot find the \'models/\' directory. Please, ensure you\'re running this command inside a Lumber generated project. 💀');
       process.exit(1);
     }
 

@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const P = require('bluebird');
 const dotenv = require('dotenv');
 const program = require('commander');
@@ -41,7 +40,7 @@ program
   }
 
   const db = await new DB().connect(config);
-  const schema = new TableAnalyzer(db, config).perform();
+  const schema = await new TableAnalyzer(db, config).perform();
   const migrator = new Migrator(config);
 
   // Detect new tables.

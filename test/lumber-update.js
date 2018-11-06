@@ -1,16 +1,16 @@
 const fs = require('fs');
 const ava = require('ava');
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const Migrator = require('../services/migrator');
 
 const config = {
   dbDialect: 'sqlite',
   dbStorage: 'test/sample-project/chinook.sqlite',
   serverHost: 'https://api.forestadmin.com',
-  sourceDirectory: 'test/sample-project'
+  sourceDirectory: 'test/sample-project',
 };
 
-ava.test('Detect new tables', async t => {
+ava.test('Detect new tables', async (t) => {
   const migrator = new Migrator(config);
   const schema = {
     albums: { fields: [], references: [] },
@@ -25,7 +25,7 @@ ava.test('Detect new tables', async t => {
   t.pass();
 });
 
-ava.test('Detect new fields', async t => {
+ava.test('Detect new fields', async (t) => {
   const migrator = new Migrator(config);
   const schema = {
     albums: {
@@ -40,7 +40,7 @@ ava.test('Detect new fields', async t => {
         name: 'ArtistId',
         type: 'INTEGER',
       }],
-      references: []
+      references: [],
     },
     customers: {
       fields: [{
@@ -49,15 +49,15 @@ ava.test('Detect new fields', async t => {
       }, {
         name: 'LastName',
         type: 'STRING',
-      }]
-    }
+      }],
+    },
   };
 
-  const modelPath = __dirname + '/sample-project/models/albums.js';
+  const modelPath = `${__dirname}/sample-project/models/albums.js`;
   const field = { name: 'AlbumId', primaryKey: true };
   const regexp = new RegExp(`\\s*'${field.name}':\\s*{\\s*type:\\s*DataTypes..*[^}]*},?`);
 
-  let originalContent = fs.readFileSync(modelPath, 'utf-8');
+  const originalContent = fs.readFileSync(modelPath, 'utf-8');
   let newContent;
 
   if (originalContent.match(regexp)) {
@@ -67,8 +67,8 @@ ava.test('Detect new fields', async t => {
 
   const newFields = await migrator.detectNewFields(schema);
   expect(newFields).to.be.eql({
-    albums: [ { name: 'AlbumId', type: 'INTEGER', primaryKey: true } ],
-    customers: []
+    albums: [{ name: 'AlbumId', type: 'INTEGER', primaryKey: true }],
+    customers: [],
   });
 
   fs.writeFileSync(modelPath, originalContent);

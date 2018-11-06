@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const fs = require('fs');
 const P = require('bluebird');
 const program = require('commander');
@@ -53,7 +52,7 @@ program
 
   if (program.db) {
     const db = await new DB().connect(config);
-    let schema = await new TableAnalyzer(db, config).perform();
+    const schema = await new TableAnalyzer(db, config).perform();
 
     let project;
     try {

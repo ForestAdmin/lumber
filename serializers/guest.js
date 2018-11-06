@@ -1,9 +1,8 @@
-'use strict';
-var JSONAPISerializer = require('jsonapi-serializer').Serializer;
+const JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
 function Guest(data) {
   return new JSONAPISerializer('guests', {
-    attributes: ['email']
+    attributes: ['email'],
   }).serialize(data);
 }
 
