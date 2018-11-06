@@ -34,11 +34,11 @@ fs.readdirSync('./routes').forEach((file) => {
   }
 });
 
-app.use(require('forest-express-sequelize').init({
-<% if (config.dbDialect) { %>modelsDir: __dirname + '/models',<% } %>
+app.use(require('forest-express-<% if (config.dbDialect === "mongodb") { %>mongoose<% } else {%>sequelize<% } %>').init({
+<% if (config.dbDialect) { %>  modelsDir: __dirname + '/models',<% } %>
   envSecret: process.env.FOREST_ENV_SECRET,
   authSecret: process.env.FOREST_AUTH_SECRET,
-<% if (config.dbDialect) { %>sequelize: require('./models').sequelize<% } %>
+<% if (config.dbDialect) { %><% if (config.dbDialect === 'mongodb') { %>  mongoose: require('mongoose')<% } else { %>  sequelize: require('./models').sequelize<% } %><% } %>
 }));
 
 module.exports = app;

@@ -71,6 +71,12 @@ function Dumper(project, config) {
       dependencies.tedious = '^1.14.0';
     } else if (config.dbDialect === 'sqlite') {
       dependencies.sqlite3 = '~4.0.2';
+    } else if (config.dbDialect === 'mongodb') {
+      delete dependencies.sequelize;
+      dependencies.mongoose = '~5.3.6';
+
+      delete dependencies['forest-express-sequelize'];
+      dependencies['forest-express-mongoose'] = 'latest';
     }
 
     let pkg = {

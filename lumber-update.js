@@ -35,30 +35,14 @@ program
     'dbStorage',
   ]);
 
-  const db = await new DB().connect(config);
-  const queryInterface = db.getQueryInterface();
-  const tableAnalyzer = new TableAnalyzer(queryInterface, config);
-  const migrator = new Migrator(config);
-
-  const schema = {};
-
-  // Build the db schema.
-  await P.mapSeries(queryInterface.showAllTables({
-    schema: config.dbSchema,
-  }), async (table) => {
-    // NOTICE: MS SQL returns objects instead of strings.
-    // eslint-disable-next-line no-param-reassign
-    if (typeof table === 'object') { table = table.tableName; }
-
-    const analysis = await tableAnalyzer.analyzeTable(table);
-    schema[table] = { fields: analysis[0], references: analysis[1] };
-  });
-
-  if (_.isEmpty(schema)) {
-    console.log('💀  Oops, your database is empty. Please, ' +
-      'create some tables before running Lumber update.💀');
+  if ((config.dbConnectionUrl && config.dbConnectionUrl.startsWith('mongodb')) || config.dbDialect === 'mongodb') {
+    logger.error('💀  The lumber update command is not valid using a MongoDB database. 💀');
     process.exit(1);
   }
+
+  const db = await new DB().connect(config);
+  const schema = new TableAnalyzer(db, config).perform();
+  const migrator = new Migrator(config);
 
   // Detect new tables.
   const newTables = await migrator.detectNewTables(schema);

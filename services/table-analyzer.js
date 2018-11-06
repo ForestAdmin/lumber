@@ -1,7 +1,9 @@
 const _ = require('lodash');
 const P = require('bluebird');
 
-function TableAnalyzer(queryInterface, config) {
+function TableAnalyzer(db, config) {
+  let queryInterface;
+
   function analyzeFields(table) {
     return queryInterface.describeTable(table, { schema: config.dbSchema });
   }
@@ -105,7 +107,8 @@ function TableAnalyzer(queryInterface, config) {
   }
 
   this.analyzeTable = function analyzeTable(table) {
-    return P.all([analyzeFields(table), analyzeForeignKeys(table)])
+    return P
+      .all([analyzeFields(table), analyzeForeignKeys(table)])
       .spread(async (schema, foreignKeys) => {
         const fields = [];
         const references = [];
@@ -135,7 +138,34 @@ function TableAnalyzer(queryInterface, config) {
         });
 
         return [fields, references];
+    });
+  };
+
+  this.perform = async function () {
+    const schema = {};
+
+    if (config.dbDialect !== 'mongodb') {
+      queryInterface = db.queryInterface;
+      // Build the db schema.
+      await P.mapSeries(queryInterface.showAllTables({
+        schema: config.dbSchema,
+      }), async (table) => {
+        // NOTICE: MS SQL returns objects instead of strings.
+        // eslint-disable-next-line no-param-reassign
+        if (typeof table === 'object') { table = table.tableName; }
+
+        const analysis = await this.analyzeTable(table);
+        schema[table] = { fields: analysis[0], references: analysis[1] };
       });
+
+      if (_.isEmpty(schema)) {
+        logger.error('💀  Oops, your database is empty. Please, ' +
+          'create some tables before running Lumber generate.💀');
+        process.exit(1);
+      }
+    }
+
+    return schema;
   };
 }
 

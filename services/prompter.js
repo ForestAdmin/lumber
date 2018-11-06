@@ -41,31 +41,13 @@ async function Prompter(program, requests) {
         },
       });
     }
-
-    if (isRequested('dbSchema')) {
-      if (process.env.DATABASE_SCHEMA) {
-        envConfig.dbSchema = process.env.DATABASE_SCHEMA;
-      } else {
-        prompts.push({
-          type: 'input',
-          name: 'dbSchema',
-          message: 'What\'s the database schema? [optional]',
-          description: 'Leave blank by default',
-          when: answers => answers.dbDialect !== 'sqlite',
-          default: (args) => {
-            if (args.dbDialect === 'postgres') { return 'public'; }
-            return '';
-          },
-        });
-      }
-    }
   } else {
     if (isRequested('dbDialect')) {
       prompts.push({
         type: 'list',
         name: 'dbDialect',
         message: 'What\'s the database type? ',
-        choices: ['postgres', 'mysql', 'mssql', 'sqlite'],
+        choices: ['postgres', 'mysql', 'mssql', 'sqlite', 'mongodb'],
       });
 
       // NOTICE: use a rawlist on Windows because of this issue:
@@ -93,15 +75,15 @@ async function Prompter(program, requests) {
     }
 
     if (isRequested('dbSchema')) {
-      if (process.env.FOREST_DB_SCHEMA) {
-        envConfig.dbSchema = process.env.FOREST_DB_SCHEMA;
+      if (process.env.DATABASE_SCHEMA) {
+        envConfig.dbSchema = process.env.DATABASE_SCHEMA;
       } else {
         prompts.push({
           type: 'input',
           name: 'dbSchema',
           message: 'What\'s the database schema? [optional]',
           description: 'Leave blank by default',
-          when: answers => answers.dbDialect !== 'sqlite',
+          when: answers => answers.dbDialect !== 'sqlite' && answers.dbDialect !== 'mongodb',
           default: (args) => {
             if (args.dbDialect === 'postgres') { return 'public'; }
             return '';
@@ -140,6 +122,8 @@ async function Prompter(program, requests) {
               return '3306';
             } else if (args.dbDialect === 'mssql') {
               return '1433';
+            } else if (args.dbDialect === 'mongodb') {
+              return '27017';
             }
 
             return undefined;
@@ -166,7 +150,13 @@ async function Prompter(program, requests) {
           name: 'dbUser',
           message: 'What\'s the database user? ',
           when: answers => answers.dbDialect !== 'sqlite',
-          default: 'root',
+          default: (args) => {
+            if (args.dbDialect === 'mongodb') {
+              return undefined;
+            }
+
+            return 'root';
+          },
         });
       }
     }
