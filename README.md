@@ -25,7 +25,7 @@ Forest Admin has been designed with scalability in mind to fit requirements from
 - [Shadow](https://shadow.tech)
 - And hundreds more…
 
-### Getting started
+## Getting started
 
 [https://docs.forestadmin.com/lumber/getting-started/installation](https://docs.forestadmin.com/lumber/getting-started/installation)
 
