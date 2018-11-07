@@ -35,7 +35,7 @@ program
   ]);
 
   if ((config.dbConnectionUrl && config.dbConnectionUrl.startsWith('mongodb')) || config.dbDialect === 'mongodb') {
-    logger.error('💀  The lumber update command is not valid using a MongoDB database. 💀');
+    logger.error('💀  The lumber update command is not yet supported on MongoDB. 💀');
     process.exit(1);
   }
 

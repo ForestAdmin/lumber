@@ -107,7 +107,7 @@ function TableAnalyzer(db, config) {
     }
   }
 
-  this.analyzeTable = function analyzeTable(table) {
+  function analyzeTable(table) {
     return P
       .all([analyzeFields(table), analyzeForeignKeys(table)])
       .spread(async (schema, foreignKeys) => {
@@ -140,17 +140,12 @@ function TableAnalyzer(db, config) {
 
         return [fields, references];
       });
-  };
+  }
 
-  this.perform = async () => {
+  async function sequelizeTableAnalyzer() {
     const schema = {};
 
-    if (config.dbDialect === 'mongodb') {
-      // NOTICE: No analyzer available in mongoDB
-      return schema;
-    }
-
-    ({ queryInterface } = db);
+    queryInterface = db.getQueryInterface();
 
     // Build the db schema.
     await P.mapSeries(queryInterface.showAllTables({
@@ -160,7 +155,7 @@ function TableAnalyzer(db, config) {
       // eslint-disable-next-line no-param-reassign
       if (typeof table === 'object') { table = table.tableName; }
 
-      const analysis = await this.analyzeTable(table);
+      const analysis = await analyzeTable(table);
       schema[table] = { fields: analysis[0], references: analysis[1] };
     });
 
@@ -170,6 +165,57 @@ function TableAnalyzer(db, config) {
     }
 
     return schema;
+  }
+
+  function analyzeMongoCollection(collection) {
+    return new P((resolve, reject) => {
+      db.collection(collection.name)
+        /* eslint-disable */
+        .mapReduce(function () {
+          for (var key in this) {
+            if (this[key] instanceof ObjectId && key !== '_id') {
+              emit(key, 'mongoose.Schema.Types.ObjectId');
+            } else if (this[key] instanceof Date) {
+              emit(key, 'Date');
+            } else if (typeof this[key] === 'boolean') {
+              emit(key, 'Boolean');
+            } else if (typeof this[key] === 'string') {
+              emit(key, 'String');
+            } else if (typeof this[key] === 'number' && key !== '__v') {
+              emit(key, 'Number');
+            }
+          }
+        }, function (key, stuff) {
+          return stuff.length ? stuff[0] : null;
+        }, {
+          out : { inline : 1 },
+        }, (err, results) => {
+          /* eslint-enable */
+          if (err) { return reject(err); }
+          /* eslint no-underscore-dangle: off */
+          resolve(results.map(r => ({ name: r._id, type: r.value })));
+        });
+    });
+  }
+
+  function mongoTableAnalyzer() {
+    const schema = {};
+
+    return db.collections()
+      .then(collections => P.each(collections, async (item) => {
+        const collection = item.s;
+        // NOTICE: Ignore system collections.
+        if (collection.name.startsWith('system.')) { return; }
+
+        const analysis = await analyzeMongoCollection(collection);
+        schema[collection.name] = { fields: analysis, references: [] };
+      }))
+      .then(() => schema);
+  }
+
+  this.perform = async () => {
+    if (config.dbDialect === 'mongodb') { return mongoTableAnalyzer(); }
+    return sequelizeTableAnalyzer();
   };
 }
 

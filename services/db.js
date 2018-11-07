@@ -1,3 +1,4 @@
+const P = require('bluebird');
 const Sequelize = require('sequelize');
 const { MongoClient } = require('mongodb');
 const logger = require('./logger');
@@ -37,40 +38,34 @@ function Database() {
         opts.server = { ssl: true };
       }
 
-      MongoClient.connect(connectionUrl, opts, (err, client) => {
-        if (err !== null) { return error(err); }
-
-        db = client;
-        return db;
-      });
-    } else {
-      const needsEncryption = isSSL && (options.dbDialect === 'mssql');
-
-      const connectionOpts = {
-        logging: false,
-        dialectOptions: {
-          ssl: isSSL,
-          encrypt: needsEncryption,
-        },
-      };
-
-      if (options.dbConnectionUrl) {
-        db = new Sequelize(options.dbConnectionUrl, connectionOpts);
-      } else {
-        connectionOpts.host = options.dbHostname;
-        connectionOpts.port = options.dbPort;
-        connectionOpts.dialect = options.dbDialect;
-
-        db = new Sequelize(
-          options.dbName, options.dbUser,
-          options.dbPassword, connectionOpts,
-        );
-      }
-
-      return sequelizeAuthenticate(db);
+      return MongoClient.connect(connectionUrl, opts)
+        .then(client => client.db(options.dbName));
     }
 
-    return db;
+    const needsEncryption = isSSL && (options.dbDialect === 'mssql');
+
+    const connectionOpts = {
+      logging: false,
+      dialectOptions: {
+        ssl: isSSL,
+        encrypt: needsEncryption,
+      },
+    };
+
+    if (options.dbConnectionUrl) {
+      db = new Sequelize(options.dbConnectionUrl, connectionOpts);
+    } else {
+      connectionOpts.host = options.dbHostname;
+      connectionOpts.port = options.dbPort;
+      connectionOpts.dialect = options.dbDialect;
+
+      db = new Sequelize(
+        options.dbName, options.dbUser,
+        options.dbPassword, connectionOpts,
+      );
+    }
+
+    return sequelizeAuthenticate(db);
   };
 }
 
