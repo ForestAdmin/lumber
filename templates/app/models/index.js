@@ -1,5 +1,8 @@
-<% if (config.dbDialect !== 'mongodb') { %>
-const fs = require('fs');
+<% if (config.dbDialect === 'mongodb') {
+%>const mongoose = require('mongoose');
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
+<% } else {
+%>const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 

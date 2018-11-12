@@ -1,7 +1,16 @@
-'use strict';
+<% if (dialect === 'mongodb') {
+%>const mongoose = require('mongoose');
 
-module.exports = (sequelize, DataTypes) => {
-  var Model = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
+const schema = mongoose.Schema({<% _.each(fields, (field) => { %>
+  '<%= field.name %>': <%= field.type %>,<% }); %>
+}, {
+  timestamps: <%= timestamps %>,
+});
+
+module.exports = mongoose.model('<%= table %>', schema);
+<% } else {
+%>module.exports = (sequelize, DataTypes) => {
+  const Model = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
     '<%= field.name %>': {
       type: DataTypes.<%= field.type %>,<% if (field.primaryKey) { %>
       primaryKey: true <% } %>
@@ -24,4 +33,4 @@ module.exports = (sequelize, DataTypes) => {
 
   return Model;
 };
-
+<% } %>

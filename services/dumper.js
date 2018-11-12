@@ -152,6 +152,7 @@ function Dumper(project, config) {
       underscored: isUnderscored(fields),
       timestamps: hasTimestamps(fields),
       schema: config.dbSchema,
+      dialect: config.dbDialect,
     });
 
     fs.writeFileSync(`${pathDest}/models/${table}.js`, text);
