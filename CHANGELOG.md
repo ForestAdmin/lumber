@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## Release 1.13.0
 - Deploy - Change the documentation link.
 - MongoDB Support - Support MongoDB database.
 
