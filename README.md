@@ -17,7 +17,7 @@ Forest Admin has been designed with scalability in mind to fit requirements from
 - [Carbon Health](https://carbonhealth.com)
 - [Ebanx](https://www.ebanx.com)
 - [First circle](https://www.firstcircle.ph)
-- [Forest Admin](https://www.forestadmin) of course :-)
+- [Forest Admin](https://www.forestadmin.com) of course :-)
 - [Heetch](https://www.heetch.com)
 - [Lunchr](https://www.lunchr.co)
 - [Pillow](https://www.pillow.com)
