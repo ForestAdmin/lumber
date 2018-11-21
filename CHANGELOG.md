@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## Release 1.13.1
 - SQLite Support - Remove the SQLite support because node-sqlite3 breaks on each new Node version.
 
 ## Release 1.13.0
