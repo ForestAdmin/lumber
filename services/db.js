@@ -28,14 +28,18 @@ function Database() {
 
       return sequelizeAuthenticate(db);
     } else if (options.dbDialect === 'mongodb') {
-      let connectionUrl = 'mongodb://';
+      let connectionUrl = 'mongodb';
+      if (options.mongodbSrv) { connectionUrl += '+srv' };
+      connectionUrl += '://';
       if (options.dbUser) { connectionUrl += options.dbUser; }
       if (options.dbPassword) { connectionUrl += `:${options.dbPassword}`; }
-      connectionUrl += `@${options.dbHostname}:${options.dbPort}/${options.dbName}`;
+      connectionUrl += `@${options.dbHostname}`;
+      if (!options.mongodbSrv) { connectionUrl += `:${options.dbPort}`; }
+      connectionUrl += `/${options.dbName}`;
 
       const opts = { useNewUrlParser: true };
       if (isSSL) {
-        opts.server = { ssl: true };
+        opts.ssl = true;
       }
 
       return MongoClient.connect(connectionUrl, opts)

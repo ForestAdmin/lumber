@@ -188,6 +188,20 @@ async function Prompter(program, requests) {
       }
     }
 
+    if (isRequested('mongodbSrv')) {
+      if (process.env.FOREST_DB_MONGODB_SRV) {
+        envConfig.mongodbSrv = process.env.FOREST_MONGODB_SRV;
+      } else {
+        prompts.push({
+          type: 'confirm',
+          name: 'mongodbSrv',
+          message: 'Use a SRV connection string? ',
+          when: answers => answers.dbDialect === 'mongodb',
+          default: false,
+        });
+      }
+    }
+
     if (isRequested('dbStorage')) {
       if (process.env.FOREST_STORAGE) {
         envConfig.dbStorage = process.env.FOREST_STORAGE;

@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+- MongoDB - Support SRV connection string.
+- MongoDB - Catch the CMD_NOT_ALLOWED: mapreduce error throw by MongoDB Atlas' free plan.
 
 ## Release 1.13.1
 - SQLite Support - Remove the SQLite support because node-sqlite3 breaks on each new Node version.

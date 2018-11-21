@@ -32,6 +32,7 @@ program
     'dbUser',
     'dbPassword',
     'dbStorage',
+    'mongodbSrv',
   ]);
 
   if ((config.dbConnectionUrl && config.dbConnectionUrl.startsWith('mongodb')) || config.dbDialect === 'mongodb') {

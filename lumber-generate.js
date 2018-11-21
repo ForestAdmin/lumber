@@ -34,6 +34,7 @@ program
     'dbPort',
     'dbUser',
     'dbPassword',
+    'mongodbSrv',
     'ssl',
     'dbStorage',
     'appHostname',
