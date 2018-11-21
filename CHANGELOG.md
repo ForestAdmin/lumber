@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## Release 1.13.2
 - MongoDB - Support SRV connection string.
 - MongoDB - Catch the CMD_NOT_ALLOWED: mapreduce error throw by MongoDB Atlas' free plan.
 
