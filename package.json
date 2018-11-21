@@ -28,7 +28,6 @@
     "mysql2": "1.4.2",
     "pg": "^6.1.0",
     "sequelize": "git://github.com/ForestAdmin/sequelize.git#feature/support-schema",
-    "sqlite3": "4.0.2",
     "superagent": "^3.8.3",
     "superagent-promise": "^1.1.0",
     "tedious": "^1.14.0",

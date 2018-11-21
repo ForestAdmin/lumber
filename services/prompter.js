@@ -47,7 +47,7 @@ async function Prompter(program, requests) {
         type: 'list',
         name: 'dbDialect',
         message: 'What\'s the database type? ',
-        choices: ['postgres', 'mysql', 'mssql', 'sqlite', 'mongodb'],
+        choices: ['postgres', 'mysql', 'mssql', 'mongodb'],
       });
 
       // NOTICE: use a rawlist on Windows because of this issue:
