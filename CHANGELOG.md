@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - MongoDB - Limit the mapReduce to 100 items to prevent very long query.
+- MongoDB - Force the right collection name to use in the models' definition.
 
 ## Release 1.13.2
 ### Added
