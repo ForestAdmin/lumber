@@ -1,12 +1,16 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- MongoDB - Limit the mapReduce to 100 items to prevent very long query.
 
 ## Release 1.13.2
+### Added
 - MongoDB - Support SRV connection string.
 - MongoDB - Catch the CMD_NOT_ALLOWED: mapreduce error throw by MongoDB Atlas' free plan.
 
 ## Release 1.13.1
+### Changed
 - SQLite Support - Remove the SQLite support because node-sqlite3 breaks on each new Node version.
 
 ## Release 1.13.0

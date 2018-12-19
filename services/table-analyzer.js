@@ -189,6 +189,7 @@ function TableAnalyzer(db, config) {
           return stuff.length ? stuff[0] : null;
         }, {
           out : { inline : 1 },
+          limit: 100,
         }, (err, results) => {
           /* eslint-enable */
           if (err) {
