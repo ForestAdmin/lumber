@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Inquirer - Upgrade inquirer to 6.2.0 for Win 10 support.
 
 ## Release 1.13.3
 ### Changed
