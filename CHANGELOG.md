@@ -1,6 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+
+## Release 1.14.1
+### Fixed
+- Command Update - Add the 'ssl' prompt option.
+
+## Release 1.14.0
 ### Fixed
 - Inquirer - Upgrade inquirer to 6.2.0 for Win 10 support.
 
