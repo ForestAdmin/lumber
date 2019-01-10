@@ -4,7 +4,10 @@
   <img src="https://github.com/ForestAdmin/Lumber/blob/master/assets/lumber-logo.png?raw=true" alt="Lumber logo">
 </p>
 
-Lumber uses your SQL or MongoDB database to generates an off-the-self administration panel application based on a highly-extensible API and a thoughtful UI.
+Lumber uses your SQL or MongoDB database to scaffold a Node.js application where Forest Admin is automatically installed to generate your application's administration panel.
+
+Forest Admin is based on a highly-extensible API and a thoughtful UI.
+
 This project has been designed with scalability in mind to fit requirements from **small projects** to **mature companies**.
 
 ## Who Uses Forest Admin
@@ -117,8 +120,8 @@ with an extensive activity log system.
 
 ## How it works
 
-The Forest Liana is an open-source plugin that introspects all your data model
-and dynamically generate the Admin API hosted on your servers. The Forest Admin
+The Forest Admin NPM package (aka Forest Liana) introspects all your data model
+and dynamically generates the Admin API hosted on your servers. The Forest Admin
 interface is a web application that handles communication between the admin
 user and your application data through the Admin API.
 
@@ -130,9 +133,9 @@ user and your application data through the Admin API.
 
 `$ lumber [command]`
 
-- `generate`      generate the back office of your web application based on the database schema
+- `generate`      generate the admin panel of your web application based on the database schema
 - `update`        update your models's definition according to your database schema
-- `deploy`        deploy your back office application to production
+- `deploy`        deploy your admin panel to production
 - `user`          show your current logged user
 - `login`         sign in to your Forest account
 - `logout`        sign out of your Forest account
