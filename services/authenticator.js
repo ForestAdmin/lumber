@@ -35,26 +35,16 @@ function Authenticator() {
       project.name = config.appName;
       const environment = project.defaultEnvironment;
 
-      // NOTICE: Update the project name.
-      return agent
-        .put(`${config.serverHost}/api/projects/${project.id}`)
-        .set('Authorization', `Bearer ${config.authToken}`)
-        .send(new ProjectSerializer({
-          id: project.id,
-          name: config.appName,
-        }))
-        .end()
         // NOTICE: Update the apiEndpoint.
-        .then(() => agent
+        return agent
           .put(`${config.serverHost}/api/environments/${environment.id}`)
           .set('Authorization', `Bearer ${config.authToken}`)
           .send(new EnvironmentSerializer({
             id: environment.id,
             apiEndpoint: `http://${config.appHostname}:${config.appPort}`,
           }))
-          .end())
-        .then(() => project);
-    });
+          .then(() => project);
+        });
 
   this.registerAndCreateProject = config => agent
     .post(`${config.serverHost}/api/guests`)
@@ -123,7 +113,6 @@ function Authenticator() {
       return process.exit(1);
     });
 
-
   this.login = config => agent
     .post(`${config.serverHost}/api/sessions`, {
       email: config.email,
@@ -134,7 +123,6 @@ function Authenticator() {
       config.authToken = auth.token;
       return fs.writeFileSync(`${os.homedir()}/.lumberrc`, auth.token);
     });
-
 
   this.logout = async (opts) => {
     const path = `${os.homedir()}/.lumberrc`;
