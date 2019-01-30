@@ -161,10 +161,6 @@ function Authenticator() {
       });
     });
   };
-
-  this.authenticateAndCreateProject = (config) => {
-    return this.createProject(config);
-  };
 }
 
 module.exports = new Authenticator();
