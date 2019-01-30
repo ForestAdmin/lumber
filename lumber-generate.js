@@ -70,7 +70,7 @@ program
 
     let project;
     try {
-      project = await authenticator.authenticateAndCreateProject(config);
+      project = await authenticator.createProject(config);
     } catch (error) {
       if (error.message === 'Unauthorized') {
         logger.error('💀  Oops, you are unauthorized to connect to forest. 💀 Try the "lumber logout && lumber login" command.');

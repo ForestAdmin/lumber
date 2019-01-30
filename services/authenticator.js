@@ -28,6 +28,18 @@ function Authenticator() {
     .send(new ProjectSerializer({
       name: config.appName,
     }))
+    .catch((error) => {
+      if (error.status !== 409) {
+        throw error;
+      }
+
+      const { projectId } = error.response.body.errors[0].meta;
+      return agent
+        .get(`${config.serverHost}/api/projects/${projectId}`)
+        .set('Authorization', `Bearer ${config.authToken}`)
+        .set('forest-origin', 'Lumber')
+        .send();
+    })
     /* eslint new-cap: off */
     .then(response => new ProjectDeserializer.deserialize(response.body))
     .then((project) => {
@@ -35,16 +47,16 @@ function Authenticator() {
       project.name = config.appName;
       const environment = project.defaultEnvironment;
 
-        // NOTICE: Update the apiEndpoint.
-        return agent
-          .put(`${config.serverHost}/api/environments/${environment.id}`)
-          .set('Authorization', `Bearer ${config.authToken}`)
-          .send(new EnvironmentSerializer({
-            id: environment.id,
-            apiEndpoint: `http://${config.appHostname}:${config.appPort}`,
-          }))
-          .then(() => project);
-        });
+      // NOTICE: Update the apiEndpoint.
+      return agent
+        .put(`${config.serverHost}/api/environments/${environment.id}`)
+        .set('Authorization', `Bearer ${config.authToken}`)
+        .send(new EnvironmentSerializer({
+          id: environment.id,
+          apiEndpoint: `http://${config.appHostname}:${config.appPort}`,
+        }))
+        .then(() => project);
+    });
 
   this.registerAndCreateProject = config => agent
     .post(`${config.serverHost}/api/guests`)
@@ -151,11 +163,7 @@ function Authenticator() {
   };
 
   this.authenticateAndCreateProject = (config) => {
-    if (config.authToken) {
-      return this.createProject(config);
-    }
-
-    return this.registerAndCreateProject(config);
+    return this.createProject(config);
   };
 }
 
