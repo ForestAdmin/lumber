@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Improvement - Reduce the number of http requests to init the project.
 
 ## Release 1.14.1
 ### Fixed

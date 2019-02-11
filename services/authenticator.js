@@ -28,6 +28,18 @@ function Authenticator() {
     .send(new ProjectSerializer({
       name: config.appName,
     }))
+    .catch((error) => {
+      if (error.status !== 409) {
+        throw error;
+      }
+
+      const { projectId } = error.response.body.errors[0].meta;
+      return agent
+        .get(`${config.serverHost}/api/projects/${projectId}`)
+        .set('Authorization', `Bearer ${config.authToken}`)
+        .set('forest-origin', 'Lumber')
+        .send();
+    })
     /* eslint new-cap: off */
     .then(response => new ProjectDeserializer.deserialize(response.body))
     .then((project) => {
@@ -35,24 +47,14 @@ function Authenticator() {
       project.name = config.appName;
       const environment = project.defaultEnvironment;
 
-      // NOTICE: Update the project name.
+      // NOTICE: Update the apiEndpoint.
       return agent
-        .put(`${config.serverHost}/api/projects/${project.id}`)
+        .put(`${config.serverHost}/api/environments/${environment.id}`)
         .set('Authorization', `Bearer ${config.authToken}`)
-        .send(new ProjectSerializer({
-          id: project.id,
-          name: config.appName,
+        .send(new EnvironmentSerializer({
+          id: environment.id,
+          apiEndpoint: `http://${config.appHostname}:${config.appPort}`,
         }))
-        .end()
-        // NOTICE: Update the apiEndpoint.
-        .then(() => agent
-          .put(`${config.serverHost}/api/environments/${environment.id}`)
-          .set('Authorization', `Bearer ${config.authToken}`)
-          .send(new EnvironmentSerializer({
-            id: environment.id,
-            apiEndpoint: `http://${config.appHostname}:${config.appPort}`,
-          }))
-          .end())
         .then(() => project);
     });
 
@@ -123,7 +125,6 @@ function Authenticator() {
       return process.exit(1);
     });
 
-
   this.login = config => agent
     .post(`${config.serverHost}/api/sessions`, {
       email: config.email,
@@ -134,7 +135,6 @@ function Authenticator() {
       config.authToken = auth.token;
       return fs.writeFileSync(`${os.homedir()}/.lumberrc`, auth.token);
     });
-
 
   this.logout = async (opts) => {
     const path = `${os.homedir()}/.lumberrc`;
@@ -160,14 +160,6 @@ function Authenticator() {
         }
       });
     });
-  };
-
-  this.authenticateAndCreateProject = (config) => {
-    if (config.authToken) {
-      return this.createProject(config);
-    }
-
-    return this.registerAndCreateProject(config);
   };
 }
 
