@@ -26,10 +26,10 @@ This project has been designed with scalability in mind to fit requirements from
 
 ## Getting started
 
-[https://docs.forestadmin.com/lumber/getting-started/installation](https://docs.forestadmin.com/lumber/getting-started/installation)
+[https://docs.forestadmin.com/documentation/getting-started/installation](https://docs.forestadmin.com/documentation/getting-started/installation)
 
 ## Documentation
-[https://docs.forestadmin.com/lumber](https://docs.forestadmin.com/lumber)
+[https://docs.forestadmin.com/documentation/](https://docs.forestadmin.com/documentation/)
 
 ## Features
 
