@@ -13,8 +13,8 @@ async function Prompter(program, requests) {
 
   const envConfig = {};
 
-  if (process.env.SERVER_HOST) {
-    envConfig.serverHost = process.env.SERVER_HOST;
+  if (process.env.FOREST_URL) {
+    envConfig.serverHost = process.env.FOREST_URL;
   } else {
     envConfig.serverHost = 'https://api.forestadmin.com';
   }
