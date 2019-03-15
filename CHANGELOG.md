@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Tools - Add a deploy script.
+- Tools - Add Docker build files.
 - Command Update - Add the new FOREST_DB_DIALECT environment variable to be able to configure project fastly.
 
 ### Changed

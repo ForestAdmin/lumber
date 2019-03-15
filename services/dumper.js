@@ -175,6 +175,42 @@ function Dumper(project, config) {
     fs.writeFileSync(`${pathDest}/models/index.js`, text);
   }
 
+  function writeDockerfile(pathDest) {
+    const templatePath = `${__dirname}/../templates/app/Dockerfile`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    const settings = {
+      port: config.appPort,
+    };
+
+    fs.writeFileSync(`${pathDest}/Dockerfile`, template(settings));
+  }
+
+  function writeDockerCompose(pathDest, authSecret) {
+    const templatePath = `${__dirname}/../templates/app/docker-compose.yml`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    const settings = {
+      appName: config.appName,
+      forestEnvSecret: project.defaultEnvironment.secretKey,
+      forestAuthSecret: authSecret,
+      databaseUrl: getDatabaseUrl(),
+      ssl: config.ssl,
+      encrypt: config.ssl && config.dbDialect === 'mssql',
+      dbSchema: config.dbSchema,
+      port: config.appPort,
+    };
+
+    fs.writeFileSync(`${pathDest}/docker-compose.yml`, template(settings));
+  }
+
+  function writeDotDockerIgnore(pathDest) {
+    const templatePath = `${__dirname}/../templates/app/dockerignore`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    fs.writeFileSync(`${pathDest}/.dockerignore`, template({}));
+  }
+
   this.dump = (table, fields, references) => writeModels(path, table, fields, references);
 
   const dirs = [
@@ -200,6 +236,9 @@ function Dumper(project, config) {
       writeDotGitIgnore(path);
       writeDotGitKeep(routesPath);
       writeDotEnv(path, authSecret);
+      writeDockerfile(path);
+      writeDockerCompose(path, authSecret);
+      writeDotDockerIgnore(path);
     })
     .then(() => this);
 }
