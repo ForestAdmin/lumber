@@ -175,6 +175,36 @@ function Dumper(project, config) {
     fs.writeFileSync(`${pathDest}/models/index.js`, text);
   }
 
+  function writeDockerfile(pathDest) {
+    const templatePath = `${__dirname}/../templates/app/Dockerfile`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    const settings = {
+      port: config.appPort,
+    };
+
+    fs.writeFileSync(`${pathDest}/Dockerfile`, template(settings));
+  }
+
+  function writeDockerCompose(pathDest) {
+    const templatePath = `${__dirname}/../templates/app/docker-compose.yaml`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    const settings = {
+      appName: config.appName,
+      port: config.appPort,
+    };
+
+    fs.writeFileSync(`${pathDest}/docker-compose.yaml`, template(settings));
+  }
+
+  function writeDotDockerIgnore(pathDest) {
+    const templatePath = `${__dirname}/../templates/app/dockerignore`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    fs.writeFileSync(`${pathDest}/.dockerignore`, template({}));
+  }
+
   this.dump = (table, fields, references) => writeModels(path, table, fields, references);
 
   const dirs = [
@@ -200,6 +230,9 @@ function Dumper(project, config) {
       writeDotGitIgnore(path);
       writeDotGitKeep(routesPath);
       writeDotEnv(path, authSecret);
+      writeDockerfile(path);
+      writeDockerCompose(path);
+      writeDotDockerIgnore(path);
     })
     .then(() => this);
 }
