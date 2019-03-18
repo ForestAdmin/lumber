@@ -102,6 +102,7 @@ program
         `An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}.`,
       );
     }
+
     process.exit(1);
   }
 
