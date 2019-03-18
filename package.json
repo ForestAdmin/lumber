@@ -1,6 +1,6 @@
 {
   "name": "lumber-cli",
-  "version": "1.14.1",
+  "version": "1.14.2",
   "description": "Generate the back office of your web application",
   "main": "lumber.js",
   "scripts": {

@@ -61,6 +61,8 @@ program
     } catch (error) {
       if (error.message === 'Unauthorized') {
         logger.error('💀  Oops, you are unauthorized to connect to forest. 💀 Try the "lumber logout && lumber login" command.');
+      } else if (error.message === 'Conflict') {
+        logger.error(`💀  Oops, you already have a project named ${config.appName}. Please, choose another name for this project. 💀 `);
       } else {
         logger.error('💀  Oops, authentication operation aborted 💀 due to the following error: ', error);
       }
