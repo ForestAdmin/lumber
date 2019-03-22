@@ -186,12 +186,20 @@ function Dumper(project, config) {
     fs.writeFileSync(`${pathDest}/Dockerfile`, template(settings));
   }
 
-  function writeDockerCompose(pathDest) {
+  function writeDockerCompose(pathDest, authSecret) {
     const templatePath = `${__dirname}/../templates/app/docker-compose.yaml`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
     const settings = {
       appName: config.appName,
+      forestEnvSecret: project.defaultEnvironment.secretKey,
+      forestAuthSecret: authSecret,
+      databaseUrl: getDatabaseUrl(),
+      forestUrl: process.env.FOREST_URL,
+      devRenderingId: project.defaultEnvironment.renderings[0].id,
+      ssl: config.ssl,
+      encrypt: config.ssl && config.dbDialect === 'mssql',
+      dbSchema: config.dbSchema,
       port: config.appPort,
     };
 
@@ -231,7 +239,7 @@ function Dumper(project, config) {
       writeDotGitKeep(routesPath);
       writeDotEnv(path, authSecret);
       writeDockerfile(path);
-      writeDockerCompose(path);
+      writeDockerCompose(path, authSecret);
       writeDotDockerIgnore(path);
     })
     .then(() => this);
