@@ -7,6 +7,9 @@
 
 const program = require('commander');
 const packagejson = require('./package.json');
+const updateNotifier = require('update-notifier');
+
+updateNotifier({ pkg: packagejson }).notify();
 
 program
   .version(packagejson.version)
