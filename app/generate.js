@@ -1,5 +1,4 @@
 const fs = require('fs');
-const P = require('bluebird');
 const authenticator = require('../services/authenticator');
 const DB = require('../services/db');
 const Dumper = require('../services/dumper');
