@@ -27,6 +27,7 @@
     "mysql": "^2.11.1",
     "mysql2": "1.4.2",
     "pg": "^6.1.0",
+    "rimraf": "^2.6.3",
     "sequelize": "git://github.com/ForestAdmin/sequelize.git#feature/support-schema",
     "superagent": "^3.8.3",
     "superagent-promise": "^1.1.0",
