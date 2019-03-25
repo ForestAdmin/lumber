@@ -1,6 +1,7 @@
 {
   "extends": "airbnb-base",
   "rules": {
-    "no-console": "off"
+    "no-console": "off",
+    "no-use-before-define": ["error", { "functions": false, "classes": false, "variables": true }]
   }
 }
