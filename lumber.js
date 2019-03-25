@@ -7,6 +7,9 @@
 
 const program = require('commander');
 const packagejson = require('./package.json');
+const dotenv = require('dotenv');
+
+dotenv.load();
 
 program
   .version(packagejson.version)
