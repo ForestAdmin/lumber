@@ -184,7 +184,8 @@ function Dumper(project, config) {
     mkdirp(publicPath),
   ];
 
-  if (config.dbDialect || config.db || config.dbConnectionUrl) { dirs.push(mkdirp(modelsPath)); }
+  const usesDb = config.dbDialect || config.db || config.dbConnectionUrl;
+  if (usesDb) { dirs.push(mkdirp(modelsPath)); }
   return P
     .all(dirs)
     .then(() => new KeyGenerator().generate())
@@ -192,7 +193,7 @@ function Dumper(project, config) {
       copyTemplate('bin/www', `${binPath}/www`);
       copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
 
-      if (config.dbDialect) {
+      if (usesDb) {
         writeModelsIndex(path);
       }
 
