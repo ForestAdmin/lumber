@@ -1,5 +1,4 @@
 const P = require('bluebird');
-const dotenv = require('dotenv');
 const program = require('commander');
 const chalk = require('chalk');
 const DB = require('./services/db');
@@ -15,9 +14,6 @@ program
   .parse(process.argv);
 
 (async () => {
-  // Load the environment variables from the .env to avoid always asking for the DB
-  // connection information.
-  dotenv.load();
   if (process.env.DATABASE_URL) {
     program.connectionUrl = true;
   }
