@@ -184,7 +184,7 @@ function Dumper(project, config) {
     mkdirp(publicPath),
   ];
 
-  if (config.dbDialect) { dirs.push(mkdirp(modelsPath)); }
+  if (config.dbDialect || config.db || config.dbConnectionUrl) { dirs.push(mkdirp(modelsPath)); }
   return P
     .all(dirs)
     .then(() => new KeyGenerator().generate())
