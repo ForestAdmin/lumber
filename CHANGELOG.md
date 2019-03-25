@@ -1,12 +1,16 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Module - This package can now be imported and used programmatically by a node application.
+
 ### Changed
 - Improvement - Reduce the number of http requests to init the project.
 - Technical - Rename environment variable SERVER_HOST to FOREST_URL.
 
 ### Fixed
 - Command Update - Environment variables are now read in from the .env file if the file exists.
+- Command Update - The prompt flow now correctly handles the --connection-url flag.
 
 ## Release 1.14.1
 ### Fixed
