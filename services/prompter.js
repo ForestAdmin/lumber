@@ -177,7 +177,7 @@ async function Prompter(program, requests) {
 
   if (isRequested('ssl')) {
     if (process.env.FOREST_DB_SSL) {
-      envConfig.ssl = process.env.FOREST_DB_SSL;
+      envConfig.ssl = JSON.parse(process.env.FOREST_DB_SSL.toLowerCase());
     } else {
       prompts.push({
         type: 'confirm',
