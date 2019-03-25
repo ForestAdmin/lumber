@@ -59,6 +59,7 @@ async function run() {
   if (projectName) {
     config.appName = projectName;
   }
+  config.appDir = `${process.cwd()}/${config.appName}`;
 
   await generate(config);
 

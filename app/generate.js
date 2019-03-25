@@ -10,9 +10,8 @@ async function generate(config) {
   }
 
   // NOTICE: Ensure the project directory doesn't exist yet.
-  const path = `${process.cwd()}/${config.appName}`;
-  if (doesDirectoryExist(path)) {
-    throw new Error(`💀  Oops, the directory ${path} already exists.💀`);
+  if (doesDirectoryExist(config.appDir)) {
+    throw new Error(`💀  Oops, the directory ${config.appDir} already exists.💀`);
   }
 
   if (config.db) {

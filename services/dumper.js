@@ -7,7 +7,7 @@ const KeyGenerator = require('./key-generator');
 const mkdirp = P.promisify(mkdirpCallback);
 
 function Dumper(project, config) {
-  const path = `${process.cwd()}/${config.appName}`;
+  const path = config.appDir;
   const binPath = `${path}/bin`;
   const routesPath = `${path}/routes`;
   const forestPath = `${path}/forest`;
