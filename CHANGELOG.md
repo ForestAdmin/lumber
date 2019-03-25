@@ -5,6 +5,9 @@
 - Improvement - Reduce the number of http requests to init the project.
 - Technical - Rename environment variable SERVER_HOST to FOREST_URL.
 
+### Fixed
+- Command Update - Environment variables are now read in from the .env file if the file exists.
+
 ## Release 1.14.1
 ### Fixed
 - Command Update - Add the 'ssl' prompt option.
