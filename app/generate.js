@@ -20,11 +20,10 @@ async function generate(config) {
     const db = await new DB().connect(config);
     const schema = await new TableAnalyzer(db, config).perform();
     const project = await authenticator.createProject(config);
-    const dumper = await new Dumper(project, config);
+    const dumper = new Dumper(project, config);
 
-    await P.each(Object.keys(schema), async (table) => {
-      await dumper.dump(table, schema[table].fields, schema[table].references);
-    });
+    await dumper.dumpProject();
+    await dumper.dumpSchema(schema);
   }
 }
 

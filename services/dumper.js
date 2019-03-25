@@ -1,10 +1,10 @@
 const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
-const mkdirpSync = require('mkdirp');
+const mkdirpCallback = require('mkdirp');
 const KeyGenerator = require('./key-generator');
 
-const mkdirp = P.promisify(mkdirpSync);
+const mkdirp = P.promisify(mkdirpCallback);
 
 function Dumper(project, config) {
   const path = `${process.cwd()}/${config.appName}`;
@@ -141,7 +141,7 @@ function Dumper(project, config) {
     fs.writeFileSync(`${pathDest}/.env`, template(settings));
   }
 
-  function writeModels(pathDest, table, fields, references) {
+  function writeModel(pathDest, table, fields, references) {
     const templatePath = `${__dirname}/../templates/model.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
@@ -174,28 +174,35 @@ function Dumper(project, config) {
     fs.writeFileSync(`${pathDest}/models/index.js`, text);
   }
 
-  this.dump = (table, fields, references) => writeModels(path, table, fields, references);
+  function dumpModel(table, fields, references) {
+    return writeModel(path, table, fields, references);
+  }
 
-  const dirs = [
-    mkdirp(path),
-    mkdirp(binPath),
-    mkdirp(routesPath),
-    mkdirp(forestPath),
-    mkdirp(publicPath),
-  ];
+  this.dumpSchema = async (schema) => {
+    await mkdirp(modelsPath);
+    writeModelsIndex(path);
 
-  const usesDb = config.dbDialect || config.db || config.dbConnectionUrl;
-  if (usesDb) { dirs.push(mkdirp(modelsPath)); }
-  return P
-    .all(dirs)
+    await P.each(Object.keys(schema), async (table) => {
+      await dumpModel(table, schema[table].fields, schema[table].references);
+    });
+  };
+
+  function makeDirectories() {
+    const dirPromises = [
+      mkdirp(path),
+      mkdirp(binPath),
+      mkdirp(routesPath),
+      mkdirp(forestPath),
+      mkdirp(publicPath),
+    ];
+    return P.all(dirPromises);
+  }
+
+  this.dumpProject = () => makeDirectories()
     .then(() => new KeyGenerator().generate())
     .then((authSecret) => {
       copyTemplate('bin/www', `${binPath}/www`);
       copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
-
-      if (usesDb) {
-        writeModelsIndex(path);
-      }
 
       writeAppJs(path);
       writePackageJson(path);
