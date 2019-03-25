@@ -5,11 +5,9 @@
 //    |  |__|  |  | | | | __ -|   __|    -|
 //    |_____|_____|_|_|_|_____|_____|__|__|
 
+require('dotenv').load();
 const program = require('commander');
 const packagejson = require('./package.json');
-const dotenv = require('dotenv');
-
-dotenv.load();
 
 program
   .version(packagejson.version)
