@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Module - This package can now be imported and used programmatically by a node application.
+- Module - A regenerateModels function was created that can be used programmatically.
 
 ### Changed
 - Improvement - Reduce the number of http requests to init the project.
