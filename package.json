@@ -2,16 +2,16 @@
   "name": "lumber-cli",
   "version": "1.14.1",
   "description": "Generate the back office of your web application",
-  "main": "lumber.js",
+  "author": "Sandro Munda",
+  "license": "GPL-3.0",
+  "main": "index.js",
+  "bin": {
+    "lumber": "lumber.js"
+  },
   "scripts": {
     "test": "ava",
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./assets ./deserializers ./serializers ./services ./test"
   },
-  "bin": {
-    "lumber": "lumber.js"
-  },
-  "author": "Sandro Munda",
-  "license": "GPL-3.0",
   "dependencies": {
     "bluebird": "^3.4.6",
     "chalk": "^1.1.3",
