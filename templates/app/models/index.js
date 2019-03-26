@@ -8,7 +8,7 @@ const Sequelize = require('sequelize');
 
 if (!process.env.DATABASE_URL) {
   console.error('Cannot connect to the database. Please declare the DATABASE_URL environment variable with the correct database connection string.');
-  process.exit();
+  process.exit(1);
 }
 
 let databaseOptions = {
@@ -18,11 +18,11 @@ let databaseOptions = {
 };
 
 if (process.env.SSL_DATABASE) {
-  databaseOptions.dialectOptions.ssl = true;
+  databaseOptions.dialectOptions.ssl = process.env.SSL_DATABASE.toLowerCase() === 'true';
 }
 
 if (process.env.ENCRYPT_DATABASE) {
-  databaseOptions.dialectOptions.encrypt = true;
+  databaseOptions.dialectOptions.encrypt = process.env.ENCRYPT_DATABASE.toLowerCase() === 'true';
 }
 
 let sequelize = new Sequelize(process.env.DATABASE_URL, databaseOptions);
