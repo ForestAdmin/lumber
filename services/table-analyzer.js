@@ -33,6 +33,11 @@ function TableAnalyzer(db, config) {
       .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT });
   }
 
+  async function analyzePrimaryKeys(table) {
+    const desc = await queryInterface.describeTable(table);
+    return Object.keys(desc).filter((column) => desc[column].primaryKey);
+  }
+
   function isColumnTypeEnum(columnName) {
     const query = `
       SELECT i.udt_name
@@ -109,8 +114,8 @@ function TableAnalyzer(db, config) {
 
   function analyzeTable(table) {
     return P
-      .all([analyzeFields(table), analyzeForeignKeys(table)])
-      .spread(async (schema, foreignKeys) => {
+      .all([analyzeFields(table), analyzeForeignKeys(table), analyzePrimaryKeys(table)])
+      .spread(async (schema, foreignKeys, primaryKeys) => {
         const fields = [];
         const references = [];
 
@@ -138,7 +143,7 @@ function TableAnalyzer(db, config) {
           }
         });
 
-        return [fields, references];
+        return [fields, references, primaryKeys];
       });
   }
 
@@ -156,7 +161,7 @@ function TableAnalyzer(db, config) {
       if (typeof table === 'object') { table = table.tableName; }
 
       const analysis = await analyzeTable(table);
-      schema[table] = { fields: analysis[0], references: analysis[1] };
+      schema[table] = { fields: analysis[0], references: analysis[1], primaryKeys: analysis[2] };
     });
 
     if (_.isEmpty(schema)) {

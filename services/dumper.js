@@ -13,6 +13,7 @@ function Dumper(project, config) {
   const forestPath = `${path}/forest`;
   const publicPath = `${path}/public`;
   const modelsPath = `${path}/models`;
+  const schemasPath = `${path}/graphql`;
 
   function isUnderscored(fields) {
     let underscored = false;
@@ -60,6 +61,12 @@ function Dumper(project, config) {
       chalk: '~1.1.3',
       sequelize: '4.8.0',
       'forest-express-sequelize': 'latest',
+      'apollo-server-express': '^2.4.8',
+      'apollo-link-http': '^1.5.14',
+      graphql: '^14.1.1',
+      'graphql-resolvers': '^0.3.2',
+      'graphql-tools': '^4.0.4',
+      'graphql-stitcher': 'latest',
     };
 
     if (config.dbDialect === 'postgres') {
@@ -78,12 +85,21 @@ function Dumper(project, config) {
       dependencies['forest-express-mongoose'] = 'latest';
     }
 
+    const devDependencies = {
+      '@babel/core': '^7.4.0',
+      '@babel/preset-env': '^7.4.2',
+      '@babel/node': '^7.2.2',
+      'babel-preset-env': '^1.7.0',
+      'babel-watch': '^7.0.0'
+    };
+
     const pkg = {
       name: config.appName,
       version: '0.0.1',
       private: true,
       scripts: { start: 'node ./bin/www' },
       dependencies,
+      devDependencies
     };
 
     fs.writeFileSync(`${pathDest}/package.json`, `${JSON.stringify(pkg, null, 2)}\n`);
@@ -142,6 +158,13 @@ function Dumper(project, config) {
     fs.writeFileSync(`${pathDest}/.env`, template(settings));
   }
 
+  function writeDotBabelRc(pathDest, authSecret) {
+    const templatePath = `${__dirname}/../templates/app/babelrc`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    fs.writeFileSync(`${pathDest}/.babelrc`, template());
+  }
+
   function writeModels(pathDest, table, fields, references) {
     const templatePath = `${__dirname}/../templates/model.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
@@ -158,6 +181,25 @@ function Dumper(project, config) {
 
     fs.writeFileSync(`${pathDest}/models/${table}.js`, text);
   }
+
+  function writeSchemas(pathDest, table, fields, references, primaryKeys) {
+    const templatePath = `${__dirname}/../templates/schema.txt`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    const text = template({
+      table,
+      fields,
+      references,
+      primaryKeys: primaryKeys,
+      underscored: isUnderscored(fields),
+      timestamps: hasTimestamps(fields),
+      schema: config.dbSchema,
+      dialect: config.dbDialect,
+    });
+
+    fs.writeFileSync(`${pathDest}/graphql/${table}.js`, text);
+  }
+
 
   function writeAppJs(pathDest) {
     const templatePath = `${__dirname}/../templates/app/app.js`;
@@ -211,7 +253,10 @@ function Dumper(project, config) {
     fs.writeFileSync(`${pathDest}/.dockerignore`, template({}));
   }
 
-  this.dump = (table, fields, references) => writeModels(path, table, fields, references);
+  this.dump = (table, { fields, references, primaryKeys }) => {
+    writeModels(path, table, fields, references);
+    writeSchemas(path, table, fields, references, primaryKeys);
+  };
 
   const dirs = [
     mkdirp(path),
@@ -221,7 +266,10 @@ function Dumper(project, config) {
     mkdirp(publicPath),
   ];
 
-  if (config.db) { dirs.push(mkdirp(modelsPath)); }
+  if (config.db) {
+    dirs.push(mkdirp(modelsPath));
+    dirs.push(mkdirp(schemasPath));
+  }
 
   return P
     .all(dirs)

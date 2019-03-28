@@ -1,0 +1,51 @@
+const gql = require('apollo-server-express').gql;
+const models = require('../models');
+const Liana = require('forest-express-sequelize');
+
+module.exports = function () {
+  this.getSchema = function () {
+    return gql`
+      extend type Query {
+        list_<%= table %>: [<%= table %>!]
+        get_<%= table %>(id: ID!): <%= table %>
+      }
+
+      extend type Mutation {
+        update_<%= table %>(<% _.each(fields, (field) => { %>
+          <%= field.name %>: String,<% }) %>
+        ): <%= table %>
+
+        delete_<%= table %>(id: ID!): Boolean!
+      }
+
+      type <%= table %> {<% if (primaryKeys.indexOf('id') > -1) { %>
+        id: ID!<% } %><% _.each(fields, (field) => { %>
+        <%= field.name %>: String<% }) %><% _.each(references, (reference) => { %>
+        <%= reference.as %>: <%= reference.ref %><% }); %>
+      }
+    `;
+  };
+
+  this.getResolver = function () {
+    return {
+      Query: {
+        list_<%= table %>: async () => {
+          const r = await new Liana.ResourcesGetter(models.<%= table %>, {}, {}).perform();
+          return r[0];
+        },
+        get_<%= table %>: async (obj, { id }, context, info) => {
+          return await new Liana.ResourceGetter(models.<%= table %>, { recordId: id }).perform();
+        },
+      },
+      Mutation: {
+        delete_<%= table %>: async (obj, args) => {
+          return await new Liana.ResourceRemover(models.<%= table %>, { recordId: args.id }).perform();
+        },
+        update_<%= table %>: async (obj, args) => {
+          return await new Liana.ResourceUpdater(models.<%= table %>, { recordId: args.id }, args).perform();
+        }
+      }
+    }
+  };
+}
+
