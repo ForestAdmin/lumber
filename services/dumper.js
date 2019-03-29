@@ -187,7 +187,7 @@ function Dumper(project, config) {
   }
 
   function writeDockerCompose(pathDest, authSecret) {
-    const templatePath = `${__dirname}/../templates/app/docker-compose.yaml`;
+    const templatePath = `${__dirname}/../templates/app/docker-compose.yml`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
     const settings = {
@@ -203,7 +203,7 @@ function Dumper(project, config) {
       port: config.appPort,
     };
 
-    fs.writeFileSync(`${pathDest}/docker-compose.yaml`, template(settings));
+    fs.writeFileSync(`${pathDest}/docker-compose.yml`, template(settings));
   }
 
   function writeDotDockerIgnore(pathDest) {
