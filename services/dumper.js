@@ -195,8 +195,6 @@ function Dumper(project, config) {
       forestEnvSecret: project.defaultEnvironment.secretKey,
       forestAuthSecret: authSecret,
       databaseUrl: getDatabaseUrl(),
-      forestUrl: process.env.FOREST_URL,
-      devRenderingId: project.defaultEnvironment.renderings[0].id,
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,

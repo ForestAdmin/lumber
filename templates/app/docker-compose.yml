@@ -11,9 +11,6 @@ services:
       - FOREST_ENV_SECRET=<%= forestEnvSecret %>
       <% if (!ssl) {%># <% } %>- SSL_DATABASE=true
       <% if (!encrypt) {%># <% } %>- ENCRYPT_DATABASE=true
-      <% if (forestUrl) {%>- FOREST_URL=<%= forestUrl %><% } %>
-      <% if (devRenderingId) {%>- DEV_RENDERING_ID=<%= devRenderingId %><% } %>
-      <% if (dbSchema) {%>- DATABASE_SCHEMA=<%= dbSchema %><% } %>
-      <% if (port) {%>- PORT=<%= port %><% } %>
+      - DATABASE_SCHEMA=<%= dbSchema %>
     ports:
       - "<%= port %>:<%= port %>"
