@@ -2,7 +2,6 @@
 
 ## [Unreleased]
 ### Changed
-- Improvement - Reduce the number of http requests to init the project.
 - Technical - Rename environment variable SERVER_HOST to FOREST_URL.
 
 ## Release 1.14.1

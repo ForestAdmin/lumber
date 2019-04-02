@@ -18,23 +18,14 @@ function isDirectoryExist(path) {
   }
 }
 
-let projectName;
-
 program
-  .arguments('[projectName]')
   .description('Generate the back office of your web application based on the database schema.')
   .option('-c, --connection-url', 'Enter the database credentials with a connection URL')
   .option('--no-db', 'Use Lumber without a database.')
-  .action((projectNameArg) => { projectName = projectNameArg; })
   .parse(process.argv);
 
 (async () => {
-  if (!authenticator.getAuthToken()) {
-    logger.error('💀  Oops, you need to be logged in to execute this command. 💀 Try the "lumber login" command.');
-    process.exit(1);
-  }
-
-  const args = [
+  const config = await Prompter(program, [
     'dbConnectionUrl',
     'dbDialect',
     'dbName',
@@ -48,15 +39,11 @@ program
     'dbStorage',
     'appHostname',
     'appPort',
-  ];
-  if (!projectName) {
-    args.push('appName');
-  }
-  const config = await Prompter(program, args);
+    'appName',
+    'email',
+    'passwordCreate',
+  ]);
 
-  if (projectName) {
-    config.appName = projectName;
-  }
   // NOTICE: Ensure the project directory doesn't exist yet.
   const path = `${process.cwd()}/${config.appName}`;
   if (isDirectoryExist(path)) {
@@ -70,7 +57,7 @@ program
 
     let project;
     try {
-      project = await authenticator.createProject(config);
+      project = await authenticator.authenticateAndCreateProject(config);
     } catch (error) {
       if (error.message === 'Unauthorized') {
         logger.error('💀  Oops, you are unauthorized to connect to forest. 💀 Try the "lumber logout && lumber login" command.');
