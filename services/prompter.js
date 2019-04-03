@@ -30,6 +30,13 @@ async function Prompter(program, requests) {
 
   if (isRequested('dbConnectionUrl')) {
     envConfig.dbConnectionUrl = program.connectionUrl || process.env.DATABASE_URL;
+
+    try {
+      [, envConfig.dbDialect] = envConfig.dbConnectionUrl.match(/(.*):\/\//);
+    } catch (error) {
+      logger.error('Cannot parse the database dialect. Please, check the syntax of the database connection string.');
+      process.exit(1);
+    }
   }
 
   if (isRequested('dbDialect')) {
