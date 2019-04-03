@@ -79,7 +79,7 @@ program
     project = await authenticator.createProject(config);
   } catch (error) {
     if (error.message === 'Unauthorized') {
-      logger.info(
+      logger.error(
         'You are unauthorized to connect to Forest Admin.',
         `Please try ${chalk.blue('lumber logout')} and ${chalk.blue('lumber login')} commands.`,
       );
