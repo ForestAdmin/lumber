@@ -114,7 +114,8 @@ program
 })().catch((error) => {
   logger.error(
     'Cannot generate your project.',
-    `An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}.`,
+    'An unexpected error occured. Please create a Github issue with following error:',
   );
+  console.log(error);
   process.exit(1);
 });
