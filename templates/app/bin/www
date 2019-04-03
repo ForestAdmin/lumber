@@ -44,7 +44,7 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 
-  console.log(chalk.cyan(`🌳  Your back office API is listening on ${bind}  🌳`));
+  console.log(chalk.cyan(`🌳  Your admin panel API is listening on ${bind}  🌳`));
   console.log(chalk.cyan(`🌳  Access the UI: http://app.forestadmin.com 🌳`));
 }
 
