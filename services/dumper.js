@@ -60,7 +60,6 @@ function Dumper(project, config) {
       chalk: '~1.1.3',
       sequelize: '4.8.0',
       'forest-express-sequelize': 'latest',
-      opn: '5.4.0',
     };
 
     if (config.dbDialect === 'postgres') {

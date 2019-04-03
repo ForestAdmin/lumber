@@ -6,6 +6,7 @@
 
 ### Changed
 - Technical - Rename environment variable SERVER_HOST to FOREST_URL.
+- Opn - Completely remove the opn NPM package.
 
 ## Release 1.14.2
 ### Fixed
