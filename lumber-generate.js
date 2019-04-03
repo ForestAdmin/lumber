@@ -81,7 +81,7 @@ program
     if (error.message === 'Unauthorized') {
       logger.error(
         'You are unauthorized to connect to Forest Admin.',
-        `Please try ${chalk.blue('lumber logout')} and ${chalk.blue('lumber login')} commands.`,
+        `Please try the ${chalk.blue('lumber login')} command.`,
       );
     } else if (error.message === 'Conflict') {
       logger.error(
