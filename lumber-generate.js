@@ -61,7 +61,10 @@ program
   // NOTICE: Ensure the project directory doesn't exist yet.
   const path = `${process.cwd()}/${config.appName}`;
   if (isDirectoryExist(path)) {
-    logger.error(`💀  Oops, the directory ${path} already exists.💀`);
+    logger.error(
+      `The directory ${chalk.red(path)} already exists.`,
+      'Please retry with a new directory.',
+    );
     process.exit(1);
   }
 
@@ -76,11 +79,20 @@ program
     project = await authenticator.createProject(config);
   } catch (error) {
     if (error.message === 'Unauthorized') {
-      logger.error('💀  Oops, you are unauthorized to connect to forest. 💀 Try the "lumber logout && lumber login" command.');
+      logger.error(
+        'You are unauthorized to connect to Forest Admin.',
+        `Please try the ${chalk.blue('lumber login')} command.`,
+      );
     } else if (error.message === 'Conflict') {
-      logger.error(`💀  Oops, you already have a project named ${config.appName}. Please, choose another name for this project. 💀 `);
+      logger.error(
+        `You already have a project named ${chalk.red(config.appName)}.`,
+        'Please choose another name for this new project.',
+      );
     } else {
-      logger.error('💀  Oops, authentication operation aborted 💀 due to the following error: ', error);
+      logger.error(
+        'You are unauthorized to connect to Forest Admin.',
+        `An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}.`,
+      );
     }
     process.exit(1);
   }
@@ -91,14 +103,18 @@ program
     await dumper.dump(table, schema[table].fields, schema[table].references);
   });
 
-  console.log(chalk.green('\n👍  Hooray, installation success! 👍\n'));
+  console.log('\n');
+  logger.success(`Hooray, ${chalk.green('installation success')}!`);
 
-  console.log(`change directory: \n $ ${chalk.green(`cd ${config.appName}`)}\n`);
-  console.log(`install dependencies: \n $ ${chalk.green('npm install')}\n`);
-  console.log(`run your admin panel application: \n $ ${chalk.green('npm start')}\n`);
+  console.log(`change directory: \n $ ${chalk.blue(`cd ${config.appName}`)}\n`);
+  console.log(`install dependencies: \n $ ${chalk.blue('npm install')}\n`);
+  console.log(`run your admin panel application: \n $ ${chalk.blue('npm start')}\n`);
 
   process.exit(0);
 })().catch((error) => {
-  logger.error('💀  Oops, operation aborted 💀 due to the following error: ', error);
+  logger.error(
+    'Cannot generate are your project.',
+    `An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}.`,
+  );
   process.exit(1);
 });

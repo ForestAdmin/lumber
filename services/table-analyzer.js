@@ -160,7 +160,10 @@ function TableAnalyzer(db, config) {
     });
 
     if (_.isEmpty(schema)) {
-      logger.error('💀  Oops, your database is empty. Please, create some tables before running Lumber generate.💀');
+      logger.error(
+        'Your database is empty.',
+        'Please, create some tables before running generate command.',
+      );
       return process.exit(1);
     }
 
