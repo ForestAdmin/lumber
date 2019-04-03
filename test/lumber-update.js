@@ -1,5 +1,5 @@
 const fs = require('fs');
-const ava = require('ava');
+const test = require('ava');
 const { expect } = require('chai');
 const Migrator = require('../services/migrator');
 
@@ -10,7 +10,7 @@ const config = {
   sourceDirectory: 'test/sample-project',
 };
 
-ava.test('Detect new tables', async (t) => {
+test('Detect new tables', async (t) => {
   const migrator = new Migrator(config);
   const schema = {
     albums: { fields: [], references: [] },
@@ -25,7 +25,7 @@ ava.test('Detect new tables', async (t) => {
   t.pass();
 });
 
-ava.test('Detect new fields', async (t) => {
+test('Detect new fields', async (t) => {
   const migrator = new Migrator(config);
   const schema = {
     albums: {
