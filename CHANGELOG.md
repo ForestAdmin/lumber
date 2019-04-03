@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Tools - Add a deploy script.
+
 ### Changed
 - Technical - Rename environment variable SERVER_HOST to FOREST_URL.
 

@@ -1,11 +1,12 @@
 {
   "name": "lumber-cli",
+  "description": "Generate the admin panel of your web application",
   "version": "1.14.2",
-  "description": "Generate the back office of your web application",
   "main": "lumber.js",
   "scripts": {
     "test": "ava",
-    "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./assets ./deserializers ./serializers ./services ./test"
+    "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./assets ./deserializers ./serializers ./services ./test",
+    "deploy": "node ./bin/deploy.js"
   },
   "bin": {
     "lumber": "lumber.js"
@@ -39,7 +40,10 @@
     "chai": "4.1.2",
     "eslint": "4.9.0",
     "eslint-config-airbnb-base": "12.1.0",
-    "eslint-plugin-import": "2.12.0"
+    "eslint-plugin-import": "2.12.0",
+    "moment": "2.24.0",
+    "semver": "6.0.0",
+    "simple-git": "1.65.0"
   },
   "ava": {
     "files": [
