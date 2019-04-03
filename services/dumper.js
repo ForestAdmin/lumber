@@ -194,10 +194,7 @@ function Dumper(project, config) {
       copyTemplate('bin/www', `${binPath}/www`);
       copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
 
-      if (config.dbDialect) {
-        writeModelsIndex(path);
-      }
-
+      if (config.db) { writeModelsIndex(path); }
       writeAppJs(path);
       writePackageJson(path);
       writeDotGitIgnore(path);

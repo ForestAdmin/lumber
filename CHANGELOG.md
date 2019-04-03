@@ -17,6 +17,7 @@
 ### Fixed
 - Command Update - Fix the ssl environment variable.
 - Command Generate - Fix the connection url option.
+- Command Generate - Fix the models/index.js file creation when using the -c option.
 - SSL options - Convert the value to lowercase to ensure the option is correctly parsed.
 
 ## Release 1.14.2
