@@ -11,8 +11,7 @@ program
 const token = authenticator.getAuthToken();
 if (token) {
   const decoded = jwt.decode(token);
-  console.log(chalk.bold('Email: ') + chalk.cyan(decoded.data.data.attributes.email));
+  logger.success(`You're logged as ${chalk.green(decoded.data.data.attributes.email)}`);
 } else {
-  logger.error('🔥  You\'re not logged 🔥');
+  logger.success('You\'re not logged in.');
 }
-

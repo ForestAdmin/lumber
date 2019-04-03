@@ -4,8 +4,10 @@ const logger = require('./logger');
 
 function Database() {
   function error(err) {
-    logger.error('💀  Ouch, cannot connect to the database 💀  due to ' +
-    'the following error:\n', err);
+    logger.error(
+      'Cannot connect to the database due to the following error:',
+      err,
+    );
 
     process.exit(1);
   }

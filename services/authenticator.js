@@ -1,7 +1,6 @@
 const fs = require('fs');
 const os = require('os');
 const P = require('bluebird');
-const chalk = require('chalk');
 const agent = require('superagent-promise')(require('superagent'), P);
 const ProjectSerializer = require('../serializers/project');
 const EnvironmentSerializer = require('../serializers/environment');
@@ -73,13 +72,13 @@ function Authenticator() {
           fs.unlinkSync(path);
 
           if (opts.log) {
-            console.log(chalk.green('👍  You\'re now unlogged 👍 '));
+            logger.success('You\'re now unlogged.');
           }
 
           resolve();
         } else if (err.code === 'ENOENT') {
           if (opts.log) {
-            logger.error('🔥  You\'re not logged 🔥');
+            logger.info('You\'re already unlogged.');
           }
 
           resolve();

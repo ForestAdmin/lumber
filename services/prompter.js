@@ -62,7 +62,7 @@ async function Prompter(program, requests) {
         when: answers => answers.dbDialect !== 'sqlite',
         validate: (dbName) => {
           if (dbName) { return true; }
-          return '🔥  Hey, you need to specify the database name 🔥';
+          return 'Please specify the database name.';
         },
       });
     }
@@ -124,12 +124,12 @@ async function Prompter(program, requests) {
         },
         validate: (port) => {
           if (!/^\d+$/.test(port)) {
-            return '🔥  Oops, the port must be a number 🔥';
+            return 'The port must be a number.';
           }
 
           const parsedPort = parseInt(port, 10);
           if (parsedPort > 0 && parsedPort < 65536) { return true; }
-          return '🔥  Oops, this is not a valid port 🔥';
+          return 'This is not a valid port.';
         },
       });
     }
@@ -207,7 +207,7 @@ async function Prompter(program, requests) {
         message: 'What\'s the full path of your SQLite file?',
         validate: (dbStorage) => {
           if (dbStorage) { return true; }
-          return '🔥  Hey, you need to specify a database SQLite file 🔥';
+          return 'Please specify a database SQLite file.';
         },
       });
     }
@@ -237,12 +237,12 @@ async function Prompter(program, requests) {
         default: '3000',
         validate: (port) => {
           if (!/^\d+$/.test(port)) {
-            return '🔥  Oops, the port must be a number 🔥';
+            return 'The port must be a number.';
           }
 
           const parsedPort = parseInt(port, 10);
           if (parsedPort > 0 && parsedPort < 65536) { return true; }
-          return '🔥  Oops, this is not a valid port 🔥';
+          return 'This is not a valid port.';
         },
       });
     }
@@ -250,7 +250,10 @@ async function Prompter(program, requests) {
 
   if (isRequested('appName')) {
     if (!program.args[0]) {
-      logger.error('💀 Please, specify a project name. Type lumber help for more information. 💀');
+      logger.error(
+        'Missing project name in the command.',
+        'Please specify a project name. Type lumber help for more information.',
+      );
       process.exit(1);
     } else {
       envConfig.appName = program.args[0];
@@ -265,7 +268,7 @@ async function Prompter(program, requests) {
         message: 'What\'s your email address? ',
         validate: (email) => {
           if (email) { return true; }
-          return '🔥  Please enter your email address 🔥';
+          return 'Please enter your email address.';
         },
       });
     }
@@ -287,7 +290,7 @@ async function Prompter(program, requests) {
             '    > Numbers';
           }
 
-          return '🔥  Oops, your password cannot be blank 🔥';
+          return 'Your password cannot be blank.';
         },
       });
     }
@@ -300,7 +303,7 @@ async function Prompter(program, requests) {
       message: 'What\'s your password: ',
       validate: (password) => {
         if (password) { return true; }
-        return '🔥  Oops, your password cannot be blank 🔥';
+        return 'Your password cannot be blank.';
       },
     });
   }
