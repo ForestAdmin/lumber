@@ -43,17 +43,21 @@ async function Prompter(program, requests) {
     }
   } else {
     if (isRequested('dbDialect')) {
-      prompts.push({
-        type: 'list',
-        name: 'dbDialect',
-        message: 'What\'s the database type? ',
-        choices: ['postgres', 'mysql', 'mssql', 'mongodb'],
-      });
+      if (process.env.FOREST_DB_DIALECT) {
+        envConfig.dbDialect = process.env.FOREST_DB_DIALECT;
+      } else {
+        prompts.push({
+          type: 'list',
+          name: 'dbDialect',
+          message: 'What\'s the database type? ',
+          choices: ['postgres', 'mysql', 'mssql', 'mongodb'],
+        });
 
-      // NOTICE: use a rawlist on Windows because of this issue:
-      // https://github.com/SBoudrias/Inquirer.js/issues/303
-      if (/^win/.test(process.platform)) {
-        prompts[0].type = 'rawlist';
+        // NOTICE: use a rawlist on Windows because of this issue:
+        // https://github.com/SBoudrias/Inquirer.js/issues/303
+        if (/^win/.test(process.platform)) {
+          prompts[0].type = 'rawlist';
+        }
       }
     }
 
@@ -176,7 +180,7 @@ async function Prompter(program, requests) {
 
     if (isRequested('ssl')) {
       if (process.env.FOREST_DB_SSL) {
-        envConfig.ssl = process.env.FOREST_DB_SSL;
+        envConfig.ssl = JSON.parse(process.env.FOREST_DB_SSL);
       } else {
         prompts.push({
           type: 'confirm',

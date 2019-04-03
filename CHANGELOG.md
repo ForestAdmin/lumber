@@ -3,10 +3,14 @@
 ## [Unreleased]
 ### Added
 - Tools - Add a deploy script.
+- Command Update - Add the new FOREST_DB_DIALECT environment variable to be able to configure project fastly.
 
 ### Changed
 - Technical - Rename environment variable SERVER_HOST to FOREST_URL.
 - Opn - Completely remove the opn NPM package.
+
+### Fixed
+- Command Update - Fix the ssl environment variable.
 
 ## Release 1.14.2
 ### Fixed
