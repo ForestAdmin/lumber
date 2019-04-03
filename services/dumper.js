@@ -106,7 +106,9 @@ function Dumper(project, config) {
   function getDatabaseUrl() {
     let connectionString;
 
-    if (config.dbDialect === 'sqlite') {
+    if (config.dbConnectionUrl) {
+      connectionString = config.dbConnectionUrl;
+    } else if (config.dbDialect === 'sqlite') {
       connectionString = `sqlite://${config.dbStorage}`;
     } else {
       connectionString = `${config.dbDialect}://${config.dbUser}`;
@@ -183,7 +185,8 @@ function Dumper(project, config) {
     mkdirp(publicPath),
   ];
 
-  if (config.dbDialect) { dirs.push(mkdirp(modelsPath)); }
+  if (config.db) { dirs.push(mkdirp(modelsPath)); }
+
   return P
     .all(dirs)
     .then(() => new KeyGenerator().generate())

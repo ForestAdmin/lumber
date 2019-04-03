@@ -1,4 +1,3 @@
-const P = require('bluebird');
 const Sequelize = require('sequelize');
 const { MongoClient } = require('mongodb');
 const logger = require('./logger');
@@ -29,7 +28,7 @@ function Database() {
       return sequelizeAuthenticate(db);
     } else if (options.dbDialect === 'mongodb') {
       let connectionUrl = 'mongodb';
-      if (options.mongodbSrv) { connectionUrl += '+srv' };
+      if (options.mongodbSrv) { connectionUrl += '+srv'; }
       connectionUrl += '://';
       if (options.dbUser) { connectionUrl += options.dbUser; }
       if (options.dbPassword) { connectionUrl += `:${options.dbPassword}`; }

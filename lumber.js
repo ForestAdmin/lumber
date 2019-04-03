@@ -10,7 +10,7 @@ const packagejson = require('./package.json');
 
 program
   .version(packagejson.version)
-  .command('generate', 'generate your back office application based on your database schema')
+  .command('generate appName', 'generate your back office application based on your database schema')
   .command('update', 'update your models\'s definition according to your database schema')
   .command('deploy', 'deploy your back office application to production')
   .command('user', 'show your current logged user')

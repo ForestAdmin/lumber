@@ -9,9 +9,11 @@
 - Technical - Rename environment variable SERVER_HOST to FOREST_URL.
 - Opn - Completely remove the opn NPM package.
 - Dependencies - Fix vulnaribilities by upgrading the dependencies in the package.json.
+- Command Generate - Make the appName argument mandatory from the command line args.
 
 ### Fixed
 - Command Update - Fix the ssl environment variable.
+- Command Generate - Fix the connection url option.
 
 ## Release 1.14.2
 ### Fixed
