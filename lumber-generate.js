@@ -123,11 +123,7 @@ program
 })().catch((error) => {
   logger.error(
     'Cannot generate your project.',
-<<<<<<< HEAD
     'An unexpected error occured. Please create a Github issue with following error:',
-=======
-    `An unexpected error occured. Please create a Github issue with following error:`,
->>>>>>> Print the full stack trace when catching an error in the generate command
   );
   console.log(error);
   process.exit(1);
