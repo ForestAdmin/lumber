@@ -109,7 +109,11 @@ program
   const dumper = await new Dumper(project, config);
 
   await P.each(Object.keys(schema), async (table) => {
-    await dumper.dump(table, schema[table].fields, schema[table].references);
+    await dumper.dump(table, {
+      fields: schema[table].fields,
+      references: schema[table].references,
+      primaryKeys: schema[table].primaryKeys,
+    });
   });
 
   console.log('\n');
