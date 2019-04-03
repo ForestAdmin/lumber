@@ -19,7 +19,7 @@ function isDirectoryExist(path) {
 }
 
 program
-  .description('Generate the back office of your web application based on the database schema.')
+  .description('Generate the admin panel of your web application based on the database schema.')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
   .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);
@@ -95,7 +95,7 @@ program
 
   console.log(`change directory: \n $ ${chalk.green(`cd ${config.appName}`)}\n`);
   console.log(`install dependencies: \n $ ${chalk.green('npm install')}\n`);
-  console.log(`run your back office application: \n $ ${chalk.green('npm start')}\n`);
+  console.log(`run your admin panel application: \n $ ${chalk.green('npm start')}\n`);
 
   process.exit(0);
 })().catch((error) => {

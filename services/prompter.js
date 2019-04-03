@@ -220,7 +220,7 @@ async function Prompter(program, requests) {
       prompts.push({
         type: 'input',
         name: 'appHostname',
-        message: 'What\'s the IP/hostname on which your back office will be running? ',
+        message: 'What\'s the IP/hostname on which your admin panel API will be running? ',
         default: 'localhost',
       });
     }
@@ -233,7 +233,7 @@ async function Prompter(program, requests) {
       prompts.push({
         type: 'input',
         name: 'appPort',
-        message: 'What\'s the port on which your back office will be running? ',
+        message: 'What\'s the port on which your admin panel API will be running? ',
         default: '3000',
         validate: (port) => {
           if (!/^\d+$/.test(port)) {
