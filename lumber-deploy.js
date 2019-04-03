@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const logger = require('./services/logger');
 
 program
-  .description('Deploy your back office to your production environment.')
+  .description('Deploy your admin panel API to your production environment.')
   .parse(process.argv);
 
 logger.info(

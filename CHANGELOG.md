@@ -12,6 +12,7 @@
 - Command Generate - Make the appName argument mandatory from the command line args.
 - Prompt - Improve the display of success/info/error command responses.
 - Wording - Improve the readability of some prompt responses.
+- Wording - Replace all existing mentions of "back office" by "admin panel" or "admin panel API".
 
 ### Fixed
 - Command Update - Fix the ssl environment variable.
