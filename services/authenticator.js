@@ -30,24 +30,14 @@ function Authenticator() {
       project.name = config.appName;
       const environment = project.defaultEnvironment;
 
-      // NOTICE: Update the project name.
       return agent
-        .put(`${config.serverHost}/api/projects/${project.id}`)
+        .put(`${config.serverHost}/api/environments/${environment.id}`)
         .set('Authorization', `Bearer ${config.authToken}`)
-        .send(new ProjectSerializer({
-          id: project.id,
-          name: config.appName,
+        .send(new EnvironmentSerializer({
+          id: environment.id,
+          apiEndpoint: `http://${config.appHostname}:${config.appPort}`,
         }))
         .end()
-        // NOTICE: Update the apiEndpoint.
-        .then(() => agent
-          .put(`${config.serverHost}/api/environments/${environment.id}`)
-          .set('Authorization', `Bearer ${config.authToken}`)
-          .send(new EnvironmentSerializer({
-            id: environment.id,
-            apiEndpoint: `http://${config.appHostname}:${config.appPort}`,
-          }))
-          .end())
         .then(() => project);
     });
 
