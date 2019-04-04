@@ -25,6 +25,14 @@ program
   .parse(process.argv);
 
 (async () => {
+  if (!authenticator.getAuthToken()) {
+    logger.error(
+      'You have to be logged in to execute this command.',
+      `Please type ${chalk.blue('lumber login')} first.`,
+    );
+    process.exit(1);
+  }
+
   let config;
 
   if (program.connectionUrl) {

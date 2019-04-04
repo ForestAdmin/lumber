@@ -5,6 +5,7 @@
 - Tools - Add a deploy script.
 - Tools - Add Docker build files.
 - Command Update - Add the new FOREST_DB_DIALECT environment variable to be able to configure project fastly.
+- Command Generate - Ensure the user is logged in before executing the generate command.
 
 ### Changed
 - Technical - Rename environment variable SERVER_HOST to FOREST_URL.
