@@ -1,6 +1,7 @@
 const gql = require('apollo-server-express').gql;
 const models = require('../models');
 const Liana = require('forest-express-sequelize');
+const { GraphQLDateTime } = require('graphql-iso-date');
 
 module.exports = function () {
   this.getSchema = function () {
@@ -12,7 +13,7 @@ module.exports = function () {
 
       extend type Mutation {
         update_<%= table %>(<% _.each(fields, (field) => { %>
-          <%= field.name %>: String,<% }) %>
+          <%= field.name %>: <%= field.graphqlType %>,<% }) %>
         ): <%= table %>
 
         delete_<%= table %>(id: ID!): Boolean!
@@ -20,7 +21,7 @@ module.exports = function () {
 
       type <%= table %> {<% if (primaryKeys.indexOf('id') > -1) { %>
         id: ID!<% } %><% _.each(fields, (field) => { %>
-        <%= field.name %>: String<% }) %><% _.each(references, (reference) => { %>
+        <%= field.name %>: <%= field.graphqlType %><% }) %><% _.each(references, (reference) => { %>
         <%= reference.as %>: <%= reference.ref %><% }); %>
       }
     `;
@@ -28,6 +29,7 @@ module.exports = function () {
 
   this.getResolver = function () {
     return {
+      DateTime: GraphQLDateTime,
       Query: {
         list_<%= table %>: async () => {
           const r = await new Liana.ResourcesGetter(models.<%= table %>, {}, {}).perform();

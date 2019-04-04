@@ -66,7 +66,8 @@ function Dumper(project, config) {
       graphql: '^14.1.1',
       'graphql-resolvers': '^0.3.2',
       'graphql-tools': '^4.0.4',
-      'graphql-stitcher': 'latest',
+      'graphql-iso-date': '^3.6.1',
+      'graphql-stitcher': '0.0.2-beta.0',
     };
 
     if (config.dbDialect === 'postgres') {
@@ -237,9 +238,36 @@ function Dumper(project, config) {
     fs.writeFileSync(`${pathDest}/.dockerignore`, template({}));
   }
 
+  function mapToGraphQLTypes(fields) {
+    return fields.map((field) => {
+      /* eslint no-param-reassign: off */
+      switch (field.type) {
+        case 'BOOLEAN':
+          field.graphqlType = 'Boolean';
+          break;
+        case 'DATE':
+          field.graphqlType = 'DateTime';
+          break;
+        case 'INTEGER':
+          field.graphqlType = 'Int';
+          break;
+        case 'DOUBLE':
+          field.graphqlType = 'Float';
+          break;
+        case 'STRING':
+          field.graphqlType = 'String';
+          break;
+        default:
+          field.graphqlType = 'String';
+      }
+
+      return field;
+    });
+  }
+
   this.dump = (table, { fields, references, primaryKeys }) => {
     writeModels(path, table, fields, references);
-    writeSchemas(path, table, fields, references, primaryKeys);
+    writeSchemas(path, table, mapToGraphQLTypes(fields), references, primaryKeys);
   };
 
   const dirs = [

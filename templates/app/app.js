@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('express-cors');
 const jwt = require('express-jwt');
-const ApolloServer = require('apollo-server-express').ApolloServer;
+const ApolloServerExpress = require('apollo-server-express');
 const GraphQLStitcher = require('graphql-stitcher');
 
 const app = express();
@@ -38,9 +38,23 @@ fs.readdirSync('./routes').forEach((file) => {
 
 (async () => {
   const schemaManager = new GraphQLStitcher();
-  const dbSchema = schemaManager.createLocalSchema(__dirname + '/graphql');
+  const dbSchema = schemaManager.createLocalSchema(__dirname + '/graphql', ApolloServerExpress.gql`
+    scalar DateTime
 
-  const server = new ApolloServer({
+    type Query {
+      _: Boolean
+    }
+
+    type Mutation {
+      _: Boolean
+    }
+
+    type Subscription {
+      _: Boolean
+    }
+  `);
+
+  const server = new ApolloServerExpress.ApolloServer({
     introspection: true,
     playground: true,
     schema: schemaManager.stitch(),

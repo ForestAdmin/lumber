@@ -19,6 +19,7 @@
     "commander": "^2.9.0",
     "dotenv": "^6.0.0",
     "expand-home-dir": "0.0.3",
+    "graphql-iso-date": "^3.6.1",
     "inquirer": "^6.2.0",
     "jsonapi-serializer": "^3.4.1",
     "jsonwebtoken": "^8.3.0",
