@@ -28,19 +28,20 @@ function Database() {
       });
 
       return sequelizeAuthenticate(db);
-    } else if (options.dbDialect === 'mongodb') {
-      let connectionUrl = 'mongodb';
-      if (options.mongodbSrv) { connectionUrl += '+srv'; }
-      connectionUrl += '://';
-      if (options.dbUser) { connectionUrl += options.dbUser; }
-      if (options.dbPassword) { connectionUrl += `:${options.dbPassword}`; }
-      connectionUrl += `@${options.dbHostname}`;
-      if (!options.mongodbSrv) { connectionUrl += `:${options.dbPort}`; }
-      connectionUrl += `/${options.dbName}`;
-
+    } else if (options.dbDialect === 'mongodb' || (options.dbConnectionUrl && options.dbConnectionUrl.startsWith('mongodb://'))) {
       const opts = { useNewUrlParser: true };
-      if (isSSL) {
-        opts.ssl = true;
+      let connectionUrl = options.dbConnectionUrl;
+
+      if (!connectionUrl) {
+        connectionUrl = 'mongodb';
+        if (options.mongodbSrv) { connectionUrl += '+srv'; }
+        connectionUrl += '://';
+        if (options.dbUser) { connectionUrl += options.dbUser; }
+        if (options.dbPassword) { connectionUrl += `:${options.dbPassword}`; }
+        connectionUrl += `@${options.dbHostname}`;
+        if (!options.mongodbSrv) { connectionUrl += `:${options.dbPort}`; }
+        connectionUrl += `/${options.dbName}`;
+        if (isSSL) { opts.ssl = true; }
       }
 
       return MongoClient.connect(connectionUrl, opts)

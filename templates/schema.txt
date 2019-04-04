@@ -1,6 +1,7 @@
 const gql = require('apollo-server-express').gql;
 const models = require('../models');
-const Liana = require('forest-express-sequelize');
+<% if (dialect === 'mongodb') { %>const Liana = require('forest-express-mongoose');<% } else { %>const Liana = require('forest-express-sequelize');<% } %>
+
 const { GraphQLDateTime } = require('graphql-iso-date');
 const GraphQLJSON = require('graphql-type-json');
 
@@ -22,7 +23,7 @@ module.exports = function (opts) {
           <%= field.name %>: <%= field.graphqlType %>,<% }) %>
         ): <%= table %>
 
-        delete_<%= table %>(id: ID!): Boolean!
+        delete_<%= table %>(id: ID!): Boolean
       }
 
       type <%= table %> {<% if (primaryKeys.indexOf('id') > -1) { %>

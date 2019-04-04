@@ -225,7 +225,7 @@ function TableAnalyzer(db, config) {
         if (collection.name.startsWith('system.')) { return; }
 
         const analysis = await analyzeMongoCollection(collection);
-        schema[collection.name] = { fields: analysis, references: [] };
+        schema[collection.name] = { fields: analysis, references: [], primaryKeys: ['_id'] };
       }))
       .then(() => schema);
   }

@@ -169,6 +169,7 @@ function Dumper(project, config) {
   }
 
   function writeSchemas(pathDest, table, fields, references, primaryKeys) {
+    if (!fields.length) { return; }
     const templatePath = `${__dirname}/../templates/schema.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
