@@ -2,12 +2,14 @@ const gql = require('apollo-server-express').gql;
 const models = require('../models');
 const Liana = require('forest-express-sequelize');
 const { GraphQLDateTime } = require('graphql-iso-date');
+const GraphQLJSON = require('graphql-type-json');
 
 module.exports = function () {
   this.getSchema = function () {
     return gql`
       extend type Query {
-        list_<%= table %>: [<%= table %>!]
+        count_<%= table %>: Int
+        list_<%= table %>(page: JSON): [<%= table %>!]
         get_<%= table %>(id: ID!): <%= table %>
       }
 
@@ -34,9 +36,13 @@ module.exports = function () {
   this.getResolver = function () {
     return {
       DateTime: GraphQLDateTime,
+      JSON: GraphQLJSON,
       Query: {
-        list_<%= table %>: async () => {
-          const r = await new Liana.ResourcesGetter(models.<%= table %>, {}, {}).perform();
+        count_<%= table %>: async () => {
+          return await new Liana.ResourcesGetter(models.<%= table %>, {}, {}).count();
+        },
+        list_<%= table %>: async (obj, args) => {
+          const r = await new Liana.ResourcesGetter(models.<%= table %>, {}, args).perform();
           return r[0];
         },
         get_<%= table %>: async (obj, { id }, context, info) => {

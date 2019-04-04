@@ -67,6 +67,7 @@ function Dumper(project, config) {
       'graphql-resolvers': '^0.3.2',
       'graphql-tools': '^4.0.4',
       'graphql-iso-date': '^3.6.1',
+      'graphql-type-json': '^0.2.4',
       'graphql-stitcher': '0.0.2-beta.0',
     };
 

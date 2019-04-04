@@ -40,6 +40,7 @@ fs.readdirSync('./routes').forEach((file) => {
   const schemaManager = new GraphQLStitcher();
   const dbSchema = schemaManager.createLocalSchema(__dirname + '/graphql', ApolloServerExpress.gql`
     scalar DateTime
+    scalar JSON
 
     type Query {
       _: Boolean
