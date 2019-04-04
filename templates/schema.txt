@@ -8,8 +8,8 @@ module.exports = function (opts) {
   this.getSchema = function () {
     return gql`
       extend type Query {
-        count_<%= table %>(search: String): Int
-        list_<%= table %>(page: JSON, sort: String, search: String): [<%= table %>!]
+        count_<%= table %>(search: String, filter: JSON): Int
+        list_<%= table %>(page: JSON, sort: String, search: String, filter: JSON): [<%= table %>!]
         get_<%= table %>(id: ID!): <%= table %>
       }
 
@@ -39,9 +39,15 @@ module.exports = function (opts) {
       JSON: GraphQLJSON,
       Query: {
         count_<%= table %>: async (obj, params) => {
+          if (!params.filterType) { params.filterType = 'and'; }
+          if (!params.timezone) { params.timezone = 'Europe/London'; }
+
           return await new Liana.ResourcesGetter(models.<%= table %>, opts, params).count();
         },
         list_<%= table %>: async (obj, params) => {
+          if (!params.filterType) { params.filterType = 'and'; }
+          if (!params.timezone) { params.timezone = 'Europe/London'; }
+
           const r = await new Liana.ResourcesGetter(models.<%= table %>, opts, params).perform();
           return r[0];
         },
