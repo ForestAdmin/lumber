@@ -9,7 +9,7 @@ module.exports = function () {
     return gql`
       extend type Query {
         count_<%= table %>: Int
-        list_<%= table %>(page: JSON): [<%= table %>!]
+        list_<%= table %>(page: JSON, sort: String): [<%= table %>!]
         get_<%= table %>(id: ID!): <%= table %>
       }
 
