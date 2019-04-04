@@ -68,7 +68,7 @@ function Dumper(project, config) {
       'graphql-tools': '^4.0.4',
       'graphql-iso-date': '^3.6.1',
       'graphql-type-json': '^0.2.4',
-      'graphql-stitcher': '0.0.2-beta.0',
+      'graphql-stitcher': '0.0.2-beta.2',
     };
 
     if (config.dbDialect === 'postgres') {

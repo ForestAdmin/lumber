@@ -4,12 +4,12 @@ const Liana = require('forest-express-sequelize');
 const { GraphQLDateTime } = require('graphql-iso-date');
 const GraphQLJSON = require('graphql-type-json');
 
-module.exports = function () {
+module.exports = function (opts) {
   this.getSchema = function () {
     return gql`
       extend type Query {
-        count_<%= table %>: Int
-        list_<%= table %>(page: JSON, sort: String): [<%= table %>!]
+        count_<%= table %>(search: String): Int
+        list_<%= table %>(page: JSON, sort: String, search: String): [<%= table %>!]
         get_<%= table %>(id: ID!): <%= table %>
       }
 
@@ -38,11 +38,11 @@ module.exports = function () {
       DateTime: GraphQLDateTime,
       JSON: GraphQLJSON,
       Query: {
-        count_<%= table %>: async () => {
-          return await new Liana.ResourcesGetter(models.<%= table %>, {}, {}).count();
+        count_<%= table %>: async (obj, params) => {
+          return await new Liana.ResourcesGetter(models.<%= table %>, opts, params).count();
         },
-        list_<%= table %>: async (obj, args) => {
-          const r = await new Liana.ResourcesGetter(models.<%= table %>, {}, args).perform();
+        list_<%= table %>: async (obj, params) => {
+          const r = await new Liana.ResourcesGetter(models.<%= table %>, opts, params).perform();
           return r[0];
         },
         get_<%= table %>: async (obj, { id }, context, info) => {
@@ -50,14 +50,14 @@ module.exports = function () {
         },
       },
       Mutation: {
-        create_<%= table %>: async (obj, args) => {
-          return await new Liana.ResourceCreator(models.<%= table %>, args).perform();
+        create_<%= table %>: async (obj, params) => {
+          return await new Liana.ResourceCreator(models.<%= table %>, params).perform();
         },
-        update_<%= table %>: async (obj, args) => {
-          return await new Liana.ResourceUpdater(models.<%= table %>, { recordId: args.id }, args).perform();
+        update_<%= table %>: async (obj, params) => {
+          return await new Liana.ResourceUpdater(models.<%= table %>, { recordId: params.id }, params).perform();
         },
-        delete_<%= table %>: async (obj, args) => {
-          return await new Liana.ResourceRemover(models.<%= table %>, { recordId: args.id }).perform();
+        delete_<%= table %>: async (obj, params) => {
+          return await new Liana.ResourceRemover(models.<%= table %>, { recordId: params.id }).perform();
         },
       }
     }

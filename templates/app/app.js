@@ -37,28 +37,17 @@ fs.readdirSync('./routes').forEach((file) => {
 });
 
 (async () => {
-  const schemaManager = new GraphQLStitcher();
-  const dbSchema = schemaManager.createLocalSchema(__dirname + '/graphql', ApolloServerExpress.gql`
-    scalar DateTime
-    scalar JSON
+  const stitcher = new GraphQLStitcher(<% if (config.dbDialect) { %><% if (config.dbDialect === 'mongodb') { %> { mongoose: require('mongoose') }<% } else { %> { sequelize: require('./models').Sequelize }<% } %><% } %>);
 
-    type Query {
-      _: Boolean
-    }
+  stitcher.addScalar('DateTime');
+  stitcher.addScalar('JSON');
 
-    type Mutation {
-      _: Boolean
-    }
-
-    type Subscription {
-      _: Boolean
-    }
-  `);
+  const dbSchema = stitcher.createLocalSchema(__dirname + '/graphql');
 
   const server = new ApolloServerExpress.ApolloServer({
     introspection: true,
     playground: true,
-    schema: schemaManager.stitch(),
+    schema: stitcher.stitch(),
   });
 
   server.applyMiddleware({ app, path: '/graphql' });
