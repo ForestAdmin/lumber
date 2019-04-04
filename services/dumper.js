@@ -194,7 +194,7 @@ function Dumper(project, config) {
       appName: config.appName,
       forestEnvSecret: project.defaultEnvironment.secretKey,
       forestAuthSecret: authSecret,
-      databaseUrl: getDatabaseUrl(),
+      databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
