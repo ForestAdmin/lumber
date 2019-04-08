@@ -263,7 +263,7 @@ async function Prompter(program, requests) {
       );
       process.exit(1);
     } else {
-      envConfig.appName = program.args[0];
+      [envConfig.appName] = program.args;
     }
   }
 
