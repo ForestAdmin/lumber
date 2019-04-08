@@ -11,14 +11,20 @@ program
   .description('Sign in with an existing account.')
   .parse(process.argv);
 
+if (!program.args[0]) {
+  logger.error(
+    'Missing your email address in the command.',
+    'Type lumber help for more information.',
+  );
+  process.exit(1);
+}
+
 (async () => {
   await authenticator
     .logout({ log: false });
 
-  const config = await Prompter(program, [
-    'email',
-    'password',
-  ]);
+  const config = await Prompter(program, ['password']);
+  [config.email] = program.args;
 
   try {
     await authenticator.login(config);
