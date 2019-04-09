@@ -10,6 +10,6 @@ const packagejson = require('./package.json');
 
 program
   .version(packagejson.version)
-  .command('generate <projectName>', 'generate a GraphQL API backend')
+  .command('generate <appName>', 'generate a GraphQL API backend based on your database schema')
   .command('update', 'update your models\'s definition according to your database schema')
   .parse(process.argv);

@@ -19,7 +19,7 @@ function isDirectoryExist(path) {
 }
 
 program
-  .description('Generate the admin panel of your web application based on the database schema.')
+  .description('Generate a GraphQL API backend based on your database schema.')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
   .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);
