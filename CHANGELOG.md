@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.14.3 - 2019-04-09
 ### Added
 - Tools - Add a deploy script.
 - Tools - Add Docker build files.

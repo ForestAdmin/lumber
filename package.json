@@ -1,7 +1,7 @@
 {
   "name": "lumber-cli",
   "description": "Generate the admin panel of your web application",
-  "version": "1.14.2",
+  "version": "1.14.3",
   "main": "lumber.js",
   "scripts": {
     "test": "ava",
