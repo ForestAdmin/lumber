@@ -112,12 +112,16 @@ program
   });
 
   console.log('\n');
-  logger.success(`Hooray, ${chalk.green('installation success')}!`);
+  logger.success(`Hooray, ${chalk.green('installation success')}!\n`);
 
   console.log(`change directory: \n $ ${chalk.blue(`cd ${config.appName}`)}\n`);
+
+  console.log(`${chalk.underline('With docker:')}\n`);
+  console.log(`run container: \n $ ${chalk.blue('docker-compose up --build')}\n`);
+
+  console.log(`${chalk.underline('Without docker:')}\n`);
   console.log(`install dependencies: \n $ ${chalk.blue('npm install')}\n`);
   console.log(`run your admin panel application: \n $ ${chalk.blue('npm start')}\n`);
-
   process.exit(0);
 })().catch((error) => {
   logger.error(
