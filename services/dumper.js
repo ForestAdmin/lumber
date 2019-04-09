@@ -13,6 +13,7 @@ function Dumper(project, config) {
   const forestPath = `${path}/forest`;
   const publicPath = `${path}/public`;
   const modelsPath = `${path}/models`;
+  const schemasPath = `${path}/graphql`;
 
   function isUnderscored(fields) {
     let underscored = false;
@@ -60,6 +61,14 @@ function Dumper(project, config) {
       chalk: '~1.1.3',
       sequelize: '4.8.0',
       'forest-express-sequelize': 'latest',
+      'apollo-server-express': '^2.4.8',
+      'apollo-link-http': '^1.5.14',
+      graphql: '^14.1.1',
+      'graphql-resolvers': '^0.3.2',
+      'graphql-tools': '^4.0.4',
+      'graphql-iso-date': '^3.6.1',
+      'graphql-type-json': '^0.2.4',
+      'graphql-stitcher': '0.0.2-beta.2',
     };
 
     if (config.dbDialect === 'postgres') {
@@ -159,6 +168,26 @@ function Dumper(project, config) {
     fs.writeFileSync(`${pathDest}/models/${table}.js`, text);
   }
 
+  function writeSchemas(pathDest, table, fields, references, primaryKeys) {
+    if (!fields.length) { return; }
+    const templatePath = `${__dirname}/../templates/schema.txt`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    const text = template({
+      table,
+      fields,
+      references,
+      primaryKeys,
+      underscored: isUnderscored(fields),
+      timestamps: hasTimestamps(fields),
+      schema: config.dbSchema,
+      dialect: config.dbDialect,
+    });
+
+    fs.writeFileSync(`${pathDest}/graphql/${table}.js`, text);
+  }
+
+
   function writeAppJs(pathDest) {
     const templatePath = `${__dirname}/../templates/app/app.js`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
@@ -217,7 +246,37 @@ function Dumper(project, config) {
     fs.writeFileSync(`${pathDest}/.dockerignore`, template({}));
   }
 
-  this.dump = (table, fields, references) => writeModels(path, table, fields, references);
+  function mapToGraphQLTypes(fields) {
+    return fields.map((field) => {
+      /* eslint no-param-reassign: off */
+      switch (field.type) {
+        case 'BOOLEAN':
+          field.graphqlType = 'Boolean';
+          break;
+        case 'DATE':
+          field.graphqlType = 'DateTime';
+          break;
+        case 'INTEGER':
+          field.graphqlType = 'Int';
+          break;
+        case 'DOUBLE':
+          field.graphqlType = 'Float';
+          break;
+        case 'STRING':
+          field.graphqlType = 'String';
+          break;
+        default:
+          field.graphqlType = 'String';
+      }
+
+      return field;
+    });
+  }
+
+  this.dump = (table, { fields, references, primaryKeys }) => {
+    writeModels(path, table, fields, references);
+    writeSchemas(path, table, mapToGraphQLTypes(fields), references, primaryKeys);
+  };
 
   const dirs = [
     mkdirp(path),
@@ -227,7 +286,10 @@ function Dumper(project, config) {
     mkdirp(publicPath),
   ];
 
-  if (config.db) { dirs.push(mkdirp(modelsPath)); }
+  if (config.db) {
+    dirs.push(mkdirp(modelsPath));
+    dirs.push(mkdirp(schemasPath));
+  }
 
   return P
     .all(dirs)

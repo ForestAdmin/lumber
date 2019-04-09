@@ -1,6 +1,7 @@
 <% if (config.dbDialect === 'mongodb') {
 %>const mongoose = require('mongoose');
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
+module.exports = mongoose.models;
 <% } else {
 %>const fs = require('fs');
 const path = require('path');

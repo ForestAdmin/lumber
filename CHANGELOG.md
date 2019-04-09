@@ -31,6 +31,10 @@
 ### Fixed
 - Command Generate - Avoid to crash if there's a conflict on the project name.
 
+## Release 1.14.2
+### Fixed
+- Command Generate - Avoid to crash if there's a conflict on the project name.
+
 ## Release 1.14.1
 ### Fixed
 - Command Update - Add the 'ssl' prompt option.
