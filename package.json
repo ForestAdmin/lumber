@@ -1,6 +1,6 @@
 {
   "name": "lumber-cli",
-  "description": "Generate the admin panel of your web application",
+  "description": "Generate a GraphQL API backend based on a database schema",
   "version": "1.14.3",
   "main": "lumber.js",
   "scripts": {
