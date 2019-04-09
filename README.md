@@ -133,7 +133,7 @@ user and your application data through the Admin API.
 
 `$ lumber [command]`
 
-- `generate`      generate the admin panel of your web application based on the database schema
+- `generate`      generate a GraphQL API backend
 - `update`        update your models's definition according to your database schema
 - `deploy`        deploy your admin panel to production
 - `user`          show your current logged user
