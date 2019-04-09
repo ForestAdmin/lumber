@@ -190,10 +190,16 @@ function Dumper(project, config) {
     const templatePath = `${__dirname}/../templates/app/docker-compose.yml`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
+    let forestUrl;
+    if (typeof process.env.FOREST_URL !== 'undefined') {
+      forestUrl = process.env.FOREST_URL.replace('localhost', 'host.docker.internal');
+    }
+
     const settings = {
       appName: config.appName,
       forestEnvSecret: project.defaultEnvironment.secretKey,
       forestAuthSecret: authSecret,
+      forestUrl,
       databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
