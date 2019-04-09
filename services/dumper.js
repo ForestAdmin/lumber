@@ -59,6 +59,7 @@ function Dumper(config) {
       dotenv: '~6.1.0',
       chalk: '~1.1.3',
       sequelize: '4.8.0',
+      'forest-express-sequelize': 'latest',
       'apollo-server-express': '^2.4.8',
       'apollo-link-http': '^1.5.14',
       graphql: '^14.1.1',
@@ -80,6 +81,9 @@ function Dumper(config) {
     } else if (config.dbDialect === 'mongodb') {
       delete dependencies.sequelize;
       dependencies.mongoose = '~5.3.6';
+
+      delete dependencies['forest-express-sequelize'];
+      dependencies['forest-express-mongoose'] = 'latest';
     }
 
     const pkg = {

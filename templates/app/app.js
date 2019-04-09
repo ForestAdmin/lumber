@@ -9,6 +9,7 @@ const cors = require('express-cors');
 const jwt = require('express-jwt');
 const ApolloServerExpress = require('apollo-server-express');
 const GraphQLStitcher = require('graphql-stitcher');
+const Liana = require('forest-express-<% if (config.dbDialect === "mongodb") { %>mongoose<% } else {%>sequelize<% } %>');
 
 const app = express();
 
@@ -28,6 +29,11 @@ app.use(jwt({
   secret: process.env.AUTH_SECRET,
   credentialsRequired: false
 }));
+
+Liana.init({
+<% if (config.dbDialect) { %>  modelsDir: __dirname + '/models',<% } %>
+<% if (config.dbDialect) { %><% if (config.dbDialect === 'mongodb') { %>  mongoose: require('mongoose')<% } else { %>  sequelize: require('./models').sequelize<% } %><% } %>
+});
 
 (async () => {
   const stitcher = new GraphQLStitcher(<% if (config.dbDialect) { %><% if (config.dbDialect === 'mongodb') { %> { mongoose: require('mongoose') }<% } else { %> { sequelize: require('./models').Sequelize }<% } %><% } %>);

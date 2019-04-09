@@ -1,5 +1,6 @@
 DATABASE_URL=<%= databaseUrl %>
 AUTH_SECRET=<%= authSecret %>
+FOREST_DEACTIVATE_INIT=true
 <% if (!ssl) {%>#<% } %>SSL_DATABASE=true
 <% if (!encrypt) {%>#<% } %>ENCRYPT_DATABASE=true
 <% if (dbSchema) {%>DATABASE_SCHEMA=<%= dbSchema %><% } %>
