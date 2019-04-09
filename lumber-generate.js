@@ -5,7 +5,6 @@ const chalk = require('chalk');
 const DB = require('./services/db');
 const TableAnalyzer = require('./services/table-analyzer');
 const Dumper = require('./services/dumper');
-const authenticator = require('./services/authenticator');
 const Prompter = require('./services/prompter');
 const logger = require('./services/logger');
 
@@ -25,14 +24,6 @@ program
   .parse(process.argv);
 
 (async () => {
-  if (!authenticator.getAuthToken()) {
-    logger.error(
-      'You have to be logged in to execute this command.',
-      `Please type ${chalk.blue('lumber login')} first.`,
-    );
-    process.exit(1);
-  }
-
   let config;
 
   if (program.connectionUrl) {
@@ -82,30 +73,7 @@ program
     schema = await new TableAnalyzer(db, config).perform();
   }
 
-  let project;
-  try {
-    project = await authenticator.createProject(config);
-  } catch (error) {
-    if (error.message === 'Unauthorized') {
-      logger.error(
-        'You are unauthorized to connect to Forest Admin.',
-        `Please try the ${chalk.blue('lumber login')} command.`,
-      );
-    } else if (error.message === 'Conflict') {
-      logger.error(
-        `You already have a project named ${chalk.red(config.appName)}.`,
-        'Please choose another name for this new project.',
-      );
-    } else {
-      logger.error(
-        'You are unauthorized to connect to Forest Admin.',
-        `An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}.`,
-      );
-    }
-    process.exit(1);
-  }
-
-  const dumper = await new Dumper(project, config);
+  const dumper = await new Dumper(config);
 
   await P.each(Object.keys(schema), async (table) => {
     await dumper.dump(table, {

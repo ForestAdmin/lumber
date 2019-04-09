@@ -1,4 +1,3 @@
-'use strict';
 const fs = require('fs');
 const express = require('express');
 const path = require('path');
@@ -22,19 +21,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
   allowedOrigins: ['*.forestadmin.com'],
-  headers: ['Authorization', 'X-Requested-With', 'Content-Type']
+  headers: ['Authorization', 'X-Requested-With', 'Content-Type'],
 }));
 
 app.use(jwt({
-  secret: process.env.FOREST_AUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   credentialsRequired: false
 }));
-
-fs.readdirSync('./routes').forEach((file) => {
-  if (file !== '.gitkeep') {
-    app.use('/forest', require('./routes/' + file));
-  }
-});
 
 (async () => {
   const stitcher = new GraphQLStitcher(<% if (config.dbDialect) { %><% if (config.dbDialect === 'mongodb') { %> { mongoose: require('mongoose') }<% } else { %> { sequelize: require('./models').Sequelize }<% } %><% } %>);
@@ -51,13 +44,6 @@ fs.readdirSync('./routes').forEach((file) => {
   });
 
   server.applyMiddleware({ app, path: '/graphql' });
-
-  app.use(require('forest-express-<% if (config.dbDialect === "mongodb") { %>mongoose<% } else {%>sequelize<% } %>').init({
-  <% if (config.dbDialect) { %>  modelsDir: __dirname + '/models',<% } %>
-    envSecret: process.env.FOREST_ENV_SECRET,
-    authSecret: process.env.FOREST_AUTH_SECRET,
-  <% if (config.dbDialect) { %><% if (config.dbDialect === 'mongodb') { %>  mongoose: require('mongoose')<% } else { %>  sequelize: require('./models').sequelize<% } %><% } %>
-  }));
 })().catch((err) => {
   console.error(err);
 });

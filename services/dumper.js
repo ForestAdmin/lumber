@@ -6,11 +6,10 @@ const KeyGenerator = require('./key-generator');
 
 const mkdirp = P.promisify(mkdirpSync);
 
-function Dumper(project, config) {
+function Dumper(config) {
   const path = `${process.cwd()}/${config.appName}`;
   const binPath = `${path}/bin`;
   const routesPath = `${path}/routes`;
-  const forestPath = `${path}/forest`;
   const publicPath = `${path}/public`;
   const modelsPath = `${path}/models`;
   const schemasPath = `${path}/graphql`;
@@ -60,7 +59,6 @@ function Dumper(project, config) {
       dotenv: '~6.1.0',
       chalk: '~1.1.3',
       sequelize: '4.8.0',
-      'forest-express-sequelize': 'latest',
       'apollo-server-express': '^2.4.8',
       'apollo-link-http': '^1.5.14',
       graphql: '^14.1.1',
@@ -82,9 +80,6 @@ function Dumper(project, config) {
     } else if (config.dbDialect === 'mongodb') {
       delete dependencies.sequelize;
       dependencies.mongoose = '~5.3.6';
-
-      delete dependencies['forest-express-sequelize'];
-      dependencies['forest-express-mongoose'] = 'latest';
     }
 
     const pkg = {
@@ -137,15 +132,12 @@ function Dumper(project, config) {
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
     const settings = {
-      forestEnvSecret: project.defaultEnvironment.secretKey,
-      forestAuthSecret: authSecret,
       databaseUrl: getDatabaseUrl(),
-      forestUrl: process.env.FOREST_URL,
-      devRenderingId: project.defaultEnvironment.renderings[0].id,
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
       port: config.appPort,
+      authSecret,
     };
 
     fs.writeFileSync(`${pathDest}/.env`, template(settings));
@@ -219,21 +211,14 @@ function Dumper(project, config) {
     const templatePath = `${__dirname}/../templates/app/docker-compose.yml`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
-    let forestUrl;
-    if (typeof process.env.FOREST_URL !== 'undefined') {
-      forestUrl = process.env.FOREST_URL.replace('localhost', 'host.docker.internal');
-    }
-
     const settings = {
       appName: config.appName,
-      forestEnvSecret: project.defaultEnvironment.secretKey,
-      forestAuthSecret: authSecret,
-      forestUrl,
       databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
       port: config.appPort,
+      authSecret,
     };
 
     fs.writeFileSync(`${pathDest}/docker-compose.yml`, template(settings));
@@ -282,7 +267,6 @@ function Dumper(project, config) {
     mkdirp(path),
     mkdirp(binPath),
     mkdirp(routesPath),
-    mkdirp(forestPath),
     mkdirp(publicPath),
   ];
 
@@ -291,24 +275,24 @@ function Dumper(project, config) {
     dirs.push(mkdirp(schemasPath));
   }
 
-  return P
-    .all(dirs)
-    .then(() => new KeyGenerator().generate())
-    .then((authSecret) => {
-      copyTemplate('bin/www', `${binPath}/www`);
-      copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
+  return (async () => {
+    await P.all(dirs);
+    const authSecret = await new KeyGenerator().generate();
+    copyTemplate('bin/www', `${binPath}/www`);
+    copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
 
-      if (config.db) { writeModelsIndex(path); }
-      writeAppJs(path);
-      writePackageJson(path);
-      writeDotGitIgnore(path);
-      writeDotGitKeep(routesPath);
-      writeDotEnv(path, authSecret);
-      writeDockerfile(path);
-      writeDockerCompose(path, authSecret);
-      writeDotDockerIgnore(path);
-    })
-    .then(() => this);
+    if (config.db) { writeModelsIndex(path); }
+    writeAppJs(path);
+    writePackageJson(path);
+    writeDotGitIgnore(path);
+    writeDotGitKeep(routesPath);
+    writeDotEnv(path, authSecret);
+    writeDockerfile(path);
+    writeDockerCompose(path, authSecret);
+    writeDotDockerIgnore(path);
+
+    return this;
+  })();
 }
 
 module.exports = Dumper;
