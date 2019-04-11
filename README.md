@@ -21,6 +21,7 @@ npm install -g lumber-cli
 |------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
 |[lumber-forestadmin](https://github.com/ForestAdmin/lumber-forestadmin) | Install Forest Admin to get an off-the-shelf admin panel based on a highly-extensible API. |
 |[lumber-graphql](https://github.com/ForestAdmin/lumber-graphql)         | Generate a GraphQL API.                                                                    |
+|[lumber-jwt](https://github.com/ForestAdmin/lumber-jwt)                 | Add a JWT authentication middleware.                                                       |
 
 ## Commands
 
