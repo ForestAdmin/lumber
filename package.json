@@ -1,6 +1,6 @@
 {
   "name": "lumber-cli",
-  "description": "Generate a GraphQL API backend based on a database schema",
+  "description": "Create your backend application in minutes. GraphQL API backend based on a database schema",
   "version": "1.14.3",
   "main": "lumber.js",
   "scripts": {
@@ -19,8 +19,7 @@
     "commander": "^2.9.0",
     "dotenv": "^6.0.0",
     "expand-home-dir": "0.0.3",
-    "graphql-iso-date": "^3.6.1",
-    "graphql-type-json": "^0.2.4",
+    "import-from": "^2.1.0",
     "inquirer": "^6.2.0",
     "jsonapi-serializer": "^3.4.1",
     "jsonwebtoken": "^8.3.0",

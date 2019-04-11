@@ -18,7 +18,7 @@ function isDirectoryExist(path) {
 }
 
 program
-  .description('Generate a GraphQL API backend based on your database schema.')
+  .description('Generate a backend application with an ORM/ODM configured.')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
   .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);

@@ -10,6 +10,7 @@ const packagejson = require('./package.json');
 
 program
   .version(packagejson.version)
-  .command('generate <appName>', 'generate a GraphQL API backend based on your database schema')
+  .command('generate <appName>', 'generate a backend application with an ORM/ODM configured')
   .command('update', 'update your models\'s definition according to your database schema')
+  .command('install <package>', 'install a Lumber plugin')
   .parse(process.argv);
