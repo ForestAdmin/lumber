@@ -32,7 +32,8 @@ app.use(jwt({
 
 Liana.init({
 <% if (config.dbDialect) { %>  modelsDir: __dirname + '/models',<% } %>
-<% if (config.dbDialect) { %><% if (config.dbDialect === 'mongodb') { %>  mongoose: require('mongoose')<% } else { %>  sequelize: require('./models').sequelize<% } %><% } %>
+<% if (config.dbDialect) { %><% if (config.dbDialect === 'mongodb') { %>  mongoose: require('mongoose')<% } else { %>  sequelize: require('./models').sequelize<% } %><% } %>,
+  onlyCrudModule: true
 });
 
 (async () => {
