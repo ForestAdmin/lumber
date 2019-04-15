@@ -93,7 +93,7 @@ program
 
   console.log(`${chalk.underline('Without docker:')}\n`);
   console.log(`install dependencies: \n $ ${chalk.blue('npm install')}\n`);
-  console.log(`run your GraphQL API backend: \n $ ${chalk.blue('npm start')}\n`);
+  console.log(`run your application: \n $ ${chalk.blue('npm start')}\n`);
   process.exit(0);
 })().catch((error) => {
   logger.error(

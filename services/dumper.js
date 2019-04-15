@@ -49,27 +49,11 @@ function Dumper(config) {
   function writePackageJson(pathDest) {
     const dependencies = {
       express: '~4.16.3',
-      'express-jwt': '~5.3.1',
-      'express-cors': 'git://github.com/ForestAdmin/express-cors',
-      'body-parser': '~1.18.3',
-      'cookie-parser': '~1.4.3',
       debug: '~4.0.1',
-      morgan: '~1.9.1',
-      'serve-favicon': '~2.5.0',
       dotenv: '~6.1.0',
       chalk: '~1.1.3',
       sequelize: '4.8.0',
-      'forest-express-sequelize': 'latest',
-      'apollo-server-express': '^2.4.8',
-      'apollo-link-http': '^1.5.14',
-      graphql: '^14.1.1',
-      'graphql-resolvers': '^0.3.2',
-      'graphql-tools': '^4.0.4',
-      'graphql-iso-date': '^3.6.1',
-      'graphql-type-json': '^0.2.4',
-      'graphql-stitcher': '0.0.2-beta.2',
       'require-all': '^3.0.0',
-      'lumber-graphql': 'latest',
     };
 
     if (config.dbDialect === 'postgres') {
