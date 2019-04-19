@@ -1,9 +1,11 @@
+const _ = require('lodash');
 const dotenv = require('dotenv');
 const program = require('commander');
 const logger = require('./services/logger');
 const importFrom = require('import-from');
 const DB = require('./services/db');
 const TableAnalyzer = require('./services/table-analyzer');
+const inquirer = require('inquirer');
 
 program
   .description('Install a Lumber plugin')
@@ -30,8 +32,13 @@ program
 
   const db = await new DB().connect(config);
   const schema = await new TableAnalyzer(db, config).perform();
+  let promptConfig = {};
 
-  await pkg.dump(schema);
+  if (_.isFunction(pkg.install)) {
+    promptConfig = await pkg.install(logger, inquirer);
+  }
+
+  await pkg.dump(schema, promptConfig);
 
   return process.exit(0);
 })();
