@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const inquirer = require('inquirer');
-const authenticator = require('../services/authenticator');
 const expandHomeDir = require('expand-home-dir');
 const path = require('path');
 const logger = require('./logger');
@@ -314,8 +313,6 @@ async function Prompter(program, requests) {
       },
     });
   }
-
-  envConfig.authToken = authenticator.getAuthToken();
 
   const config = await inquirer.prompt(prompts);
 

@@ -67,9 +67,6 @@ function Dumper(config) {
     } else if (config.dbDialect === 'mongodb') {
       delete dependencies.sequelize;
       dependencies.mongoose = '~5.3.6';
-
-      delete dependencies['forest-express-sequelize'];
-      dependencies['forest-express-mongoose'] = 'latest';
     }
 
     const pkg = {
