@@ -44,7 +44,7 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 
-  console.log(chalk.cyan(`🌳 Your application is listening on ${bind}  🌳`));
+  console.log(chalk.cyan(`Your application is listening on ${bind}.`));
 }
 
 const port = normalizePort(process.env.PORT || '3000');
