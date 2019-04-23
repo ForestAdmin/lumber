@@ -1,0 +1,11 @@
+<html>
+  <head>
+    <title>It works!</title>
+  </head>
+  <body>
+    <h1>Installed middlewares</h1>
+    <ul><% _.each(middlewares, (middleware) => { %>
+      <li><%= middleware %></li>
+    <% }); %></ul>
+  </body>
+</html>

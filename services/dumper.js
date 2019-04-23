@@ -201,6 +201,15 @@ function Dumper(config) {
     fs.writeFileSync(`${pathDest}/.dockerignore`, template({}));
   }
 
+  async function writeWelcomeMiddlewareIndex() {
+    await mkdirp(`${middlewaresPath}/welcome`);
+    copyTemplate('middlewares/welcome/index.js', `${middlewaresPath}/welcome/index.js`);
+  }
+
+  function writeWelcomeMiddlewareTemplate() {
+    copyTemplate('middlewares/welcome/template.txt', `${middlewaresPath}/welcome/template.txt`);
+  }
+
   this.dump = (table, { fields, references }) => {
     writeModels(path, table, fields, references);
   };
@@ -232,6 +241,8 @@ function Dumper(config) {
     writeDockerfile(path);
     writeDockerCompose(path, authSecret);
     writeDotDockerIgnore(path);
+    await writeWelcomeMiddlewareIndex();
+    writeWelcomeMiddlewareTemplate();
 
     return this;
   })();
