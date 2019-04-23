@@ -5,7 +5,7 @@
 </p>
 
 Lumber is a CLI tool that helps you create your backend application in minutes.
-At its core, Lumber has been designed with a modural architecture thanks to a set of plugins.
+At its core, Lumber has been designed with a modular architecture that leverages a set of plugins.
 
 For example, this means it takes one command to get a REST API, a GraphQL API or a fully operational Admin Panel.
 
