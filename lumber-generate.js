@@ -29,13 +29,11 @@ program
   if (program.connectionUrl) {
     config = await Prompter(program, [
       'dbConnectionUrl',
-      'appHostname',
       'appPort',
       'appName',
     ]);
   } else if (!program.db) {
     config = await Prompter(program, [
-      'appHostname',
       'appPort',
       'appName',
     ]);
@@ -44,7 +42,6 @@ program
       'dbDialect',
       'dbName',
       'dbSchema',
-      'dbHostname',
       'dbPort',
       'dbUser',
       'dbPassword',
