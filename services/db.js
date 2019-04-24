@@ -29,6 +29,8 @@ function Database() {
 
       return sequelizeAuthenticate(db);
     } else if (options.dbDialect === 'mongodb' || (options.dbConnectionUrl && options.dbConnectionUrl.startsWith('mongodb://'))) {
+      options.dbDialect = 'mongodb';
+
       const opts = { useNewUrlParser: true };
       let connectionUrl = options.dbConnectionUrl;
 

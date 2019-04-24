@@ -5,7 +5,6 @@ const chalk = require('chalk');
 const DB = require('./services/db');
 const TableAnalyzer = require('./services/table-analyzer');
 const Dumper = require('./services/dumper');
-const authenticator = require('./services/authenticator');
 const Prompter = require('./services/prompter');
 const logger = require('./services/logger');
 
@@ -19,32 +18,22 @@ function isDirectoryExist(path) {
 }
 
 program
-  .description('Generate the admin panel of your web application based on the database schema.')
+  .description('Generate a backend application with an ORM/ODM configured.')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
   .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);
 
 (async () => {
-  if (!authenticator.getAuthToken()) {
-    logger.error(
-      'You have to be logged in to execute this command.',
-      `Please type ${chalk.blue('lumber login')} first.`,
-    );
-    process.exit(1);
-  }
-
   let config;
 
   if (program.connectionUrl) {
     config = await Prompter(program, [
       'dbConnectionUrl',
-      'appHostname',
       'appPort',
       'appName',
     ]);
   } else if (!program.db) {
     config = await Prompter(program, [
-      'appHostname',
       'appPort',
       'appName',
     ]);
@@ -53,7 +42,6 @@ program
       'dbDialect',
       'dbName',
       'dbSchema',
-      'dbHostname',
       'dbPort',
       'dbUser',
       'dbPassword',
@@ -82,30 +70,7 @@ program
     schema = await new TableAnalyzer(db, config).perform();
   }
 
-  let project;
-  try {
-    project = await authenticator.createProject(config);
-  } catch (error) {
-    if (error.message === 'Unauthorized') {
-      logger.error(
-        'You are unauthorized to connect to Forest Admin.',
-        `Please try the ${chalk.blue('lumber login')} command.`,
-      );
-    } else if (error.message === 'Conflict') {
-      logger.error(
-        `You already have a project named ${chalk.red(config.appName)}.`,
-        'Please choose another name for this new project.',
-      );
-    } else {
-      logger.error(
-        'You are unauthorized to connect to Forest Admin.',
-        `An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}.`,
-      );
-    }
-    process.exit(1);
-  }
-
-  const dumper = await new Dumper(project, config);
+  const dumper = await new Dumper(config);
 
   await P.each(Object.keys(schema), async (table) => {
     await dumper.dump(table, {
@@ -125,7 +90,7 @@ program
 
   console.log(`${chalk.underline('Without docker:')}\n`);
   console.log(`install dependencies: \n $ ${chalk.blue('npm install')}\n`);
-  console.log(`run your admin panel application: \n $ ${chalk.blue('npm start')}\n`);
+  console.log(`run your application: \n $ ${chalk.blue('npm start')}\n`);
   process.exit(0);
 })().catch((error) => {
   logger.error(

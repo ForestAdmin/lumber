@@ -7,11 +7,10 @@ services:
     container_name: <%= appName %>
     environment:
       - DATABASE_URL=<%= databaseUrl %>
-      - FOREST_AUTH_SECRET=<%= forestAuthSecret %>
-      - FOREST_ENV_SECRET=<%= forestEnvSecret %>
+      - AUTH_SECRET=<%= authSecret %>
+      <% if (!port) {%># <% } %>- PORT=<%= port %>
       <% if (!ssl) {%># <% } %>- SSL_DATABASE=true
       <% if (!encrypt) {%># <% } %>- ENCRYPT_DATABASE=true
-      <% if (forestUrl) {%>- FOREST_URL=<%= forestUrl %><% } %>
       <% if (dbSchema) {%>- DATABASE_SCHEMA=<%= dbSchema %><% } %>
     ports:
       - "<%= port %>:<%= port %>"

@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const inquirer = require('inquirer');
-const authenticator = require('../services/authenticator');
 const expandHomeDir = require('expand-home-dir');
 const path = require('path');
 const logger = require('./logger');
@@ -227,7 +226,7 @@ async function Prompter(program, requests) {
       prompts.push({
         type: 'input',
         name: 'appHostname',
-        message: 'What\'s the IP/hostname on which your admin panel API will be running? ',
+        message: 'What\'s the IP/hostname on which your application will be running? ',
         default: 'localhost',
       });
     }
@@ -240,7 +239,7 @@ async function Prompter(program, requests) {
       prompts.push({
         type: 'input',
         name: 'appPort',
-        message: 'What\'s the port on which your admin panel API will be running? ',
+        message: 'What\'s the port on which your application will be running? ',
         default: '3000',
         validate: (port) => {
           if (!/^\d+$/.test(port)) {
@@ -314,8 +313,6 @@ async function Prompter(program, requests) {
       },
     });
   }
-
-  envConfig.authToken = authenticator.getAuthToken();
 
   const config = await inquirer.prompt(prompts);
 
