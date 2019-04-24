@@ -23,6 +23,24 @@ npm install -g lumber-cli
 |[lumber-graphql](https://github.com/ForestAdmin/lumber-graphql)         | Generate a GraphQL API.                                                                    |
 |[lumber-jwt](https://github.com/ForestAdmin/lumber-jwt)                 | Add a JWT authentication middleware.                                                       |
 
+## See it in action
+
+```
+$ npm install -g lumber-cli
+$ lumber generate -c postgres://erlich:aviato@localhost:5432/meals Meals
+
+? What's the IP/hostname on which your application will be running?  localhost
+? What's the port on which your application will be running?  3000
+
+$ cd Meals/
+$ npm install
+$ npm start
+
+Your application is listening on port 3000.
+```
+
+Finally, visit http://localhost:3000.
+
 ## Commands
 
 `$ lumber [command]`
