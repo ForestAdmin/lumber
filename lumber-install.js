@@ -6,6 +6,7 @@ const importFrom = require('import-from');
 const DB = require('./services/db');
 const TableAnalyzer = require('./services/table-analyzer');
 const inquirer = require('inquirer');
+const argv = require('minimist')(process.argv.slice(2));
 
 program
   .description('Install a Lumber plugin')
@@ -35,7 +36,7 @@ program
   let promptConfig = {};
 
   if (_.isFunction(pkg.install)) {
-    promptConfig = await pkg.install(logger, inquirer);
+    promptConfig = await pkg.install(logger, inquirer, argv);
   }
 
   await pkg.dump(schema, promptConfig, config);
