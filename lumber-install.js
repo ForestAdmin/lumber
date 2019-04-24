@@ -38,7 +38,9 @@ program
     promptConfig = await pkg.install(logger, inquirer);
   }
 
-  await pkg.dump(schema, promptConfig);
+  await pkg.dump(schema, promptConfig, config);
 
   return process.exit(0);
-})();
+})().catch((err) => {
+  console.error(err);
+});;
