@@ -52,7 +52,7 @@ function Dumper(config) {
       debug: '~4.0.1',
       dotenv: '~6.1.0',
       chalk: '~1.1.3',
-      sequelize: '4.8.0',
+      sequelize: '~5.7.4',
       'require-all': '^3.0.0',
     };
 

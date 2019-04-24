@@ -8,6 +8,7 @@ services:
     environment:
       - DATABASE_URL=<%= databaseUrl %>
       - AUTH_SECRET=<%= authSecret %>
+      <% if (!port) {%># <% } %>- PORT=<%= port %>
       <% if (!ssl) {%># <% } %>- SSL_DATABASE=true
       <% if (!encrypt) {%># <% } %>- ENCRYPT_DATABASE=true
       <% if (dbSchema) {%>- DATABASE_SCHEMA=<%= dbSchema %><% } %>

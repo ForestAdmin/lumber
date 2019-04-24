@@ -7,7 +7,7 @@
 Lumber is a CLI tool that helps you create your backend application in minutes.
 At its core, Lumber has been designed with a modular architecture that leverages a set of plugins.
 
-For example, this means it takes one command to get a REST API, a GraphQL API or a fully operational Admin Panel.
+For example, it takes one command to get a REST API, a GraphQL API or a fully operational Admin Panel.
 
 ## Install
 
@@ -27,9 +27,10 @@ npm install -g lumber-cli
 
 `$ lumber [command]`
 
-- `generate`      generate a backend application with an ORM/ODM configured.
+- `generate <appName>`      generate a backend application with an ORM/ODM configured.
 - `update`        update your models's definition according to your database schema
-- `install`       install a Lumber plugin.
+- `install <package>`       install a Lumber plugin.
+- `run <plugin:cmd>` run a command from a Lumber plugin.
 - `help [cmd]`    display help for [cmd]
 
 ## License
