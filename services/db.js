@@ -22,15 +22,19 @@ function Database() {
     const isSSL = options.dbSSL || options.ssl;
     let db;
 
-    if (options.dbDialect === 'sqlite') {
-      db = new Sequelize(`sqlite://${options.dbStorage}`, {
-        logging: false,
-      });
+    if (options.dbConnectionUrl) {
+      if (options.dbConnectionUrl.startsWith('postgres://')) {
+        options.dbDialect = 'postgres';
+      } else if (options.dbConnectionUrl.startsWith('mysql://')) {
+        options.dbDialect = 'mysql';
+      } else if (options.dbConnectionUrl.startsWith('mssql://')) {
+        options.dbDialect = 'mssql';
+      } else if (options.dbConnectionUrl.startsWith('mongodb://')) {
+        options.dbDialect = 'mongodb';
+      }
+    }
 
-      return sequelizeAuthenticate(db);
-    } else if (options.dbDialect === 'mongodb' || (options.dbConnectionUrl && options.dbConnectionUrl.startsWith('mongodb://'))) {
-      options.dbDialect = 'mongodb';
-
+    if (options.dbDialect === 'mongodb') {
       const opts = { useNewUrlParser: true };
       let connectionUrl = options.dbConnectionUrl;
 
