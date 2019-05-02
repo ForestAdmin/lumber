@@ -1,0 +1,9 @@
+postgres :
+  image : postgres:10
+  container_name : lumber_meals
+  ports :
+    - "5432:5432"
+  environment:
+    - POSTGRES_DB=meals
+    - POSTGRES_USER=lumber
+    - POSTGRES_PASSWORD=secret
