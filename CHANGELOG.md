@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Loose coupling - Use Lumber as a backend generator that leverages a set of plugins.
 
 ## RELEASE 1.14.3 - 2019-04-09
 ### Added
