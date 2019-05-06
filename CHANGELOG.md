@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.0.1 - 2019-05-06
 ### Changed
 - Docker - Remove docker instruction for now.
 
