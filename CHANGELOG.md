@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.0.2 - 2019-05-07
 ### Fixed
 - Command Generate - Ask for the database hostname when not using -c option.
 
