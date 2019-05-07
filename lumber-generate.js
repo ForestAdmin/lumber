@@ -42,6 +42,7 @@ program
       'dbDialect',
       'dbName',
       'dbSchema',
+      'dbHostname',
       'dbPort',
       'dbUser',
       'dbPassword',
