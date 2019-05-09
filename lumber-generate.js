@@ -48,7 +48,6 @@ program
       'dbPassword',
       'mongodbSrv',
       'ssl',
-      'dbStorage',
       'appHostname',
       'appPort',
       'appName',

@@ -13,12 +13,6 @@ async function Prompter(program, requests) {
 
   const envConfig = { db: program.db };
 
-  if (process.env.FOREST_URL) {
-    envConfig.serverHost = process.env.FOREST_URL;
-  } else {
-    envConfig.serverHost = 'https://api.forestadmin.com';
-  }
-
   if (program.sourceDirectory) {
     envConfig.sourceDirectory = program.sourceDirectory;
   } else {
@@ -39,8 +33,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbDialect')) {
-    if (process.env.FOREST_DB_DIALECT) {
-      envConfig.dbDialect = process.env.FOREST_DB_DIALECT;
+    if (process.env.DATABASE_DIALECT) {
+      envConfig.dbDialect = process.env.DATABASE_DIALECT;
     } else {
       prompts.push({
         type: 'list',
@@ -58,8 +52,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbName')) {
-    if (process.env.FOREST_DB_NAME) {
-      envConfig.dbName = process.env.FOREST_DB_NAME;
+    if (process.env.DATABASE_NAME) {
+      envConfig.dbName = process.env.DATABASE_NAME;
     } else {
       prompts.push({
         type: 'input',
@@ -93,8 +87,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbHostname')) {
-    if (process.env.FOREST_DB_HOSTNAME) {
-      envConfig.dbHostname = process.env.FOREST_DB_HOSTNAME;
+    if (process.env.DATABASE_HOST) {
+      envConfig.dbHostname = process.env.DATABASE_HOST;
     } else {
       prompts.push({
         type: 'input',
@@ -107,8 +101,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbPort')) {
-    if (process.env.FOREST_DB_PORT) {
-      envConfig.dbPort = process.env.FOREST_DB_PORT;
+    if (process.env.DATABASE_PORT) {
+      envConfig.dbPort = process.env.DATABASE_PORT;
     } else {
       prompts.push({
         type: 'input',
@@ -142,8 +136,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbUser')) {
-    if (process.env.FOREST_DB_USER) {
-      envConfig.dbUser = process.env.FOREST_DB_USER;
+    if (process.env.DATABASE_USER) {
+      envConfig.dbUser = process.env.DATABASE_USER;
     } else {
       prompts.push({
         type: 'input',
@@ -162,8 +156,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbPassword')) {
-    if (process.env.FOREST_DB_PASSWORD) {
-      envConfig.dbPassword = process.env.FOREST_DB_PASSWORD;
+    if (process.env.DATABASE_PASSWORD) {
+      envConfig.dbPassword = process.env.DATABASE_PASSWORD;
     } else {
       prompts.push({
         type: 'password',
@@ -175,8 +169,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('ssl')) {
-    if (process.env.FOREST_DB_SSL) {
-      envConfig.ssl = JSON.parse(process.env.FOREST_DB_SSL.toLowerCase());
+    if (process.env.DATABASE_SSL) {
+      envConfig.ssl = JSON.parse(process.env.DATABASE_SSL.toLowerCase());
     } else {
       prompts.push({
         type: 'confirm',
@@ -189,8 +183,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('mongodbSrv')) {
-    if (process.env.FOREST_DB_MONGODB_SRV) {
-      envConfig.mongodbSrv = process.env.FOREST_MONGODB_SRV;
+    if (process.env.DATABASE_MONGODB_SRV) {
+      envConfig.mongodbSrv =JSON.parse(process.env.DATABASE_MONGODB_SRV.toLowerCase())
     } else {
       prompts.push({
         type: 'confirm',
@@ -202,26 +196,9 @@ async function Prompter(program, requests) {
     }
   }
 
-  if (isRequested('dbStorage')) {
-    if (process.env.FOREST_STORAGE) {
-      envConfig.dbStorage = process.env.FOREST_STORAGE;
-    } else {
-      prompts.push({
-        type: 'input',
-        name: 'dbStorage',
-        when: answers => answers.dbDialect === 'sqlite',
-        message: 'What\'s the full path of your SQLite file?',
-        validate: (dbStorage) => {
-          if (dbStorage) { return true; }
-          return 'Please specify a database SQLite file.';
-        },
-      });
-    }
-  }
-
   if (isRequested('appHostname')) {
-    if (process.env.FOREST_HOSTNAME) {
-      envConfig.appHostname = process.env.FOREST_HOSTNAME;
+    if (process.env.APP_HOST) {
+      envConfig.appHostname = process.env.APP_HOSTNAME;
     } else {
       prompts.push({
         type: 'input',
@@ -233,8 +210,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('appPort')) {
-    if (process.env.FOREST_PORT) {
-      envConfig.appPort = process.env.FOREST_PORT;
+    if (process.env.APP_PORT) {
+      envConfig.appPort = process.env.APP_PORT;
     } else {
       prompts.push({
         type: 'input',

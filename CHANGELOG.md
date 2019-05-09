@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Command Generate - Rename all env vars to avoid the prompt.
 
 ## RELEASE 2.0.2 - 2019-05-07
 ### Fixed
