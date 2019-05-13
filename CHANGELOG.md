@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.0.4 - 2019-05-13
 ### Changed
 - Docker - Create an image to run the generate command + install the lumber-forestadmin plugin.
 
