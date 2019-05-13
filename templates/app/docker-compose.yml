@@ -14,3 +14,5 @@ services:
       <% if (dbSchema) {%>- DATABASE_SCHEMA=<%= dbSchema %><% } %>
     ports:
       - "<%= port %>:<%= port %>"
+    volumes:
+      - ./:/usr/src/app
