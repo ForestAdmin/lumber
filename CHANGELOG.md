@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Docker - Remove the lumber-forestadmin stuff from the Dockerfile.
 
 ## RELEASE 2.0.4 - 2019-05-13
 ### Changed
