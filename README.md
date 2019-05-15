@@ -1,7 +1,7 @@
 # Lumber
 
 <p align="center">
-  <img src="https://github.com/ForestAdmin/Lumber/blob/master/assets/lumber-logo.png?raw=true" alt="Lumber logo">
+  <img src="https://github.com/ForestAdmin/lumber/blob/master/assets/lumber-logo.png?raw=true" alt="Lumber logo">
 </p>
 
 Lumber is a CLI tool that helps you create your backend application in minutes.
