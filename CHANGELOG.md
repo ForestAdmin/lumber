@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.0.5 - 2019-05-15
 ### Changed
 - Docker - Remove the lumber-forestadmin stuff from the Dockerfile.
 - Welcome middleware - Change the design of the welcome plugin.
