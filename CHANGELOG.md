@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-## RELEASE 2.0.8 - 2019-06-05
+## RELEASE 2.0.9 - 2019-06-05
+### Changed
+- Welcome middleware - Change the design of the welcome plugin.
 
 ## RELEASE 2.0.6 - 2019-05-15
 ### Changed
