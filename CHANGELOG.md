@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## RELEASE 2.0.8 - 2019-06-05
+
 ## RELEASE 2.0.6 - 2019-05-15
 ### Changed
 - Docker - Install the lumber-cli NPM package in the container.
