@@ -18,6 +18,7 @@ program
   dotenv.load();
   const config = {
     dbConnectionUrl: process.env.DATABASE_URL,
+    dbSSL: process.env.DATABASE_SSL,
   };
 
   if (!program.args[0]) {
