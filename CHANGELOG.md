@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Command Generate - Upgrade sequelize version to avoid vulnerabilities.
+- Command Install - Fix install with ssl.
 
 ## RELEASE 2.0.9 - 2019-06-05
 ### Changed
