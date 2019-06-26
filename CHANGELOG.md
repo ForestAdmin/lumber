@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.1.0 - 2019-06-26
 ### Fixed
 - Command Generate - Upgrade sequelize version to avoid vulnerabilities.
 - Command Install - Fix install with ssl.
