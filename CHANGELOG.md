@@ -4,6 +4,7 @@
 ### Fixed
 - Command Generate - Upgrade sequelize version to avoid vulnerabilities.
 - Command Install - Fix install with ssl.
+- Command Generate - Use `SSL_DATABASE` instead of `DATABASE_SSL` for generating a project.
 
 ## RELEASE 2.0.9 - 2019-06-05
 ### Changed

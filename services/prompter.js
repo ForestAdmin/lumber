@@ -169,8 +169,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('ssl')) {
-    if (process.env.DATABASE_SSL) {
-      envConfig.ssl = JSON.parse(process.env.DATABASE_SSL.toLowerCase());
+    if (process.env.SSL_DATABASE) {
+      envConfig.ssl = JSON.parse(process.env.SSL_DATABASE.toLowerCase());
     } else {
       prompts.push({
         type: 'confirm',
