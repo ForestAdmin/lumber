@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Upgrade sequelize version to avoid vulnerabilities.
 
 ## RELEASE 2.0.9 - 2019-06-05
 ### Changed
