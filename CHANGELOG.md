@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix package.json in app name contains whitespaces.
 
 ## RELEASE 2.1.1 - 2019-06-27
 ### Fixed
