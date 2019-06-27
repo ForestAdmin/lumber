@@ -198,7 +198,7 @@ async function Prompter(program, requests) {
 
   if (isRequested('appHostname')) {
     if (process.env.APP_HOST) {
-      envConfig.appHostname = process.env.APP_HOSTNAME;
+      envConfig.appHostname = process.env.APP_HOST;
     } else {
       prompts.push({
         type: 'input',
