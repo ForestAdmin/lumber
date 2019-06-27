@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.1.1 - 2019-06-27
 ### Fixed
 - Command Install - Add environment variable HOSTNAME.
 
