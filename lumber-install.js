@@ -16,9 +16,11 @@ program
   // Load the environment variables from the .env to avoid always asking for the DB
   // connection information.
   dotenv.load();
+  const dbDialect = process.env.DATABASE_URL.substring(process.env.DATABASE_URL.indexOf(':'));
   const config = {
     dbConnectionUrl: process.env.DATABASE_URL,
     dbSSL: ['true', true, '1', 1].includes(process.env.SSL_DATABASE),
+    dbDialect,
   };
 
   if (!program.args[0]) {

@@ -4,6 +4,7 @@
 ### Fixed
 - Command Generate - Fix package.json in app name contains whitespaces.
 - Command Install - Fix `SSL_DATABASE` parsing.
+- Command Install - Fix install with mongodb.
 
 ## RELEASE 2.1.1 - 2019-06-27
 ### Fixed
