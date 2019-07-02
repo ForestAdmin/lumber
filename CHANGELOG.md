@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.1.2 - 2019-07-02
 ### Fixed
 - Command Generate - Fix package.json in app name contains whitespaces.
 - Command Install - Fix `SSL_DATABASE` parsing.
