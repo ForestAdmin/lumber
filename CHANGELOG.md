@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.1.3 - 2019-07-03
 ### Fixed
 - Command Generate - Fix dependencies `pg` when using `DATABASE_URL`.
 - Technical - Add `FOREST_URL` for easier development.
