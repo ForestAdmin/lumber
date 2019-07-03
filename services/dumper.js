@@ -56,7 +56,7 @@ function Dumper(config) {
       'require-all': '^3.0.0',
     };
 
-    if (config.dbDialect === 'postgres') {
+    if (config.dbDialect.includes('postgres')) {
       dependencies.pg = '~6.1.0';
     } else if (config.dbDialect === 'mysql') {
       dependencies.mysql2 = '~1.4.2';

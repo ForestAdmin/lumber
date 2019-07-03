@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix dependencies `pg` when using `DATABASE_URL`.
 
 ## RELEASE 2.1.2 - 2019-07-02
 ### Fixed
