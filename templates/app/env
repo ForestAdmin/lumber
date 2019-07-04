@@ -5,4 +5,3 @@ AUTH_SECRET=<%= authSecret %>
 <% if (dbSchema) {%>DATABASE_SCHEMA=<%= dbSchema %><% } %>
 <% if (hostname) {%>HOSTNAME=<%= hostname %><% } %>
 <% if (port) {%>PORT=<%= port %><% } %>
-<% if (forestUrl) {%>FOREST_URL=<%= forestUrl %><% } %>
