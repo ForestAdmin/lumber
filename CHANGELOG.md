@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ## RELEASE 2.1.4 - 2019-07-04
-- Revert Commit - (Technical - Add `FOREST_URL` for easier development).
+- Onboarding - Fix the `lumber generate` command (Regression introduced in v2.1.3).
 
 ## RELEASE 2.1.3 - 2019-07-03
 ### Fixed
