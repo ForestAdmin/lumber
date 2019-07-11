@@ -184,7 +184,7 @@ async function Prompter(program, requests) {
 
   if (isRequested('mongodbSrv')) {
     if (process.env.DATABASE_MONGODB_SRV) {
-      envConfig.mongodbSrv =JSON.parse(process.env.DATABASE_MONGODB_SRV.toLowerCase())
+      envConfig.mongodbSrv = JSON.parse(process.env.DATABASE_MONGODB_SRV.toLowerCase());
     } else {
       prompts.push({
         type: 'confirm',
