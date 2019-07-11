@@ -1,8 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Prompt - Display consistent spacing across questions.
 
 ## RELEASE 2.1.4 - 2019-07-04
+### Fixed
 - Onboarding - Fix the `lumber generate` command (Regression introduced in v2.1.3).
 
 ## RELEASE 2.1.3 - 2019-07-03

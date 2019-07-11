@@ -142,7 +142,7 @@ async function Prompter(program, requests) {
       prompts.push({
         type: 'input',
         name: 'dbUser',
-        message: 'What\'s the database user? ',
+        message: 'What\'s the database user?',
         when: answers => answers.dbDialect !== 'sqlite',
         default: (args) => {
           if (args.dbDialect === 'mongodb') {
@@ -163,7 +163,7 @@ async function Prompter(program, requests) {
         type: 'password',
         name: 'dbPassword',
         when: answers => answers.dbDialect !== 'sqlite',
-        message: 'What\'s the database password? [optional] ',
+        message: 'What\'s the database password? [optional]',
       });
     }
   }
