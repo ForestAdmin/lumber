@@ -29,7 +29,6 @@ program
   if (program.connectionUrl) {
     config = await Prompter(program, [
       'dbConnectionUrl',
-      'appPort',
       'appName',
     ]);
   } else if (!program.db) {

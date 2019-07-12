@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Code Style - Apply code conventions.
+- Command Generate - Stop asking for a port for the generated server and use "3000" as default value.
 
 ### Fixed
 - Prompt - Display consistent spacing across questions.
