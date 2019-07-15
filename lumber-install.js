@@ -19,7 +19,7 @@ program
   const dbDialect = process.env.DATABASE_URL.substring(process.env.DATABASE_URL.indexOf(':'));
   const config = {
     dbConnectionUrl: process.env.DATABASE_URL,
-    dbSSL: ['true', true, '1', 1].includes(process.env.SSL_DATABASE),
+    dbSSL: ['true', true, '1', 1].includes(process.env.DATABASE_SSL),
     dbDialect,
   };
 

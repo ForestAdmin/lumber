@@ -181,11 +181,12 @@ function Dumper(config) {
 
     const settings = {
       appName: config.appName,
+      hostname: config.appHostname,
+      port: config.appPort,
       databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
-      port: config.appPort,
       authSecret,
     };
 

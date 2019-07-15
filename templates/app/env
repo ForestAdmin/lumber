@@ -2,9 +2,8 @@ APPLICATION_HOST=<%= hostname || 'http://localhost' %>
 APPLICATION_PORT=<%= port || 3000 %>
 
 DATABASE_URL=<%= databaseUrl %>
+DATABASE_SCHEMA=<%= dbSchema || 'public '%>
+DATABASE_SSL=<%= ssl || 'false '%>
+DATABASE_ENCRYPT=<%= encrypt || 'false '%>
+
 AUTH_SECRET=<%= authSecret %>
-<% if (!ssl) {%>#<% } %>SSL_DATABASE=true
-<% if (!encrypt) {%>#<% } %>ENCRYPT_DATABASE=true
-<% if (dbSchema) {%>DATABASE_SCHEMA=<%= dbSchema %><% } %>
-<% if (hostname) {%>HOSTNAME=<%= hostname %><% } %>
-<% if (port) {%>PORT=<%= port %><% } %>
