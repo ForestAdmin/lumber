@@ -13,8 +13,8 @@ program
   .parse(process.argv);
 
 (async () => {
-  // Load the environment variables from the .env to avoid always asking for the DB
-  // connection information.
+  // NOTICE: Load the environment variables from the .env to avoid always asking for the DB
+  //         connection information.
   dotenv.load();
   const dbDialect = process.env.DATABASE_URL.substring(process.env.DATABASE_URL.indexOf(':'));
   const config = {
