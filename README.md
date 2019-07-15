@@ -12,7 +12,7 @@ For example, it takes one command to get a REST API, a GraphQL API or a fully op
 ## Install
 
 ```sh
-npm install -g lumber-cli
+npm install -g lumber-cli -s
 ```
 
 ## Plugins
@@ -48,4 +48,14 @@ Finally, visit http://localhost:3000.
 - `help [cmd]`    display help for [cmd]
 
 ## License
+
 [GPL](https://github.com/ForestAdmin/Lumber/blob/master/LICENSE)
+
+## Contribute
+
+To publish the docker image:
+```sh
+docker build -t forestadmin/lumber .
+docker login
+docker push forestadmin/lumber
+```
