@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.2.0 - 2019-07-15
 ### Changed
 - Code Style - Apply code conventions.
 - Command Generate - Stop asking for a port for the generated server and use "3000" as default value.
