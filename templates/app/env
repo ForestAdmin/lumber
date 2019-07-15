@@ -1,3 +1,6 @@
+APPLICATION_HOST=<%= hostname || 'http://localhost' %>
+APPLICATION_PORT=<%= port || 3000 %>
+
 DATABASE_URL=<%= databaseUrl %>
 AUTH_SECRET=<%= authSecret %>
 <% if (!ssl) {%>#<% } %>SSL_DATABASE=true
