@@ -7,6 +7,7 @@
 
 ### Fixed
 - Prompt - Display consistent spacing across questions.
+- Readme - Fix the readme according to the new behaviour.
 
 ## RELEASE 2.1.4 - 2019-07-04
 ### Fixed
