@@ -20,22 +20,25 @@ function Database() {
 
   this.connect = (options) => {
     const isSSL = options.dbSSL || options.ssl;
-    let db;
+    let connection;
+    let databaseDialect;
 
     if (options.dbConnectionUrl) {
       if (options.dbConnectionUrl.startsWith('postgres://')) {
-        options.dbDialect = 'postgres';
+        databaseDialect = 'postgres';
       } else if (options.dbConnectionUrl.startsWith('mysql://')) {
-        options.dbDialect = 'mysql';
+        databaseDialect = 'mysql';
       } else if (options.dbConnectionUrl.startsWith('mssql://')) {
-        options.dbDialect = 'mssql';
+        databaseDialect = 'mssql';
       } else if (options.dbConnectionUrl.startsWith('mongodb://')) {
-        options.dbDialect = 'mongodb';
+        databaseDialect = 'mongodb';
       }
+    } else {
+      databaseDialect = options.dbDialect;
     }
 
-    if (options.dbDialect === 'mongodb') {
-      const opts = { useNewUrlParser: true };
+    if (databaseDialect === 'mongodb') {
+      const connectionOptionsMongoClient = { useNewUrlParser: true };
       let connectionUrl = options.dbConnectionUrl;
 
       if (!connectionUrl) {
@@ -47,16 +50,16 @@ function Database() {
         connectionUrl += `@${options.dbHostname}`;
         if (!options.mongodbSrv) { connectionUrl += `:${options.dbPort}`; }
         connectionUrl += `/${options.dbName}`;
-        if (isSSL) { opts.ssl = true; }
+        if (isSSL) { connectionOptionsMongoClient.ssl = true; }
       }
 
-      return MongoClient.connect(connectionUrl, opts)
+      return MongoClient.connect(connectionUrl, connectionOptionsMongoClient)
         .then(client => client.db(options.dbName));
     }
 
-    const needsEncryption = isSSL && (options.dbDialect === 'mssql');
+    const needsEncryption = isSSL && (databaseDialect === 'mssql');
 
-    const connectionOpts = {
+    const connectionOptionsSequelize = {
       logging: false,
       dialectOptions: {
         ssl: isSSL,
@@ -65,19 +68,19 @@ function Database() {
     };
 
     if (options.dbConnectionUrl) {
-      db = new Sequelize(options.dbConnectionUrl, connectionOpts);
+      connection = new Sequelize(options.dbConnectionUrl, connectionOptionsSequelize);
     } else {
-      connectionOpts.host = options.dbHostname;
-      connectionOpts.port = options.dbPort;
-      connectionOpts.dialect = options.dbDialect;
+      connectionOptionsSequelize.host = options.dbHostname;
+      connectionOptionsSequelize.port = options.dbPort;
+      connectionOptionsSequelize.dialect = databaseDialect;
 
-      db = new Sequelize(
+      connection = new Sequelize(
         options.dbName, options.dbUser,
-        options.dbPassword, connectionOpts,
+        options.dbPassword, connectionOptionsSequelize,
       );
     }
 
-    return sequelizeAuthenticate(db);
+    return sequelizeAuthenticate(connection);
   };
 }
 

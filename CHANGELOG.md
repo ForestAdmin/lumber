@@ -6,6 +6,7 @@
 - Command Generate - Stop asking for a port for the generated server and use "3000" as default value.
 - Environment variables - Expose all existing environment variables on server creation to educate users.
 - Install - Make `npm install` command silent to prevent useless logs.
+- Code Style - Rename some variables in `services/db.js`.
 
 ### Fixed
 - Prompt - Display consistent spacing across questions.
