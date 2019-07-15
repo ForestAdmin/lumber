@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.2.1 - 2019-07-15
 ### Changed
 - Build - Reduce package size removing assets folder from it.
 
