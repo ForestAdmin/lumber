@@ -35,7 +35,7 @@ function TableAnalyzer(db, config) {
 
   async function analyzePrimaryKeys(table) {
     const desc = await queryInterface.describeTable(table);
-    return Object.keys(desc).filter((column) => desc[column].primaryKey);
+    return Object.keys(desc).filter(column => desc[column].primaryKey);
   }
 
   function isColumnTypeEnum(columnName) {
