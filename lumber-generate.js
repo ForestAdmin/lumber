@@ -30,6 +30,7 @@ program
     config = await Prompter(program, [
       'dbConnectionUrl',
       'appName',
+      'ssl',
     ]);
   } else if (!program.db) {
     config = await Prompter(program, [
