@@ -102,13 +102,21 @@ function Dumper(config) {
     } else if (config.dbDialect === 'sqlite') {
       connectionString = `sqlite://${config.dbStorage}`;
     } else {
-      connectionString = `${config.dbDialect}://${config.dbUser}`;
-      if (config.dbPassword) {
-        // NOTICE: Encode password string in case of special chars.
-        connectionString += `:${encodeURIComponent(config.dbPassword)}`;
+      let protocol = config.dbDialect;
+      let port = `:${config.dbPort}`;
+      let password = '';
+
+      if (config.dbDialect === 'mongodb' && config.mongodbSrv) {
+        protocol = 'mongodb+srv';
+        port = '';
       }
 
-      connectionString += `@${config.dbHostname}:${config.dbPort}/${config.dbName}`;
+      if (config.dbPassword) {
+        // NOTICE: Encode password string in case of special chars.
+        password = `:${encodeURIComponent(config.dbPassword)}`;
+      }
+
+      connectionString = `${protocol}://${config.dbUser}${password}@${config.dbHostname}${port}/${config.dbName}`;
     }
 
     return connectionString;

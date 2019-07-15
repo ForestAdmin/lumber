@@ -13,6 +13,7 @@
 - Readme - Fix the readme according to the new behaviour.
 - Generate - Fix custom application host and port on ForestAdmin project generation.
 - Generate - Users using the connection option can now choose a SSL database connection.
+- MongoDB - Fix the generate command for MongoDB SRV database urls.
 
 ## RELEASE 2.1.4 - 2019-07-04
 ### Fixed

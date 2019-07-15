@@ -30,7 +30,8 @@ function Database() {
         databaseDialect = 'mysql';
       } else if (options.dbConnectionUrl.startsWith('mssql://')) {
         databaseDialect = 'mssql';
-      } else if (options.dbConnectionUrl.startsWith('mongodb://')) {
+      // NOTICE: For MongoDB can be "mongodb://" or "mongodb+srv://"
+      } else if (options.dbConnectionUrl.startsWith('mongodb')) {
         databaseDialect = 'mongodb';
       }
     } else {

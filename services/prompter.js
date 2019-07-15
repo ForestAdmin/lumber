@@ -26,6 +26,7 @@ async function Prompter(program, requests) {
 
     try {
       [, envConfig.dbDialect] = envConfig.dbConnectionUrl.match(/(.*):\/\//);
+      if (envConfig.dbDialect === 'mongodb+srv') { envConfig.dbDialect = 'mongodb'; }
     } catch (error) {
       logger.error('Cannot parse the database dialect. Please, check the syntax of the database connection string.');
       process.exit(1);

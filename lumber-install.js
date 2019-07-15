@@ -16,7 +16,9 @@ program
   // NOTICE: Load the environment variables from the .env to avoid always asking for the DB
   //         connection information.
   dotenv.load();
-  const dbDialect = process.env.DATABASE_URL.substring(process.env.DATABASE_URL.indexOf(':'));
+  let dbDialect = process.env.DATABASE_URL.substring(0, process.env.DATABASE_URL.indexOf(':'));
+  if (dbDialect === 'mongodb+srv') { dbDialect = 'mongodb'; }
+
   const config = {
     dbConnectionUrl: process.env.DATABASE_URL,
     dbSSL: ['true', true, '1', 1].includes(process.env.DATABASE_SSL),
