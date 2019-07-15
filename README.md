@@ -26,10 +26,10 @@ npm install -g lumber-cli
 ## See it in action
 
 ```
-$ npm install -g lumber-cli
+$ npm install -g lumber-cli -s
 $ lumber generate -c postgres://erlich:aviato@localhost:5432/meals Meals
 
-$ cd Meals/ && npm install
+$ cd Meals/ && npm install -s
 $ npm start
 
 Your application is listening on port 3000.

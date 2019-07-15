@@ -85,7 +85,7 @@ program
 
   console.log(`change directory: \n $ ${chalk.blue(`cd ${config.appName}`)}\n`);
 
-  console.log(`install dependencies: \n $ ${chalk.blue('npm install')}\n`);
+  console.log(`install dependencies: \n $ ${chalk.blue('npm install -s')}\n`);
   console.log(`run your application: \n $ ${chalk.blue('npm start')}\n`);
   process.exit(0);
 })().catch((error) => {
