@@ -6,10 +6,10 @@ services:
       dockerfile: Dockerfile
     container_name: <%= appName %>
     environment:
-      - APPLICATION_HOST=<%= hostname || 'http://localhost' %>
-      - APPLICATION_PORT=<%= port || 3000 %>
+      - APPLICATION_HOST=<%= hostname %>
+      - APPLICATION_PORT=<%= port %>
       - DATABASE_URL=<%= databaseUrl %>
-      - DATABASE_SCHEMA=<%= dbSchema || 'public' %>
+      - DATABASE_SCHEMA=<%= dbSchema %>
       - DATABASE_SSL=<%= ssl || 'false' %>
       - DATABASE_ENCRYPT=<%= encrypt || 'false' %>
       - AUTH_SECRET=<%= authSecret %>

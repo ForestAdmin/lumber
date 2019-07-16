@@ -6,6 +6,8 @@ const KeyGenerator = require('./key-generator');
 
 const mkdirp = P.promisify(mkdirpSync);
 
+const DEFAULT_PORT = 3000;
+
 function Dumper(config) {
   const path = `${process.cwd()}/${config.appName}`;
   const binPath = `${path}/bin`;
@@ -177,7 +179,7 @@ function Dumper(config) {
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
     const settings = {
-      port: config.appPort,
+      port: config.appPort || DEFAULT_PORT,
     };
 
     fs.writeFileSync(`${pathDest}/Dockerfile`, template(settings));
@@ -189,12 +191,12 @@ function Dumper(config) {
 
     const settings = {
       appName: config.appName,
-      hostname: config.appHostname,
-      port: config.appPort,
+      hostname: config.appHostname || 'http://localhost',
+      port: config.appPort || DEFAULT_PORT,
       databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
-      dbSchema: config.dbSchema,
+      dbSchema: config.dbSchema || 'public',
       authSecret,
     };
 
