@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.2.3 - 2019-07-16
 ### Fixed
 - Docker - Fix missing port in Docker files if generated using Docker.
 
