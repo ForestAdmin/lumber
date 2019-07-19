@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - Add an issue template to have better context for submitted issues.
 
 ## RELEASE 2.2.3 - 2019-07-16
 ### Fixed
