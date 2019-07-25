@@ -4,6 +4,9 @@
 ### Added
 - Technical - Add an issue template to have better context for submitted issues.
 
+### Fixed
+- Command Generate - Fix generate on database with a custom schema.
+
 ## RELEASE 2.2.3 - 2019-07-16
 ### Fixed
 - Docker - Fix missing port in Docker files if generated using Docker.

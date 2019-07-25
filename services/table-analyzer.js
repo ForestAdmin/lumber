@@ -33,8 +33,7 @@ function TableAnalyzer(db, config) {
       .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT });
   }
 
-  async function analyzePrimaryKeys(table) {
-    const desc = await queryInterface.describeTable(table);
+  async function analyzePrimaryKeys(desc) {
     return Object.keys(desc).filter(column => desc[column].primaryKey);
   }
 
@@ -114,7 +113,8 @@ function TableAnalyzer(db, config) {
 
   function analyzeTable(table) {
     return P
-      .all([analyzeFields(table), analyzeForeignKeys(table), analyzePrimaryKeys(table)])
+      .resolve(analyzeFields(table))
+      .then(schema => P.all([schema, analyzeForeignKeys(table), analyzePrimaryKeys(schema)]))
       .spread(async (schema, foreignKeys, primaryKeys) => {
         const fields = [];
         const references = [];
