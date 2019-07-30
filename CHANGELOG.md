@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Rename a the database analyzer service.
 
 ## RELEASE 2.2.4 - 2019-07-25
 ### Added

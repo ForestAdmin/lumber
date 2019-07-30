@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const program = require('commander');
 const chalk = require('chalk');
 const DB = require('./services/db');
-const TableAnalyzer = require('./services/table-analyzer');
+const DatabaseAnalyzer = require('./services/database-analyzer');
 const Migrator = require('./services/migrator');
 const Prompter = require('./services/prompter');
 const logger = require('./services/logger');
@@ -43,7 +43,7 @@ program
   }
 
   const db = await new DB().connect(config);
-  const schema = await new TableAnalyzer(db, config).perform();
+  const schema = await new DatabaseAnalyzer(db, config).perform();
   const migrator = new Migrator(config);
 
   // Detect new tables.

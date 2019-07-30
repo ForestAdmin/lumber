@@ -4,7 +4,7 @@ const program = require('commander');
 const logger = require('./services/logger');
 const importFrom = require('import-from');
 const DB = require('./services/db');
-const TableAnalyzer = require('./services/table-analyzer');
+const DatabaseAnalyzer = require('./services/database-analyzer');
 const inquirer = require('inquirer');
 const argv = require('minimist')(process.argv.slice(2));
 
@@ -37,7 +37,7 @@ program
   const pkg = importFrom(process.cwd(), program.args[0]);
 
   const db = await new DB().connect(config);
-  const schema = await new TableAnalyzer(db, config).perform();
+  const schema = await new DatabaseAnalyzer(db, config).perform();
   let promptConfig = {};
 
   if (_.isFunction(pkg.install)) {

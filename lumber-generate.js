@@ -3,7 +3,7 @@ const P = require('bluebird');
 const program = require('commander');
 const chalk = require('chalk');
 const DB = require('./services/db');
-const TableAnalyzer = require('./services/table-analyzer');
+const DatabaseAnalyzer = require('./services/database-analyzer');
 const Dumper = require('./services/dumper');
 const Prompter = require('./services/prompter');
 const logger = require('./services/logger');
@@ -67,7 +67,7 @@ program
   let schema = {};
   if (program.db) {
     const db = await new DB().connect(config);
-    schema = await new TableAnalyzer(db, config).perform();
+    schema = await new DatabaseAnalyzer(db, config).perform();
   }
 
   const dumper = await new Dumper(config);

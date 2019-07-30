@@ -2,7 +2,7 @@ const _ = require('lodash');
 const P = require('bluebird');
 const logger = require('./logger');
 
-function TableAnalyzer(db, config) {
+function DatabaseAnalyzer(db, config) {
   let queryInterface;
 
   function analyzeFields(table) {
@@ -236,4 +236,4 @@ function TableAnalyzer(db, config) {
   };
 }
 
-module.exports = TableAnalyzer;
+module.exports = DatabaseAnalyzer;
