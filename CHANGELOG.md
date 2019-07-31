@@ -3,7 +3,8 @@
 ## [Unreleased]
 ### Changed
 - Technical - Rename the database analyzer service.
-- Technical - Rename the database connection service. 
+- Technical - Rename the database connection service.
+- Technical - Split the database analyzer into several services. 
 
 ## RELEASE 2.2.4 - 2019-07-25
 ### Added
