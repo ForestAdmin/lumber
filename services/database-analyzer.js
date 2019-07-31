@@ -34,19 +34,20 @@ function DatabaseAnalyzer(databaseConnection, config) {
           const type = await columnTypeGetter.perform(columnInfo, columnName);
           const foreignKey = _.find(foreignKeys, { column_name: columnName });
 
-          if (foreignKey && foreignKey.foreign_table_name &&
-            foreignKey.column_name && !columnInfo.primaryKey) {
-            const ref = {
+          if (foreignKey
+            && foreignKey.foreign_table_name
+            && foreignKey.column_name && !columnInfo.primaryKey) {
+            const reference = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
               as: `_${foreignKey.column_name}`,
             };
 
             if (foreignKey.foreign_column_name !== 'id') {
-              ref.targetKey = foreignKey.foreign_column_name;
+              reference.targetKey = foreignKey.foreign_column_name;
             }
 
-            references.push(ref);
+            references.push(reference);
           } else if (type && columnName !== 'id') {
             const opts = { name: columnName, type, primaryKey: columnInfo.primaryKey };
             fields.push(opts);
