@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Default Values - Define fields with their default value.
+
 ### Changed
 - Technical - Rename the database analyzer service.
 - Technical - Rename the database connection service.
@@ -8,6 +11,7 @@
 
 ### Fixed
 - Models - Fix models template to prevent useless newlines.
+- Models - Fix missing "id" field definitions for fields that are not both of integer type and primary.  
 
 ## RELEASE 2.2.4 - 2019-07-25
 ### Added
