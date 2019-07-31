@@ -16,19 +16,18 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
       primaryKey: true <% } %>
     },<% }) %>
   }, {
-    tableName: '<%= table %>',
-    <% if (underscored) { %>underscored: true,<% } %>
-    <% if (!timestamps) { %>timestamps: false,<% } %>
-    <% if (schema) { %>schema: process.env.DATABASE_SCHEMA,<% } %>
+    tableName: '<%= table %>',<% if (underscored) { %>
+    underscored: true,<% } %><% if (!timestamps) { %>
+    timestamps: false,<% } %><% if (schema) { %>
+    schema: process.env.DATABASE_SCHEMA,<% } %>
   });
 
   Model.associate = (models) => {<% _.each(references, (reference) => { %>
     Model.belongsTo(models.<%= reference.ref %>, {
-      foreignKey: '<%= reference.foreignKey %>',
-      <% if (reference.targetKey) { %>targetKey: '<%= reference.targetKey %>',<% } %>
-      <% if (reference.as) { %>as: '<%= reference.as %>',<% } %>
-    });
-    <% }); %>
+      foreignKey: '<%= reference.foreignKey %>',<% if (reference.targetKey) { %>
+      targetKey: '<%= reference.targetKey %>',<% } %><% if (reference.as) { %>
+      as: '<%= reference.as %>',<% } %>
+    });<% }); %>
   };
 
   return Model;

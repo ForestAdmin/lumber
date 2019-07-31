@@ -4,7 +4,10 @@
 ### Changed
 - Technical - Rename the database analyzer service.
 - Technical - Rename the database connection service.
-- Technical - Split the database analyzer into several services. 
+- Technical - Split the database analyzer into several services.
+
+### Fixed
+- Models - Fix models template to prevent useless newlines.
 
 ## RELEASE 2.2.4 - 2019-07-25
 ### Added
