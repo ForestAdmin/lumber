@@ -2,7 +2,7 @@ const _ = require('lodash');
 const P = require('bluebird');
 const logger = require('./logger');
 
-function DatabaseAnalyzer(db, config) {
+function DatabaseAnalyzer(databaseConnection, config) {
   let queryInterface;
 
   function analyzeFields(table) {
@@ -58,7 +58,7 @@ function DatabaseAnalyzer(db, config) {
     const mysqlEnumRegex = /ENUM\((.*)\)/i;
 
     switch (type) {
-      case 'BIT': // MSSQL type
+      case 'BIT': // NOTICE: MSSQL type.
       case 'BOOLEAN':
         return 'BOOLEAN';
       case 'CHARACTER VARYING':
@@ -67,7 +67,7 @@ function DatabaseAnalyzer(db, config) {
       case (type.match(/TEXT.*/i) || {}).input:
       case (type.match(/VARCHAR.*/i) || {}).input:
       case (type.match(/CHAR.*/i) || {}).input:
-      case 'NVARCHAR': // MSSQL type
+      case 'NVARCHAR': // NOTICE: MSSQL type.
         return 'STRING';
       case 'USER-DEFINED': {
         if (queryInterface.sequelize.options.dialect === 'postgres' &&
@@ -150,7 +150,7 @@ function DatabaseAnalyzer(db, config) {
   async function sequelizeTableAnalyzer() {
     const schema = {};
 
-    queryInterface = db.getQueryInterface();
+    queryInterface = databaseConnection.getQueryInterface();
 
     // Build the db schema.
     await P.mapSeries(queryInterface.showAllTables({
@@ -177,7 +177,7 @@ function DatabaseAnalyzer(db, config) {
 
   function analyzeMongoCollection(collection) {
     return new P((resolve, reject) => {
-      db.collection(collection.name)
+      databaseConnection.collection(collection.name)
         /* eslint-disable */
         .mapReduce(function () {
           for (var key in this) {
@@ -218,22 +218,24 @@ function DatabaseAnalyzer(db, config) {
   function mongoTableAnalyzer() {
     const schema = {};
 
-    return db.collections()
+    return databaseConnection.collections()
       .then(collections => P.each(collections, async (item) => {
         const collection = item.s;
         // NOTICE: Ignore system collections.
         if (collection.name.startsWith('system.')) { return; }
 
         const analysis = await analyzeMongoCollection(collection);
-        schema[collection.name] = { fields: analysis, references: [], primaryKeys: ['_id'] };
+        schema[collection.name] = {
+          fields: analysis,
+          references: [],
+          primaryKeys: ['_id'],
+        };
       }))
       .then(() => schema);
   }
 
-  this.perform = async () => {
-    if (config.dbDialect === 'mongodb') { return mongoTableAnalyzer(); }
-    return sequelizeTableAnalyzer();
-  };
+  this.perform = async () =>
+    (config.dbDialect === 'mongodb' ? mongoTableAnalyzer() : sequelizeTableAnalyzer());
 }
 
 module.exports = DatabaseAnalyzer;
