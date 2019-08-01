@@ -48,9 +48,19 @@ function DatabaseAnalyzer(databaseConnection, config) {
             }
 
             references.push(reference);
-          } else if (type && columnName !== 'id') {
-            const opts = { name: columnName, type, primaryKey: columnInfo.primaryKey };
-            fields.push(opts);
+          } else if (type) {
+            // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
+            //         handle it automatically without necessary declaration.
+            if (!(columnName === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+              const field = {
+                name: columnName,
+                type,
+                primaryKey: columnInfo.primaryKey,
+                defaultValue: columnInfo.defaultValue,
+              };
+
+              fields.push(field);
+            }
           }
         });
 

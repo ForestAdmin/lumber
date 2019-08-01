@@ -10,10 +10,12 @@ const schema = mongoose.Schema({<% _.each(fields, (field) => { %>
 module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
 <% } else {
 %>module.exports = (sequelize, DataTypes) => {
+  const { Sequelize } = sequelize;
   const Model = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
     '<%= field.name %>': {
       type: DataTypes.<%= field.type %>,<% if (field.primaryKey) { %>
-      primaryKey: true <% } %>
+      primaryKey: true,<% } %><% if (field.defaultValue) { %>
+      defaultValue: Sequelize.literal('<%= field.defaultValue %>'),<% } %>
     },<% }) %>
   }, {
     tableName: '<%= table %>',<% if (underscored) { %>
