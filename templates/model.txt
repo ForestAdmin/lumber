@@ -14,8 +14,8 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
   const Model = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
     '<%= field.name %>': {
       type: DataTypes.<%= field.type %>,<% if (field.primaryKey) { %>
-      primaryKey: true, <% } %><% if (field.defaultValue) { %>
-      defaultValue: Sequelize.literal('<%= field.defaultValue %>'), <% } %>
+      primaryKey: true,<% } %><% if (field.defaultValue) { %>
+      defaultValue: Sequelize.literal('<%= field.defaultValue %>'),<% } %>
     },<% }) %>
   }, {
     tableName: '<%= table %>',<% if (underscored) { %>

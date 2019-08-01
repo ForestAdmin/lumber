@@ -11,7 +11,8 @@
 
 ### Fixed
 - Models - Fix models template to prevent useless newlines.
-- Models - Fix missing "id" field definitions for fields that are not both of integer type and primary.  
+- Models - Fix missing "id" field definitions for fields that are not both of integer type and primary.
+- Models - Remove some trailing spaces in generated models.
 
 ## RELEASE 2.2.4 - 2019-07-25
 ### Added
