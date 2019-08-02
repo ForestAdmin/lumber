@@ -57,6 +57,8 @@ function ColumnTypeGetter(databaseConnection) {
         return 'INTEGER';
       case 'BIGINT':
         return 'BIGINT';
+      case (type.match(/FLOAT.*/i) || {}).input:
+        return 'FLOAT';
       case 'NUMERIC':
       case 'DECIMAL':
       case 'REAL':

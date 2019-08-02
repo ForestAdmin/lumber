@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Default Values - Define fields with their default value.
+- Fields - Support Float types.
 
 ### Changed
 - Technical - Rename the database analyzer service.
