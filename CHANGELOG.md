@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.0 - 2019-08-02
 ### Added
 - Default Values - Define fields with their default value.
 - Fields - Support Float types.
