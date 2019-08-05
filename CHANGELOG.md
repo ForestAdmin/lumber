@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.1 - 2019-08-05
 ### Fixed
 - Command Update - Fix update with custom database schema.
 - Command Install - Fix install with custom database schema.
