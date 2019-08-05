@@ -1,8 +1,21 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.0 - 2019-08-02
+### Added
+- Default Values - Define fields with their default value.
+- Fields - Support Float types.
+
 ### Changed
-- Technical - Rename a the database analyzer service.
+- Technical - Rename the database analyzer service.
+- Technical - Rename the database connection service.
+- Technical - Split the database analyzer into several services.
+
+### Fixed
+- Models - Fix models template to prevent useless newlines.
+- Models - Fix missing "id" field definitions for fields that are not both of integer type and primary.
+- Models - Remove some trailing spaces in generated models.
 
 ## RELEASE 2.2.4 - 2019-07-25
 ### Added

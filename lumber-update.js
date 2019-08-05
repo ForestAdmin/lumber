@@ -2,7 +2,7 @@ const P = require('bluebird');
 const dotenv = require('dotenv');
 const program = require('commander');
 const chalk = require('chalk');
-const DB = require('./services/db');
+const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/database-analyzer');
 const Migrator = require('./services/migrator');
 const Prompter = require('./services/prompter');
@@ -17,7 +17,7 @@ program
   .parse(process.argv);
 
 (async () => {
-  // Load the environment variables from the .env to avoid always asking for the DB
+  // Load the environment variables from the .env to avoid always asking for the database
   // connection information.
   dotenv.load();
   let config;
@@ -44,8 +44,8 @@ program
 
   config.dbSchema = process.env.DATABASE_SCHEMA
 
-  const db = await new DB().connect(config);
-  const schema = await new DatabaseAnalyzer(db, config).perform();
+  const connection = await new Database().connect(config);
+  const schema = await new DatabaseAnalyzer(connection, config).perform();
   const migrator = new Migrator(config);
 
   // Detect new tables.

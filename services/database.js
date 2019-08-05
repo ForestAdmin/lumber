@@ -3,19 +3,15 @@ const { MongoClient } = require('mongodb');
 const logger = require('./logger');
 
 function Database() {
-  function error(err) {
-    logger.error(
-      'Cannot connect to the database due to the following error:',
-      err,
-    );
-
+  function handleAuthenticationError(error) {
+    logger.error('Cannot connect to the database due to the following error:', error);
     process.exit(1);
   }
 
-  function sequelizeAuthenticate(db) {
-    return db.authenticate()
-      .then(() => db)
-      .catch(err => error(err));
+  function sequelizeAuthenticate(connection) {
+    return connection.authenticate()
+      .then(() => connection)
+      .catch(error => handleAuthenticationError(error));
   }
 
   this.connect = (options) => {

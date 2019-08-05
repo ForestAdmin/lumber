@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const program = require('commander');
 const logger = require('./services/logger');
 const importFrom = require('import-from');
-const DB = require('./services/db');
+const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/database-analyzer');
 const inquirer = require('inquirer');
 const argv = require('minimist')(process.argv.slice(2));
@@ -13,7 +13,7 @@ program
   .parse(process.argv);
 
 (async () => {
-  // NOTICE: Load the environment variables from the .env to avoid always asking for the DB
+  // NOTICE: Load the environment variables from the .env to avoid always asking for the database
   //         connection information.
   dotenv.load();
   let dbDialect = process.env.DATABASE_URL.substring(0, process.env.DATABASE_URL.indexOf(':'));
@@ -37,8 +37,8 @@ program
 
   const pkg = importFrom(process.cwd(), program.args[0]);
 
-  const db = await new DB().connect(config);
-  const schema = await new DatabaseAnalyzer(db, config).perform();
+  const connection = await new Database().connect(config);
+  const schema = await new DatabaseAnalyzer(connection, config).perform();
   let promptConfig = {};
 
   if (_.isFunction(pkg.install)) {
