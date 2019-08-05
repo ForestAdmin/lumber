@@ -21,6 +21,7 @@ program
 
   const config = {
     dbConnectionUrl: process.env.DATABASE_URL,
+    dbSchema: process.env.DATABASE_SCHEMA,
     dbSSL: ['true', true, '1', 1].includes(process.env.DATABASE_SSL),
     dbDialect,
   };

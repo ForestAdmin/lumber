@@ -42,6 +42,8 @@ program
     process.exit(1);
   }
 
+  config.dbSchema = process.env.DATABASE_SCHEMA;
+
   const connection = await new Database().connect(config);
   const schema = await new DatabaseAnalyzer(connection, config).perform();
   const migrator = new Migrator(config);
