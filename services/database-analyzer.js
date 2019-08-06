@@ -48,10 +48,16 @@ function DatabaseAnalyzer(databaseConnection, config, options) {
           if (foreignKey
             && foreignKey.foreign_table_name
             && foreignKey.column_name && !columnInfo.primaryKey) {
+            let alias = _.camelCase(foreignKey.column_name);
+            if (alias.endsWith('Id') && alias.length > 2) {
+              alias = alias.substring(0, alias.length - 2);
+            } else if (alias.endsWith('Uuid') && alias.length > 4) {
+              alias = alias.substring(0, alias.length - 4);
+            }
             const reference = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
-              as: `_${foreignKey.column_name}`,
+              as: alias,
             };
 
             if (foreignKey.foreign_column_name !== 'id') {

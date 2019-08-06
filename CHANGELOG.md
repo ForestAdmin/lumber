@@ -6,6 +6,7 @@
 
 ### Changed
 - Command Generate - Camelize all field names.
+- Command Generate - Camelize all reference names and remove `id` or `uuid` from name.
 
 ### Fixed
 - Command Generate - Fix package name.
