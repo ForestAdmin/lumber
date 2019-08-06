@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix package name.
 
 ## RELEASE 2.3.1 - 2019-08-05
 ### Fixed

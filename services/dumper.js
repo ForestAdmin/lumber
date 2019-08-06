@@ -72,7 +72,7 @@ function Dumper(config) {
     }
 
     const pkg = {
-      name: config.appName.replace(/ /g, '_'),
+      name: config.appName.replace(/ /g, '_').toLowerCase(),
       version: '0.0.1',
       private: true,
       scripts: { start: 'node ./bin/www' },
