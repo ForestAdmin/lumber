@@ -1,13 +1,22 @@
 const _ = require('lodash');
 const P = require('bluebird');
+const chalk = require('chalk');
 const logger = require('./logger');
 const ColumnTypeGetter = require('./column-type-getter');
 const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
 
-function DatabaseAnalyzer(databaseConnection, config) {
+function DatabaseAnalyzer(databaseConnection, config, options) {
+  const withLogs = options ? options.withLogs : false;
+
   let queryInterface;
   let tableForeignKeysAnalyzer;
   let columnTypeGetter;
+
+  function log(message) {
+    if (withLogs) {
+      console.log(message);
+    }
+  }
 
   function analyzeFields(table) {
     return queryInterface.describeTable(table, { schema: config.dbSchema });
@@ -18,6 +27,8 @@ function DatabaseAnalyzer(databaseConnection, config) {
   }
 
   function analyzeTable(table) {
+    log(`Analyzing ${chalk.bold('table')} ${chalk.green(table)}`);
+
     return P
       .resolve(analyzeFields(table))
       .then(schema => P.all([
@@ -47,17 +58,32 @@ function DatabaseAnalyzer(databaseConnection, config) {
               reference.targetKey = foreignKey.foreign_column_name;
             }
 
+            log(`  Detected ${chalk.bold('relationship')} ${chalk.magenta(reference.as)}`);
+            log(`    with ${chalk.bold('reference to table')} ${chalk.cyan(reference.ref)}`);
+            log(`    with ${chalk.bold('foreign key')} ${chalk.cyan(reference.foreignKey)}`);
+            if (reference.targetKey) {
+              log(`    with ${chalk.bold('target key')} ${chalk.cyan(reference.targetKey)}`);
+            }
             references.push(reference);
           } else if (type) {
             // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
             //         handle it automatically without necessary declaration.
             if (!(columnName === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
               const field = {
+                cameCaseName: _.camelCase(columnName),
                 name: columnName,
                 type,
                 primaryKey: columnInfo.primaryKey,
                 defaultValue: columnInfo.defaultValue,
               };
+
+              const typeOfField = field.primaryKey ? 'primary key' : 'field';
+              log(`  Detected ${chalk.bold(typeOfField)} ${chalk.magenta(field.cameCaseName)}`);
+              log(`    with ${chalk.bold('column name')} ${chalk.cyan(field.name)}`);
+              log(`    with ${chalk.bold('type')} ${chalk.cyan(field.type)}`);
+              if (field.defaultValue !== undefined) {
+                log(`    with ${chalk.bold('defaultValue')} ${chalk.cyan(field.defaultValue)}`);
+              }
 
               fields.push(field);
             }
@@ -127,10 +153,9 @@ function DatabaseAnalyzer(databaseConnection, config) {
             if (err.message && err.message.startsWith('CMD_NOT_ALLOWED')) {
               logger.warn(`⚠️  [${collection.name}] CMD_NOT_ALLOWED: mapReduce. Please, write manually the Mongoose fields on this collection.  ⚠️`);
               logger.warn('If your database is hosted on MongoDB Atlas, it\'s probably due to the Free tier limitations. More info here: https://docs.atlas.mongodb.com/unsupported-commands\n');
-              results = [];
-            } else {
-              return reject(err);
+              return resolve([]);
             }
+            return reject(err);
           }
           /* eslint no-underscore-dangle: off */
           resolve(results.map(r => ({ name: r._id, type: r.value })));
