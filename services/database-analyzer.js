@@ -127,10 +127,9 @@ function DatabaseAnalyzer(databaseConnection, config) {
             if (err.message && err.message.startsWith('CMD_NOT_ALLOWED')) {
               logger.warn(`⚠️  [${collection.name}] CMD_NOT_ALLOWED: mapReduce. Please, write manually the Mongoose fields on this collection.  ⚠️`);
               logger.warn('If your database is hosted on MongoDB Atlas, it\'s probably due to the Free tier limitations. More info here: https://docs.atlas.mongodb.com/unsupported-commands\n');
-              results = [];
-            } else {
-              return reject(err);
+              return resolve([]);
             }
+            return reject(err);
           }
           /* eslint no-underscore-dangle: off */
           resolve(results.map(r => ({ name: r._id, type: r.value })));

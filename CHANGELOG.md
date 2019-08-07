@@ -4,6 +4,7 @@
 ### Fixed
 - Command Generate - Fix package name.
 - Command Generate - Remove trailing spaces in `.env`.
+- Technical - Apply ESLint rules to `database-analyzer`.
 
 ## RELEASE 2.3.1 - 2019-08-05
 ### Fixed
