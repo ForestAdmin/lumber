@@ -76,7 +76,7 @@ function DatabaseAnalyzer(databaseConnection, config, options) {
             //         handle it automatically without necessary declaration.
             if (!(columnName === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
               const field = {
-                cameCaseName: _.camelCase(columnName),
+                nameCamelCased: _.camelCase(columnName),
                 name: columnName,
                 type,
                 primaryKey: columnInfo.primaryKey,
@@ -84,7 +84,7 @@ function DatabaseAnalyzer(databaseConnection, config, options) {
               };
 
               const typeOfField = field.primaryKey ? 'primary key' : 'field';
-              log(`  Detected ${chalk.bold(typeOfField)} ${chalk.magenta(field.cameCaseName)}`);
+              log(`  Detected ${chalk.bold(typeOfField)} ${chalk.magenta(field.nameCamelCased)}`);
               log(`    with ${chalk.bold('column name')} ${chalk.cyan(field.name)}`);
               log(`    with ${chalk.bold('type')} ${chalk.cyan(field.type)}`);
               if (field.defaultValue !== undefined) {

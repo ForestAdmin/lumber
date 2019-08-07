@@ -11,7 +11,7 @@
 ### Fixed
 - Command Generate - Fix package name.
 - Command Generate - Remove trailing spaces in `.env`.
-- Command Generate - Do not duplicate `createAt` and `updatedAt` if not named as camelCase in database.
+- Command Generate - Do not duplicate `createdAt` and `updatedAt` if not named as camelCase in database.
 
 ## RELEASE 2.3.1 - 2019-08-05
 ### Fixed
