@@ -74,6 +74,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
             //         handle it automatically without necessary declaration.
             if (!(columnName === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
               const field = {
+                nameCamelCased: _.camelCase(columnName),
                 name: columnName,
                 type,
                 primaryKey: columnInfo.primaryKey,

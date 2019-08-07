@@ -117,10 +117,17 @@ function Dumper(config) {
   function writeModel(pathDest, table, fields, references, options) {
     const templatePath = `${__dirname}/../templates/model.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    const { underscored } = options;
+
+    const fieldsWithSetColumn = fields.map((field) => {
+      const shouldSetColumnName = (underscored && field.name !== _.snakeCase(field.nameCamelCased))
+        || (!underscored && field.nameCamelCased !== field.name);
+      return { ...field, setColumn: shouldSetColumnName };
+    });
 
     const text = template({
       table,
-      fields,
+      fields: fieldsWithSetColumn,
       references,
       ...options,
       schema: config.dbSchema,
