@@ -106,7 +106,7 @@ function DatabaseAnalyzer(databaseConnection, config, options) {
               };
 
               const defaultValueLog = field.defaultValue !== undefined ? `, defaultValue: ${chalk.cyan(JSON.stringify(field.defaultValue))}` : '';
-              log(`  Added field ${chalk.magenta(`"${field.camelCaseName}"`)} (column: ${chalk.cyan(`"${field.name}"`)}, type: ${chalk.cyan(field.type)}${defaultValueLog})`);
+              log(`  Added field ${chalk.magenta(`"${field.nameCamelCased}"`)} (column: ${chalk.cyan(`"${field.name}"`)}, type: ${chalk.cyan(field.type)}${defaultValueLog})`);
 
               fields.push(field);
             }
