@@ -1,13 +1,22 @@
 const _ = require('lodash');
 const P = require('bluebird');
+const chalk = require('chalk');
 const logger = require('./logger');
 const ColumnTypeGetter = require('./column-type-getter');
 const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
 
-function DatabaseAnalyzer(databaseConnection, config) {
+function DatabaseAnalyzer(databaseConnection, config, options) {
+  const withLogs = options ? options.withLogs : false;
+
   let queryInterface;
   let tableForeignKeysAnalyzer;
   let columnTypeGetter;
+
+  function log(message) {
+    if (withLogs) {
+      console.log(message);
+    }
+  }
 
   function analyzeFields(table) {
     return queryInterface.describeTable(table, { schema: config.dbSchema });
@@ -49,6 +58,8 @@ function DatabaseAnalyzer(databaseConnection, config) {
   }
 
   function analyzeTable(table) {
+    log(`Added ${chalk.bold('model')} ${chalk.green(`"${table}"`)} (table: ${chalk.green(`"${table}`)})`);
+
     return P
       .resolve(analyzeFields(table))
       .then(schema => P.all([
@@ -79,6 +90,8 @@ function DatabaseAnalyzer(databaseConnection, config) {
               reference.targetKey = foreignKey.foreign_column_name;
             }
 
+            const targetKeyLog = reference.targetKey ? `, ${chalk.bold('targetKey')}: ${chalk.cyan(`"${reference.targetKey}"`)}` : '';
+            log(`  Added ${chalk.bold('relationship')} ${chalk.magenta(`"${reference.as}"`)} (reference: ${chalk.cyan(`"${reference.ref}"`)}, foreignKey: ${chalk.cyan(`"${reference.foreignKey}"`)}${targetKeyLog})`);
             references.push(reference);
           } else if (type) {
             // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
@@ -91,6 +104,9 @@ function DatabaseAnalyzer(databaseConnection, config) {
                 primaryKey: columnInfo.primaryKey,
                 defaultValue: columnInfo.defaultValue,
               };
+
+              const defaultValueLog = field.defaultValue !== undefined ? `, defaultValue: ${chalk.cyan(JSON.stringify(field.defaultValue))}` : '';
+              log(`  Added field ${chalk.magenta(`"${field.camelCaseName}"`)} (column: ${chalk.cyan(`"${field.name}"`)}, type: ${chalk.cyan(field.type)}${defaultValueLog})`);
 
               fields.push(field);
             }

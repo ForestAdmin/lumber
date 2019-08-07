@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Command Generate - Add logs to explain what model, fields and relationships has been detected.
+
 ### Changed
 - Technical - Factorize duplicated code.
 - Command Generate - Normalize the fields name on generate inside models.
