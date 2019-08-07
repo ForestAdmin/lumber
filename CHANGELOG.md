@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- Command Generate - Add logs to explain what model, fields and relationships has been detected.
+- Command Generate - Add logs to explain what models, fields and relationships have been detected.
 
 ### Changed
 - Technical - Factorize duplicated code.

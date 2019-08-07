@@ -58,7 +58,7 @@ function DatabaseAnalyzer(databaseConnection, config, options) {
   }
 
   function analyzeTable(table) {
-    log(`Added ${chalk.bold('model')} ${chalk.green(`"${table}"`)} (table: ${chalk.green(`"${table}`)})`);
+    log(`Added ${chalk.bold('model')} ${chalk.green(`"${table}"`)} (table: ${chalk.green(`"${table}"`)})`);
 
     return P
       .resolve(analyzeFields(table))
@@ -105,8 +105,9 @@ function DatabaseAnalyzer(databaseConnection, config, options) {
                 defaultValue: columnInfo.defaultValue,
               };
 
+              const primaryKeyLog = field.primaryKey ? `, primaryKey: ${chalk.cyan(field.primaryKey)}` : '';
               const defaultValueLog = field.defaultValue !== undefined ? `, defaultValue: ${chalk.cyan(JSON.stringify(field.defaultValue))}` : '';
-              log(`  Added field ${chalk.magenta(`"${field.nameCamelCased}"`)} (column: ${chalk.cyan(`"${field.name}"`)}, type: ${chalk.cyan(field.type)}${defaultValueLog})`);
+              log(`  Added field ${chalk.magenta(`"${field.nameCamelCased}"`)} (column: ${chalk.cyan(`"${field.name}"`)}, type: ${chalk.cyan(field.type)}${primaryKeyLog}${defaultValueLog})`);
 
               fields.push(field);
             }
