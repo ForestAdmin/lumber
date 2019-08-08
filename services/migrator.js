@@ -3,7 +3,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const chalk = require('chalk');
 const logger = require('./logger');
-const { hasTimestamps, isUnderscored, getModelName } = require('../utils/model-generator-helper');
+const { getModelName } = require('../utils/model-generator-helper');
 
 function Migrator(config) {
   this.createModel = (schema, table) => {
