@@ -86,7 +86,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
         });
 
         const options = {
-          underscore: isUnderscored(fields),
+          underscored: isUnderscored(fields),
           timestamps: hasTimestamps(fields),
         };
 
