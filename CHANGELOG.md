@@ -4,6 +4,7 @@
 ### Changed
 - Technical - Factorize duplicated code.
 - Command Generate - Normalize the fields name on generate inside models.
+- Command Generate - Create better naming of belongsTo relationships.
 
 ### Fixed
 - Command Generate - Fix package name.
