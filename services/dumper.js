@@ -120,9 +120,9 @@ function Dumper(config) {
     const { underscored } = options;
 
     const fieldsWithSetColumn = fields.map((field) => {
-      const shouldSetColumnName = (underscored && field.name !== _.snakeCase(field.nameCamelCased))
-        || (!underscored && field.nameCamelCased !== field.name);
-      return { ...field, setColumn: shouldSetColumnName };
+      const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
+      const nameColumnUnconventional = field.nameColumn !== expectedConventionalColumnName;
+      return { ...field, nameColumnUnconventional };
     });
 
     const text = template({
