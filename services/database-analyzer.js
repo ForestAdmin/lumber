@@ -18,7 +18,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
   }
 
   function isUnderscored(fields) {
-    return fields.some(field => field.name.includes('_'));
+    return fields.some(field => field.nameColumn.includes('_'));
   }
 
   function hasTimestamps(fields) {
@@ -26,11 +26,11 @@ function DatabaseAnalyzer(databaseConnection, config) {
     let hasUpdatedAt = false;
 
     fields.forEach((field) => {
-      if (_.camelCase(field.name) === 'createdAt') {
+      if (field.name === 'createdAt') {
         hasCreatedAt = true;
       }
 
-      if (_.camelCase(field.name) === 'updatedAt') {
+      if (field.name === 'updatedAt') {
         hasUpdatedAt = true;
       }
     });
