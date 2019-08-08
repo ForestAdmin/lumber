@@ -119,7 +119,7 @@ function Dumper(config) {
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
 
-    const fieldsWithSetColumn = fields.map((field) => {
+    const fieldsDefinition = fields.map((field) => {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
       const nameColumnUnconventional = field.nameColumn !== expectedConventionalColumnName;
       return { ...field, nameColumnUnconventional };
@@ -127,7 +127,7 @@ function Dumper(config) {
 
     const text = template({
       table,
-      fields: fieldsWithSetColumn,
+      fields: fieldsDefinition,
       references,
       ...options,
       schema: config.dbSchema,
