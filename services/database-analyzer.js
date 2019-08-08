@@ -17,6 +17,33 @@ function DatabaseAnalyzer(databaseConnection, config) {
     return Object.keys(schema).filter(column => schema[column].primaryKey);
   }
 
+  function isUnderscored(fields) {
+    let underscored = false;
+
+    fields.forEach((field) => {
+      if (field.name.includes('_')) { underscored = true; }
+    });
+
+    return underscored;
+  }
+
+  function hasTimestamps(fields) {
+    let hasCreatedAt = false;
+    let hasUpdatedAt = false;
+
+    fields.forEach((field) => {
+      if (_.camelCase(field.name) === 'createdAt') {
+        hasCreatedAt = true;
+      }
+
+      if (_.camelCase(field.name) === 'updatedAt') {
+        hasUpdatedAt = true;
+      }
+    });
+
+    return hasCreatedAt && hasUpdatedAt;
+  }
+
   function analyzeTable(table) {
     return P
       .resolve(analyzeFields(table))
@@ -64,7 +91,12 @@ function DatabaseAnalyzer(databaseConnection, config) {
           }
         });
 
-        return [fields, references, primaryKeys];
+        const options = {
+          underscore: isUnderscored(fields),
+          timestamps: hasTimestamps(fields),
+        };
+
+        return [fields, references, primaryKeys, options];
       });
   }
 
@@ -84,7 +116,12 @@ function DatabaseAnalyzer(databaseConnection, config) {
       if (typeof table === 'object') { table = table.tableName; }
 
       const analysis = await analyzeTable(table);
-      schema[table] = { fields: analysis[0], references: analysis[1], primaryKeys: analysis[2] };
+      schema[table] = {
+        fields: analysis[0],
+        references: analysis[1],
+        primaryKeys: analysis[2],
+        options: analysis[3],
+      };
     });
 
     if (_.isEmpty(schema)) {

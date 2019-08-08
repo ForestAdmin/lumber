@@ -5,36 +5,9 @@ const chalk = require('chalk');
 const logger = require('./logger');
 
 function Migrator(config) {
-  function isUnderscored(fields) {
-    let underscored = false;
-
-    fields.forEach((f) => {
-      if (f.name.includes('_')) { underscored = true; }
-    });
-
-    return underscored;
-  }
-
-  function hasTimestamps(fields) {
-    let hasCreatedAt = false;
-    let hasUpdatedAt = false;
-
-    fields.forEach((f) => {
-      if (_.camelCase(f.name) === 'createdAt') {
-        hasCreatedAt = true;
-      }
-
-      if (_.camelCase(f.name) === 'updatedAt') {
-        hasUpdatedAt = true;
-      }
-    });
-
-    return hasCreatedAt && hasUpdatedAt;
-  }
-
   this.createModel = (schema, table) => {
     const modelPath = `${config.sourceDirectory}/models/${table}.js`;
-    const { fields, references } = schema[table];
+    const { fields, references, options } = schema[table];
 
     const templatePath = `${__dirname}/../templates/model.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
@@ -43,8 +16,8 @@ function Migrator(config) {
       table,
       fields,
       references,
-      underscored: isUnderscored(fields),
-      timestamps: hasTimestamps(fields),
+      underscored: options.underscored,
+      timestamps: options.timestamps,
       schema: config.dbSchema,
       dialect: config.dbDialect,
     });

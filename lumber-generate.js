@@ -77,6 +77,7 @@ program
       fields: schema[table].fields,
       references: schema[table].references,
       primaryKeys: schema[table].primaryKeys,
+      options: schema[table].options,
     });
   });
 
