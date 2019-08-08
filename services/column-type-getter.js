@@ -19,7 +19,8 @@ function ColumnTypeGetter(databaseConnection, schema) {
 
   function getTypeOfArrayForPostgres(table, columName) {
     const query = `
-      SELECT e.udt_name as "udtName", (CASE WHEN e.udt_name = 'hstore' THEN e.udt_name ELSE e.data_type END) || (CASE WHEN e.character_maximum_length IS NOT NULL THEN '(' || e.character_maximum_length || ')' ELSE '' END) as "type", (SELECT array_agg(en.enumlabel) FROM pg_catalog.pg_type t JOIN pg_catalog.pg_enum en ON t.oid=en.enumtypid WHERE t.typname=e.udt_name) AS "special"  FROM information_schema.columns c
+      SELECT e.udt_name as "udtName", (CASE WHEN e.udt_name = 'hstore' THEN e.udt_name ELSE e.data_type END) || (CASE WHEN e.character_maximum_length IS NOT NULL THEN '(' || e.character_maximum_length || ')' ELSE '' END) as "type", (SELECT array_agg(en.enumlabel) FROM pg_catalog.pg_type t JOIN pg_catalog.pg_enum en ON t.oid=en.enumtypid WHERE t.typname=e.udt_name) AS "special"
+      FROM information_schema.columns c
       LEFT JOIN information_schema.element_types e
       ON ((c.table_catalog, c.table_schema, c.table_name, 'TABLE', c.dtd_identifier) = (e.object_catalog, e.object_schema, e.object_name, e.object_type, e.collection_type_identifier))
       WHERE table_schema = '${schema}'
