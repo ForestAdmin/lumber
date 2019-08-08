@@ -38,6 +38,16 @@ function DatabaseAnalyzer(databaseConnection, config) {
     return hasCreatedAt && hasUpdatedAt;
   }
 
+  function formatAliasName(columnName) {
+    const alias = _.camelCase(columnName);
+    if (alias.endsWith('Id') && alias.length > 2) {
+      return alias.substring(0, alias.length - 2);
+    } else if (alias.endsWith('Uuid') && alias.length > 4) {
+      return alias.substring(0, alias.length - 4);
+    }
+    return alias;
+  }
+
   function analyzeTable(table) {
     return P
       .resolve(analyzeFields(table))
@@ -57,17 +67,12 @@ function DatabaseAnalyzer(databaseConnection, config) {
 
           if (foreignKey
             && foreignKey.foreign_table_name
-            && foreignKey.column_name && !columnInfo.primaryKey) {
-            let alias = _.camelCase(foreignKey.column_name);
-            if (alias.endsWith('Id') && alias.length > 2) {
-              alias = alias.substring(0, alias.length - 2);
-            } else if (alias.endsWith('Uuid') && alias.length > 4) {
-              alias = alias.substring(0, alias.length - 4);
-            }
+            && foreignKey.column_name
+            && !columnInfo.primaryKey) {
             const reference = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
-              as: alias,
+              as: formatAliasName(foreignKey.column_name),
             };
 
             if (foreignKey.foreign_column_name !== 'id') {
