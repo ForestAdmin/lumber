@@ -18,7 +18,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
   }
 
   function isUnderscored(fields) {
-    return fields.some(field => field.name.includes('_'));
+    return fields.some(field => field.nameColumn.includes('_'));
   }
 
   function hasTimestamps(fields) {
@@ -26,11 +26,11 @@ function DatabaseAnalyzer(databaseConnection, config) {
     let hasUpdatedAt = false;
 
     fields.forEach((field) => {
-      if (_.camelCase(field.name) === 'createdAt') {
+      if (field.name === 'createdAt') {
         hasCreatedAt = true;
       }
 
-      if (_.camelCase(field.name) === 'updatedAt') {
+      if (field.name === 'updatedAt') {
         hasUpdatedAt = true;
       }
     });
@@ -50,10 +50,10 @@ function DatabaseAnalyzer(databaseConnection, config) {
         const fields = [];
         const references = [];
 
-        await P.each(Object.keys(schema), async (columnName) => {
-          const columnInfo = schema[columnName];
-          const type = await columnTypeGetter.perform(columnInfo, columnName);
-          const foreignKey = _.find(foreignKeys, { column_name: columnName });
+        await P.each(Object.keys(schema), async (nameColumn) => {
+          const columnInfo = schema[nameColumn];
+          const type = await columnTypeGetter.perform(columnInfo, nameColumn);
+          const foreignKey = _.find(foreignKeys, { column_name: nameColumn });
 
           if (foreignKey
             && foreignKey.foreign_table_name
@@ -72,9 +72,10 @@ function DatabaseAnalyzer(databaseConnection, config) {
           } else if (type) {
             // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
             //         handle it automatically without necessary declaration.
-            if (!(columnName === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+            if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
               const field = {
-                name: columnName,
+                name: _.camelCase(nameColumn),
+                nameColumn,
                 type,
                 primaryKey: columnInfo.primaryKey,
                 defaultValue: columnInfo.defaultValue,
