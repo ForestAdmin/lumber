@@ -70,7 +70,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
 
         await P.each(Object.keys(schema), async (nameColumn) => {
           const columnInfo = schema[nameColumn];
-          const type = await columnTypeGetter.perform(columnInfo, nameColumn);
+          const type = await columnTypeGetter.perform(columnInfo, nameColumn, table);
           const foreignKey = _.find(foreignKeys, { column_name: nameColumn });
 
           if (foreignKey
@@ -125,7 +125,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
 
     queryInterface = databaseConnection.getQueryInterface();
     tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, config);
-    columnTypeGetter = new ColumnTypeGetter(databaseConnection);
+    columnTypeGetter = new ColumnTypeGetter(databaseConnection, config.dbSchema || 'public');
 
     // Build the db schema.
     await P.mapSeries(queryInterface.showAllTables({
