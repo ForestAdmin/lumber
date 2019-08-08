@@ -3,6 +3,9 @@ const P = require('bluebird');
 const logger = require('./logger');
 const ColumnTypeGetter = require('./column-type-getter');
 const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
+const lodashInflection = require('lodash-inflection');
+
+_.mixin(lodashInflection);
 
 function DatabaseAnalyzer(databaseConnection, config) {
   let queryInterface;
@@ -15,6 +18,11 @@ function DatabaseAnalyzer(databaseConnection, config) {
 
   async function analyzePrimaryKeys(schema) {
     return Object.keys(schema).filter(column => schema[column].primaryKey);
+  }
+
+  function formatModelName(table) {
+    const modelName = _.camelCase(_.singularize(table));
+    return `${modelName.charAt(0).toUpperCase()}${modelName.slice(1)}`;
   }
 
   function isUnderscored(fields) {
@@ -98,6 +106,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
         });
 
         const options = {
+          modelName: formatModelName(table),
           underscored: isUnderscored(fields),
           timestamps: hasTimestamps(fields),
         };

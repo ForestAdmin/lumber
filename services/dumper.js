@@ -3,7 +3,6 @@ const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
 const KeyGenerator = require('./key-generator');
-const { getModelName } = require('../utils/model-generator-helper');
 
 const mkdirp = P.promisify(mkdirpSync);
 
@@ -128,7 +127,6 @@ function Dumper(config) {
 
     const text = template({
       table,
-      modelName: getModelName(table),
       fields: fieldsDefinition,
       references,
       ...options,

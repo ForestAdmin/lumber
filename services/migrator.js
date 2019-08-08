@@ -3,7 +3,6 @@ const fs = require('fs');
 const _ = require('lodash');
 const chalk = require('chalk');
 const logger = require('./logger');
-const { getModelName } = require('../utils/model-generator-helper');
 
 function Migrator(config) {
   this.createModel = (schema, table) => {
@@ -15,7 +14,6 @@ function Migrator(config) {
 
     const text = template({
       table,
-      modelName: getModelName(table),
       fields,
       references,
       ...options,
