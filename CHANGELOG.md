@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Factorize duplicated code.
+
 ### Fixed
 - Command Generate - Fix package name.
 - Command Generate - Remove trailing spaces in `.env`.

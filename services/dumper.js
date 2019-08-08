@@ -16,33 +16,6 @@ function Dumper(config) {
   const modelsPath = `${path}/models`;
   const middlewaresPath = `${path}/middlewares`;
 
-  function isUnderscored(fields) {
-    let underscored = false;
-
-    fields.forEach((f) => {
-      if (f.name.includes('_')) { underscored = true; }
-    });
-
-    return underscored;
-  }
-
-  function hasTimestamps(fields) {
-    let hasCreatedAt = false;
-    let hasUpdatedAt = false;
-
-    fields.forEach((f) => {
-      if (_.camelCase(f.name) === 'createdAt') {
-        hasCreatedAt = true;
-      }
-
-      if (_.camelCase(f.name) === 'updatedAt') {
-        hasUpdatedAt = true;
-      }
-    });
-
-    return hasCreatedAt && hasUpdatedAt;
-  }
-
   function copyTemplate(from, to) {
     const newFrom = `${__dirname}/../templates/app/${from}`;
     fs.writeFileSync(to, fs.readFileSync(newFrom, 'utf-8'));
@@ -141,7 +114,7 @@ function Dumper(config) {
     fs.writeFileSync(`${pathDest}/.env`, template(settings));
   }
 
-  function writeModels(pathDest, table, fields, references) {
+  function writeModel(pathDest, table, fields, references, options) {
     const templatePath = `${__dirname}/../templates/model.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
@@ -149,8 +122,7 @@ function Dumper(config) {
       table,
       fields,
       references,
-      underscored: isUnderscored(fields),
-      timestamps: hasTimestamps(fields),
+      ...options,
       schema: config.dbSchema,
       dialect: config.dbDialect,
     });
@@ -219,8 +191,8 @@ function Dumper(config) {
     copyTemplate('middlewares/welcome/template.txt', `${middlewaresPath}/welcome/template.txt`);
   }
 
-  this.dump = (table, { fields, references }) => {
-    writeModels(path, table, fields, references);
+  this.dump = (table, { fields, references, options }) => {
+    writeModel(path, table, fields, references, options);
   };
 
   const dirs = [
