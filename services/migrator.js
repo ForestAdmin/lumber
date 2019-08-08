@@ -16,8 +16,7 @@ function Migrator(config) {
       table,
       fields,
       references,
-      underscored: options.underscored,
-      timestamps: options.timestamps,
+      ...options,
       schema: config.dbSchema,
       dialect: config.dbDialect,
     });

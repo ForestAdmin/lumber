@@ -18,13 +18,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
   }
 
   function isUnderscored(fields) {
-    let underscored = false;
-
-    fields.forEach((field) => {
-      if (field.name.includes('_')) { underscored = true; }
-    });
-
-    return underscored;
+    return fields.some(field => field.name.includes('_'));
   }
 
   function hasTimestamps(fields) {
@@ -96,7 +90,12 @@ function DatabaseAnalyzer(databaseConnection, config) {
           timestamps: hasTimestamps(fields),
         };
 
-        return [fields, references, primaryKeys, options];
+        return {
+          fields,
+          references,
+          primaryKeys,
+          options,
+        };
       });
   }
 
@@ -115,13 +114,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
       // eslint-disable-next-line no-param-reassign
       if (typeof table === 'object') { table = table.tableName; }
 
-      const analysis = await analyzeTable(table);
-      schema[table] = {
-        fields: analysis[0],
-        references: analysis[1],
-        primaryKeys: analysis[2],
-        options: analysis[3],
-      };
+      schema[table] = await analyzeTable(table);
     });
 
     if (_.isEmpty(schema)) {
