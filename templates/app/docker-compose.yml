@@ -6,8 +6,8 @@ services:
       dockerfile: Dockerfile
     container_name: <%= appName %>
     environment:
-      - APPLICATION_HOST=<%= hostname %>
-      - APPLICATION_PORT=<%= port %>
+      - APP_HOST=<%= hostname %>
+      - APP_PORT=<%= port %>
       - DATABASE_URL=<%= databaseUrl %>
       - DATABASE_SCHEMA=<%= dbSchema %>
       - DATABASE_SSL=<%= ssl || 'false' %>

@@ -1,5 +1,5 @@
-APPLICATION_HOST=<%= hostname || 'http://localhost' %>
-APPLICATION_PORT=<%= port || 3000 %>
+APP_HOST=<%= hostname || 'http://localhost' %>
+APP_PORT=<%= port || 3000 %>
 
 DATABASE_URL=<%= databaseUrl %>
 DATABASE_SCHEMA=<%= dbSchema || 'public' %>

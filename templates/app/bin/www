@@ -47,7 +47,7 @@ function onListening() {
   console.log(chalk.cyan(`Your application is listening on ${bind}.`));
 }
 
-const port = normalizePort(process.env.APPLICATION_PORT || '3000');
+const port = normalizePort(process.env.APP_PORT || '3000');
 app.set('port', port);
 
 const server = http.createServer(app);

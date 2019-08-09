@@ -198,8 +198,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('appHostname')) {
-    if (process.env.APPLICATION_HOST) {
-      envConfig.appHostname = process.env.APPLICATION_HOST;
+    if (process.env.APP_HOST) {
+      envConfig.appHostname = process.env.APP_HOST;
     } else {
       prompts.push({
         type: 'input',
@@ -211,8 +211,8 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('appPort')) {
-    if (process.env.APPLICATION_PORT) {
-      envConfig.appPort = process.env.APPLICATION_PORT;
+    if (process.env.APP_PORT) {
+      envConfig.appPort = process.env.APP_PORT;
     } else {
       prompts.push({
         type: 'input',

@@ -5,12 +5,14 @@
 - Technical - Factorize duplicated code.
 - Command Generate - Normalize the fields name on generate inside models.
 - Command Generate - Create better naming of belongsTo relationships.
+- Environment variables - Coherent naming between doc, lumber and lumber-forestadmin.
 
 ### Fixed
 - Command Generate - Fix package name.
 - Command Generate - Remove trailing spaces in `.env`.
 - Technical - Apply ESLint rules to `database-analyzer`.
 - Command Generate - Do not duplicate `createdAt` and `updatedAt` if not named as camelCase in database.
+- Environment variables - Fix application port env variable name.
 
 ## RELEASE 2.3.1 - 2019-08-05
 ### Fixed
