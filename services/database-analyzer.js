@@ -1,9 +1,10 @@
 const _ = require('lodash');
 const P = require('bluebird');
+const lodashInflection = require('lodash-inflection');
 const logger = require('./logger');
 const ColumnTypeGetter = require('./column-type-getter');
 const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
-const lodashInflection = require('lodash-inflection');
+const { getModelName } = require('../utils/model-generator-helper');
 
 _.mixin(lodashInflection);
 
@@ -78,7 +79,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
             && foreignKey.column_name
             && !columnInfo.primaryKey) {
             const reference = {
-              ref: foreignKey.foreign_table_name,
+              ref: getModelName(foreignKey.foreign_table_name),
               foreignKey: foreignKey.column_name,
               as: formatAliasName(foreignKey.column_name),
             };
