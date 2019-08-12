@@ -8,6 +8,7 @@
 - Command Generate - Change model name on generate to have more conventional naming.
 - Command Generate - Improve visibility on type ENUM with one line per value.
 - Readme - Improve the community section.
+- Readme - Remove the Licence section as it it not the right one and it is already accessible in the Github page header.
 
 ### Fixed
 - Command Generate - Fix package name.

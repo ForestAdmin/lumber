@@ -47,10 +47,6 @@ Finally, visit http://localhost:3000.
 - `run <plugin:cmd>` run a command from a Lumber plugin.
 - `help [cmd]`    display help for [cmd]
 
-## License
-
-[GPL](https://github.com/ForestAdmin/Lumber/blob/master/LICENSE)
-
 ## Contribute
 
 To publish the docker image:
