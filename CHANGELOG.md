@@ -7,6 +7,7 @@
 - Command Generate - Create better naming of belongsTo relationships.
 - Command Generate - Change model name on generate to have more conventional naming.
 - Command Generate - Improve visibility on type ENUM with one line per value.
+- Readme - Improve the community section.
 
 ### Fixed
 - Command Generate - Fix package name.

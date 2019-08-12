@@ -47,12 +47,6 @@ Finally, visit http://localhost:3000.
 - `run <plugin:cmd>` run a command from a Lumber plugin.
 - `help [cmd]`    display help for [cmd]
 
-## Community
-
-👇 Join our Slack community of +1000 developers
-
-<img src="http://community.forestadmin.com/badge.svg">
-
 ## License
 
 [GPL](https://github.com/ForestAdmin/Lumber/blob/master/LICENSE)
@@ -65,3 +59,9 @@ docker build -t forestadmin/lumber .
 docker login
 docker push forestadmin/lumber
 ```
+
+## Community
+
+👇 Join our Slack community of +1000 developers
+
+[![Slack Status](https://community.forestadmin.com/badge.svg)](https://community.forestadmin.com)
