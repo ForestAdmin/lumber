@@ -6,12 +6,14 @@
 - Command Generate - Normalize the fields name on generate inside models.
 - Command Generate - Create better naming of belongsTo relationships.
 - Command Generate - Change model name on generate to have more conventional naming.
+- Command Generate - Improve visibility on type ENUM with one line per value.
 
 ### Fixed
 - Command Generate - Fix package name.
 - Command Generate - Remove trailing spaces in `.env`.
 - Technical - Apply ESLint rules to `database-analyzer`.
 - Command Generate - Do not duplicate `createdAt` and `updatedAt` if not named as camelCase in database.
+- Command Generate - Fix generation of field with type array.
 
 ## RELEASE 2.3.1 - 2019-08-05
 ### Fixed
