@@ -51,7 +51,9 @@ Finally, visit http://localhost:3000.
 
 👇 Join our Slack community of +1000 developers
 
+<a href="https://community.forestadmin.com/">
 <img src="http://community.forestadmin.com/badge.svg">
+</a>
 
 ## License
 
