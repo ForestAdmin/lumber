@@ -15,6 +15,7 @@
 - Command Generate - Improve visibility on type ENUM with one line per value.
 - Readme - Improve the community section.
 - Readme - Remove the Licence section as it it not the right one and it is already accessible in the Github page header.
+- Command Generate - Ask for application host/port when using a connection url.
 
 ### Fixed
 - Command Generate - Fix package name.
