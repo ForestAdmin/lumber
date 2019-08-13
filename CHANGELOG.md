@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix application host/port usage by asking for it in lumber generate.
 
 ## RELEASE 2.3.2 - 2019-08-14
 ### Added
