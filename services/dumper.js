@@ -125,10 +125,30 @@ function Dumper(config) {
       return { ...field, nameColumnUnconventional };
     });
 
+    const referencesDefinition = references.map((reference) => {
+      const expectedConventionalForeignKeyName = underscored
+        ? _.snakeCase(reference.foreignKey) : reference.foreignKey;
+      const foreignKeyColumnUnconventional =
+        reference.foreignKey !== expectedConventionalForeignKeyName;
+
+      if (reference.targetKey) {
+        const expectedConventionalTargetKeyName = underscored
+          ? _.snakeCase(reference.targetKey) : reference.targetKey;
+        const targetKeyColumnUnconventional =
+          reference.targetKey !== expectedConventionalTargetKeyName;
+        return {
+          ...reference,
+          foreignKeyColumnUnconventional,
+          targetKeyColumnUnconventional,
+        };
+      }
+      return { ...reference, foreignKeyColumnUnconventional };
+    });
+
     const text = template({
       table,
       fields: fieldsDefinition,
-      references,
+      references: referencesDefinition,
       ...options,
       schema: config.dbSchema,
       dialect: config.dbDialect,

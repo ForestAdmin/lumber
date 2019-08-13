@@ -26,7 +26,8 @@ function DatabaseAnalyzer(databaseConnection, config) {
   }
 
   function isUnderscored(fields) {
-    return fields.some(field => field.nameColumn.includes('_'));
+    return fields.every(field => field.nameColumn === _.snakeCase(field.columnName))
+      && fields.some(field => field.nameColumn.includes('_'));
   }
 
   function hasTimestamps(fields) {
