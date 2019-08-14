@@ -20,6 +20,8 @@
 - Command Generate - Do not duplicate `createdAt` and `updatedAt` if not named as camelCase in database.
 - Command Generate - Fix generation of field with type array.
 - Command Generate - Prevent internal errors for Mongoose databases having collections without name.
+- Command Generate - Fix generation of relationship if foreign key is unconventional.
+- Command Generate - Declare table as underscored only if all fields respect the convention.
 
 ## RELEASE 2.3.1 - 2019-08-05
 ### Fixed

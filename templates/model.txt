@@ -27,8 +27,14 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
 
   Model.associate = (models) => {<% _.each(references, (reference) => { %>
     Model.belongsTo(models.<%= reference.ref %>, {
-      foreignKey: '<%= reference.foreignKey %>',<% if (reference.targetKey) { %>
-      targetKey: '<%= reference.targetKey %>',<% } %><% if (reference.as) { %>
+      foreignKey: {
+        name: '<%= reference.foreignKey %>',<% if (reference.foreignKeyColumnUnconventional) { %>
+        field: '<%= reference.foreignKey %>',<% } %>
+      },<% if (reference.targetKey) { %>
+      targetKey: {
+        name: '<%= reference.targetKey %>',<% if (reference.targetKeyColumnUnconventional) { %>
+        field: '<%= reference.targetKey %>',<% } %>
+      },<% } %><% if (reference.as) { %>
       as: '<%= reference.as %>',<% } %>
     });<% }); %>
   };
