@@ -1,11 +1,8 @@
 const _ = require('lodash');
 const P = require('bluebird');
-const lodashInflection = require('lodash-inflection');
 const logger = require('./logger');
 const ColumnTypeGetter = require('./column-type-getter');
 const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
-
-_.mixin(lodashInflection);
 
 function DatabaseAnalyzer(databaseConnection, config) {
   let queryInterface;
@@ -18,11 +15,6 @@ function DatabaseAnalyzer(databaseConnection, config) {
 
   async function analyzePrimaryKeys(schema) {
     return Object.keys(schema).filter(column => schema[column].primaryKey);
-  }
-
-  function formatModelName(table) {
-    const modelName = _.camelCase(_.singularize(table));
-    return `${modelName.charAt(0).toUpperCase()}${modelName.slice(1)}`;
   }
 
   function isUnderscored(fields) {
@@ -79,7 +71,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
             && foreignKey.column_name
             && !columnInfo.primaryKey) {
             const reference = {
-              ref: formatModelName(foreignKey.foreign_table_name),
+              ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
               as: formatAliasName(foreignKey.column_name),
             };
@@ -107,7 +99,6 @@ function DatabaseAnalyzer(databaseConnection, config) {
         });
 
         const options = {
-          modelName: formatModelName(table),
           underscored: isUnderscored(fields),
           timestamps: hasTimestamps(fields),
         };

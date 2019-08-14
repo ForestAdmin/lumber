@@ -8,7 +8,6 @@
 - Technical - Factorize duplicated code.
 - Command Generate - Normalize the fields name on generate inside models.
 - Command Generate - Create better naming of belongsTo relationships.
-- Command Generate - Change model name on generate to have more conventional naming.
 - Command Generate - Improve visibility on type ENUM with one line per value.
 - Readme - Improve the community section.
 - Readme - Remove the Licence section as it it not the right one and it is already accessible in the Github page header.

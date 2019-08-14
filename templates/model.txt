@@ -11,7 +11,7 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
 <% } else {
 %>module.exports = (sequelize, DataTypes) => {
   const { Sequelize } = sequelize;
-  const Model = sequelize.define('<%= modelName %>', {<% _.each(fields, (field) => { %>
+  const Model = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
     <%= field.name %>: {
       type: DataTypes.<%= field.type %>,<% if (field.nameColumnUnconventional) { %>
       field: '<%= field.nameColumn %>',<% } %><% if (field.primaryKey) { %>
