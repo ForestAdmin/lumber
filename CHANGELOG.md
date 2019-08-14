@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
-- Command Generate - Fix application host/port usage by asking for it in lumber generate.
+- Command Generate - Fix application host/port usage when using a connection url or Docker.
 
 ## RELEASE 2.3.2 - 2019-08-14
 ### Added
@@ -15,7 +15,6 @@
 - Command Generate - Improve visibility on type ENUM with one line per value.
 - Readme - Improve the community section.
 - Readme - Remove the Licence section as it it not the right one and it is already accessible in the Github page header.
-- Command Generate - Ask for application host/port when using a connection url.
 
 ### Fixed
 - Command Generate - Fix package name.
