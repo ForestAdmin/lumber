@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.2 - 2019-08-14
 ### Added
 - Readme - Add a badge for the NPM package version.
 
