@@ -194,6 +194,9 @@ function DatabaseAnalyzer(databaseConnection, config) {
     return databaseConnection.collections()
       .then(collections => P.each(collections, async (item) => {
         const collection = item.s;
+        // NOTICE: Defensive programming
+        if (!collection || !collection.name) { return; }
+
         // NOTICE: Ignore system collections.
         if (collection.name.startsWith('system.')) { return; }
 

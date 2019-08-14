@@ -19,6 +19,7 @@
 - Technical - Apply ESLint rules to `database-analyzer`.
 - Command Generate - Do not duplicate `createdAt` and `updatedAt` if not named as camelCase in database.
 - Command Generate - Fix generation of field with type array.
+- Command Generate - Prevent internal errors for Mongoose databases having collections without name.
 
 ## RELEASE 2.3.1 - 2019-08-05
 ### Fixed
