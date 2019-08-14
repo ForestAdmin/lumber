@@ -3,14 +3,18 @@ const fs = require('fs');
 const _ = require('lodash');
 const chalk = require('chalk');
 const logger = require('./logger');
+const TableHelper = require('../utils/table-helper');
 
 function Migrator(config) {
   this.createModel = (schema, table) => {
     const modelPath = `${config.sourceDirectory}/models/${table}.js`;
-    const { fields, references, options } = schema[table];
+    const {
+      fields, references, options, primaryKeys,
+    } = schema[table];
 
     const templatePath = `${__dirname}/../templates/model.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    const hasIdColumn = TableHelper.hasIdColumn(fields, primaryKeys);
 
     const text = template({
       table,
@@ -19,6 +23,7 @@ function Migrator(config) {
       ...options,
       schema: config.dbSchema,
       dialect: config.dbDialect,
+      hasIdColumn,
     });
 
     fs.writeFileSync(modelPath, text);

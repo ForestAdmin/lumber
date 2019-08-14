@@ -25,6 +25,8 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
     schema: process.env.DATABASE_SCHEMA,<% } %>
   });
 
+  <% if (!hasIdColumn) {%>Model.removeAttribute('id');<% } %>
+
   Model.associate = (models) => {<% _.each(references, (reference) => { %>
     Model.belongsTo(models.<%= reference.ref %>, {
       foreignKey: {

@@ -1,4 +1,9 @@
 # Change Log
+### Added
+- Technical - Add `yarn.lock` to `.gitignore`
+
+### Fixed
+- Models - Remove attribute `id` when column is missing.
 
 ## [Unreleased]
 ### Fixed
