@@ -1,13 +1,12 @@
 # Change Log
+
+## [Unreleased]
 ### Added
 - Technical - Add `yarn.lock` to `.gitignore`
 
 ### Fixed
-- Models - Remove attribute `id` when column is missing.
-
-## [Unreleased]
-### Fixed
 - Command Generate - Fix application host/port usage when using a connection url or Docker.
+- Models - Remove attribute `id` when column is missing.
 
 ## RELEASE 2.3.2 - 2019-08-14
 ### Added
