@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Readme - Add a badge for the NPM package version.
+
 ### Changed
 - Technical - Factorize duplicated code.
 - Command Generate - Normalize the fields name on generate inside models.

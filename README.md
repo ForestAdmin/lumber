@@ -1,4 +1,5 @@
 # Lumber
+[![npm package](https://badge.fury.io/js/lumber-cli.svg)](https://badge.fury.io/js/lumber-cli)
 
 <p align="center">
   <img src="https://github.com/ForestAdmin/lumber/blob/master/assets/lumber-logo.png?raw=true" alt="Lumber logo">
