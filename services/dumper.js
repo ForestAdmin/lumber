@@ -3,7 +3,6 @@ const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
 const KeyGenerator = require('./key-generator');
-const TableHelper = require('../utils/table-helper');
 
 const mkdirp = P.promisify(mkdirpSync);
 
@@ -115,11 +114,10 @@ function Dumper(config) {
     fs.writeFileSync(`${pathDest}/.env`, template(settings));
   }
 
-  function writeModel(pathDest, table, fields, references, primaryKeys, options) {
+  function writeModel(pathDest, table, fields, references, options) {
     const templatePath = `${__dirname}/../templates/model.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
-    const hasIdColumn = TableHelper.hasIdColumn(fields, primaryKeys);
 
     const fieldsDefinition = fields.map((field) => {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
@@ -154,7 +152,6 @@ function Dumper(config) {
       ...options,
       schema: config.dbSchema,
       dialect: config.dbDialect,
-      hasIdColumn,
     });
 
     fs.writeFileSync(`${pathDest}/models/${table}.js`, text);
@@ -221,10 +218,8 @@ function Dumper(config) {
     copyTemplate('middlewares/welcome/template.txt', `${middlewaresPath}/welcome/template.txt`);
   }
 
-  this.dump = (table, {
-    fields, references, primaryKeys, options,
-  }) => {
-    writeModel(path, table, fields, references, primaryKeys, options);
+  this.dump = (table, { fields, references, options }) => {
+    writeModel(path, table, fields, references, options);
   };
 
   const dirs = [

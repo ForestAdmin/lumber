@@ -1,7 +1,7 @@
 # Change Log
 
 ## [Unreleased]
-### Added
+### Changed
 - Technical - Add `yarn.lock` to `.gitignore`
 
 ### Fixed
