@@ -5,7 +5,7 @@ RUN npm install -g lumber-cli -s
 
 VOLUME /usr/src/app
 
-EXPOSE 3000
+EXPOSE $APPLICATION_PORT
 CMD lumber generate $APP_NAME -c $DATABASE_URL && \
   cd $APP_NAME && \
   npm install -s

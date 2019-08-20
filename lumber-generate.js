@@ -31,6 +31,8 @@ program
       'dbConnectionUrl',
       'appName',
       'ssl',
+      'appHostname',
+      'appPort',
     ]);
   } else if (!program.db) {
     config = await Prompter(program, [

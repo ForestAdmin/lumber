@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix application host/port usage when using a connection url or Docker.
 
 ## RELEASE 2.3.2 - 2019-08-14
 ### Added
