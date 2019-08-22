@@ -6,7 +6,7 @@
 
 ### Fixed
 - Command Generate - Fix application host/port usage when using a connection url or Docker.
-- Models - Remove attribute `id` when column is missing.
+- Models - Prevent bad Sequelize model generation if origin table does not contain `id` column nor primary keys.
 
 ## RELEASE 2.3.2 - 2019-08-14
 ### Added
