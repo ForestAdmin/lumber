@@ -1,8 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Add `yarn.lock` to `.gitignore`
+
 ### Fixed
 - Command Generate - Fix application host/port usage when using a connection url or Docker.
+- Models - Prevent bad Sequelize model generation if origin table does not contain `id` column nor primary keys.
 
 ## RELEASE 2.3.2 - 2019-08-14
 ### Added

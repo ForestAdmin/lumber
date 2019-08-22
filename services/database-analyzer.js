@@ -49,6 +49,12 @@ function DatabaseAnalyzer(databaseConnection, config) {
     return alias;
   }
 
+  // NOTICE: Look for the id column in both fields and primary keys.
+  function hasIdColumn(fields, primaryKeys) {
+    return fields.some(field => field.name === 'id' || field.nameColumn === 'id')
+      || _.includes(primaryKeys, 'id');
+  }
+
   function analyzeTable(table) {
     return P
       .resolve(analyzeFields(table))
@@ -101,6 +107,8 @@ function DatabaseAnalyzer(databaseConnection, config) {
         const options = {
           underscored: isUnderscored(fields),
           timestamps: hasTimestamps(fields),
+          hasIdColumn: hasIdColumn(fields, primaryKeys),
+          hasPrimaryKeys: !_.isEmpty(primaryKeys),
         };
 
         return {
