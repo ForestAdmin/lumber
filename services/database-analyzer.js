@@ -108,6 +108,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
           underscored: isUnderscored(fields),
           timestamps: hasTimestamps(fields),
           hasIdColumn: hasIdColumn(fields, primaryKeys),
+          hasPrimaryKeys: !_.isEmpty(primaryKeys),
         };
 
         return {
