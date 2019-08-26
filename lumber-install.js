@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const program = require('commander');
 const logger = require('./services/logger');
 const importFrom = require('import-from');
+const Caster = require('./services/caster');
 const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/database-analyzer');
 const inquirer = require('inquirer');
@@ -22,7 +23,7 @@ program
   const config = {
     dbConnectionUrl: process.env.DATABASE_URL,
     dbSchema: process.env.DATABASE_SCHEMA,
-    dbSSL: ['true', true, '1', 1].includes(process.env.DATABASE_SSL),
+    dbSSL: new Caster().toBoolean(process.env.DATABASE_SSL),
     dbDialect,
   };
 

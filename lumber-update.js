@@ -2,6 +2,7 @@ const P = require('bluebird');
 const dotenv = require('dotenv');
 const program = require('commander');
 const chalk = require('chalk');
+const Caster = require('./services/caster');
 const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/database-analyzer');
 const Migrator = require('./services/migrator');
@@ -43,6 +44,7 @@ program
   }
 
   config.dbSchema = process.env.DATABASE_SCHEMA;
+  config.dbSSL = new Caster().toBoolean(process.env.DATABASE_SSL);
 
   const connection = await new Database().connect(config);
   const schema = await new DatabaseAnalyzer(connection, config).perform();

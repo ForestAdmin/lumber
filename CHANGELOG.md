@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Update - Use SSL for database connections configured with SSL on `lumber update` commands.
 
 ## RELEASE 2.3.3 - 2019-08-22
 ### Changed
