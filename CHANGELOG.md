@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.5 - 2019-08-26
 ### Fixed
 - Release - Fix previous broken release.
 
