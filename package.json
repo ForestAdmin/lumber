@@ -1,7 +1,7 @@
 {
   "name": "lumber-cli",
   "description": "Create your backend application in minutes. GraphQL API backend based on a database schema",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "main": "lumber.js",
   "scripts": {
     "test": "ava",
