@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Release - Fix previous broken release.
 
 ## RELEASE 2.3.4 - 2019-08-26
 ### Fixed
