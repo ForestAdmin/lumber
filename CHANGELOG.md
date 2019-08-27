@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix underscored true not set when it should.
 
 ## RELEASE 2.3.5 - 2019-08-26
 ### Fixed
