@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.7 - 2019-08-28
 ### Fixed
 - Command Generate - Fix generation of field when table is underscored and field contains digits.
 
