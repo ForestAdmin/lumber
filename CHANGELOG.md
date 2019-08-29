@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
 - Command Generate - Fix install of lumber-forestadmin when using mysql with no schema.
 
