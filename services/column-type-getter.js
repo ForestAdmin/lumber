@@ -99,6 +99,8 @@ function ColumnTypeGetter(databaseConnection, schema) {
       case 'TIMESTAMP WITH TIME ZONE':
       case 'TIMESTAMP WITHOUT TIME ZONE':
         return 'DATE';
+      case 'TIME':
+        return 'TIME';
       case 'ARRAY': {
         if (queryInterface.sequelize.options.dialect !== 'postgres') {
           return null;

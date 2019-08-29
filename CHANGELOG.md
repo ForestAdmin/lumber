@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Command Generate - Add support for `INET` and `DOUBLE` types.
+- Command Generate - Add support for `TIME` type.
 
 ## RELEASE 2.3.7 - 2019-08-28
 ### Fixed
