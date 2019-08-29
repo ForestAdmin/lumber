@@ -196,7 +196,7 @@ function Dumper(config) {
       databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
-      dbSchema: config.dbSchema || 'public',
+      dbSchema: config.dbSchema,
       authSecret,
     };
 

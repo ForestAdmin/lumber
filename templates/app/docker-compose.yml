@@ -8,8 +8,8 @@ services:
     environment:
       - APPLICATION_HOST=<%= hostname %>
       - APPLICATION_PORT=<%= port %>
-      - DATABASE_URL=<%= databaseUrl %>
-      - DATABASE_SCHEMA=<%= dbSchema %>
+      - DATABASE_URL=<%= databaseUrl %><% if (dbSchema) { %>
+      - DATABASE_SCHEMA=<%= dbSchema %><% } %>
       - DATABASE_SSL=<%= ssl || 'false' %>
       - DATABASE_ENCRYPT=<%= encrypt || 'false' %>
       - AUTH_SECRET=<%= authSecret %>
