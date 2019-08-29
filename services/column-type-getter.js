@@ -88,6 +88,7 @@ function ColumnTypeGetter(databaseConnection, schema) {
       case 'NUMERIC':
       case 'DECIMAL':
       case 'REAL':
+      case 'DOUBLE':
       case 'DOUBLE PRECISION':
       case (type.match(/DECIMAL.*/i) || {}).input:
       case 'MONEY': // MSSQL type
@@ -106,6 +107,8 @@ function ColumnTypeGetter(databaseConnection, schema) {
         const innerColumnInfo = await getTypeOfArrayForPostgres(tableName, columnName);
         return `ARRAY(DataTypes.${await this.perform(innerColumnInfo, innerColumnInfo.udtName, tableName)})`;
       }
+      case 'INET':
+        return 'INET';
       default:
         console.error(`Type ${type} is not handled`);
         return null;

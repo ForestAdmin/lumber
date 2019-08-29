@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Add support for `INET` and `DOUBLE` types.
 
 ## RELEASE 2.3.7 - 2019-08-28
 ### Fixed
