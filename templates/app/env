@@ -1,8 +1,8 @@
 APPLICATION_HOST=<%= hostname || 'http://localhost' %>
 APPLICATION_PORT=<%= port || 3000 %>
 
-DATABASE_URL=<%= databaseUrl %>
-DATABASE_SCHEMA=<%= dbSchema || 'public' %>
+DATABASE_URL=<%= databaseUrl %><% if (dbSchema) { %>
+DATABASE_SCHEMA=<%= dbSchema %><% } %>
 DATABASE_SSL=<%= ssl || 'false' %>
 DATABASE_ENCRYPT=<%= encrypt || 'false' %>
 
