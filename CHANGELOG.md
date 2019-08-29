@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.8 - 2019-08-29
 ### Fixed
 - Command Generate - Add support for `INET` and `DOUBLE` types.
 - Command Generate - Add support for `TIME` type.
