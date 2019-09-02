@@ -28,6 +28,7 @@ npm install -g lumber-cli -s
 
 ```
 $ npm install -g lumber-cli -s
+$ docker run -p 5432:5432 forestadmin/meals-database
 $ lumber generate -c postgres://erlich:aviato@localhost:5432/meals Meals
 
 $ cd Meals/ && npm install -s
