@@ -33,7 +33,7 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
         name: '<%= reference.foreignKey %>',<% if (reference.foreignKeyColumnUnconventional) { %>
         field: '<%= reference.foreignKey %>',<% } %>
       },<% if (reference.targetKey) { %>
-      targetKey: {
+      target: {
         name: '<%= reference.targetKey %>',<% if (reference.targetKeyColumnUnconventional) { %>
         field: '<%= reference.targetKey %>',<% } %>
       },<% } %><% if (reference.as) { %>

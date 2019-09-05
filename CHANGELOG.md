@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix generation of targetKey.
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
