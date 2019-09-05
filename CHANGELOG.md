@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix generation of project with no database.
 
 ## RELEASE 2.3.10 - 2019-09-05
 ### Fixed
