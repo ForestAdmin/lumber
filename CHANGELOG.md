@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Avoid foreignKey to conflict with relationship.
 
 ## RELEASE 2.4.0 - 2019-09-20
 ### Changed

@@ -79,8 +79,13 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
             const reference = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
+              foreignKeyname: _.camelCase(foreignKey.column_name),
               as: formatAliasName(foreignKey.column_name),
             };
+
+            if (reference.foreignKeyName === reference.as) {
+              reference.foreignKeyName = `${reference.foreignKeyName}Key`;
+            }
 
             if (foreignKey.foreign_column_name !== 'id') {
               reference.targetKey = foreignKey.foreign_column_name;
