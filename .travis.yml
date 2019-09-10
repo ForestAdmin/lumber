@@ -1,0 +1,19 @@
+sudo: required
+
+language: node_js
+
+node_js:
+  - 11.14.0
+
+env:
+  - NODE_ENV=travis
+
+notifications:
+  webhooks: https://files-aopiaslhxw.now.sh
+
+install:
+  - yarn install
+
+script:
+  - npm run lint
+  - npm run test
