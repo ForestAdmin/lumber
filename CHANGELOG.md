@@ -4,6 +4,7 @@
 ### Added
 - Technical - Setup a minimal tests configuration.
 - Technical - Setup a minimal CI configuration.
+- Readme - Add a CI badge in the README.md file.
 
 ### Fixed
 - Command Generate - Fix generation of project with no database.
