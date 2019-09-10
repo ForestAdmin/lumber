@@ -4,8 +4,8 @@
   "version": "2.3.10",
   "main": "lumber.js",
   "scripts": {
-    "test": "ava",
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./assets ./deserializers ./serializers ./services ./test",
+    "test": "./node_modules/mocha/bin/mocha test/**/*.js",
     "deploy": "node ./bin/deploy.js"
   },
   "bin": {
@@ -48,6 +48,7 @@
     "eslint": "4.9.0",
     "eslint-config-airbnb-base": "12.1.0",
     "eslint-plugin-import": "2.12.0",
+    "mocha": "6.2.0",
     "moment": "2.24.0",
     "semver": "6.0.0",
     "simple-git": "1.65.0"

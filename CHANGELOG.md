@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - Setup a minimal tests configuration.
+
 ### Fixed
 - Command Generate - Fix generation of project with no database.
 
