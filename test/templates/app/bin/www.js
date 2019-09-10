@@ -1,3 +1,4 @@
+/* global describe, it */
 const fs = require('fs');
 const { expect } = require('chai');
 
