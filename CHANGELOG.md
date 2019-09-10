@@ -7,6 +7,7 @@
 
 ### Fixed
 - Command Generate - Fix generation of project with no database.
+- Deployments - Ensure that a deployment on Heroku works well. 🛡
 
 ## RELEASE 2.3.10 - 2019-09-05
 ### Fixed
