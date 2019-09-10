@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Schema Option - Ask for the database schema option if a connectionUrl option is set.
+- MongodbSrv Option - Ask for the MongodbSrv option if a connectionUrl option is set with a mongodb dialect.
 
 ## RELEASE 2.3.11 - 2019-09-10
 ### Added

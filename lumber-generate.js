@@ -5,7 +5,7 @@ const chalk = require('chalk');
 const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/database-analyzer');
 const Dumper = require('./services/dumper');
-const Prompter = require('./services/prompter');
+const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
 const logger = require('./services/logger');
 
 function isDirectoryExist(path) {
@@ -24,37 +24,7 @@ program
   .parse(process.argv);
 
 (async () => {
-  let config;
-
-  if (program.connectionUrl) {
-    config = await Prompter(program, [
-      'dbConnectionUrl',
-      'appName',
-      'ssl',
-      'appHostname',
-      'appPort',
-    ]);
-  } else if (!program.db) {
-    config = await Prompter(program, [
-      'appPort',
-      'appName',
-    ]);
-  } else {
-    config = await Prompter(program, [
-      'dbDialect',
-      'dbName',
-      'dbSchema',
-      'dbHostname',
-      'dbPort',
-      'dbUser',
-      'dbPassword',
-      'mongodbSrv',
-      'ssl',
-      'appHostname',
-      'appPort',
-      'appName',
-    ]);
-  }
+  const config = await new CommandGenerateConfigGetter(program).perform();
 
   // NOTICE: Ensure the project directory doesn't exist yet.
   const path = `${process.cwd()}/${config.appName}`;
