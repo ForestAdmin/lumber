@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.11 - 2019-09-10
 ### Added
 - Technical - Setup a minimal tests configuration.
 - Technical - Setup a minimal CI configuration.
