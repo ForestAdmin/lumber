@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.12 - 2019-09-11
 ### Changed
 - Technical - Remove old tests dependencies.
 
