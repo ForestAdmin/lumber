@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Remove old tests dependencies.
+
 ### Fixed
 - Schema Option - Ask for the database schema option if a connectionUrl option is set.
 - MongodbSrv Option - Ask for the MongodbSrv option if a connectionUrl option is set with a mongodb dialect.

@@ -42,8 +42,6 @@
     "winston": "^2.2.0"
   },
   "devDependencies": {
-    "ajv": "6.0.1",
-    "ava": "^1.4.1",
     "chai": "4.1.2",
     "eslint": "4.9.0",
     "eslint-config-airbnb-base": "12.1.0",
@@ -52,11 +50,5 @@
     "moment": "2.24.0",
     "semver": "6.0.0",
     "simple-git": "1.65.0"
-  },
-  "ava": {
-    "files": [
-      "test/**/*.js",
-      "!test/sample-project/**/*.js"
-    ]
   }
 }
