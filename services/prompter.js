@@ -2,7 +2,9 @@ const _ = require('lodash');
 const inquirer = require('inquirer');
 const expandHomeDir = require('expand-home-dir');
 const path = require('path');
+const chalk = require('chalk');
 const logger = require('./logger');
+const DirectoryExistenceChecker = require('./directory-existence-checker');
 
 const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/;
 
@@ -237,6 +239,12 @@ async function Prompter(program, requests) {
       logger.error(
         'Missing project name in the command.',
         'Please specify a project name. Type lumber help for more information.',
+      );
+      process.exit(1);
+    } else if (new DirectoryExistenceChecker(process.cwd(), program.args[0]).perform()) {
+      logger.error(
+        `The directory ${chalk.red(`${process.cwd()}/${program.args[0]}`)} already exists.`,
+        'Please retry with a project name.',
       );
       process.exit(1);
     } else {

@@ -1,4 +1,3 @@
-const fs = require('fs');
 const P = require('bluebird');
 const program = require('commander');
 const chalk = require('chalk');
@@ -8,15 +7,6 @@ const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
 const logger = require('./services/logger');
 
-function isDirectoryExist(path) {
-  try {
-    fs.accessSync(path, fs.F_OK);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
 program
   .description('Generate a backend application with an ORM/ODM configured.')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
@@ -25,16 +15,6 @@ program
 
 (async () => {
   const config = await new CommandGenerateConfigGetter(program).perform();
-
-  // NOTICE: Ensure the project directory doesn't exist yet.
-  const path = `${process.cwd()}/${config.appName}`;
-  if (isDirectoryExist(path)) {
-    logger.error(
-      `The directory ${chalk.red(path)} already exists.`,
-      'Please retry with a new directory.',
-    );
-    process.exit(1);
-  }
 
   let schema = {};
   if (program.db) {

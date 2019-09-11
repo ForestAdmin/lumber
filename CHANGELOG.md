@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Generate command - Make the command fail immediately the project name entered corresponds to a directory present in the current directory (instead of failing after all the prompt questions...).
 
 ## RELEASE 2.3.12 - 2019-09-11
 ### Changed
