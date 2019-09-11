@@ -205,6 +205,9 @@ function DatabaseAnalyzer(databaseConnection, config) {
           fields: analysis,
           references: [],
           primaryKeys: ['_id'],
+          options: {
+            timestamps: isUnderscored(analysis),
+          },
         };
       }))
       .then(() => schema);
