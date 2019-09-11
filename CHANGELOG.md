@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.13 - 2019-09-11
 ### Fixed
 - Generate command - Make the command fail immediately the project name entered corresponds to a directory present in the current directory (instead of failing after all the prompt questions...).
 - Generate command - Fix MongoDB models creation.
