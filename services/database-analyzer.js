@@ -149,9 +149,9 @@ function DatabaseAnalyzer(databaseConnection, config) {
     return schema;
   }
 
-  function analyzeMongoCollection(collection) {
+  function analyzeMongoCollection(collectionName) {
     return new P((resolve, reject) => {
-      databaseConnection.collection(collection.name)
+      databaseConnection.collection(collectionName)
         /* eslint-disable */
         .mapReduce(function () {
           for (var key in this) {
@@ -176,7 +176,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
           /* eslint-enable */
           if (err) {
             if (err.message && err.message.startsWith('CMD_NOT_ALLOWED')) {
-              logger.warn(`⚠️  [${collection.name}] CMD_NOT_ALLOWED: mapReduce. Please, write manually the Mongoose fields on this collection.  ⚠️`);
+              logger.warn(`⚠️  [${collectionName}] CMD_NOT_ALLOWED: mapReduce. Please, write manually the Mongoose fields on this collection.  ⚠️`);
               logger.warn('If your database is hosted on MongoDB Atlas, it\'s probably due to the Free tier limitations. More info here: https://docs.atlas.mongodb.com/unsupported-commands\n');
               return resolve([]);
             }
@@ -194,14 +194,17 @@ function DatabaseAnalyzer(databaseConnection, config) {
     return databaseConnection.collections()
       .then(collections => P.each(collections, async (item) => {
         const collection = item.s;
+        const collectionName = collection && collection.namespace
+          && collection.namespace.collection;
+
         // NOTICE: Defensive programming
-        if (!collection || !collection.name) { return; }
+        if (!collectionName) { return; }
 
         // NOTICE: Ignore system collections.
-        if (collection.name.startsWith('system.')) { return; }
+        if (collectionName.startsWith('system.')) { return; }
 
-        const analysis = await analyzeMongoCollection(collection);
-        schema[collection.name] = {
+        const analysis = await analyzeMongoCollection(collectionName);
+        schema[collectionName] = {
           fields: analysis,
           references: [],
           primaryKeys: ['_id'],

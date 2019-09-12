@@ -35,7 +35,10 @@ function Database() {
     }
 
     if (databaseDialect === 'mongodb') {
-      const connectionOptionsMongoClient = { useNewUrlParser: true };
+      const connectionOptionsMongoClient = {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      };
       let connectionUrl = options.dbConnectionUrl;
 
       if (!connectionUrl) {
