@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.14 - 2019-09-12
 ### Fixed
 - Mongodb - Lumber now supports Mongodb v4.2.0.
 
