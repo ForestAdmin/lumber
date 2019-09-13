@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Column Types - Do not detect SQL "Point" type and convert them as "INTEGER" anymore.
 
 ## RELEASE 2.3.14 - 2019-09-12
 ### Fixed

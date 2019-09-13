@@ -78,8 +78,8 @@ function ColumnTypeGetter(databaseConnection, schema) {
       case 'INTEGER':
       case 'SERIAL':
       case 'BIGSERIAL':
-      case (type.match(/INT.*/i) || {}).input:
-      case (type.match(/TINYINT.*/i) || {}).input:
+      case (type.match(/^INT.*/i) || {}).input:
+      case (type.match(/^TINYINT.*/i) || {}).input:
         return 'INTEGER';
       case 'BIGINT':
         return 'BIGINT';
