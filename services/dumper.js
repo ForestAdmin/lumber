@@ -6,7 +6,7 @@ const KeyGenerator = require('./key-generator');
 
 const mkdirp = P.promisify(mkdirpSync);
 
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 3010;
 
 function Dumper(config) {
   const path = `${process.cwd()}/${config.appName}`;

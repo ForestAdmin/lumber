@@ -220,7 +220,7 @@ async function Prompter(program, requests) {
         type: 'input',
         name: 'appPort',
         message: 'What\'s the port on which your application will be running? ',
-        default: '3000',
+        default: '3010',
         validate: (port) => {
           if (!/^\d+$/.test(port)) {
             return 'The port must be a number.';

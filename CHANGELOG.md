@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Generate command - Change default application port to prevent conflicts.
 
 ## RELEASE 2.3.15 - 2019-09-20
 ### Added

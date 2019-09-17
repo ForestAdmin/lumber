@@ -34,10 +34,10 @@ $ lumber generate -c postgres://erlich:aviato@localhost:5432/meals Meals
 $ cd Meals/ && npm install -s
 $ npm start
 
-Your application is listening on port 3000.
+Your application is listening on port 3010.
 ```
 
-Finally, visit http://localhost:3000.
+Finally, visit http://localhost:3010.
 
 ## Commands
 
