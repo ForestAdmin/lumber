@@ -47,7 +47,7 @@ program
   config.dbSSL = new Caster().toBoolean(process.env.DATABASE_SSL);
 
   const connection = await new Database().connect(config);
-  const schema = await new DatabaseAnalyzer(connection, config).perform();
+  const schema = await new DatabaseAnalyzer(connection, config, true).perform();
   const migrator = new Migrator(config);
 
   // Detect new tables.

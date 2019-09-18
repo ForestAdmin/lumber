@@ -11,9 +11,14 @@ const argv = require('minimist')(process.argv.slice(2));
 
 program
   .description('Install a Lumber plugin')
+  .option('--silent', 'Do not print any logs')
   .parse(process.argv);
 
 (async () => {
+  if (program.silent) {
+    logger.silent = true;
+  }
+
   // NOTICE: Load the environment variables from the .env to avoid always asking for the database
   //         connection information.
   dotenv.load();
@@ -39,7 +44,7 @@ program
   const pkg = importFrom(process.cwd(), program.args[0]);
 
   const connection = await new Database().connect(config);
-  const schema = await new DatabaseAnalyzer(connection, config).perform();
+  const schema = await new DatabaseAnalyzer(connection, config, false).perform();
   let promptConfig = {};
 
   if (_.isFunction(pkg.install)) {

@@ -24,7 +24,7 @@ program
   let schema = {};
   if (program.db) {
     const connection = await new Database().connect(config);
-    schema = await new DatabaseAnalyzer(connection, config).perform();
+    schema = await new DatabaseAnalyzer(connection, config, true).perform();
   }
 
   const dumper = await new Dumper(config);
