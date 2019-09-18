@@ -14,6 +14,7 @@ program
   .option('-S, --ssl <ssl>', 'Use SSL for database connection (true|false)')
   .option('-H, --application-host <applicationHost>', 'Hostname of your admin backend application')
   .option('-p, --application-port <applicationPort>', 'Port of your admin backend application')
+  .option('--schema <schema>', 'Enter your database schema')
   .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);
 

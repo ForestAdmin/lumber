@@ -134,6 +134,20 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, config);
     columnTypeGetter = new ColumnTypeGetter(databaseConnection, config.dbSchema || 'public', allowWarning);
 
+    if (config.dbSchema) {
+      const schemaExists = await queryInterface.sequelize
+        .query(
+          `SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '${config.dbSchema}';`,
+          { type: queryInterface.sequelize.QueryTypes.SELECT },
+        )
+        .then(result => !!result.length);
+
+      if (!schemaExists) {
+        logger.error('This schema does not exists.');
+        return process.exit(1);
+      }
+    }
+
     // Build the db schema.
     await P.mapSeries(queryInterface.showAllTables({
       schema: config.dbSchema,
@@ -147,8 +161,8 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
 
     if (_.isEmpty(schema)) {
       logger.error(
-        'Your database is empty.',
-        'Please, create some tables before running generate command.',
+        'Your database looks empty! Please create some tables before running the command.',
+        'If not, check whether you\'re using a custom database schema (use in that case the --schema option or the DATABASE_SCHEMA environment variable)',
       );
       return process.exit(1);
     }

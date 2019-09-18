@@ -9,7 +9,6 @@ const OPTIONS_DATABASE_MANDATORY = [
   'dbPassword',
 ];
 const OPTIONS_DATABASE_OPTIONAL = [
-  'dbSchema',
   'ssl',
   'mongodbSrv',
 ];
