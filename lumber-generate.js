@@ -35,6 +35,6 @@ program
     'Cannot generate your project.',
     'An unexpected error occured. Please create a Github issue with following error:',
   );
-  logger.log(error, true);
+  logger.log(error);
   process.exit(1);
 });

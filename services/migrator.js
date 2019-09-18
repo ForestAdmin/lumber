@@ -44,7 +44,7 @@ function Migrator(config) {
     } else {
       logger.warn(chalk.bold(`WARNING: Cannot add the field definition ${field.name} \
 automatically. Please, add it manually to the file '${modelPath}'.`));
-      logger.log(newContent, true);
+      logger.log(newContent);
     }
 
     return modelPath;
