@@ -8,6 +8,7 @@
 
 ### Fixed
 - Column Types - Do not detect SQL "Point" type and convert them as "INTEGER" anymore.
+- Technical - Upgrade sequelize version to avoid sql injection.
 
 ## RELEASE 2.3.14 - 2019-09-12
 ### Fixed
