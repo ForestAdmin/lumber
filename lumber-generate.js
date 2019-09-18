@@ -28,7 +28,7 @@ program
     await dumper.dump(table, schema[table]);
   });
 
-  logger.success(`Hooray, ${chalk.green('installation success')}!\n`);
+  logger.success(`Hooray, ${chalk.green('installation success')}!`);
   process.exit(0);
 })().catch((error) => {
   logger.error(
