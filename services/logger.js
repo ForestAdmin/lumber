@@ -5,28 +5,24 @@ class Logger {
     this.silent = silent;
   }
 
-  _logMessage(message, force) {
-    if (!this.silent || force) {
+  log(message) {
+    if (!this.silent) {
       console.log(message);
     }
   }
 
-  log(message, force = false) {
-    this._logMessage(message, force);
+  logLine(color, message) {
+    this.log(`${chalk[color]('>')} ${message}`);
   }
 
-  logLine(color, message, force = false) {
-    this._logMessage(`${chalk[color]('>')} ${message}`, force);
-  }
-
-  logLines(color, messages, force = false) {
-    messages.forEach(message => this.logLine(color, message, force));
+  logLines(color, messages) {
+    messages.forEach(message => this.logLine(color, message));
   }
 
   success(...messages) { this.logLines('green', messages); }
   info(...messages) { this.logLines('blue', messages); }
-  warn(...messages) { this.logLines('yellow', messages, true); }
-  error(...messages) { this.logLines('red', messages, true); }
+  warn(...messages) { this.logLines('yellow', messages); }
+  error(...messages) { this.logLines('red', messages); }
 }
 
 module.exports = new Logger();

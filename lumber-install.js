@@ -11,14 +11,9 @@ const argv = require('minimist')(process.argv.slice(2));
 
 program
   .description('Install a Lumber plugin')
-  .option('--silent', 'Do not print any logs')
   .parse(process.argv);
 
 (async () => {
-  if (program.silent) {
-    logger.silent = true;
-  }
-
   // NOTICE: Load the environment variables from the .env to avoid always asking for the database
   //         connection information.
   dotenv.load();
