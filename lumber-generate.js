@@ -10,10 +10,15 @@ const logger = require('./services/logger');
 program
   .description('Generate a backend application with an ORM/ODM configured.')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
+  .option('--silent', 'Do not print any logs')
   .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);
 
 (async () => {
+  if (program.silent) {
+    logger.silent = true;
+  }
+
   const config = await new CommandGenerateConfigGetter(program).perform();
 
   let schema = {};
@@ -28,19 +33,19 @@ program
     await dumper.dump(table, schema[table]);
   });
 
-  console.log('\n');
+  logger.log('\n');
   logger.success(`Hooray, ${chalk.green('installation success')}!\n`);
 
-  console.log(`change directory: \n $ ${chalk.blue(`cd ${config.appName}`)}\n`);
+  logger.log(`change directory: \n $ ${chalk.blue(`cd ${config.appName}`)}\n`);
 
-  console.log(`install dependencies: \n $ ${chalk.blue('npm install -s')}\n`);
-  console.log(`run your application: \n $ ${chalk.blue('npm start')}\n`);
+  logger.log(`install dependencies: \n $ ${chalk.blue('npm install -s')}\n`);
+  logger.log(`run your application: \n $ ${chalk.blue('npm start')}\n`);
   process.exit(0);
 })().catch((error) => {
   logger.error(
     'Cannot generate your project.',
     'An unexpected error occured. Please create a Github issue with following error:',
   );
-  console.log(error);
+  logger.log(error, true);
   process.exit(1);
 });

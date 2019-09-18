@@ -1,6 +1,10 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Generate command - Improve logs of non automatically handled type.
+- Generate command - Add a silent mode to remove all logs except warning and error.
+
 ### Fixed
 - Column Types - Do not detect SQL "Point" type and convert them as "INTEGER" anymore.
 

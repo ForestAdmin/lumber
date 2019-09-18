@@ -1,16 +1,32 @@
 const chalk = require('chalk');
 
-function logLine(color, message) {
-  console.log(`${chalk[color]('>')} ${message}`);
+class Logger {
+  constructor(silent) {
+    this.silent = silent;
+  }
+
+  _logMessage(message, force) {
+    if (!this.silent || force) {
+      console.log(message);
+    }
+  }
+
+  log(message, force = false) {
+    this._logMessage(message, force);
+  }
+
+  logLine(color, message, force = false) {
+    this._logMessage(`${chalk[color]('>')} ${message}`, force);
+  }
+
+  logLines(color, messages, force = false) {
+    messages.forEach(message => this.logLine(color, message, force));
+  }
+
+  success(...messages) { this.logLines('green', messages); }
+  info(...messages) { this.logLines('blue', messages); }
+  warn(...messages) { this.logLines('yellow', messages, true); }
+  error(...messages) { this.logLines('red', messages, true); }
 }
 
-function logLines(color, messages) {
-  messages.forEach(message => logLine(color, message));
-}
-
-module.exports = {
-  success: (...messages) => logLines('green', messages),
-  info: (...messages) => logLines('blue', messages),
-  warn: (...messages) => logLines('yellow', messages),
-  error: (...messages) => logLines('red', messages),
-};
+module.exports = new Logger();

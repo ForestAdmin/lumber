@@ -50,5 +50,5 @@ program
 
   return process.exit(0);
 })().catch((err) => {
-  console.error(err);
+  logger.error(err);
 });
