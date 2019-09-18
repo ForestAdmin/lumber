@@ -4,7 +4,7 @@ const logger = require('./logger');
 const ColumnTypeGetter = require('./column-type-getter');
 const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
 
-function DatabaseAnalyzer(databaseConnection, config) {
+function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
   let queryInterface;
   let tableForeignKeysAnalyzer;
   let columnTypeGetter;
@@ -125,7 +125,7 @@ function DatabaseAnalyzer(databaseConnection, config) {
 
     queryInterface = databaseConnection.getQueryInterface();
     tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, config);
-    columnTypeGetter = new ColumnTypeGetter(databaseConnection, config.dbSchema || 'public');
+    columnTypeGetter = new ColumnTypeGetter(databaseConnection, config.dbSchema || 'public', allowWarning);
 
     // Build the db schema.
     await P.mapSeries(queryInterface.showAllTables({

@@ -19,7 +19,7 @@ program
   let schema = {};
   if (program.db) {
     const connection = await new Database().connect(config);
-    schema = await new DatabaseAnalyzer(connection, config).perform();
+    schema = await new DatabaseAnalyzer(connection, config, true).perform();
   }
 
   const dumper = await new Dumper(config);
@@ -28,19 +28,13 @@ program
     await dumper.dump(table, schema[table]);
   });
 
-  console.log('\n');
-  logger.success(`Hooray, ${chalk.green('installation success')}!\n`);
-
-  console.log(`change directory: \n $ ${chalk.blue(`cd ${config.appName}`)}\n`);
-
-  console.log(`install dependencies: \n $ ${chalk.blue('npm install -s')}\n`);
-  console.log(`run your application: \n $ ${chalk.blue('npm start')}\n`);
+  logger.success(`Hooray, ${chalk.green('installation success')}!`);
   process.exit(0);
 })().catch((error) => {
   logger.error(
     'Cannot generate your project.',
     'An unexpected error occured. Please create a Github issue with following error:',
   );
-  console.log(error);
+  logger.log(error);
   process.exit(1);
 });

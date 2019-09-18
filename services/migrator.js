@@ -42,9 +42,9 @@ function Migrator(config) {
       newContent = currentContent.replace(regexp, `$1\n${newContent}`);
       fs.writeFileSync(modelPath, newContent);
     } else {
-      console.log(chalk.bold(`WARNING: Cannot add the field definition ${field.name} \
+      logger.warn(chalk.bold(`WARNING: Cannot add the field definition ${field.name} \
 automatically. Please, add it manually to the file '${modelPath}'.`));
-      console.log(newContent);
+      logger.log(newContent);
     }
 
     return modelPath;

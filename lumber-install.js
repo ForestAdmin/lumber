@@ -39,7 +39,7 @@ program
   const pkg = importFrom(process.cwd(), program.args[0]);
 
   const connection = await new Database().connect(config);
-  const schema = await new DatabaseAnalyzer(connection, config).perform();
+  const schema = await new DatabaseAnalyzer(connection, config, false).perform();
   let promptConfig = {};
 
   if (_.isFunction(pkg.install)) {
@@ -50,5 +50,5 @@ program
 
   return process.exit(0);
 })().catch((err) => {
-  console.error(err);
+  logger.error(err);
 });
