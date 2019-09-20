@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.4.0 - 2019-09-20
 ### Changed
 - Generate command - Change default application port to prevent conflicts.
 
