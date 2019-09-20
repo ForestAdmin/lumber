@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - A Release now also automatically publish the release note to Slack.
+
 ### Changed
 - Generate command - Improve logs of non automatically handled type.
 - Generate command - Remove some logs to avoid confusion.
