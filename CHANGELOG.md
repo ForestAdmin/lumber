@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.15 - 2019-09-20
 ### Added
 - Technical - A Release now also automatically publish the release note to Slack.
 
