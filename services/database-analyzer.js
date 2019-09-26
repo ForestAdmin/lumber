@@ -83,6 +83,8 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
               as: formatAliasName(foreignKey.column_name),
             };
 
+            // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
+            //         to handle this specific scenario generating a different foreign key name.
             if (reference.foreignKeyName === reference.as) {
               reference.foreignKeyName = `${reference.foreignKeyName}Key`;
             }
