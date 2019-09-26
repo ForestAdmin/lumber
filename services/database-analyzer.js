@@ -79,7 +79,7 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
             const reference = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
-              foreignKeyname: _.camelCase(foreignKey.column_name),
+              foreignKeyName: _.camelCase(foreignKey.column_name),
               as: formatAliasName(foreignKey.column_name),
             };
 
