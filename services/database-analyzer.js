@@ -79,8 +79,15 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
             const reference = {
               ref: foreignKey.foreign_table_name,
               foreignKey: foreignKey.column_name,
+              foreignKeyName: _.camelCase(foreignKey.column_name),
               as: formatAliasName(foreignKey.column_name),
             };
+
+            // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
+            //         to handle this specific scenario generating a different foreign key name.
+            if (reference.foreignKeyName === reference.as) {
+              reference.foreignKeyName = `${reference.foreignKeyName}Key`;
+            }
 
             if (foreignKey.foreign_column_name !== 'id') {
               reference.targetKey = foreignKey.foreign_column_name;

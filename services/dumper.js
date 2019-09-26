@@ -132,7 +132,7 @@ function Dumper(config) {
       const expectedConventionalForeignKeyName = underscored
         ? _.snakeCase(reference.foreignKey) : reference.foreignKey;
       const foreignKeyColumnUnconventional =
-        reference.foreignKey !== expectedConventionalForeignKeyName;
+        reference.foreignKeyName !== expectedConventionalForeignKeyName;
 
       if (reference.targetKey) {
         const expectedConventionalTargetKeyName = underscored
