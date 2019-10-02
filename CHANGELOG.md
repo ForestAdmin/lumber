@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
+- Command Generate - Quote the `APP_NAME` env variable to accept whitespaces.
 
 ## RELEASE 2.4.0 - 2019-09-20
 ### Changed
