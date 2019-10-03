@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
+- Command Generate - Fix creation of project containing whitespaces.
 
 ## RELEASE 2.4.0 - 2019-09-20
 ### Changed
