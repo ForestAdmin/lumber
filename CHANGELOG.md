@@ -4,6 +4,7 @@
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
 - Command Generate - Fix creation of project containing whitespaces.
+- Technical - Fix Github repository language
 
 ## RELEASE 2.4.0 - 2019-09-20
 ### Changed
