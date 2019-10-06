@@ -4,7 +4,7 @@
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
 - Command Generate - Fix creation of project containing whitespaces.
-- Technical - Fix MySQL boolean values (Tinyint)
+- Records Update - Fix `TINYINT` column update when declared as a `BOOLEAN` field in the ORM model.
 
 ## RELEASE 2.4.0 - 2019-09-20
 ### Changed
