@@ -5,6 +5,7 @@
 - Command Generate - Avoid foreignKey to conflict with relationship.
 - Command Generate - Fix creation of project containing whitespaces.
 - Records Update - Fix `TINYINT` column update when declared as a `BOOLEAN` field in the ORM model.
+- Technical - Fix Github repository language.
 
 ## RELEASE 2.4.0 - 2019-09-20
 ### Changed
