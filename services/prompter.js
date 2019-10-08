@@ -10,7 +10,7 @@ const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/;
 
 async function Prompter(program, requests) {
   function isRequested(option) {
-    return requests.indexOf(option) > -1;
+    return requests.includes(option);
   }
 
   const envConfig = { db: program.db };
@@ -213,9 +213,9 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('appPort')) {
-    if (process.env.APPLICATION_PORT) {
-      envConfig.appPort = process.env.APPLICATION_PORT;
-    } else {
+    // TODO: Remove APPLICATION_PORT environment variable usage in the future major Lumber version.
+    envConfig.appPort = program.applicationPort || process.env.APPLICATION_PORT;
+    if (!envConfig.appPort) {
       prompts.push({
         type: 'input',
         name: 'appPort',
