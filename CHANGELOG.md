@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Dependencies - Remove obsolete `mysql` dependency.
+
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
 - Command Generate - Fix creation of project containing whitespaces.

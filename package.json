@@ -32,7 +32,6 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "mongodb": "3.3.0",
-    "mysql": "^2.11.1",
     "mysql2": "1.7.0",
     "pg": "^6.1.0",
     "sequelize": "git://github.com/ForestAdmin/sequelize.git#feature/support-schema",
