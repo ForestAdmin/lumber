@@ -213,7 +213,7 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('appPort')) {
-    envConfig.applicationPort = process.env.APPLICATION_PORT || program.applicationPort;
+    envConfig.applicationPort = program.applicationPort || process.env.APPLICATION_PORT;
     if (!envConfig.applicationPort) {
       prompts.push({
         type: 'input',
