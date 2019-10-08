@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Command Generate - Add  "Application host" parameter (`-p, --application-host`) to `lumber generate`.
+- Command Generate - Add  "Application port" parameter (`-p, --application-port`) to `lumber generate`.
 
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
