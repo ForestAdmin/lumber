@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Command Generate - Add  "Application port" parameter (`-p, --application-port`) to `lumber generate`.
+
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
 - Command Generate - Fix creation of project containing whitespaces.
