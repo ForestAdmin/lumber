@@ -10,6 +10,7 @@ const logger = require('./services/logger');
 program
   .description('Generate a backend application with an ORM/ODM configured.')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
+  .option('-H, --application-host <applicationHost>', 'Hostname of your admin backend app')
   .option('--no-db', 'Use Lumber without a database.')
   .parse(process.argv);
 

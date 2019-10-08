@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Command Generate - Add  "Application host" parameter (`-p, --application-host`) to `lumber generate`.
+
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
 - Command Generate - Fix creation of project containing whitespaces.
