@@ -213,8 +213,9 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('appPort')) {
-    envConfig.applicationPort = program.applicationPort || process.env.APPLICATION_PORT;
-    if (!envConfig.applicationPort) {
+    // TODO: Remove APPLICATION_PORT environment variable usage in the future major Lumber version.
+    envConfig.appPort = program.applicationPort || process.env.APPLICATION_PORT;
+    if (!envConfig.appPort) {
       prompts.push({
         type: 'input',
         name: 'appPort',
