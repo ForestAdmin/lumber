@@ -200,9 +200,9 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('appHostname')) {
-    if (process.env.APPLICATION_HOST) {
-      envConfig.appHostname = process.env.APPLICATION_HOST;
-    } else {
+    // TODO: Remove APPLICATION_HOST environment variable usage in the future major Lumber version.
+    envConfig.appHostname = program.applicationHost || process.env.APPLICATION_HOST;
+    if (!envConfig.appHostname) {
       prompts.push({
         type: 'input',
         name: 'appHostname',
