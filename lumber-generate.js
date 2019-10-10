@@ -10,6 +10,8 @@ const logger = require('./services/logger');
 program
   .description('Generate a backend application with an ORM/ODM configured.')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
+  // NOTICE: --ssl option is not a real boolean option since we do not want a breaking change.
+  .option('-S, --ssl <ssl>', 'Use SSL for database connection (true|false)')
   .option('-H, --application-host <applicationHost>', 'Hostname of your admin backend application')
   .option('-p, --application-port <applicationPort>', 'Port of your admin backend application')
   .option('--no-db', 'Use Lumber without a database.')
