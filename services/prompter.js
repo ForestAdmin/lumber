@@ -80,7 +80,7 @@ async function Prompter(program, requests) {
         name: 'dbSchema',
         message: 'What\'s the database schema? [optional]',
         description: 'Leave blank by default',
-        when: answers => answers.dbDialect !== 'sqlite' && answers.dbDialect !== 'mongodb',
+        when: answers => answers.dbDialect !== 'sqlite' && answers.dbDialect !== 'mongodb' && envConfig.dbDialect !== 'mongodb',
         default: (args) => {
           if (args.dbDialect === 'postgres') { return 'public'; }
           return '';
