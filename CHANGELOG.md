@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Onboarding - Add error handling to have feedback on forestadmin.
+
 ### Changed
 - Dependencies - Remove obsolete `mysql` dependency.
 

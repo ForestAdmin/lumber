@@ -2,6 +2,7 @@ const _ = require('lodash');
 const dotenv = require('dotenv');
 const program = require('commander');
 const logger = require('./services/logger');
+const eventSender = require('./services/event-sender');
 const importFrom = require('import-from');
 const Caster = require('./services/caster');
 const Database = require('./services/database');
@@ -17,6 +18,10 @@ program
   // NOTICE: Load the environment variables from the .env to avoid always asking for the database
   //         connection information.
   dotenv.load();
+
+  eventSender.command = 'install';
+  [eventSender.appName] = program.args;
+
   let dbDialect = process.env.DATABASE_URL.substring(0, process.env.DATABASE_URL.indexOf(':'));
   if (dbDialect === 'mongodb+srv') { dbDialect = 'mongodb'; }
 
@@ -48,7 +53,11 @@ program
 
   await pkg.dump(schema, promptConfig, config);
 
+  await eventSender.notifySuccess();
+
   return process.exit(0);
-})().catch((err) => {
+})().catch(async (err) => {
   logger.error(err);
+  await eventSender.notifyError();
+  return process.exit(1);
 });

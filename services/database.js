@@ -1,10 +1,12 @@
 const Sequelize = require('sequelize');
 const { MongoClient } = require('mongodb');
 const logger = require('./logger');
+const eventSender = require('./event-sender');
 
 function Database() {
-  function handleAuthenticationError(error) {
+  async function handleAuthenticationError(error) {
     logger.error('Cannot connect to the database due to the following error:', error);
+    await eventSender.notifyError('database_authentication_error', error.message);
     process.exit(1);
   }
 

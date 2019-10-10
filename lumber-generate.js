@@ -6,6 +6,7 @@ const DatabaseAnalyzer = require('./services/database-analyzer');
 const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
 const logger = require('./services/logger');
+const eventSender = require('./services/event-sender');
 
 program
   .description('Generate a backend application with an ORM/ODM configured.')
@@ -14,6 +15,8 @@ program
   .parse(process.argv);
 
 (async () => {
+  eventSender.command = 'generate';
+  [eventSender.appName] = program.args;
   const config = await new CommandGenerateConfigGetter(program).perform();
 
   let schema = {};
@@ -29,12 +32,14 @@ program
   });
 
   logger.success(`Hooray, ${chalk.green('installation success')}!`);
+  await eventSender.notifySuccess();
   process.exit(0);
-})().catch((error) => {
+})().catch(async (error) => {
   logger.error(
     'Cannot generate your project.',
     'An unexpected error occured. Please create a Github issue with following error:',
   );
   logger.log(error);
+  await eventSender.notifyError();
   process.exit(1);
 });

@@ -35,8 +35,7 @@
     "mysql2": "1.7.0",
     "pg": "^6.1.0",
     "sequelize": "git://github.com/ForestAdmin/sequelize.git#feature/support-schema",
-    "superagent": "^3.8.3",
-    "superagent-promise": "^1.1.0",
+    "superagent": "5.1.0",
     "tedious": "^1.14.0",
     "winston": "^2.2.0"
   },
