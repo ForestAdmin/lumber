@@ -176,10 +176,10 @@ async function Prompter(program, requests) {
     const ssl = program.ssl || process.env.DATABASE_SSL;
     if (ssl) {
       try {
-        // NOTICE: Parse from string (e.g "true" or "false") to boolean. 
+        // NOTICE: Parse from string (e.g "true" or "false") to boolean.
         envConfig.ssl = JSON.parse(ssl.toLowerCase());
         if (typeof envConfig.ssl !== 'boolean') {
-          throw new Error;
+          throw new Error();
         }
       } catch (e) {
         logger.error(`Database SSL value must be either "true" or "false" ("${ssl}" given).`);
