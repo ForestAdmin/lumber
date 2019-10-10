@@ -172,8 +172,19 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('ssl')) {
-    if (process.env.DATABASE_SSL) {
-      envConfig.ssl = JSON.parse(process.env.DATABASE_SSL.toLowerCase());
+    // TODO: Remove DATABASE_SSL environment variable usage in the future major Lumber version.
+    const ssl = program.ssl || process.env.DATABASE_SSL;
+    if (ssl) {
+      try {
+        // NOTICE: Parse from string (e.g "true" or "false") to boolean. 
+        envConfig.ssl = JSON.parse(ssl.toLowerCase());
+        if (typeof envConfig.ssl !== 'boolean') {
+          throw new Error;
+        }
+      } catch (e) {
+        logger.error(`Database SSL value must be either "true" or "false" ("${ssl}" given).`);
+        process.exit(1);
+      }
     } else {
       prompts.push({
         type: 'confirm',
