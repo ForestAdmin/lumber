@@ -6,6 +6,9 @@
 - Command Generate - Add  "Application host" parameter (`-H, --application-host`) to `lumber generate`.
 - Command Generate - Add  "SSL" parameter (`-S, --ssl`) to `lumber generate`.
 
+### Changed
+- Command Generate - Do not prompt for MongoDB SRV connection string usage if connection URL contains `+srv`
+
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
 - Command Generate - Fix creation of project containing whitespaces.

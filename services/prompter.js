@@ -28,7 +28,10 @@ async function Prompter(program, requests) {
 
     try {
       [, envConfig.dbDialect] = envConfig.dbConnectionUrl.match(/(.*):\/\//);
-      if (envConfig.dbDialect === 'mongodb+srv') { envConfig.dbDialect = 'mongodb'; }
+      if (envConfig.dbDialect === 'mongodb+srv') { 
+        envConfig.dbDialect = 'mongodb';
+        envConfig.mongodbSrv = true;
+      }
     } catch (error) {
       logger.error('Cannot parse the database dialect. Please, check the syntax of the database connection string.');
       process.exit(1);
@@ -196,6 +199,7 @@ async function Prompter(program, requests) {
     }
   }
 
+  // TODO: remove everything about mongodbSrv since it could be in URL connection string.
   if (isRequested('mongodbSrv')) {
     if (process.env.DATABASE_MONGODB_SRV) {
       envConfig.mongodbSrv = JSON.parse(process.env.DATABASE_MONGODB_SRV.toLowerCase());
