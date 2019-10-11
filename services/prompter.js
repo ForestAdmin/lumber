@@ -199,8 +199,8 @@ async function Prompter(program, requests) {
     }
   }
 
-  // TODO: remove everything about mongodbSrv since it could be in URL connection string.
-  if (isRequested('mongodbSrv')) {
+  // TODO: Remove everything about mongodbSrv since it could be in URL connection string.
+  if (isRequested('mongodbSrv') && !envConfig.mongodbSrv) {
     if (process.env.DATABASE_MONGODB_SRV) {
       envConfig.mongodbSrv = JSON.parse(process.env.DATABASE_MONGODB_SRV.toLowerCase());
     } else {
