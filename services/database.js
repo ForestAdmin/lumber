@@ -67,8 +67,8 @@ function Database() {
     //         See: https://github.com/sidorares/node-mysql2/pull/895
     if (databaseDialect === 'mysql') {
       connectionOptionsSequelize.dialectOptions = {
-        ssl: { rejectUnauthorized: isSSL }
-      }
+        ssl: { rejectUnauthorized: isSSL },
+      };
     } else {
       connectionOptionsSequelize.dialectOptions = {
         ssl: isSSL,
