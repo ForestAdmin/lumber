@@ -13,6 +13,7 @@
 - Records Update - Fix `TINYINT` column update when declared as a `BOOLEAN` field in the ORM model.
 - Technical - Fix Github repository language.
 - Generate command - Generate field with type "TIME WITHOUT TIME ZONE".
+- Command Generate - Remove schema prompt with MongoDB connection URL.
 
 ## RELEASE 2.4.0 - 2019-09-20
 ### Changed
