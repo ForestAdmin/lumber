@@ -72,9 +72,9 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbSchema')) {
-    if (process.env.DATABASE_SCHEMA) {
-      envConfig.dbSchema = process.env.DATABASE_SCHEMA;
-    } else {
+    // TODO: Remove DATABASE_SCHEMA environment variable usage in the future major Lumber version.
+    envConfig.dbSchema = program.schema || process.env.DATABASE_SCHEMA;
+    if (!envConfig.dbSchema) {
       prompts.push({
         type: 'input',
         name: 'dbSchema',
@@ -88,6 +88,7 @@ async function Prompter(program, requests) {
       });
     }
   }
+
 
   if (isRequested('dbHostname')) {
     if (process.env.DATABASE_HOST) {
