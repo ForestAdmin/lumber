@@ -11,6 +11,10 @@ const argv = require('minimist')(process.argv.slice(2));
 
 program
   .description('Install a Lumber plugin')
+  .option('-e, --email <email>', 'Your Forest Admin account email')
+  .option('-P, --password <password>', 'Your Forest Admin account password')
+  .option('-t, --token <token>', 'Your Forest Admin account token')
+  .option('-p, --projectName <projectName>', 'Your Forest Admin project name')
   .parse(process.argv);
 
 (async () => {
