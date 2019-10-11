@@ -71,7 +71,24 @@ async function Prompter(program, requests) {
     }
   }
 
-  envConfig.dbSchema = program.schema || process.env.DATABASE_SCHEMA || '';
+  if (isRequested('dbSchema')) {
+    // TODO: Remove DATABASE_SCHEMA environment variable usage in the future major Lumber version.
+    envConfig.dbSchema = program.schema || process.env.DATABASE_SCHEMA;
+    if (!envConfig.dbSchema) {
+      prompts.push({
+        type: 'input',
+        name: 'dbSchema',
+        message: 'What\'s the database schema? [optional]',
+        description: 'Leave blank by default',
+        when: answers => answers.dbDialect !== 'sqlite' && answers.dbDialect !== 'mongodb',
+        default: (args) => {
+          if (args.dbDialect === 'postgres') { return 'public'; }
+          return '';
+        },
+      });
+    }
+  }
+
 
   if (isRequested('dbHostname')) {
     if (process.env.DATABASE_HOST) {

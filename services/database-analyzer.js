@@ -162,7 +162,7 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     if (_.isEmpty(schema)) {
       logger.error(
         'Your database looks empty! Please create some tables before running the command.',
-        'If not, check whether you\'re using a custom database schema (use in that case the --schema option or the DATABASE_SCHEMA environment variable)',
+        'If not, check whether you are using a custom database schema (use in that case the --schema option)',
       );
       return process.exit(1);
     }
