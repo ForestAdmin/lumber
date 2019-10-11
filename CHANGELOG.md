@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.4.1 - 2019-10-11
 ### Added
 - Onboarding - Add error handling to have feedback on forestadmin.
 
