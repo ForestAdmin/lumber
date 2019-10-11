@@ -137,8 +137,8 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     if (config.dbSchema) {
       const schemaExists = await queryInterface.sequelize
         .query(
-          `SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '${config.dbSchema}';`,
-          { type: queryInterface.sequelize.QueryTypes.SELECT },
+          'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?;',
+          { type: queryInterface.sequelize.QueryTypes.SELECT, replacements: [config.dbSchema] },
         )
         .then(result => !!result.length);
 
