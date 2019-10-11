@@ -28,7 +28,7 @@ async function Prompter(program, requests) {
 
     try {
       [, envConfig.dbDialect] = envConfig.dbConnectionUrl.match(/(.*):\/\//);
-      if (envConfig.dbDialect === 'mongodb+srv') { 
+      if (envConfig.dbDialect === 'mongodb+srv') {
         envConfig.dbDialect = 'mongodb';
         envConfig.mongodbSrv = true;
       }
@@ -291,10 +291,10 @@ async function Prompter(program, requests) {
           if (password) {
             if (FORMAT_PASSWORD.test(password)) { return true; }
             return '🔓  Your password security is too weak 🔓\n' +
-            ' Please make sure it contains at least:\n' +
-            '    > 8 characters\n' +
-            '    > Upper and lower case letters\n' +
-            '    > Numbers';
+              ' Please make sure it contains at least:\n' +
+              '    > 8 characters\n' +
+              '    > Upper and lower case letters\n' +
+              '    > Numbers';
           }
 
           return 'Your password cannot be blank.';
