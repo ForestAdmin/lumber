@@ -20,7 +20,7 @@ program
   .parse(process.argv);
 
 (async () => {
-  // NOTICE: Check deprecated environments variables
+  // NOTICE: Check deprecated environments variables.
   const environmentChecker = new EnvironmentChecker(process.env, logger, [
     'DATABASE_URL',
     'DATABASE_DIALECT',
