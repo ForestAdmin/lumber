@@ -1,12 +1,10 @@
 function EnvironmentChecker(env, logger, deprecated) {
   this.deprecated = deprecated;
 
-  this.getActiveEnvironmentVariables = () => {
-    return this.deprecated.filter(variable => env[variable] !== undefined);
-  };
+  this.getActives = () => this.deprecated.filter(variable => env[variable] !== undefined);
 
   this.logWarnings = () => {
-    const activeEnvironmentVariables = this.getActiveEnvironmentVariables();
+    const activeEnvironmentVariables = this.getActives();
     if (activeEnvironmentVariables.length) {
       logger.warn(
         'Environment variables usage detected:',
