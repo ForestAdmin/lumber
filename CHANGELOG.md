@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Generate command - Rename APP_NAME to APPLICATION_NAME for consistency. The old name remains supported.
+
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
 
