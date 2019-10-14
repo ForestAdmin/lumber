@@ -19,8 +19,12 @@ let databaseOptions = {
 };
 
 if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
-  databaseOptions.dialectOptions.ssl = true;
-}
+<% if (config.dbDialect === 'mysql') {
+%>  databaseOptions.dialectOptions.ssl = { rejectUnauthorized: true };
+<% } else {
+%>  databaseOptions.dialectOptions.ssl = true;
+<% } 
+%>}
 
 if (process.env.DATABASE_ENCRYPT && JSON.parse(process.env.DATABASE_ENCRYPT.toLowerCase())) {
   databaseOptions.dialectOptions.encrypt = true;
