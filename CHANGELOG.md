@@ -3,7 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Technical - Fix dependencies in `package-lock.json`.
-- Command Generate - Fix `mysql2` error with ssl as a boolean.
+- Command Generate - Fix projects generation based on MySQL connections. (Regression introduced in v2.4.1).
 
 ## RELEASE 2.4.1 - 2019-10-11
 ### Added
