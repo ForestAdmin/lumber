@@ -13,7 +13,7 @@ program
   .description('Install a Lumber plugin')
   .option('-e, --email <email>', 'Your Forest Admin account email')
   .option('-P, --password <password>', 'Your Forest Admin account password (ignored if token is set)')
-  .option('-t, --token <token>', 'Your Forest Admin account token (required if token is missing)')
+  .option('-t, --token <token>', 'Your Forest Admin account token (required if password is missing)')
   .option('-p, --projectName <projectName>', 'Your Forest Admin project name')
   .parse(process.argv);
 
