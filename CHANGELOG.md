@@ -6,6 +6,7 @@
 - Command Generate - Add  "Application host" parameter (`-H, --application-host`) to `lumber generate`.
 - Command Generate - Add  "SSL" parameter (`-S, --ssl`) to `lumber generate`.
 - Command generate - Add "Schema" parameter (`-s, --schema`) to `lumber generate`.
+- Command generate - Add parameters documentation to `lumber install`.
 
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
