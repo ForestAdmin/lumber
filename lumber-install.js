@@ -8,6 +8,7 @@ const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/database-analyzer');
 const inquirer = require('inquirer');
 const argv = require('minimist')(process.argv.slice(2));
+const EnvironmentChecker = require('./services/environment-checker');
 
 program
   .description('Install a Lumber plugin')
@@ -35,6 +36,13 @@ program
 
     return process.exit(1);
   }
+
+  const environmentChecker = new EnvironmentChecker(process.env, logger, [
+    'FOREST_EMAIL',
+    'FOREST_TOKEN',
+    'FOREST_PASSWORD',
+  ]);
+  environmentChecker.logWarnings();
 
   const pkg = importFrom(process.cwd(), program.args[0]);
 
