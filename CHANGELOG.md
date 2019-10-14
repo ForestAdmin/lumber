@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Technical - Fix dependencies in `package-lock.json`.
 
 ## RELEASE 2.4.1 - 2019-10-11
 ### Added
