@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const P = require('bluebird');
 const logger = require('./logger');
+const eventSender = require('./event-sender');
 const ColumnTypeGetter = require('./column-type-getter');
 const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
 
@@ -150,6 +151,10 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
         'Your database is empty.',
         'Please, create some tables before running generate command.',
       );
+      await eventSender.notifyError('database_empty', 'Your database is empty.', {
+        orm: 'sequelize',
+        dialect: databaseConnection.getDialect(),
+      });
       return process.exit(1);
     }
 

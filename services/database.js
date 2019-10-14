@@ -1,10 +1,12 @@
 const Sequelize = require('sequelize');
 const { MongoClient } = require('mongodb');
 const logger = require('./logger');
+const eventSender = require('./event-sender');
 
 function Database() {
-  function handleAuthenticationError(error) {
+  async function handleAuthenticationError(error) {
     logger.error('Cannot connect to the database due to the following error:', error);
+    await eventSender.notifyError('database_authentication_error', error.message);
     process.exit(1);
   }
 
@@ -59,13 +61,20 @@ function Database() {
 
     const needsEncryption = isSSL && (databaseDialect === 'mssql');
 
-    const connectionOptionsSequelize = {
-      logging: false,
-      dialectOptions: {
+    const connectionOptionsSequelize = { logging: false };
+
+    // NOTICE: mysql2 does not accepts unwanted options anymore.
+    //         See: https://github.com/sidorares/node-mysql2/pull/895
+    if (databaseDialect === 'mysql') {
+      connectionOptionsSequelize.dialectOptions = {
+        ssl: { rejectUnauthorized: isSSL },
+      };
+    } else {
+      connectionOptionsSequelize.dialectOptions = {
         ssl: isSSL,
         encrypt: needsEncryption,
-      },
-    };
+      };
+    }
 
     if (options.dbConnectionUrl) {
       connection = new Sequelize(options.dbConnectionUrl, connectionOptionsSequelize);

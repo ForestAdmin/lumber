@@ -4,6 +4,7 @@ const expandHomeDir = require('expand-home-dir');
 const path = require('path');
 const chalk = require('chalk');
 const logger = require('./logger');
+const eventSender = require('./event-sender');
 const DirectoryExistenceChecker = require('./directory-existence-checker');
 
 const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/;
@@ -23,6 +24,26 @@ async function Prompter(program, requests) {
 
   const prompts = [];
 
+  if (isRequested('appName')) {
+    if (!program.args[0]) {
+      logger.error(
+        'Missing project name in the command.',
+        'Please specify a project name. Type lumber help for more information.',
+      );
+      process.exit(1);
+    } else if (new DirectoryExistenceChecker(process.cwd(), program.args[0]).perform()) {
+      const message = `The directory ${chalk.red(`${process.cwd()}/${program.args[0]}`)} already exists.`;
+      logger.error(
+        message,
+        'Please retry with another project name.',
+      );
+      await eventSender.notifyError('unknown_error', message);
+      process.exit(1);
+    } else {
+      [envConfig.appName] = program.args;
+    }
+  }
+
   if (isRequested('dbConnectionUrl')) {
     envConfig.dbConnectionUrl = program.connectionUrl || process.env.DATABASE_URL;
 
@@ -30,7 +51,9 @@ async function Prompter(program, requests) {
       [, envConfig.dbDialect] = envConfig.dbConnectionUrl.match(/(.*):\/\//);
       if (envConfig.dbDialect === 'mongodb+srv') { envConfig.dbDialect = 'mongodb'; }
     } catch (error) {
-      logger.error('Cannot parse the database dialect. Please, check the syntax of the database connection string.');
+      const message = 'Cannot parse the database dialect. Please, check the syntax of the database connection string.';
+      logger.error(message);
+      await eventSender.notifyError('unknown_error', message);
       process.exit(1);
     }
   }
@@ -80,7 +103,7 @@ async function Prompter(program, requests) {
         name: 'dbSchema',
         message: 'What\'s the database schema? [optional]',
         description: 'Leave blank by default',
-        when: answers => answers.dbDialect !== 'sqlite' && answers.dbDialect !== 'mongodb',
+        when: answers => answers.dbDialect !== 'sqlite' && answers.dbDialect !== 'mongodb' && envConfig.dbDialect !== 'mongodb',
         default: (args) => {
           if (args.dbDialect === 'postgres') { return 'public'; }
           return '';
@@ -231,24 +254,6 @@ async function Prompter(program, requests) {
           return 'This is not a valid port.';
         },
       });
-    }
-  }
-
-  if (isRequested('appName')) {
-    if (!program.args[0]) {
-      logger.error(
-        'Missing project name in the command.',
-        'Please specify a project name. Type lumber help for more information.',
-      );
-      process.exit(1);
-    } else if (new DirectoryExistenceChecker(process.cwd(), program.args[0]).perform()) {
-      logger.error(
-        `The directory ${chalk.red(`${process.cwd()}/${program.args[0]}`)} already exists.`,
-        'Please retry with a project name.',
-      );
-      process.exit(1);
-    } else {
-      [envConfig.appName] = program.args;
     }
   }
 

@@ -5,7 +5,23 @@
 - Generate command - Rename APP_NAME to APPLICATION_NAME for consistency. The old name remains supported.
 
 ### Fixed
+- Technical - Fix dependencies in `package-lock.json`.
+- Command Generate - Fix projects generation based on MySQL connections. (Regression introduced in v2.4.1).
+
+## RELEASE 2.4.1 - 2019-10-11
+### Added
+- Onboarding - Add error handling to have feedback on forestadmin.
+
+### Changed
+- Dependencies - Remove obsolete `mysql` dependency.
+
+### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
+- Command Generate - Fix creation of project containing whitespaces.
+- Records Update - Fix `TINYINT` column update when declared as a `BOOLEAN` field in the ORM model.
+- Technical - Fix Github repository language.
+- Generate command - Generate field with type "TIME WITHOUT TIME ZONE".
+- Command Generate - Remove schema prompt with MongoDB connection URL.
 
 ## RELEASE 2.4.0 - 2019-09-20
 ### Changed

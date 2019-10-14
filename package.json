@@ -1,7 +1,7 @@
 {
   "name": "lumber-cli",
   "description": "Create your backend application in minutes. GraphQL API backend based on a database schema",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "main": "lumber.js",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./assets ./deserializers ./serializers ./services ./test",
@@ -32,12 +32,10 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "mongodb": "3.3.0",
-    "mysql": "^2.11.1",
-    "mysql2": "1.4.2",
+    "mysql2": "1.7.0",
     "pg": "^6.1.0",
     "sequelize": "git://github.com/ForestAdmin/sequelize.git#feature/support-schema",
-    "superagent": "^3.8.3",
-    "superagent-promise": "^1.1.0",
+    "superagent": "5.1.0",
     "tedious": "^1.14.0",
     "winston": "^2.2.0"
   },
