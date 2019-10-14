@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Generate command - Rename APP_NAME to APPLICATION_NAME for consistency. The old name remains supported.
+
 ### Fixed
 - Technical - Fix dependencies in `package-lock.json`.
 - Command Generate - Fix projects generation based on MySQL connections. (Regression introduced in v2.4.1).
