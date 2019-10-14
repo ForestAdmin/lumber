@@ -103,7 +103,11 @@ async function Prompter(program, requests) {
         name: 'dbSchema',
         message: 'What\'s the database schema? [optional]',
         description: 'Leave blank by default',
-        when: answers => answers.dbDialect !== 'sqlite' && answers.dbDialect !== 'mongodb' && envConfig.dbDialect !== 'mongodb',
+        when: (answers) => {
+          // NOTICE: MongoDB, MySQL and SQLite do not require a Schema.
+          const skipDatabases = ['sqlite', 'mongodb', 'mysql'];
+          return !skipDatabases.includes(answers.dbDialect || envConfig.dbDialect);
+        },
         default: (args) => {
           if (args.dbDialect === 'postgres') { return 'public'; }
           return '';

@@ -7,6 +7,7 @@
 ### Fixed
 - Technical - Fix dependencies in `package-lock.json`.
 - Command Generate - Fix projects generation based on MySQL connections. (Regression introduced in v2.4.1).
+- Command Generate - Remove schema prompt for MySQL.
 
 ## RELEASE 2.4.1 - 2019-10-11
 ### Added
