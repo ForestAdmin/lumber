@@ -112,7 +112,6 @@ async function Prompter(program, requests) {
     }
   }
 
-
   if (isRequested('dbHostname')) {
     if (process.env.DATABASE_HOST) {
       envConfig.dbHostname = process.env.DATABASE_HOST;
