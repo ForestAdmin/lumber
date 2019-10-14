@@ -7,6 +7,7 @@
 - Command Generate - Add  "SSL" parameter (`-S, --ssl`) to `lumber generate`.
 - Command generate - Add "Schema" parameter (`-s, --schema`) to `lumber generate`.
 - Command generate - Add parameters documentation to `lumber install`.
+- Commands - Add deprecation warning for environment variables usage.
 
 ### Fixed
 - Command Generate - Avoid foreignKey to conflict with relationship.
