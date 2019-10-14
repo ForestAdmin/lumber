@@ -106,8 +106,7 @@ async function Prompter(program, requests) {
         when: (answers) => {
           // NOTICE: MongoDB, MySQL and SQLite do not require a Schema.
           const skipDatabases = ['sqlite', 'mongodb', 'mysql'];
-          return !(skipDatabases.includes(answers.dbDialect)
-            || skipDatabases.includes(envConfig.dbDialect));
+          return !skipDatabases.includes(answers.dbDialect || envConfig.dbDialect);
         },
         default: (args) => {
           if (args.dbDialect === 'postgres') { return 'public'; }
@@ -286,10 +285,10 @@ async function Prompter(program, requests) {
           if (password) {
             if (FORMAT_PASSWORD.test(password)) { return true; }
             return '🔓  Your password security is too weak 🔓\n' +
-              ' Please make sure it contains at least:\n' +
-              '    > 8 characters\n' +
-              '    > Upper and lower case letters\n' +
-              '    > Numbers';
+            ' Please make sure it contains at least:\n' +
+            '    > 8 characters\n' +
+            '    > Upper and lower case letters\n' +
+            '    > Numbers';
           }
 
           return 'Your password cannot be blank.';
