@@ -9,7 +9,7 @@ function EnvironmentChecker(env, logger, deprecated) {
       logger.warn(
         'Environment variables usage detected:',
         activeEnvironmentVariables.map(variable => ` - ${variable}`),
-        'Environment variables will be removed in the future major Lumber version. Please use command parameters instead.',
+        'Environment variables are DEPRECATED and will be removed in the future major Lumber version. Please use command parameters instead.',
         'Type `lumber help` for more information.',
       );
     }
