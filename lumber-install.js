@@ -37,7 +37,7 @@ program
     return process.exit(1);
   }
 
-    // NOTICE: Check deprecated environments variables.
+  // NOTICE: Check deprecated environments variables.
   const environmentChecker = new EnvironmentChecker(process.env, logger, [
     'FOREST_EMAIL',
     'FOREST_TOKEN',
