@@ -103,6 +103,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       case 'TIMESTAMP WITHOUT TIME ZONE':
         return 'DATE';
       case 'TIME':
+      case 'TIME WITHOUT TIME ZONE':
         return 'TIME';
       case 'ARRAY': {
         if (queryInterface.sequelize.options.dialect !== 'postgres') {

@@ -6,6 +6,7 @@ const DatabaseAnalyzer = require('./services/database-analyzer');
 const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
 const logger = require('./services/logger');
+const eventSender = require('./services/event-sender');
 const EnvironmentChecker = require('./services/environment-checker');
 
 program
@@ -20,6 +21,9 @@ program
   .parse(process.argv);
 
 (async () => {
+  eventSender.command = 'generate';
+  [eventSender.appName] = program.args;
+
   // NOTICE: Check deprecated environments variables.
   const environmentChecker = new EnvironmentChecker(process.env, logger, [
     'DATABASE_URL',
@@ -52,12 +56,14 @@ program
   });
 
   logger.success(`Hooray, ${chalk.green('installation success')}!`);
+  await eventSender.notifySuccess();
   process.exit(0);
-})().catch((error) => {
+})().catch(async (error) => {
   logger.error(
     'Cannot generate your project.',
     'An unexpected error occured. Please create a Github issue with following error:',
   );
   logger.log(error);
+  await eventSender.notifyError();
   process.exit(1);
 });
