@@ -11,6 +11,7 @@
 
 ### Changed
 - Generate command - Rename APP_NAME to APPLICATION_NAME for consistency. The old name remains supported.
+- Technical - Change `no-multiple-empty-lines` ESLint rule. Disallow two and more consecutive empty lines.
 
 ### Fixed
 - Technical - Fix dependencies in `package-lock.json`.
