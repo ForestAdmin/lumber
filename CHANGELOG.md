@@ -1,6 +1,14 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Command Generate - Add  "Application port" parameter (`-p, --application-port`) to `lumber generate`.
+- Command Generate - Add  "Application host" parameter (`-H, --application-host`) to `lumber generate`.
+- Command Generate - Add  "SSL" parameter (`-S, --ssl`) to `lumber generate`.
+- Command generate - Add "Schema" parameter (`-s, --schema`) to `lumber generate`.
+- Command generate - Add parameters documentation to `lumber install`.
+- Commands - Add deprecation warning for environment variables usage.
+
 ### Changed
 - Generate command - Rename APP_NAME to APPLICATION_NAME for consistency. The old name remains supported.
 

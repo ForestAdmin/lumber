@@ -9,9 +9,14 @@ const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/database-analyzer');
 const inquirer = require('inquirer');
 const argv = require('minimist')(process.argv.slice(2));
+const EnvironmentChecker = require('./services/environment-checker');
 
 program
   .description('Install a Lumber plugin')
+  .option('-e, --email <email>', 'Your Forest Admin account email')
+  .option('-P, --password <password>', 'Your Forest Admin account password (ignored if token is set)')
+  .option('-t, --token <token>', 'Your Forest Admin account token (replaces password)')
+  .option('-p, --projectName <projectName>', 'Your Forest Admin project name')
   .parse(process.argv);
 
 (async () => {
@@ -40,6 +45,14 @@ program
 
     return process.exit(1);
   }
+
+  // NOTICE: Check deprecated environments variables.
+  const environmentChecker = new EnvironmentChecker(process.env, logger, [
+    'FOREST_EMAIL',
+    'FOREST_TOKEN',
+    'FOREST_PASSWORD',
+  ]);
+  environmentChecker.logWarnings();
 
   const pkg = importFrom(process.cwd(), program.args[0]);
 

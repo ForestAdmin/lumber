@@ -11,7 +11,7 @@ const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/;
 
 async function Prompter(program, requests) {
   function isRequested(option) {
-    return requests.indexOf(option) > -1;
+    return requests.includes(option);
   }
 
   const envConfig = { db: program.db };
@@ -95,9 +95,9 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbSchema')) {
-    if (process.env.DATABASE_SCHEMA) {
-      envConfig.dbSchema = process.env.DATABASE_SCHEMA;
-    } else {
+    // TODO: Remove DATABASE_SCHEMA environment variable usage in the future major Lumber version.
+    envConfig.dbSchema = program.schema || process.env.DATABASE_SCHEMA;
+    if (!envConfig.dbSchema) {
       prompts.push({
         type: 'input',
         name: 'dbSchema',
@@ -199,8 +199,19 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('ssl')) {
-    if (process.env.DATABASE_SSL) {
-      envConfig.ssl = JSON.parse(process.env.DATABASE_SSL.toLowerCase());
+    // TODO: Remove DATABASE_SSL environment variable usage in the future major Lumber version.
+    const ssl = program.ssl || process.env.DATABASE_SSL;
+    if (ssl) {
+      try {
+        // NOTICE: Parse from string (e.g "true" or "false") to boolean.
+        envConfig.ssl = JSON.parse(ssl.toLowerCase());
+        if (typeof envConfig.ssl !== 'boolean') {
+          throw new Error();
+        }
+      } catch (e) {
+        logger.error(`Database SSL value must be either "true" or "false" ("${ssl}" given).`);
+        process.exit(1);
+      }
     } else {
       prompts.push({
         type: 'confirm',
@@ -227,9 +238,9 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('appHostname')) {
-    if (process.env.APPLICATION_HOST) {
-      envConfig.appHostname = process.env.APPLICATION_HOST;
-    } else {
+    // TODO: Remove APPLICATION_HOST environment variable usage in the future major Lumber version.
+    envConfig.appHostname = program.applicationHost || process.env.APPLICATION_HOST;
+    if (!envConfig.appHostname) {
       prompts.push({
         type: 'input',
         name: 'appHostname',
@@ -240,9 +251,9 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('appPort')) {
-    if (process.env.APPLICATION_PORT) {
-      envConfig.appPort = process.env.APPLICATION_PORT;
-    } else {
+    // TODO: Remove APPLICATION_PORT environment variable usage in the future major Lumber version.
+    envConfig.appPort = program.applicationPort || process.env.APPLICATION_PORT;
+    if (!envConfig.appPort) {
       prompts.push({
         type: 'input',
         name: 'appPort',

@@ -7,16 +7,40 @@ const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
 const logger = require('./services/logger');
 const eventSender = require('./services/event-sender');
+const EnvironmentChecker = require('./services/environment-checker');
 
 program
-  .description('Generate a backend application with an ORM/ODM configured.')
+  .description('Generate a backend application with an ORM/ODM configured')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
-  .option('--no-db', 'Use Lumber without a database.')
+  // NOTICE: --ssl option is not a real boolean option since we do not want a breaking change.
+  .option('-S, --ssl <ssl>', 'Use SSL for database connection (true|false)')
+  .option('-H, --application-host <applicationHost>', 'Hostname of your admin backend application')
+  .option('-p, --application-port <applicationPort>', 'Port of your admin backend application')
+  .option('-s, --schema <schema>', 'Enter your database schema')
+  .option('--no-db', 'Use Lumber without a database')
   .parse(process.argv);
 
 (async () => {
   eventSender.command = 'generate';
   [eventSender.appName] = program.args;
+
+  // NOTICE: Check deprecated environments variables.
+  const environmentChecker = new EnvironmentChecker(process.env, logger, [
+    'DATABASE_URL',
+    'DATABASE_DIALECT',
+    'DATABASE_NAME',
+    'DATABASE_SCHEMA',
+    'DATABASE_HOST',
+    'DATABASE_PORT',
+    'DATABASE_USER',
+    'DATABASE_PASSWORD',
+    'DATABASE_SSL',
+    'DATABASE_MONGODB_SRV',
+    'APPLICATION_HOST',
+    'APPLICATION_PORT',
+  ]);
+  environmentChecker.logWarnings();
+
   const config = await new CommandGenerateConfigGetter(program).perform();
 
   let schema = {};
