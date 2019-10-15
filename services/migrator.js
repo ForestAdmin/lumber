@@ -3,6 +3,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const chalk = require('chalk');
 const logger = require('./logger');
+const stringUtils = require('../utils/strings');
 
 function Migrator(config) {
   this.createModel = (schema, table) => {
@@ -13,6 +14,7 @@ function Migrator(config) {
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
     const text = template({
+      modelName: stringUtils.pascalCase(table),
       table,
       fields,
       references,

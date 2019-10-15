@@ -11,7 +11,7 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
 <% } else {
 %>module.exports = (sequelize, DataTypes) => {
   const { Sequelize } = sequelize;
-  const Model = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
+  const <%= modelName %> = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
     <%= field.name %>: {
       type: DataTypes.<%= field.type %>,<% if (field.nameColumnUnconventional) { %>
       field: '<%= field.nameColumn %>',<% } %><% if (field.primaryKey) { %>
@@ -25,10 +25,10 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
     schema: process.env.DATABASE_SCHEMA,<% } %>
   });
 <%if (!hasIdColumn && !hasPrimaryKeys) {%>
-  Model.removeAttribute('id');
+  <%= modelName %>.removeAttribute('id');
 <% } %>
-  Model.associate = (models) => {<% _.each(references, (reference) => { %>
-    Model.belongsTo(models.<%= reference.ref %>, {
+  <%= modelName %>.associate = (models) => {<% _.each(references, (reference) => { %>
+    <%= modelName %>.belongsTo(models.<%= reference.ref %>, {
       foreignKey: {
         name: '<%= reference.foreignKeyName %>',<% if (reference.foreignKeyColumnUnconventional) { %>
         field: '<%= reference.foreignKey %>',<% } %>
@@ -41,6 +41,6 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
     });<% }); %>
   };
 
-  return Model;
+  return <%= modelName %>;
 };
 <% } %>
