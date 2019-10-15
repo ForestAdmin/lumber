@@ -9,9 +9,13 @@ const schema = mongoose.Schema({<% _.each(fields, (field) => { %>
 
 module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
 <% } else {
+%><%
+const pascalCase = function(input) {
+  return _.chain(input).camelCase().upperFirst().value();
+}
 %>module.exports = (sequelize, DataTypes) => {
   const { Sequelize } = sequelize;
-  const <%= _.chain(table).camelCase().upperFirst().value() %> = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
+  const <%= pascalCase(table) %> = sequelize.define('<%= table %>', {<% _.each(fields, (field) => { %>
     <%= field.name %>: {
       type: DataTypes.<%= field.type %>,<% if (field.nameColumnUnconventional) { %>
       field: '<%= field.nameColumn %>',<% } %><% if (field.primaryKey) { %>
@@ -25,10 +29,10 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
     schema: process.env.DATABASE_SCHEMA,<% } %>
   });
 <%if (!hasIdColumn && !hasPrimaryKeys) {%>
-  <%= _.chain(table).camelCase().upperFirst().value() %>.removeAttribute('id');
+  <%= pascalCase(table) %>.removeAttribute('id');
 <% } %>
-  <%= _.chain(table).camelCase().upperFirst().value() %>.associate = (models) => {<% _.each(references, (reference) => { %>
-    <%= _.chain(table).camelCase().upperFirst().value() %>.belongsTo(models.<%= reference.ref %>, {
+  <%= pascalCase(table) %>.associate = (models) => {<% _.each(references, (reference) => { %>
+    <%= pascalCase(table) %>.belongsTo(models.<%= reference.ref %>, {
       foreignKey: {
         name: '<%= reference.foreignKeyName %>',<% if (reference.foreignKeyColumnUnconventional) { %>
         field: '<%= reference.foreignKey %>',<% } %>
@@ -41,6 +45,6 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
     });<% }); %>
   };
 
-  return <%= _.chain(table).camelCase().upperFirst().value() %>;
+  return <%= pascalCase(table) %>;
 };
 <% } %>
