@@ -3,7 +3,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const chalk = require('chalk');
 const logger = require('./logger');
-const stringUtils = require('../utils/string-utils');
+const stringUtils = require('../utils/strings');
 
 function Migrator(config) {
   this.createModel = (schema, table) => {

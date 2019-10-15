@@ -3,7 +3,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
 const KeyGenerator = require('./key-generator');
-const stringUtils = require('../utils/string-utils');
+const stringUtils = require('../utils/strings');
 
 const mkdirp = P.promisify(mkdirpSync);
 
