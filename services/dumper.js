@@ -3,6 +3,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
 const KeyGenerator = require('./key-generator');
+const stringUtils = require('../utils/string-utils');
 
 const mkdirp = P.promisify(mkdirpSync);
 
@@ -149,6 +150,7 @@ function Dumper(config) {
     });
 
     const text = template({
+      modelName: stringUtils.pascalCase(table),
       table,
       fields: fieldsDefinition,
       references: referencesDefinition,
