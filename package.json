@@ -36,7 +36,7 @@
     "pg": "^6.1.0",
     "sequelize": "git://github.com/ForestAdmin/sequelize.git#feature/support-schema",
     "superagent": "5.1.0",
-    "tedious": "^1.14.0",
+    "tedious": "6.4.0",
     "winston": "^2.2.0"
   },
   "devDependencies": {

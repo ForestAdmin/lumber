@@ -38,7 +38,7 @@ function Dumper(config) {
       } else if (config.dbDialect === 'mysql') {
         dependencies.mysql2 = '~1.7.0';
       } else if (config.dbDialect === 'mssql') {
-        dependencies.tedious = '^1.14.0';
+        dependencies.tedious = '^6.4.0';
       } else if (config.dbDialect === 'sqlite') {
         dependencies.sqlite3 = '~4.0.2';
       } else if (config.dbDialect === 'mongodb') {

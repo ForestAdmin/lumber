@@ -4,6 +4,9 @@
 ### Changed
 - Command Generate - Give models a unique pascal-cased name when generating sequelize model files.
 
+### Fixed
+- MSSQL - Prevent potential bad database connection using upgrading an old version of `tedious` dependency.
+
 ## RELEASE 2.5.0 - 2019-10-15
 ### Added
 - Command Generate - Add  "Application port" parameter (`-p, --application-port`) to `lumber generate`.
