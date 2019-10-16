@@ -7,6 +7,7 @@
 ### Fixed
 - MSSQL - Prevent potential bad database connection using upgrading an old version of `tedious` dependency.
 - Onboarding - Catch correctly authentication error on mongodb.
+- Onboarding - Catch correctly empty collections on mongodb.
 
 ## RELEASE 2.5.0 - 2019-10-15
 ### Added

@@ -218,27 +218,41 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     const schema = {};
 
     return databaseConnection.collections()
-      .then(collections => P.each(collections, async (item) => {
-        const collection = item.s;
-        const collectionName = collection && collection.namespace
-          && collection.namespace.collection;
+      .then(async (collections) => {
+        if (collections.length === 0) {
+          logger.error(
+            'Your database is empty.',
+            'Please, create some collections before running generate command.',
+          );
+          await eventSender.notifyError('database_empty', 'Your database is empty.', {
+            orm: 'mongoose',
+            dialect: 'mongodb',
+          });
+          return process.exit(1);
+        }
 
-        // NOTICE: Defensive programming
-        if (!collectionName) { return; }
+        return P.each(collections, async (item) => {
+          const collection = item.s;
+          const collectionName = collection && collection.namespace
+            && collection.namespace.collection;
 
-        // NOTICE: Ignore system collections.
-        if (collectionName.startsWith('system.')) { return; }
+          // NOTICE: Defensive programming
+          if (!collectionName) { return; }
 
-        const analysis = await analyzeMongoCollection(collectionName);
-        schema[collectionName] = {
-          fields: analysis,
-          references: [],
-          primaryKeys: ['_id'],
-          options: {
-            timestamps: isUnderscored(analysis),
-          },
-        };
-      }))
+          // NOTICE: Ignore system collections.
+          if (collectionName.startsWith('system.')) { return; }
+
+          const analysis = await analyzeMongoCollection(collectionName);
+          schema[collectionName] = {
+            fields: analysis,
+            references: [],
+            primaryKeys: ['_id'],
+            options: {
+              timestamps: isUnderscored(analysis),
+            },
+          };
+        });
+      })
       .then(() => schema);
   }
 
