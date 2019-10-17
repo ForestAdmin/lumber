@@ -18,6 +18,17 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     return Object.keys(schema).filter(column => schema[column].primaryKey);
   }
 
+  async function reportEmptyDatabase(orm, dialect) {
+    const sqlSpecificError = orm === 'sequelize'
+      ? 'If not, check whether you are using a custom database schema (use in that case the --schema option)' : '';
+    logger.error(`Your database looks empty! Please create some ${orm === 'mongoose' ? 'collections' : 'tables'} before running the command.${sqlSpecificError}`);
+    await eventSender.notifyError('database_empty', 'Your database is empty.', {
+      orm,
+      dialect,
+    });
+    return process.exit(1);
+  }
+
   function isUnderscored(fields) {
     return fields.every(field => field.nameColumn === _.snakeCase(field.nameColumn))
       && fields.some(field => field.nameColumn.includes('_'));
@@ -161,15 +172,7 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     });
 
     if (_.isEmpty(schema)) {
-      logger.error(
-        'Your database looks empty! Please create some tables before running the command.',
-        'If not, check whether you are using a custom database schema (use in that case the --schema option)',
-      );
-      await eventSender.notifyError('database_empty', 'Your database is empty.', {
-        orm: 'sequelize',
-        dialect: databaseConnection.getDialect(),
-      });
-      return process.exit(1);
+      return reportEmptyDatabase('sequelize', databaseConnection.getDialect());
     }
 
     return schema;
@@ -220,15 +223,7 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     return databaseConnection.collections()
       .then(async (collections) => {
         if (collections.length === 0) {
-          logger.error(
-            'Your database is empty.',
-            'Please, create some collections before running generate command.',
-          );
-          await eventSender.notifyError('database_empty', 'Your database is empty.', {
-            orm: 'mongoose',
-            dialect: 'mongodb',
-          });
-          return process.exit(1);
+          return reportEmptyDatabase('mongoose', 'mongodb');
         }
 
         return P.each(collections, async (item) => {
