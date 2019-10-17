@@ -44,7 +44,6 @@ Finally, visit http://localhost:3310.
 `$ lumber [command]`
 
 - `generate <appName>`      generate a backend application with an ORM/ODM configured.
-- `update`        update your models's definition according to your database schema
 - `install <package>`       install a Lumber plugin.
 - `run <plugin:cmd>` run a command from a Lumber plugin.
 - `help [cmd]`    display help for [cmd]

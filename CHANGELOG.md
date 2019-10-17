@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Command Generate - Give models a unique pascal-cased name when generating sequelize model files.
+- Command Update - Remove command update.
 
 ### Fixed
 - MSSQL - Prevent potential bad database connection using upgrading an old version of `tedious` dependency.
