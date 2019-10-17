@@ -19,9 +19,11 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
   }
 
   async function reportEmptyDatabase(orm, dialect) {
-    const sqlSpecificError = orm === 'sequelize'
-      ? 'If not, check whether you are using a custom database schema (use in that case the --schema option)' : '';
-    logger.error(`Your database looks empty! Please create some ${orm === 'mongoose' ? 'collections' : 'tables'} before running the command.${sqlSpecificError}`);
+    const logs = [`Your database looks empty! Please create some ${orm === 'mongoose' ? 'collections' : 'tables'} before running the command.`];
+    if (orm === 'sequelize') {
+      logs.push('If not, check whether you are using a custom database schema (use in that case the --schema option).');
+    }
+    logger.error(...logs);
     await eventSender.notifyError('database_empty', 'Your database is empty.', {
       orm,
       dialect,
