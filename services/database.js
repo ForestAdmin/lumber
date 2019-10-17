@@ -77,10 +77,22 @@ function Database() {
       };
     }
 
+    let { dbConnectionUrl, dbHostname } = options;
+    if (databaseDialect === 'mssql' && dbConnectionUrl && dbConnectionUrl.includes('\\')) {
+      const [prefix, suffix] = dbConnectionUrl.split('\\');
+      const indexOfColon = suffix.indexOf(':');
+      dbConnectionUrl = `${prefix}${suffix.substring(indexOfColon)}`;
+      connectionOptionsSequelize.dialectOptions.instanceName = suffix.substring(0, indexOfColon);
+    } else if (databaseDialect === 'mssql' && options.dbHostname && options.dbHostname.includes('\\')) {
+      const [hostname, instanceName] = dbConnectionUrl.split('\\');
+      dbHostname = hostname;
+      connectionOptionsSequelize.dialectOptions.instanceName = instanceName;
+    }
+
     if (options.dbConnectionUrl) {
-      connection = new Sequelize(options.dbConnectionUrl, connectionOptionsSequelize);
+      connection = new Sequelize(dbConnectionUrl, connectionOptionsSequelize);
     } else {
-      connectionOptionsSequelize.host = options.dbHostname;
+      connectionOptionsSequelize.host = dbHostname;
       connectionOptionsSequelize.port = options.dbPort;
       connectionOptionsSequelize.dialect = databaseDialect;
 
