@@ -2,7 +2,7 @@ sudo: required
 
 language: node_js
 
-node_js: stable
+node_js: lts/*
 
 env:
   - NODE_ENV=travis
