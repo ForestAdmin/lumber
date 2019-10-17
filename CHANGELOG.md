@@ -6,8 +6,6 @@
 
 ### Fixed
 - MSSQL - Prevent potential bad database connection using upgrading an old version of `tedious` dependency.
-- Onboarding - Catch correctly authentication error on mongodb.
-- Onboarding - Catch correctly empty collections on mongodb.
 - Command Generate - Catch correctly authentication error on mongodb.
 - Command Generate - Catch correctly empty collections on mongodb.
 
