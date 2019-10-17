@@ -56,7 +56,8 @@ function Database() {
       }
 
       return MongoClient.connect(connectionUrl, connectionOptionsMongoClient)
-        .then(client => client.db(options.dbName));
+        .then(client => client.db(options.dbName))
+        .catch(error => handleAuthenticationError(error));
     }
 
     const needsEncryption = isSSL && (databaseDialect === 'mssql');
