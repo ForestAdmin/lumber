@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.5.1 - 2019-10-18
 ### Changed
 - Command Generate - Give models a unique pascal-cased name when generating sequelize model files.
 
