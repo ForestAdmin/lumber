@@ -18,6 +18,19 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     return Object.keys(schema).filter(column => schema[column].primaryKey);
   }
 
+  async function reportEmptyDatabase(orm, dialect) {
+    const logs = [`Your database looks empty! Please create some ${orm === 'mongoose' ? 'collections' : 'tables'} before running the command.`];
+    if (orm === 'sequelize') {
+      logs.push('If not, check whether you are using a custom database schema (use in that case the --schema option).');
+    }
+    logger.error(...logs);
+    await eventSender.notifyError('database_empty', 'Your database is empty.', {
+      orm,
+      dialect,
+    });
+    return process.exit(1);
+  }
+
   function isUnderscored(fields) {
     return fields.every(field => field.nameColumn === _.snakeCase(field.nameColumn))
       && fields.some(field => field.nameColumn.includes('_'));
@@ -161,15 +174,7 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     });
 
     if (_.isEmpty(schema)) {
-      logger.error(
-        'Your database looks empty! Please create some tables before running the command.',
-        'If not, check whether you are using a custom database schema (use in that case the --schema option)',
-      );
-      await eventSender.notifyError('database_empty', 'Your database is empty.', {
-        orm: 'sequelize',
-        dialect: databaseConnection.getDialect(),
-      });
-      return process.exit(1);
+      return reportEmptyDatabase('sequelize', databaseConnection.getDialect());
     }
 
     return schema;
@@ -218,27 +223,33 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     const schema = {};
 
     return databaseConnection.collections()
-      .then(collections => P.each(collections, async (item) => {
-        const collection = item.s;
-        const collectionName = collection && collection.namespace
-          && collection.namespace.collection;
+      .then(async (collections) => {
+        if (collections.length === 0) {
+          return reportEmptyDatabase('mongoose', 'mongodb');
+        }
 
-        // NOTICE: Defensive programming
-        if (!collectionName) { return; }
+        return P.each(collections, async (item) => {
+          const collection = item.s;
+          const collectionName = collection && collection.namespace
+            && collection.namespace.collection;
 
-        // NOTICE: Ignore system collections.
-        if (collectionName.startsWith('system.')) { return; }
+          // NOTICE: Defensive programming
+          if (!collectionName) { return; }
 
-        const analysis = await analyzeMongoCollection(collectionName);
-        schema[collectionName] = {
-          fields: analysis,
-          references: [],
-          primaryKeys: ['_id'],
-          options: {
-            timestamps: isUnderscored(analysis),
-          },
-        };
-      }))
+          // NOTICE: Ignore system collections.
+          if (collectionName.startsWith('system.')) { return; }
+
+          const analysis = await analyzeMongoCollection(collectionName);
+          schema[collectionName] = {
+            fields: analysis,
+            references: [],
+            primaryKeys: ['_id'],
+            options: {
+              timestamps: isUnderscored(analysis),
+            },
+          };
+        });
+      })
       .then(() => schema);
   }
 
