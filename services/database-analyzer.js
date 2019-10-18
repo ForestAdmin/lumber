@@ -212,7 +212,7 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
               return resolve([]);
             }
             if (err.codeName && err.codeName === 'CommandNotSupportedOnView') {
-              // NOTICE: Silently ignore views errors (e.g do not import views). 
+              // NOTICE: Silently ignore views errors (e.g do not import views).
               //         See: https://github.com/ForestAdmin/lumber/issues/265
               return resolve([]);
             }
