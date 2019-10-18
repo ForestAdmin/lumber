@@ -5,6 +5,7 @@
 ## RELEASE 2.5.1 - 2019-10-18
 ### Changed
 - Command Generate - Give models a unique pascal-cased name when generating sequelize model files.
+- Continuous Integration - Change `11.14` version of `node_js` to `lts/*` in `.travis.yml`.
 
 ### Fixed
 - MSSQL - Prevent potential bad database connection using upgrading an old version of `tedious` dependency.
