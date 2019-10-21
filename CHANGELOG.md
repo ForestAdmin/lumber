@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fixed error when analyzing MongoDB views.
 
 ## RELEASE 2.5.1 - 2019-10-18
 ### Changed

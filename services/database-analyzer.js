@@ -211,6 +211,11 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
               logger.warn('If your database is hosted on MongoDB Atlas, it\'s probably due to the Free tier limitations. More info here: https://docs.atlas.mongodb.com/unsupported-commands\n');
               return resolve([]);
             }
+            if (err.codeName && err.codeName === 'CommandNotSupportedOnView') {
+              // NOTICE: Silently ignore views errors (e.g do not import views).
+              //         See: https://github.com/ForestAdmin/lumber/issues/265
+              return resolve([]);
+            }
             return reject(err);
           }
           /* eslint no-underscore-dangle: off */
