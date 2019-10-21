@@ -1,7 +1,7 @@
 FROM node:lts-jessie
 
 WORKDIR /usr/src/app
-RUN npm install -g lumber-cli -s
+RUN npm install -g lumber-cli@2 -s
 
 VOLUME /usr/src/app
 

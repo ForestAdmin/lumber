@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Docker - Fix lumber version in `Dockerfile`.
+
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.
 
