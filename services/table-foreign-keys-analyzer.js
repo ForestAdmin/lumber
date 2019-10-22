@@ -3,7 +3,7 @@ function TableForeignKeysAnalyzer(databaseConnection, config) {
 
   this.perform = async (table) => {
     let query = null;
-    let replacements = { table };
+    const replacements = { table };
 
     switch (queryInterface.sequelize.options.dialect) {
       case 'postgres':
@@ -32,9 +32,9 @@ function TableForeignKeysAnalyzer(databaseConnection, config) {
           FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
           WHERE TABLE_SCHEMA = :databaseName
             AND TABLE_NAME = :table;`;
-        // NOTICE: `config.dbName` may not exists when using connection URL. 
+        // NOTICE: `config.dbName` may not exists when using connection URL.
         //         Use `dbConnectionUrl` as a fallback.
-        replacements.databaseName = config.dbName || config.dbConnectionUrl.split("/").pop();
+        replacements.databaseName = config.dbName || config.dbConnectionUrl.split('/').pop();
         break;
       case 'mssql':
         query = `
@@ -56,7 +56,7 @@ function TableForeignKeysAnalyzer(databaseConnection, config) {
           WHERE fk.parent_object_id = (SELECT object_id FROM sys.tables WHERE name = :table)`;
         break;
       case 'sqlite':
-        query = `PRAGMA foreign_key_list(:table);`;
+        query = 'PRAGMA foreign_key_list(:table);';
         break;
       default:
         break;
