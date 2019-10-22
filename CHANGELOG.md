@@ -13,6 +13,7 @@
 ## RELEASE 2.5.2 - 2019-10-25
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
+- Commands - Remove command run and install.
 
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.

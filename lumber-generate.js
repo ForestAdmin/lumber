@@ -17,6 +17,9 @@ program
   .option('-p, --application-port <applicationPort>', 'Port of your admin backend application')
   .option('-s, --schema <schema>', 'Enter your database schema')
   .option('--no-db', 'Use Lumber without a database')
+  .option('-e, --email <email>', 'Your Forest Admin account email')
+  .option('-P, --password <password>', 'Your Forest Admin account password (ignored if token is set)')
+  .option('-t, --token <token>', 'Your Forest Admin account token (replaces password)')
   .parse(process.argv);
 
 (async () => {
