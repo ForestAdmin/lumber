@@ -6,6 +6,7 @@
 
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.
+- Security - Upgrade `lodash` dependencies to patch vulnerabilities.
 
 ## RELEASE 2.5.1 - 2019-10-18
 ### Changed
