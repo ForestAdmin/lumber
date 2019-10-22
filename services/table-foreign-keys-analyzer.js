@@ -3,6 +3,7 @@ function TableForeignKeysAnalyzer(databaseConnection, config) {
 
   this.perform = async (table) => {
     let query = null;
+    let replacements = { table };
 
     switch (queryInterface.sequelize.options.dialect) {
       case 'postgres':
@@ -19,7 +20,7 @@ function TableForeignKeysAnalyzer(databaseConnection, config) {
           JOIN information_schema.constraint_column_usage AS ccu
             ON ccu.constraint_name = tc.constraint_name
           WHERE constraint_type = 'FOREIGN KEY'
-            AND tc.table_name='${table}';`;
+            AND tc.table_name=:table;`;
         break;
       case 'mysql':
         query = `
@@ -29,8 +30,11 @@ function TableForeignKeysAnalyzer(databaseConnection, config) {
             REFERENCED_TABLE_NAME AS foreign_table_name,
             REFERENCED_COLUMN_NAME AS foreign_column_name
           FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-          WHERE TABLE_SCHEMA = '${config.dbName}'
-            AND TABLE_NAME = '${table}';`;
+          WHERE TABLE_SCHEMA = :databaseName
+            AND TABLE_NAME = :table;`;
+        // NOTICE: `config.dbName` may not exists when using connection URL. 
+        //         Use `dbConnectionUrl` as a fallback.
+        replacements.databaseName = config.dbName || config.dbConnectionUrl.split("/").pop();
         break;
       case 'mssql':
         query = `
@@ -49,17 +53,18 @@ function TableForeignKeysAnalyzer(databaseConnection, config) {
           INNER JOIN sys.columns c2
             ON fkc.referenced_column_id = c2.column_id
               AND fkc.referenced_object_id = c2.object_id
-          WHERE fk.parent_object_id = (SELECT object_id FROM sys.tables WHERE name = '${table}')`;
+          WHERE fk.parent_object_id = (SELECT object_id FROM sys.tables WHERE name = :table)`;
         break;
       case 'sqlite':
-        query = `PRAGMA foreign_key_list('${table}');`;
+        query = `PRAGMA foreign_key_list(:table);`;
         break;
       default:
         break;
     }
 
+    console.log(replacements);
     return queryInterface.sequelize
-      .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT });
+      .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT, replacements });
   };
 }
 
