@@ -16,6 +16,10 @@ function Database() {
       .catch(error => handleAuthenticationError(error));
   }
 
+  function hasInstanceName(hostname) {
+    return hostname && hostname.includes('\\');
+  }
+
   this.connect = (options) => {
     const isSSL = options.dbSSL || options.ssl;
     let connection;
@@ -78,15 +82,17 @@ function Database() {
     }
 
     let { dbConnectionUrl, dbHostname } = options;
-    if (databaseDialect === 'mssql' && dbConnectionUrl && dbConnectionUrl.includes('\\')) {
-      const [prefix, suffix] = dbConnectionUrl.split('\\');
-      const indexOfColon = suffix.indexOf(':');
-      dbConnectionUrl = `${prefix}${suffix.substring(indexOfColon)}`;
-      connectionOptionsSequelize.dialectOptions.instanceName = suffix.substring(0, indexOfColon);
-    } else if (databaseDialect === 'mssql' && options.dbHostname && options.dbHostname.includes('\\')) {
-      const [hostname, instanceName] = dbConnectionUrl.split('\\');
-      dbHostname = hostname;
-      connectionOptionsSequelize.dialectOptions.instanceName = instanceName;
+    if (databaseDialect === 'mssql') {
+      if (hasInstanceName(dbConnectionUrl)) {
+        const [prefix, suffix] = dbConnectionUrl.split('\\');
+        const indexOfColon = suffix.indexOf(':');
+        dbConnectionUrl = `${prefix}${suffix.substring(indexOfColon)}`;
+        connectionOptionsSequelize.dialectOptions.instanceName = suffix.substring(0, indexOfColon);
+      } else if (hasInstanceName(options.dbHostname)) {
+        const [hostname, instanceName] = dbConnectionUrl.split('\\');
+        dbHostname = hostname;
+        connectionOptionsSequelize.dialectOptions.instanceName = instanceName;
+      }
     }
 
     if (options.dbConnectionUrl) {
