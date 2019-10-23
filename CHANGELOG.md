@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Generate MongoDB belongsTo.
 
 ## RELEASE 2.6.0 - 2019-10-29
 ### Added
