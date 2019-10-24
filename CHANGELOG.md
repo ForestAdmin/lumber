@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - database analyzer refacto - separate each database analyzer in its own file and add errors.
+
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.
 
