@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
+- Technical - Remove obsolete directories `serializers` and `deserializers`.
 
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.
