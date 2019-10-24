@@ -60,7 +60,6 @@ function TableForeignKeysAnalyzer(databaseConnection) {
         break;
     }
 
-    console.log(replacements);
     return queryInterface.sequelize
       .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT, replacements });
   };
