@@ -8,6 +8,8 @@
 - Command Generate - Fixed error when analyzing MongoDB views.
 - Security - Upgrade `lodash` dependencies to patch vulnerabilities.
 - Security - Upgrade `eslint` dependency to patch vulnerabilities.
+- Security - Use Sequelize replacements to avoid SQL injections.
+- Command Generate - Fix foreign key imports using connection URL with MySQL.
 
 ## RELEASE 2.5.1 - 2019-10-18
 ### Changed
