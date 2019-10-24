@@ -32,9 +32,7 @@ function TableForeignKeysAnalyzer(databaseConnection, config) {
           FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
           WHERE TABLE_SCHEMA = :databaseName
             AND TABLE_NAME = :table;`;
-        // NOTICE: `config.dbName` may not exists when using connection URL.
-        //         Use `dbConnectionUrl` as a fallback.
-        replacements.databaseName = config.dbName || config.dbConnectionUrl.split('/').pop();
+        replacements.databaseName = queryInterface.sequelize.config.database;
         break;
       case 'mssql':
         query = `
