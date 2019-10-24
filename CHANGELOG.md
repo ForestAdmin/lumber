@@ -3,9 +3,12 @@
 ## [Unreleased]
 ### Changed
 - Technical - database analyzer refacto - separate each database analyzer in its own file and add errors.
+- Docker - Fix lumber version in `Dockerfile`.
 
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.
+- Security - Upgrade `lodash` dependencies to patch vulnerabilities.
+- Security - Upgrade `eslint` dependency to patch vulnerabilities.
 
 ## RELEASE 2.5.1 - 2019-10-18
 ### Changed
