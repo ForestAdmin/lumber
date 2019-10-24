@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Command generate - Add comments to generated models.
+
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
 
