@@ -1,4 +1,4 @@
-function TableForeignKeysAnalyzer(databaseConnection, config) {
+function TableForeignKeysAnalyzer(databaseConnection) {
   const queryInterface = databaseConnection.getQueryInterface();
 
   this.perform = async (table) => {
