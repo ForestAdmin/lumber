@@ -65,7 +65,7 @@ function mongoTableAnalyzer(databaseConnection) {
 
   return databaseConnection.collections()
     .then(async (collections) => {
-        if (collections.length === 0) {
+      if (collections.length === 0) {
         throw new DatabaseAnalyzerError.EmptyDatabase('no collections found', {
           orm: 'mongoose',
           dialect: 'mongodb',
