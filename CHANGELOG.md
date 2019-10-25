@@ -1,11 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Docker - Use lumber options in `Dockerfile`.
 
 ## RELEASE 2.5.2 - 2019-10-25
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
-- Docker - Use lumber options in `Dockerfile`.
 
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.
