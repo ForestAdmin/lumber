@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.5.2 - 2019-10-25
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
 
