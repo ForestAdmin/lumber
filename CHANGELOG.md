@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Commands - Drop environment variables (breaking change!).
+
 ### Fixed
 - Technical - Fix repository in `package.json`.
 
