@@ -8,14 +8,6 @@ function isUnderscored(fields) {
     && fields.some(field => field.nameColumn.includes('_'));
 }
 
-function analyzeMongoCollection(databaseConnection, collectionName) {
-  return new Promise((resolve, reject) => {
-    databaseConnection.collection(collectionName)
-    /* eslint-disable */
-      .mapReduce(mapCollection, reduceCollection, mapReduceOptions, mapReduceErrors(resolve, reject, collectionName))
-  });
-}
-
 const mapReduceOptions = {
   out: { inline: 1 },
   limit: 100,
@@ -59,6 +51,18 @@ const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
   /* eslint no-underscore-dangle: off */
   resolve(results.map(r => ({ name: r._id, type: r.value })));
 };
+
+function analyzeMongoCollection(databaseConnection, collectionName) {
+  return new Promise((resolve, reject) => {
+    databaseConnection.collection(collectionName)
+      .mapReduce(
+        mapCollection,
+        reduceCollection,
+        mapReduceOptions,
+        mapReduceErrors(resolve, reject, collectionName),
+      );
+  });
+}
 
 function mongoTableAnalyzer(databaseConnection) {
   const schema = {};

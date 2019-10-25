@@ -1,8 +1,8 @@
-const ColumnTypeGetter = require('./column-type-getter');
-const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
+const P = require('bluebird');
 const _ = require('lodash');
 const logger = require('./logger');
-const P = require('bluebird');
+const ColumnTypeGetter = require('./column-type-getter');
+const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
 const { DatabaseAnalyzerError } = require('../utils/errors');
 
 let queryInterface;
@@ -154,7 +154,7 @@ async function sequelizeTableAnalyzer(databaseConnection, config, allowWarning) 
   }), async (table) => {
     // NOTICE: MS SQL returns objects instead of strings.
     if (typeof table === 'object') {
-    // eslint-disable-next-line no-param-reassign
+      // eslint-disable-next-line no-param-reassign
       table = table.tableName;
     }
 
@@ -162,7 +162,10 @@ async function sequelizeTableAnalyzer(databaseConnection, config, allowWarning) 
   });
 
   if (_.isEmpty(schema)) {
-    throw new DatabaseAnalyzerError.EmptyDatabase('sequelize', databaseConnection.getDialect());
+    throw new DatabaseAnalyzerError.EmptyDatabase('no tables found', {
+      orm: 'sequelize',
+      dialect: databaseConnection.getDialect(),
+    });
   }
 
   return schema;
