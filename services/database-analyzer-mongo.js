@@ -13,8 +13,11 @@ const mapReduceOptions = {
   limit: 100,
 };
 
-const mapCollection = function () {
-  for (var key in this) {
+// eslint-disable no-undef
+function mapCollection() {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key in this) {
+    /* eslint-disable no-undef */
     if (this[key] instanceof ObjectId && key !== '_id') {
       emit(key, 'mongoose.Schema.Types.ObjectId');
     } else if (this[key] instanceof Date) {
@@ -25,13 +28,12 @@ const mapCollection = function () {
       emit(key, 'String');
     } else if (typeof this[key] === 'number' && key !== '__v') {
       emit(key, 'Number');
+      /* eslint-enable no-undef */
     }
   }
-};
+}
 
-const reduceCollection = function (key, stuff) {
-  return stuff.length ? stuff[0] : null;
-};
+const reduceCollection = (key, stuff) => (stuff.length ? stuff[0] : null);
 
 const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
   /* eslint-enable */
@@ -49,7 +51,7 @@ const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
     return reject(err);
   }
   /* eslint no-underscore-dangle: off */
-  resolve(results.map(r => ({ name: r._id, type: r.value })));
+  return resolve(results.map(r => ({ name: r._id, type: r.value })));
 };
 
 function analyzeMongoCollection(databaseConnection, collectionName) {
