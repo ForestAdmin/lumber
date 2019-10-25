@@ -1,6 +1,7 @@
 {
   "extends": "airbnb-base",
   "rules": {
+    "eol-last": "error",
     "no-console": "off",
     "no-multiple-empty-lines": [
       "error",

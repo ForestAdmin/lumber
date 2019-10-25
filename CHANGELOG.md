@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - Add EOF empty line lint rule
+
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
 
