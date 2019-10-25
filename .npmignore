@@ -1,1 +1,4 @@
 assets
+.env
+.env-example
+.github
