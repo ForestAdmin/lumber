@@ -14,6 +14,7 @@
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
 - Commands - Remove command run and install.
+- Commands Generate - Now also install forestadmin middleware.
 
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.

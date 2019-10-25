@@ -7,6 +7,7 @@ const OPTIONS_DATABASE_MANDATORY = [
   'dbPort',
   'dbUser',
   'dbPassword',
+  'email',
 ];
 const OPTIONS_DATABASE_OPTIONAL = [
   'dbSchema',

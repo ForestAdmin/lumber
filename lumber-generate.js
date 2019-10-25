@@ -7,6 +7,7 @@ const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
 const logger = require('./services/logger');
 const eventSender = require('./services/event-sender');
+const ProjectCreator = require('./services/project-creator');
 
 program
   .description('Generate a backend application with an ORM/ODM configured')
@@ -27,12 +28,16 @@ program
   [eventSender.appName] = program.args;
 
   const config = await new CommandGenerateConfigGetter(program).perform();
-
   let schema = {};
   if (program.db) {
     const connection = await new Database().connect(config);
     schema = await new DatabaseAnalyzer(connection, config, true).perform();
   }
+
+  const { envSecret, authSecret } = await new ProjectCreator(logger)
+    .createProject(config.appName, config);
+  config.forestEnvSecret = envSecret;
+  config.forestAuthSecret = authSecret;
 
   const dumper = await new Dumper(config);
 

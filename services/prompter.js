@@ -14,7 +14,11 @@ async function Prompter(program, requests) {
     return requests.includes(option);
   }
 
-  const envConfig = { db: program.db };
+  const envConfig = {
+    db: program.db,
+    password: program.password || process.env.FOREST_PASSWORD,
+    token: program.token || process.env.FOREST_TOKEN,
+  };
 
   if (program.sourceDirectory) {
     envConfig.sourceDirectory = program.sourceDirectory;

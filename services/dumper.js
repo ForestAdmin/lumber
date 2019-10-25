@@ -13,6 +13,7 @@ function Dumper(config) {
   const path = `${process.cwd()}/${config.appName}`;
   const binPath = `${path}/bin`;
   const routesPath = `${path}/routes`;
+  const forestPath = `${path}/forest`;
   const publicPath = `${path}/public`;
   const modelsPath = `${path}/models`;
   const middlewaresPath = `${path}/middlewares`;
@@ -23,13 +24,16 @@ function Dumper(config) {
   }
 
   function writePackageJson(pathDest) {
+    const orm = config.dbDialect === 'mongodb' ? 'mongoose' : 'sequelize';
     const dependencies = {
       express: '~4.16.3',
       debug: '~4.0.1',
       dotenv: '~6.1.0',
       chalk: '~1.1.3',
       sequelize: '~5.15.1',
+      [`forest-express-${orm}`]: '^4.0.0',
       'require-all': '^3.0.0',
+      'cookie-parser': '1.4.4',
     };
 
     if (config.dbDialect) {
@@ -112,6 +116,8 @@ function Dumper(config) {
       hostname: config.appHostname,
       port: config.appPort,
       authSecret,
+      forestEnvSecret: config.forestEnvSecret,
+      forestAuthSecret: config.forestAuthSecret,
     };
 
     fs.writeFileSync(`${pathDest}/.env`, template(settings));
@@ -165,7 +171,7 @@ function Dumper(config) {
   function writeAppJs(pathDest) {
     const templatePath = `${__dirname}/../templates/app/app.js`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    const text = template({ config });
+    const text = template({ config, forestUrl: process.env.FOREST_URL });
 
     fs.writeFileSync(`${pathDest}/app.js`, text);
   }
@@ -214,13 +220,11 @@ function Dumper(config) {
     fs.writeFileSync(`${pathDest}/.dockerignore`, template({}));
   }
 
-  async function writeWelcomeMiddlewareIndex() {
-    await mkdirp(`${middlewaresPath}/welcome`);
-    copyTemplate('middlewares/welcome/index.js', `${middlewaresPath}/welcome/index.js`);
-  }
-
-  function writeWelcomeMiddlewareTemplate() {
-    copyTemplate('middlewares/welcome/template.txt', `${middlewaresPath}/welcome/template.txt`);
+  function writeForestadminMiddleware(pathDest) {
+    mkdirp.sync(`${process.cwd()}/middlewares`);
+    const templatePath = `${__dirname}/../templates/app/middlewares/forestadmin.txt`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    fs.writeFileSync(`${pathDest}/middlewares/forestadmin.js`, template(config));
   }
 
   this.dump = (table, { fields, references, options }) => {
@@ -231,6 +235,7 @@ function Dumper(config) {
     mkdirp(path),
     mkdirp(binPath),
     mkdirp(routesPath),
+    mkdirp(forestPath),
     mkdirp(publicPath),
     mkdirp(middlewaresPath),
   ];
@@ -250,12 +255,12 @@ function Dumper(config) {
     writePackageJson(path);
     writeDotGitIgnore(path);
     writeDotGitKeep(routesPath);
+    writeDotGitKeep(forestPath);
     writeDotEnv(path, authSecret);
     writeDockerfile(path);
     writeDockerCompose(path, authSecret);
     writeDotDockerIgnore(path);
-    await writeWelcomeMiddlewareIndex();
-    writeWelcomeMiddlewareTemplate();
+    writeForestadminMiddleware(path);
 
     return this;
   })();
