@@ -7,7 +7,6 @@ const OPTIONS_DATABASE_MANDATORY = [
   'dbPort',
   'dbUser',
   'dbPassword',
-  'email',
 ];
 const OPTIONS_DATABASE_OPTIONAL = [
   'dbSchema',
@@ -18,6 +17,7 @@ const OPTIONS_APPLICATION = [
   'appName',
   'appHostname',
   'appPort',
+  'email',
 ];
 
 function CommandGenerateConfigGetter(program) {
