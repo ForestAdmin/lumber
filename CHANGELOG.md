@@ -10,6 +10,8 @@
 - Security - Upgrade `eslint` dependency to patch vulnerabilities.
 - Security - Use Sequelize replacements to avoid SQL injections.
 - Command Generate - Fix foreign key imports using connection URL with MySQL.
+- NPM Publish - Do not send local environment variables on package publish.
+- NPM Publish - Remove Github templates from the published packages.
 - Command Generate - Fix MySQL connection failure without SSL.
 
 ## RELEASE 2.5.1 - 2019-10-18
