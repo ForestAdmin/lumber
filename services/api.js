@@ -31,7 +31,7 @@ function API() {
     .send(new UserSerializer(user))
     .then(response => UserDeserializer.deserialize(response.body));
 
-  this.createProject = async (sessionToken, project) => {
+  this.createProject = async (config, sessionToken, project) => {
     let newProject;
 
     try {
@@ -59,8 +59,8 @@ function API() {
       }
     }
 
-    const hostname = process.env.APPLICATION_HOST || 'http://localhost';
-    const port = process.env.APPLICATION_PORT || 3000;
+    const hostname = config.appHostname || 'http://localhost';
+    const port = config.appPort || 3310;
     const protocol = hostname.startsWith('http') ? '' : 'http://';
     newProject.defaultEnvironment.apiEndpoint = `${protocol}${hostname}:${port}`;
     const updatedEnvironment = await agent

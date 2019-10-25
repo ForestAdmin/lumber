@@ -14,7 +14,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  origin: /forestadmin\.com$<% if (forestUrl) { %>|^localhost:\d{4}$<% } %>/,
+  origin: /forestadmin\.com$<% if (forestUrl) { %>|localhost:\d{4}$<% } %>/,
   allowedHeaders: ['Authorization', 'X-Requested-With', 'Content-Type'],
   maxAge: 86400, // NOTICE: 1 day
   credentials: true,

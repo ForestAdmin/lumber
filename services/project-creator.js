@@ -11,7 +11,7 @@ function ProjectCreator() {
     const sessionToken = await auth.loginFromCommandLine(config);
 
     try {
-      const newProject = await api.createProject(sessionToken, { name: projectName });
+      const newProject = await api.createProject(config, sessionToken, { name: projectName });
 
       return {
         envSecret: newProject.defaultEnvironment.secretKey,
