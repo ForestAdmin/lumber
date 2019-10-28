@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- MongoDB - Enhance authentication mechanism using optional `salsprep` library.
+
 ### Changed
 - Docker - Use lumber options in `Dockerfile`.
 
