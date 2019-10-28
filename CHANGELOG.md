@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- Technical - Add EOF empty line lint rule
+- Technical - Add EOF empty line lint rule.
 
 ### Fixed
 - Technical - Fix repository in `package.json`.
