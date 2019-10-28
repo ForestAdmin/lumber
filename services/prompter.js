@@ -18,6 +18,7 @@ async function Prompter(program, requests) {
     db: program.db,
     password: program.password,
     token: program.token,
+    email: program.email,
   };
 
   if (program.sourceDirectory) {
@@ -245,7 +246,6 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('email')) {
-    envConfig.email = program.email;
     if (!envConfig.email) {
       prompts.push({
         type: 'input',

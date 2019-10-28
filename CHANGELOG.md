@@ -6,6 +6,8 @@
 
 ### Changed
 - Commands - Drop environment variables.
+- Commands - Remove command run and install.
+- Command Generate - Now also install forestadmin middleware.
 
 ### Fixed
 - Technical - Fix repository in `package.json`.
@@ -13,8 +15,6 @@
 ## RELEASE 2.5.2 - 2019-10-25
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
-- Commands - Remove command run and install.
-- Commands Generate - Now also install forestadmin middleware.
 
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.

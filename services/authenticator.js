@@ -7,7 +7,9 @@ const api = require('./api');
 const { parseJwt } = require('../utils/authenticator-helper');
 const logger = require('./logger');
 
-const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/;
+// NOTICE: The forest password should be composed of digit, at least on capital letter
+//         and one lower case letter. It also accepts special characters except whitespaces.
+const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])\S{8,}$/;
 
 function Authenticator() {
   this.login = async (email, password) => {
@@ -48,13 +50,11 @@ function Authenticator() {
         if (err === null) {
           fs.unlinkSync(path);
 
-          logger.success('Logout successful.');
-
-          resolve();
+          resolve(true);
         } else if (err.code === 'ENOENT') {
-          logger.info('Your were not logged in.');
+          logger.info('Your were not logged in');
 
-          resolve();
+          resolve(false);
         } else {
           reject(err);
         }
@@ -163,10 +163,10 @@ function Authenticator() {
   };
 
   this.loginFromCommandLine = async (config) => {
-    const { email } = config;
+    const { email, token } = config;
     let sessionToken;
     try {
-      sessionToken = config.token || fs.readFileSync(`${os.homedir()}/.lumberrc`, { encoding: 'utf8' });
+      sessionToken = token || fs.readFileSync(`${os.homedir()}/.lumberrc`, { encoding: 'utf8' });
       if (email) {
         const sessionInfo = parseJwt(sessionToken);
         if (sessionInfo && sessionInfo.data.data.attributes.email !== email) {
@@ -180,6 +180,7 @@ function Authenticator() {
       return this.createAccount();
     }
 
+    fs.writeFileSync(`${os.homedir()}/.lumberrc`, sessionToken);
     return sessionToken;
   };
 }
