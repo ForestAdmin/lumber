@@ -11,4 +11,6 @@ const packagejson = require('./package.json');
 program
   .version(packagejson.version)
   .command('generate <appName>', 'generate a backend application with an ORM/ODM configured')
+  .command('login', 'login onto foreastadmin api')
+  .command('logout', 'log out from forestadmin api')
   .parse(process.argv);
