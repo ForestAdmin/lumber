@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - Installs salsprep required by mongo to sanitize passwords.
+
 ### Fixed
 - Technical - Fix repository in `package.json`.
 
