@@ -4,6 +4,9 @@
 ### Changed
 - Docker - Use lumber options in `Dockerfile`.
 
+### Fixed
+- Technical - Fix repository in `package.json`.
+
 ## RELEASE 2.5.2 - 2019-10-25
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.

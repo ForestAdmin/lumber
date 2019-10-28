@@ -17,6 +17,7 @@
     "Valentin Lamatte <valentinl@forestadmin.com>",
     "Arnaud Besnier <arnaudibesnier@gmail.com>"
   ],
+  "repository": "github:ForestAdmin/lumber",
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.4.6",
