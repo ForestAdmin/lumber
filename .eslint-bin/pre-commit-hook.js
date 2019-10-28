@@ -1,24 +1,21 @@
 const simpleGit = require('simple-git')(`${__dirname}/..`);
-let listFilesModified = [];
 
-function getFilesModified(callback) {
+const getFilesModified = () => new Promise((resolve, reject) => {
   simpleGit.status((error, status) => {
     if (error) {
-      console.error(error);
-      process.exit(-1);
+      reject(error)
     }
-
-    listFilesModified = status.files
-      .map(file => file.path)
-      .filter(file => file.endsWith('.js'));
-
-    callback();
+    resolve(
+      status.files
+        .map(file => file.path)
+        .filter(file => file.endsWith('.js')),
+    )
   });
-}
+});
 
-function runEslint(callback) {
+const runEslint = (listFilesModified) => {
   if (listFilesModified.length === 0) {
-    return callback(0);
+    return;
   }
 
   console.log(`[ESLint] Validating changed files:\n${listFilesModified.join('\n')}`);
@@ -26,14 +23,22 @@ function runEslint(callback) {
   const spawn = require('child_process').spawn;
   const cmd = spawn(eslintPath, listFilesModified, { stdio: 'inherit', shell: true });
 
-  cmd.on('exit',code => callback(code));
-}
+  return new Promise((resolve, reject) => {
+    cmd.on('exit', code => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`${eslintPath} returns non-zero code ${code}`));
+      }
+    });
+  });
+};
 
-getFilesModified((error) => {
-  if (error) {
-    console.error(error);
-    process.exit(-2);
-  }
+const onError = (error) => {
+  console.error(error);
+  process.exit(-1);
+};
 
-  runEslint((code) => process.exit(code));
-});
+getFilesModified()
+  .then(runEslint)
+  .catch(onError);
