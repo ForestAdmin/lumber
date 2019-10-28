@@ -1,5 +1,5 @@
-const mongoTableAnalyzer = require('./database-analyzer-mongo');
-const sequelizeTableAnalyzer = require('./database-analyzer-sequelize');
+const analyzeMongoCollections = require('./analyze-mongo-collections');
+const analyzeSequelizeTables = require('./analyze-sequelize-tables');
 const { DatabaseAnalyzerError } = require('../utils/errors');
 const logger = require('./logger');
 const eventSender = require('./event-sender');
@@ -21,9 +21,9 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
   this.perform = async () => {
     let analyze;
     if (config.dbDialect === 'mongodb') {
-      analyze = mongoTableAnalyzer;
+      analyze = analyzeMongoCollections;
     } else {
-      analyze = sequelizeTableAnalyzer;
+      analyze = analyzeSequelizeTables;
     }
     return analyze(databaseConnection, config, allowWarning)
       .catch((error) => {

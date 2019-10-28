@@ -33,7 +33,9 @@ function mapCollection() {
   }
 }
 
-const reduceCollection = (key, stuff) => (stuff.length ? stuff[0] : null);
+function reduceCollection(key, stuff) {
+  return stuff.length ? stuff[0] : null;
+}
 
 const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
   /* eslint-enable */
@@ -66,7 +68,7 @@ function analyzeMongoCollection(databaseConnection, collectionName) {
   });
 }
 
-function mongoTableAnalyzer(databaseConnection) {
+function analyzeMongoCollections(databaseConnection) {
   const schema = {};
 
   return databaseConnection.collections()
@@ -107,4 +109,4 @@ function mongoTableAnalyzer(databaseConnection) {
     .then(() => schema);
 }
 
-module.exports = mongoTableAnalyzer;
+module.exports = analyzeMongoCollections;

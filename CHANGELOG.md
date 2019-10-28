@@ -3,7 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
-- Technical - database analyzer refacto - separate each database analyzer in its own file and add errors.
+- Technical - Split database analysis logic in 2 separated files (MongoDB and Sequelize).
 
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.

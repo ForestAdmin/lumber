@@ -127,7 +127,7 @@ function analyzeTable(table, config) {
     });
 }
 
-async function sequelizeTableAnalyzer(databaseConnection, config, allowWarning) {
+async function analyzeSequelizeTables(databaseConnection, config, allowWarning) {
   const schema = {};
 
   queryInterface = databaseConnection.getQueryInterface();
@@ -171,4 +171,4 @@ async function sequelizeTableAnalyzer(databaseConnection, config, allowWarning) 
   return schema;
 }
 
-module.exports = sequelizeTableAnalyzer;
+module.exports = analyzeSequelizeTables;
