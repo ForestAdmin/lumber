@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- MongoDB - Enhance authentication mechanism using optional salsprep library
+- MongoDB - Enhance authentication mechanism using optional `salsprep` library.
 
 ### Fixed
 - Technical - Fix repository in `package.json`.
