@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Docker - Use lumber options in `Dockerfile`.
+
 ### Fixed
 - Technical - Fix repository in `package.json`.
 
