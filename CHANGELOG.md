@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Added
+- Command generate - Add comments to generated models.
 - Node version - Define supported node versions (10 and 12) in `package.json`.
 
 ### Changed
