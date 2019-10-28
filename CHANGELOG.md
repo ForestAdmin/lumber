@@ -4,6 +4,10 @@
 ### Added
 - Technical - Add EOF empty line lint rule
 
+### Fixed
+- Technical - Fix repository in `package.json`.
+
+## RELEASE 2.5.2 - 2019-10-25
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
 
@@ -15,6 +19,7 @@
 - Command Generate - Fix foreign key imports using connection URL with MySQL.
 - NPM Publish - Do not send local environment variables on package publish.
 - NPM Publish - Remove Github templates from the published packages.
+- Command Generate - Fix MySQL connection failure without SSL.
 
 ## RELEASE 2.5.1 - 2019-10-18
 ### Changed
