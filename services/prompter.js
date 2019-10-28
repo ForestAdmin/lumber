@@ -45,7 +45,7 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbConnectionUrl')) {
-    envConfig.dbConnectionUrl = program.connectionUrl || process.env.DATABASE_URL;
+    envConfig.dbConnectionUrl = program.connectionUrl;
 
     try {
       [, envConfig.dbDialect] = envConfig.dbConnectionUrl.match(/(.*):\/\//);
@@ -59,44 +59,35 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbDialect')) {
-    if (process.env.DATABASE_DIALECT) {
-      envConfig.dbDialect = process.env.DATABASE_DIALECT;
-    } else {
-      prompts.push({
-        type: 'list',
-        name: 'dbDialect',
-        message: 'What\'s the database type? ',
-        choices: ['postgres', 'mysql', 'mssql', 'mongodb'],
-      });
+    prompts.push({
+      type: 'list',
+      name: 'dbDialect',
+      message: 'What\'s the database type? ',
+      choices: ['postgres', 'mysql', 'mssql', 'mongodb'],
+    });
 
-      // NOTICE: use a rawlist on Windows because of this issue:
-      // https://github.com/SBoudrias/Inquirer.js/issues/303
-      if (/^win/.test(process.platform)) {
-        prompts[0].type = 'rawlist';
-      }
+    // NOTICE: use a rawlist on Windows because of this issue:
+    // https://github.com/SBoudrias/Inquirer.js/issues/303
+    if (/^win/.test(process.platform)) {
+      prompts[0].type = 'rawlist';
     }
   }
 
   if (isRequested('dbName')) {
-    if (process.env.DATABASE_NAME) {
-      envConfig.dbName = process.env.DATABASE_NAME;
-    } else {
-      prompts.push({
-        type: 'input',
-        name: 'dbName',
-        message: 'What\'s the database name?',
-        when: answers => answers.dbDialect !== 'sqlite',
-        validate: (dbName) => {
-          if (dbName) { return true; }
-          return 'Please specify the database name.';
-        },
-      });
-    }
+    prompts.push({
+      type: 'input',
+      name: 'dbName',
+      message: 'What\'s the database name?',
+      when: answers => answers.dbDialect !== 'sqlite',
+      validate: (dbName) => {
+        if (dbName) { return true; }
+        return 'Please specify the database name.';
+      },
+    });
   }
 
   if (isRequested('dbSchema')) {
-    // TODO: Remove DATABASE_SCHEMA environment variable usage in the future major Lumber version.
-    envConfig.dbSchema = program.schema || process.env.DATABASE_SCHEMA;
+    envConfig.dbSchema = program.schema;
     if (!envConfig.dbSchema) {
       prompts.push({
         type: 'input',
@@ -117,90 +108,73 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbHostname')) {
-    if (process.env.DATABASE_HOST) {
-      envConfig.dbHostname = process.env.DATABASE_HOST;
-    } else {
-      prompts.push({
-        type: 'input',
-        name: 'dbHostname',
-        message: 'What\'s the database hostname?',
-        when: answers => answers.dbDialect !== 'sqlite',
-        default: 'localhost',
-      });
-    }
+    prompts.push({
+      type: 'input',
+      name: 'dbHostname',
+      message: 'What\'s the database hostname?',
+      when: answers => answers.dbDialect !== 'sqlite',
+      default: 'localhost',
+    });
   }
 
   if (isRequested('dbPort')) {
-    if (process.env.DATABASE_PORT) {
-      envConfig.dbPort = process.env.DATABASE_PORT;
-    } else {
-      prompts.push({
-        type: 'input',
-        name: 'dbPort',
-        message: 'What\'s the database port?',
-        when: answers => answers.dbDialect !== 'sqlite',
-        default: (args) => {
-          if (args.dbDialect === 'postgres') {
-            return '5432';
-          } else if (args.dbDialect === 'mysql') {
-            return '3306';
-          } else if (args.dbDialect === 'mssql') {
-            return '1433';
-          } else if (args.dbDialect === 'mongodb') {
-            return '27017';
-          }
+    prompts.push({
+      type: 'input',
+      name: 'dbPort',
+      message: 'What\'s the database port?',
+      when: answers => answers.dbDialect !== 'sqlite',
+      default: (args) => {
+        if (args.dbDialect === 'postgres') {
+          return '5432';
+        } else if (args.dbDialect === 'mysql') {
+          return '3306';
+        } else if (args.dbDialect === 'mssql') {
+          return '1433';
+        } else if (args.dbDialect === 'mongodb') {
+          return '27017';
+        }
 
-          return undefined;
-        },
-        validate: (port) => {
-          if (!/^\d+$/.test(port)) {
-            return 'The port must be a number.';
-          }
+        return undefined;
+      },
+      validate: (port) => {
+        if (!/^\d+$/.test(port)) {
+          return 'The port must be a number.';
+        }
 
-          const parsedPort = parseInt(port, 10);
-          if (parsedPort > 0 && parsedPort < 65536) { return true; }
-          return 'This is not a valid port.';
-        },
-      });
-    }
+        const parsedPort = parseInt(port, 10);
+        if (parsedPort > 0 && parsedPort < 65536) { return true; }
+        return 'This is not a valid port.';
+      },
+    });
   }
 
   if (isRequested('dbUser')) {
-    if (process.env.DATABASE_USER) {
-      envConfig.dbUser = process.env.DATABASE_USER;
-    } else {
-      prompts.push({
-        type: 'input',
-        name: 'dbUser',
-        message: 'What\'s the database user?',
-        when: answers => answers.dbDialect !== 'sqlite',
-        default: (args) => {
-          if (args.dbDialect === 'mongodb') {
-            return undefined;
-          }
+    prompts.push({
+      type: 'input',
+      name: 'dbUser',
+      message: 'What\'s the database user?',
+      when: answers => answers.dbDialect !== 'sqlite',
+      default: (args) => {
+        if (args.dbDialect === 'mongodb') {
+          return undefined;
+        }
 
-          return 'root';
-        },
-      });
-    }
+        return 'root';
+      },
+    });
   }
 
   if (isRequested('dbPassword')) {
-    if (process.env.DATABASE_PASSWORD) {
-      envConfig.dbPassword = process.env.DATABASE_PASSWORD;
-    } else {
-      prompts.push({
-        type: 'password',
-        name: 'dbPassword',
-        when: answers => answers.dbDialect !== 'sqlite',
-        message: 'What\'s the database password? [optional]',
-      });
-    }
+    prompts.push({
+      type: 'password',
+      name: 'dbPassword',
+      when: answers => answers.dbDialect !== 'sqlite',
+      message: 'What\'s the database password? [optional]',
+    });
   }
 
   if (isRequested('ssl')) {
-    // TODO: Remove DATABASE_SSL environment variable usage in the future major Lumber version.
-    const ssl = program.ssl || process.env.DATABASE_SSL;
+    const { ssl } = program;
     if (ssl) {
       try {
         // NOTICE: Parse from string (e.g "true" or "false") to boolean.
@@ -224,22 +198,17 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('mongodbSrv')) {
-    if (process.env.DATABASE_MONGODB_SRV) {
-      envConfig.mongodbSrv = JSON.parse(process.env.DATABASE_MONGODB_SRV.toLowerCase());
-    } else {
-      prompts.push({
-        type: 'confirm',
-        name: 'mongodbSrv',
-        message: 'Use a SRV connection string? ',
-        when: answers => answers.dbDialect === 'mongodb',
-        default: false,
-      });
-    }
+    prompts.push({
+      type: 'confirm',
+      name: 'mongodbSrv',
+      message: 'Use a SRV connection string? ',
+      when: answers => answers.dbDialect === 'mongodb',
+      default: false,
+    });
   }
 
   if (isRequested('appHostname')) {
-    // TODO: Remove APPLICATION_HOST environment variable usage in the future major Lumber version.
-    envConfig.appHostname = program.applicationHost || process.env.APPLICATION_HOST;
+    envConfig.appHostname = program.applicationHost;
     if (!envConfig.appHostname) {
       prompts.push({
         type: 'input',
@@ -260,8 +229,7 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('appPort')) {
-    // TODO: Remove APPLICATION_PORT environment variable usage in the future major Lumber version.
-    envConfig.appPort = program.applicationPort || process.env.APPLICATION_PORT;
+    envConfig.appPort = program.applicationPort;
     if (!envConfig.appPort) {
       prompts.push({
         type: 'input',
@@ -305,10 +273,10 @@ async function Prompter(program, requests) {
           if (password) {
             if (FORMAT_PASSWORD.test(password)) { return true; }
             return '🔓  Your password security is too weak 🔓\n' +
-            ' Please make sure it contains at least:\n' +
-            '    > 8 characters\n' +
-            '    > Upper and lower case letters\n' +
-            '    > Numbers';
+              ' Please make sure it contains at least:\n' +
+              '    > 8 characters\n' +
+              '    > Upper and lower case letters\n' +
+              '    > Numbers';
           }
 
           return 'Your password cannot be blank.';
