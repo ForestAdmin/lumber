@@ -4,6 +4,9 @@
 ### Added
 - Technical - Add EOF empty line lint rule.
 
+### Changed
+- Docker - Use lumber options in `Dockerfile`.
+
 ### Fixed
 - Technical - Fix repository in `package.json`.
 
