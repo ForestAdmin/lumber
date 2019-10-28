@@ -33,7 +33,7 @@ module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
 <%if (!hasIdColumn && !hasPrimaryKeys) {%>
   <%= modelName %>.removeAttribute('id');
 <% } %>
-  // This section contains the relationships for the `<%= modelName %>` model. See: https://docs.forestadmin.com/documentation/v/v4/reference-guide/relationships#adding-relationships.
+  // This section contains the relationships for this model. See: https://docs.forestadmin.com/documentation/v/v4/reference-guide/relationships#adding-relationships.
   <%= modelName %>.associate = (models) => {<% _.each(references, (reference) => { %>
     <%= modelName %>.belongsTo(models.<%= reference.ref %>, {
       foreignKey: {
