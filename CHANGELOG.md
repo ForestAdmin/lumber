@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Field Types - Support `TIMESTAMP(n)`, `SMALLINT(n)` and `BIGINT(n)` column types (MySQL)
+- Command generate - Add comments to generated models.
 
 ### Changed
 - Commands - Drop environment variables.
