@@ -5,14 +5,17 @@ const ProjectSerializer = require('../serializers/project');
 const ProjectDeserializer = require('../deserializers/project');
 const EnvironmentSerializer = require('../serializers/environment');
 const EnvironmentDeserializer = require('../deserializers/environment');
+const pkg = require('../package.json');
 
 function API() {
   this.endpoint = process.env.FOREST_URL || 'https://api.forestadmin.com';
+  this.userAgent = `lumber@${pkg.version}`;
 
   this.isGoogleAccount = async email => agent
     .get(`${this.endpoint}/api/users/google/${email}`)
     .set('forest-origin', 'Lumber')
     .set('Content-Type', 'application/json')
+    .set('User-Agent', this.userAgent)
     .send()
     .then(response => response.body.data.isGoogleAccount)
     .catch(() => false);
@@ -21,6 +24,7 @@ function API() {
     .post(`${this.endpoint}/api/sessions`)
     .set('forest-origin', 'Lumber')
     .set('Content-Type', 'application/json')
+    .set('User-Agent', this.userAgent)
     .send({ email, password })
     .then(response => response.body.token);
 
@@ -28,6 +32,7 @@ function API() {
     .post(`${this.endpoint}/api/users`)
     .set('forest-origin', 'Lumber')
     .set('Content-Type', 'application/json')
+    .set('User-Agent', this.userAgent)
     .send(new UserSerializer(user))
     .then(response => UserDeserializer.deserialize(response.body));
 
@@ -39,6 +44,7 @@ function API() {
         .post(`${this.endpoint}/api/projects`)
         .set('forest-origin', 'Lumber')
         .set('Content-Type', 'application/json')
+        .set('User-Agent', this.userAgent)
         .set('Authorization', `Bearer ${sessionToken}`)
         .send(new ProjectSerializer(project))
         .then(response => ProjectDeserializer.deserialize(response.body));
@@ -49,6 +55,7 @@ function API() {
           .get(`${this.endpoint}/api/projects/${projectId}`)
           .set('Authorization', `Bearer ${sessionToken}`)
           .set('forest-origin', 'Lumber')
+          .set('User-Agent', this.userAgent)
           .send()
           .then(response => ProjectDeserializer.deserialize(response.body));
 
@@ -67,6 +74,7 @@ function API() {
       .put(`${this.endpoint}/api/environments/${newProject.defaultEnvironment.id}`)
       .set('forest-origin', 'Lumber')
       .set('Content-Type', 'application/json')
+      .set('User-Agent', this.userAgent)
       .set('Authorization', `Bearer ${sessionToken}`)
       .send(new EnvironmentSerializer(newProject.defaultEnvironment))
       .then(response => EnvironmentDeserializer.deserialize(response.body));
