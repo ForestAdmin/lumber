@@ -4,6 +4,9 @@
 ### Added
 - MongoDB - Enhance authentication mechanism using optional `salsprep` library.
 
+### Changed
+- Docker - Use lumber options in `Dockerfile`.
+
 ### Fixed
 - Technical - Fix repository in `package.json`.
 
