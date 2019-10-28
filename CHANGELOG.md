@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Commands - Drop environment variables.
 
 ## RELEASE 2.6.1 - 2019-10-30
 ### Fixed
