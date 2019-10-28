@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- Technical - Installs salsprep required by mongo to sanitize passwords.
+- MongoDB - Enhance authentication mechanism using optional salsprep library
 
 ### Fixed
 - Technical - Fix repository in `package.json`.
