@@ -4,6 +4,9 @@
 ### Added
 - Command generate - Add comments to generated models.
 
+### Changed
+- Commands - Drop environment variables.
+
 ### Fixed
 - Technical - Fix repository in `package.json`.
 
