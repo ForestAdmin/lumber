@@ -11,6 +11,7 @@ const ProjectCreator = require('./services/project-creator');
 
 program
   .description('Generate a backend application with an ORM/ODM configured')
+  .usage('<appName> [options]')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
   // NOTICE: --ssl option is not a real boolean option since we do not want a breaking change.
   .option('-S, --ssl <ssl>', 'Use SSL for database connection (true|false)')
