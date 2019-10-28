@@ -5,22 +5,25 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
   const queryInterface = databaseConnection.getQueryInterface();
 
   function isColumnTypeEnum(columnName) {
+    const type = queryInterface.sequelize.QueryTypes.SELECT;
     const query = `
       SELECT i.udt_name
       FROM pg_catalog.pg_type t
       JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
       JOIN pg_catalog.pg_enum e ON t.oid = e.enumtypid
       LEFT JOIN information_schema.columns i ON t.typname = i.udt_name
-      WHERE i.column_name = '${columnName}' OR t.typname = '${columnName}'
+      WHERE i.column_name = :columnName OR t.typname = :columnName
       GROUP BY i.udt_name;
     `;
+    const replacements = { columnName };
 
     return queryInterface.sequelize
-      .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT })
+      .query(query, { replacements, type })
       .then(result => !!result.length);
   }
 
-  function getTypeOfArrayForPostgres(table, columName) {
+  function getTypeOfArrayForPostgres(table, columnName) {
+    const type = queryInterface.sequelize.QueryTypes.SELECT;
     const query = `
       SELECT e.udt_name as "udtName",
         (CASE WHEN e.udt_name = 'hstore'
@@ -34,11 +37,13 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       FROM information_schema.columns c
       LEFT JOIN information_schema.element_types e
       ON ((c.table_catalog, c.table_schema, c.table_name, 'TABLE', c.dtd_identifier) = (e.object_catalog, e.object_schema, e.object_name, e.object_type, e.collection_type_identifier))
-      WHERE table_schema = '${schema}'
-        AND table_name = '${table}' AND c.column_name = '${columName}'
+      WHERE table_schema = :schema
+        AND table_name = :table AND c.column_name = :columnName
     `;
+    const replacements = { schema, table, columnName };
+
     return queryInterface.sequelize
-      .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT })
+      .query(query, { replacements, type })
       .then(result => result[0])
       .then(info => ({
         ...info,

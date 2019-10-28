@@ -1,7 +1,7 @@
 {
   "name": "lumber-cli",
   "description": "Create your backend application in minutes. GraphQL API backend based on a database schema",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "main": "lumber.js",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./assets ./deserializers ./serializers ./services ./test",
@@ -17,6 +17,7 @@
     "Valentin Lamatte <valentinl@forestadmin.com>",
     "Arnaud Besnier <arnaudibesnier@gmail.com>"
   ],
+  "repository": "github:ForestAdmin/lumber",
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.4.6",

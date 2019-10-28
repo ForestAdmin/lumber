@@ -67,9 +67,15 @@ function Database() {
     // NOTICE: mysql2 does not accepts unwanted options anymore.
     //         See: https://github.com/sidorares/node-mysql2/pull/895
     if (databaseDialect === 'mysql') {
-      connectionOptionsSequelize.dialectOptions = {
-        ssl: { rejectUnauthorized: isSSL },
-      };
+      // NOTICE: Add SSL options only if the user selected SSL mode.
+      if (isSSL) {
+        // TODO: Lumber should accept certificate file (CRT) to work with SSL.
+        //       Since it requires to review onboarding, it is not implemented yet.
+        //       See: https://www.npmjs.com/package/mysql#ssl-options
+        connectionOptionsSequelize.dialectOptions = {
+          ssl: { rejectUnauthorized: isSSL },
+        };
+      }
     } else {
       connectionOptionsSequelize.dialectOptions = {
         ssl: isSSL,

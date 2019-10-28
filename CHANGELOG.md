@@ -4,6 +4,10 @@
 ### Added
 - Command generate - Add comments to generated models.
 
+### Fixed
+- Technical - Fix repository in `package.json`.
+
+## RELEASE 2.5.2 - 2019-10-25
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
 
@@ -11,6 +15,11 @@
 - Command Generate - Fixed error when analyzing MongoDB views.
 - Security - Upgrade `lodash` dependencies to patch vulnerabilities.
 - Security - Upgrade `eslint` dependency to patch vulnerabilities.
+- Security - Use Sequelize replacements to avoid SQL injections.
+- Command Generate - Fix foreign key imports using connection URL with MySQL.
+- NPM Publish - Do not send local environment variables on package publish.
+- NPM Publish - Remove Github templates from the published packages.
+- Command Generate - Fix MySQL connection failure without SSL.
 
 ## RELEASE 2.5.1 - 2019-10-18
 ### Changed
