@@ -6,6 +6,7 @@ const inquirer = require('inquirer');
 const api = require('./api');
 const { parseJwt } = require('../utils/authenticator-helper');
 const { EMAIL_REGEX, PASSWORD_REGEX } = require('../utils/regexs');
+const { terminate } = require('../utils/terminator');
 const logger = require('./logger');
 
 function Authenticator() {
@@ -28,6 +29,7 @@ function Authenticator() {
     }
     return false;
   };
+  const unexpectedError = 'An unexpected error occured. Please create a Github issue with following error:';
 
   this.login = async (email, password) => {
     const sessionToken = await api.login(email, password);
@@ -105,13 +107,11 @@ function Authenticator() {
 
       return await this.login(email, password);
     } catch (error) {
-      if (error.message === 'Unauthorized') {
-        logger.error('Incorrect email or password.');
-      } else {
-        logger.error(`An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}`);
-      }
+      const message = error.message === 'Unauthorized'
+        ? 'Incorrect email or password.'
+        : `${unexpectedError} ${chalk.red(error)}`;
 
-      process.exit(1);
+      terminate(1, { logs: [message] });
     }
 
     return null;
@@ -164,13 +164,11 @@ function Authenticator() {
     try {
       await api.createUser(authConfig);
     } catch (error) {
-      if (error.message === 'Conflict') {
-        logger.error(`Your account already exists. Please, use the command ${chalk.cyan('lumber run lumber-forestadmin:login')}.`);
-      } else {
-        logger.error(`An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}`);
-      }
+      const message = error.message === 'Conflict'
+        ? `Your account already exists. Please, use the command ${chalk.cyan('lumber run lumber-forestadmin:login')}.`
+        : `${unexpectedError}  ${chalk.red(error)}`;
 
-      process.exit(1);
+      terminate(1, { logs: [message] });
     }
 
     const token = await this.login(authConfig.email, authConfig.password);

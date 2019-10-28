@@ -3,10 +3,15 @@ const chalk = require('chalk');
 class Logger {
   constructor(silent) {
     this.silent = silent;
+    this.spinner = null;
   }
 
   log(message) {
     if (!this.silent) {
+      if (this.spinner && this.spinner.isSpinning) {
+        this.spinner.clear();
+        this.spinner.frame();
+      }
       console.log(message);
     }
   }
