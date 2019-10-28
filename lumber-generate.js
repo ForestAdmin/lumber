@@ -7,7 +7,6 @@ const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
 const logger = require('./services/logger');
 const eventSender = require('./services/event-sender');
-const EnvironmentChecker = require('./services/environment-checker');
 
 program
   .description('Generate a backend application with an ORM/ODM configured')
@@ -23,23 +22,6 @@ program
 (async () => {
   eventSender.command = 'generate';
   [eventSender.appName] = program.args;
-
-  // NOTICE: Check deprecated environments variables.
-  const environmentChecker = new EnvironmentChecker(process.env, logger, [
-    'DATABASE_URL',
-    'DATABASE_DIALECT',
-    'DATABASE_NAME',
-    'DATABASE_SCHEMA',
-    'DATABASE_HOST',
-    'DATABASE_PORT',
-    'DATABASE_USER',
-    'DATABASE_PASSWORD',
-    'DATABASE_SSL',
-    'DATABASE_MONGODB_SRV',
-    'APPLICATION_HOST',
-    'APPLICATION_PORT',
-  ]);
-  environmentChecker.logWarnings();
 
   const config = await new CommandGenerateConfigGetter(program).perform();
 
