@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Field Types - Support `TIMESTAMP(n)`, `SMALLINT(n)`, `BIGINT(n)` and `BIT(1)` column types (MySQL)
 
 ## RELEASE 2.6.3 - 2019-11-04
 ### Fixed
