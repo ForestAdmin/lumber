@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Added
+- Technical - Add EOF empty line lint rule.
 - MongoDB - Enhance authentication mechanism using optional `salsprep` library.
 
 ### Changed

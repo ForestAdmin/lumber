@@ -25,6 +25,7 @@
     "commander": "^2.9.0",
     "dotenv": "^6.0.0",
     "expand-home-dir": "0.0.3",
+    "git-hooks": "1.1.10",
     "import-from": "^2.1.0",
     "inquirer": "^6.2.0",
     "jsonapi-serializer": "^3.4.1",
@@ -37,6 +38,7 @@
     "pg": "^6.1.0",
     "saslprep": "1.0.3",
     "sequelize": "git://github.com/ForestAdmin/sequelize.git#feature/support-schema",
+    "simple-git": "1.126.0",
     "superagent": "5.1.0",
     "tedious": "6.4.0",
     "winston": "^2.2.0"
