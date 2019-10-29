@@ -3,7 +3,7 @@ const logger = require('./services/logger');
 const Authenticator = require('./services/authenticator');
 
 program
-  .description('Log out from forestadmin api')
+  .description('Log out from Forest Admin API')
   .parse(process.argv);
 
 (async () => {

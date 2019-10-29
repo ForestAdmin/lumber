@@ -3,7 +3,7 @@ const logger = require('./services/logger');
 const Authenticator = require('./services/authenticator');
 
 program
-  .description('Log in onto forestadmin api')
+  .description('Log into Forest Admin API')
   .option('-e, --email <email>', 'Your Forest Admin account email')
   .option('-P, --password <password>', 'Your Forest Admin account password (ignored if token is set)')
   .option('-t, --token <token>', 'Your Forest Admin account token (replaces password)')
