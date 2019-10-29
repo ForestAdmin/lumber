@@ -10,6 +10,14 @@ env:
 notifications:
   webhooks: https://files-aopiaslhxw.now.sh
 
+services:
+  - docker --privileged
+
+before_install:
+  - docker-compose --version
+  - docker-compose up -d
+  - docker ps
+
 install:
   - yarn install
 
