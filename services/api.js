@@ -51,6 +51,11 @@ function API() {
     } catch (error) {
       if (error.message === 'Conflict') {
         const { projectId } = error.response.body.errors[0].meta;
+
+        if (!projectId) {
+          throw error;
+        }
+
         newProject = await agent
           .get(`${this.endpoint}/api/projects/${projectId}`)
           .set('Authorization', `Bearer ${sessionToken}`)
