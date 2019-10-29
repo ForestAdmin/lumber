@@ -1,26 +1,38 @@
-/* global describe, before, after, it */
+/* global describe, before, beforeEach, after, it */
 const { expect } = require('chai');
 
-const MongoConnection = require('../utils/mongo-connect');
+const MongoHelper = require('../utils/mongo-helper');
+const DatabaseAnalyzer = require('../../services/database-analyzer');
+const basicModel = require('../fixtures/basicModel');
+const expectedSimpleModelResult = require('../expected/expected-simple-model-result.json');
 
 describe('Database analyser > MongoDB', () => {
-  let mongoConnection;
+  let mongoHelper;
   let databaseConnection;
 
   before(async () => {
-    mongoConnection = new MongoConnection();
-    databaseConnection = await mongoConnection.connect();
+    mongoHelper = new MongoHelper();
+    databaseConnection = await mongoHelper.connect();
   });
+
+  beforeEach(() => mongoHelper.dropAllCollections());
 
   after(() => {
     databaseConnection = null;
-    mongoConnection.close();
+    mongoHelper.close();
   });
 
   it('should connect and insert a document.', async () => {
-    databaseConnection.collection('connect_test').insertOne({ name: 'hello' });
+    await databaseConnection.collection('connect_test').insertOne({ name: 'hello' });
     const doc = await databaseConnection.collection('connect_test').findOne({ name: 'hello' });
 
     expect(doc.name).to.be.equal('hello');
+  });
+
+  it('should generate a basic model', async () => {
+    await mongoHelper.given(basicModel);
+    const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+    const model = await databaseAnalyzer.perform();
+    expect(model).is.deep.equal(expectedSimpleModelResult);
   });
 });

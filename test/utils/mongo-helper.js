@@ -4,7 +4,7 @@ const assert = require('assert');
 const url = process.env.DATABASE_CONNECTION_URL || 'mongodb://localhost:27017';
 const dbName = 'forest-test';
 
-class MongoConnection {
+class MongoHelper {
   connect() {
     this.client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
     return new Promise((resolve) => {
@@ -19,9 +19,28 @@ class MongoConnection {
     return this.client.db(dbName);
   }
 
+  given(fixtures) {
+    return Promise.all(Object.keys(fixtures).map(collectionName =>
+      this.insertDocs(collectionName, fixtures[collectionName])));
+  }
+
+  insertDocs(collectionName, docs) {
+    return this.db()
+      .collection(collectionName)
+      .insertMany(docs, { ordered: false });
+  }
+
   close() {
     this.client.close();
   }
+
+  dropAllCollections() {
+    return new Promise(resolve => this.db().listCollections()
+      .forEach(
+        ({ name }) => this.db().collection(name).drop(),
+        resolve,
+      ));
+  }
 }
 
-module.exports = MongoConnection;
+module.exports = MongoHelper;
