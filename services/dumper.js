@@ -124,7 +124,7 @@ function Dumper(config) {
   }
 
   function writeModel(pathDest, table, fields, references, options = {}) {
-    const templatePath = `${__dirname}/../templates/model.txt`;
+    const templatePath = `${__dirname}/../templates/app/models/model.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
 
