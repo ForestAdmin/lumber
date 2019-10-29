@@ -16,6 +16,7 @@
 ## RELEASE 2.5.2 - 2019-10-25
 ### Changed
 - Docker - Fix lumber version in `Dockerfile`.
+- Technical - Split database analysis logic in 2 separated files (MongoDB and Sequelize).
 
 ### Fixed
 - Command Generate - Fixed error when analyzing MongoDB views.
