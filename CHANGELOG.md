@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.6.0 - 2019-10-29
 ### Added
 - Technical - Add EOF empty line lint rule.
 - MongoDB - Enhance authentication mechanism using optional `salsprep` library.
