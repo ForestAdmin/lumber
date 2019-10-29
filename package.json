@@ -36,6 +36,7 @@
     "mongodb": "3.3.0",
     "mysql2": "1.7.0",
     "pg": "^6.1.0",
+    "saslprep": "1.0.3",
     "sequelize": "git://github.com/ForestAdmin/sequelize.git#feature/support-schema",
     "simple-git": "1.126.0",
     "superagent": "5.1.0",
