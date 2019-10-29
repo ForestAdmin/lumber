@@ -2,7 +2,6 @@ const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
-const KeyGenerator = require('./key-generator');
 const stringUtils = require('../utils/strings');
 
 const mkdirp = P.promisify(mkdirpSync);
@@ -15,6 +14,7 @@ function Dumper(config) {
   const routesPath = `${path}/routes`;
   const forestPath = `${path}/forest`;
   const publicPath = `${path}/public`;
+  const viewPath = `${path}/views`;
   const modelsPath = `${path}/models`;
   const middlewaresPath = `${path}/middlewares`;
 
@@ -220,7 +220,7 @@ function Dumper(config) {
     fs.writeFileSync(`${pathDest}/.dockerignore`, template({}));
   }
 
-  function writeForestadminMiddleware(pathDest) {
+  function writeForestAdminMiddleware(pathDest) {
     mkdirp.sync(`${process.cwd()}/middlewares`);
     const templatePath = `${__dirname}/../templates/app/middlewares/forestadmin.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
@@ -236,6 +236,7 @@ function Dumper(config) {
     mkdirp(binPath),
     mkdirp(routesPath),
     mkdirp(forestPath),
+    mkdirp(viewPath),
     mkdirp(publicPath),
     mkdirp(middlewaresPath),
   ];
@@ -248,6 +249,8 @@ function Dumper(config) {
     await P.all(dirs);
     copyTemplate('bin/www', `${binPath}/www`);
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
+    copyTemplate('views/index.html', `${path}/views/index.html`);
+    copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
 
     if (config.db) { writeModelsIndex(path); }
     writeAppJs(path);
@@ -259,7 +262,7 @@ function Dumper(config) {
     writeDockerfile(path);
     writeDockerCompose(path);
     writeDotDockerIgnore(path);
-    writeForestadminMiddleware(path);
+    writeForestAdminMiddleware(path);
 
     return this;
   })();
