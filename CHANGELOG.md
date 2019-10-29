@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Command generate - Add comments to generated models.
+- Command Generate - Generate the forest collection files.
 
 ### Changed
 - Commands - Drop environment variables.
