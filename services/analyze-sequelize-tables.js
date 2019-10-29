@@ -166,7 +166,7 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
       .then(result => !!result.length);
 
     if (!schemaExists) {
-      const message = 'This schema does not exist.';
+      const message = 'This schema does not exists.';
       return terminate(1, {
         errorCode: 'database_authentication_error',
         errorMessage: message,

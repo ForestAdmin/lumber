@@ -20,11 +20,11 @@ function ProjectCreator() {
     } catch (error) {
       let message;
       if (error.message === 'Unauthorized') {
-        message = `Your session has expired. Please, relogin with the command ${chalk.cyan('lumber run lumber-forestadmin:login')}.`;
+        message = `Your session has expired. Please log back in with the command ${chalk.cyan('lumber login')}.`;
       } else if (error.message === 'Conflict') {
         message = 'A project with this name already exists. Please choose another name.';
       } else {
-        message = `An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}`;
+        message = `An unexpected error occured. Please reach out for help in our Slack community or create a Github issue with following error: ${chalk.red(error)}`;
       }
 
       return terminate(1, {

@@ -29,7 +29,7 @@ function Authenticator() {
     }
     return false;
   };
-  const unexpectedError = 'An unexpected error occured. Please create a Github issue with following error:';
+  const unexpectedError = 'An unexpected error occurred. Please reach out for help in our Slack community or create a Github issue with following error:';
 
   this.login = async (email, password) => {
     const sessionToken = await api.login(email, password);
@@ -41,7 +41,7 @@ function Authenticator() {
     const endpoint = process.env.FOREST_URL && process.env.FOREST_URL.includes('localhost')
       ? 'http://localhost:4200' : 'https://app.forestadmin.com';
     const url = chalk.cyan.underline(`${endpoint}/authentication-token`);
-    logger.info(`To authentify with your google account please follow this link and copy the authentication token: ${url}`);
+    logger.info(`To authentify with your google account, please follow this link and copy the authentication token: ${url}`);
     const { sessionToken } = await inquirer.prompt([{
       type: 'password',
       name: 'sessionToken',
@@ -165,7 +165,7 @@ function Authenticator() {
       await api.createUser(authConfig);
     } catch (error) {
       const message = error.message === 'Conflict'
-        ? `Your account already exists. Please, use the command ${chalk.cyan('lumber run lumber-forestadmin:login')}.`
+        ? `This account already exists. Please, use the command ${chalk.cyan('lumber login')} to login with this account.`
         : `${unexpectedError}  ${chalk.red(error)}`;
 
       terminate(1, { logs: [message] });
