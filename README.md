@@ -36,24 +36,9 @@ Finally, visit https://app.forestadmin.com/.
 `$ lumber [command]`
 
 - `generate <appName>`      generate a backend application with an ORM/ODM configured.
-- `login`                   log in on forestadmin api.
-- `logout`                  log out from forestadmin api.
+- `login`                   log into Forest Admin API.
+- `logout`                  log out from Forest Admin API.
 - `help [cmd]`              display help for [cmd]
-
-## Contribute
-
-To publish the docker image:
-```sh
-docker build -t forestadmin/lumber .
-docker login
-docker push forestadmin/lumber
-```
-
-## Community
-
-👇 Join our Slack community of +1000 developers
-
-[![Slack Status](http://community.forestadmin.com/badge.svg)](https://community.forestadmin.com)
 
 ## Who Uses Forest Admin
 - [Apartmentlist](https://www.apartmentlist.com)
@@ -169,3 +154,18 @@ Monitor each action executed and follow the trail of modification on any data
 with an extensive activity log system.
 
 <img src="https://www.forestadmin.com/public/img/illustrations-dev/screens/activity.jpg" alt="Activity logs">
+
+## Contribute
+
+To publish the docker image:
+```sh
+docker build -t forestadmin/lumber .
+docker login
+docker push forestadmin/lumber
+```
+
+## Community
+
+👇 Join our Slack community of +1000 developers
+
+[![Slack Status](http://community.forestadmin.com/badge.svg)](https://community.forestadmin.com)
