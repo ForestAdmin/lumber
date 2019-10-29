@@ -104,7 +104,7 @@ function Dumper(config) {
     return connectionString;
   }
 
-  function writeDotEnv(pathDest, authSecret) {
+  function writeDotEnv(pathDest) {
     const templatePath = `${__dirname}/../templates/app/env`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
@@ -115,7 +115,6 @@ function Dumper(config) {
       dbSchema: config.dbSchema,
       hostname: config.appHostname,
       port: config.appPort,
-      authSecret,
       forestEnvSecret: config.forestEnvSecret,
       forestAuthSecret: config.forestAuthSecret,
     };
@@ -195,7 +194,7 @@ function Dumper(config) {
     fs.writeFileSync(`${pathDest}/Dockerfile`, template(settings));
   }
 
-  function writeDockerCompose(pathDest, authSecret) {
+  function writeDockerCompose(pathDest) {
     const templatePath = `${__dirname}/../templates/app/docker-compose.yml`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
@@ -207,7 +206,8 @@ function Dumper(config) {
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
-      authSecret,
+      forestEnvSecret: config.forestEnvSecret,
+      forestAuthSecret: config.forestAuthSecret,
     };
 
     fs.writeFileSync(`${pathDest}/docker-compose.yml`, template(settings));
@@ -246,7 +246,6 @@ function Dumper(config) {
 
   return (async () => {
     await P.all(dirs);
-    const authSecret = await new KeyGenerator().generate();
     copyTemplate('bin/www', `${binPath}/www`);
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
 
@@ -256,9 +255,9 @@ function Dumper(config) {
     writeDotGitIgnore(path);
     writeDotGitKeep(routesPath);
     writeDotGitKeep(forestPath);
-    writeDotEnv(path, authSecret);
+    writeDotEnv(path);
     writeDockerfile(path);
-    writeDockerCompose(path, authSecret);
+    writeDockerCompose(path);
     writeDotDockerIgnore(path);
     writeForestadminMiddleware(path);
 
