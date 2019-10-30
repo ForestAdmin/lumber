@@ -56,7 +56,7 @@ describe('Database analyser > MongoDB', () => {
     expect(model).is.deep.equal(expectedManyuNullsGeneratedModel);
   });
 
-  it('should generate the complex model', async () => {
+  it('should generate the model with many objectid fields', async () => {
     await mongoHelper.given(complexModel);
     const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
     const model = await databaseAnalyzer.perform();
