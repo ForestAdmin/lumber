@@ -24,6 +24,7 @@
 
 ### Fixed
 - Technical - Fix repository in `package.json`.
+- Command Login - Fix login to match old behaviour.
 
 ## RELEASE 2.5.2 - 2019-10-25
 ### Changed

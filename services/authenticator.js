@@ -12,9 +12,24 @@ const logger = require('./logger');
 const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])\S{8,}$/;
 
 function Authenticator() {
+  this.pathToLumberrc = `${os.homedir()}/.lumberrc`;
+
+  this.saveToken = token => fs.writeFileSync(this.pathToLumberrc, token);
+
+  this.isTokenCorrect = (email, token) => {
+    const sessionInfo = parseJwt(token);
+    if (sessionInfo) {
+      if (sessionInfo.data.data.attributes.email === email) {
+        return true;
+      }
+      logger.warn('You tried to use a token of another account');
+    }
+    return false;
+  };
+
   this.login = async (email, password) => {
     const sessionToken = await api.login(email, password);
-    fs.writeFileSync(`${os.homedir()}/.lumberrc`, sessionToken);
+    this.saveToken(sessionToken);
     return sessionToken;
   };
 
@@ -38,39 +53,37 @@ function Authenticator() {
         return errorMessage;
       },
     }]);
-    fs.writeFileSync(`${os.homedir()}/.lumberrc`, sessionToken);
+    this.saveToken(sessionToken);
     return sessionToken;
   };
 
-  this.logout = async () => {
-    const path = `${os.homedir()}/.lumberrc`;
+  this.logout = async () => new P((resolve, reject) => {
+    fs.stat(this.pathToLumberrc, (err) => {
+      if (err === null) {
+        fs.unlinkSync(this.pathToLumberrc);
 
-    return new P((resolve, reject) => {
-      fs.stat(path, (err) => {
-        if (err === null) {
-          fs.unlinkSync(path);
+        resolve(true);
+      } else if (err.code === 'ENOENT') {
+        logger.info('Your were not logged in');
 
-          resolve(true);
-        } else if (err.code === 'ENOENT') {
-          logger.info('Your were not logged in');
-
-          resolve(false);
-        } else {
-          reject(err);
-        }
-      });
+        resolve(false);
+      } else {
+        reject(err);
+      }
     });
-  };
+  });
 
   this.loginWithEmailOrTokenArgv = async (config) => {
     try {
       const { email, token } = config;
       let { password } = config;
 
-      const isGoogleAccount = await api.isGoogleAccount(email);
-      if (token) {
+      if (token && this.isTokenCorrect(email, token)) {
         return token;
-      } else if (isGoogleAccount) {
+      }
+
+      const isGoogleAccount = await api.isGoogleAccount(email);
+      if (isGoogleAccount) {
         return this.loginWithGoogle(email);
       }
 
@@ -166,21 +179,22 @@ function Authenticator() {
     const { email, token } = config;
     let sessionToken;
     try {
-      sessionToken = token || fs.readFileSync(`${os.homedir()}/.lumberrc`, { encoding: 'utf8' });
-      if (email) {
-        const sessionInfo = parseJwt(sessionToken);
-        if (sessionInfo && sessionInfo.data.data.attributes.email !== email) {
-          throw new Error();
-        }
+      sessionToken = token || fs.readFileSync(this.pathToLumberrc, { encoding: 'utf8' });
+      if (!sessionToken && email) {
+        throw new Error();
       }
-    } catch (err) {
+
+      if (email && !this.isTokenCorrect(email, sessionToken)) {
+        throw new Error();
+      }
+    } catch (error) {
       if (email) {
         return this.loginWithEmailOrTokenArgv(config);
       }
       return this.createAccount();
     }
 
-    fs.writeFileSync(`${os.homedir()}/.lumberrc`, sessionToken);
+    this.saveToken(sessionToken);
     return sessionToken;
   };
 }
