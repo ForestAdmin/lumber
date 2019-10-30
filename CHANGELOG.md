@@ -7,6 +7,8 @@
 
 ### Changed
 - Commands - Drop environment variables.
+- Commands - Remove command run and install.
+- Command Generate - Install Forest Admin middleware.
 
 ## RELEASE 2.6.3 - 2019-11-04
 ### Fixed

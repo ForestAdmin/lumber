@@ -17,6 +17,7 @@ const OPTIONS_APPLICATION = [
   'appName',
   'appHostname',
   'appPort',
+  'email',
 ];
 
 function CommandGenerateConfigGetter(program) {

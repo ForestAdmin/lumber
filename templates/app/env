@@ -6,4 +6,5 @@ DATABASE_SCHEMA=<%= dbSchema %><% } %>
 DATABASE_SSL=<%= ssl || 'false' %>
 DATABASE_ENCRYPT=<%= encrypt || 'false' %>
 
-AUTH_SECRET=<%= authSecret %>
+FOREST_AUTH_SECRET=<%= forestAuthSecret %>
+FOREST_ENV_SECRET=<%= forestEnvSecret %>

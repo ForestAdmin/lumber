@@ -7,9 +7,11 @@ const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
 const logger = require('./services/logger');
 const eventSender = require('./services/event-sender');
+const ProjectCreator = require('./services/project-creator');
 
 program
   .description('Generate a backend application with an ORM/ODM configured')
+  .usage('<appName> [options]')
   .option('-c, --connection-url <connectionUrl>', 'Enter the database credentials with a connection URL')
   // NOTICE: --ssl option is not a real boolean option since we do not want a breaking change.
   .option('-S, --ssl <ssl>', 'Use SSL for database connection (true|false)')
@@ -17,6 +19,9 @@ program
   .option('-p, --application-port <applicationPort>', 'Port of your admin backend application')
   .option('-s, --schema <schema>', 'Enter your database schema')
   .option('--no-db', 'Use Lumber without a database')
+  .option('-e, --email <email>', 'Your Forest Admin account email')
+  .option('-P, --password <password>', 'Your Forest Admin account password (ignored if token is set)')
+  .option('-t, --token <token>', 'Your Forest Admin account token (replaces password)')
   .parse(process.argv);
 
 (async () => {
@@ -24,12 +29,16 @@ program
   [eventSender.appName] = program.args;
 
   const config = await new CommandGenerateConfigGetter(program).perform();
-
   let schema = {};
   if (program.db) {
     const connection = await new Database().connect(config);
     schema = await new DatabaseAnalyzer(connection, config, true).perform();
   }
+
+  const { envSecret, authSecret } = await new ProjectCreator(logger)
+    .createProject(config.appName, config);
+  config.forestEnvSecret = envSecret;
+  config.forestAuthSecret = authSecret;
 
   const dumper = await new Dumper(config);
 

@@ -14,6 +14,7 @@ describe('Services > Command Generate Config Getter', () => {
         'appName',
         'appHostname',
         'appPort',
+        'email',
       ]);
     });
   });
@@ -25,12 +26,13 @@ describe('Services > Command Generate Config Getter', () => {
         'appName',
         'appHostname',
         'appPort',
+        'email',
       ]);
     });
   });
 
   describe('with a command with no options', () => {
-    it('should require [dbDialect, dbName, dbHostname, dbPort, dbUser, dbPassword, dbSchema, ssl, mongodbSrv, appName, appHostname, appPort]', () => {
+    it('should require [dbDialect, dbName, dbHostname, dbPort, dbUser, dbPassword, dbSchema, email, ssl, mongodbSrv, appName, appHostname, appPort]', () => {
       const commandGenerateConfigGetter = new CommandGenerateConfigGetter({ db: true });
       expect(commandGenerateConfigGetter.getOptions()).to.eql([
         'dbDialect',
@@ -45,6 +47,7 @@ describe('Services > Command Generate Config Getter', () => {
         'appName',
         'appHostname',
         'appPort',
+        'email',
       ]);
     });
   });
