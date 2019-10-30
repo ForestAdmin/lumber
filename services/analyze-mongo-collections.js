@@ -86,8 +86,6 @@ function analyzeMongoCollections(databaseConnection) {
         const collectionName = collection && collection.namespace
           && collection.namespace.collection;
 
-        console.log('scanning', collectionName);
-
         // NOTICE: Defensive programming
         if (!collectionName) {
           return;

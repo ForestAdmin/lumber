@@ -21,24 +21,20 @@ class MongoHelper {
       this.insertDocs(collectionName, fixtures[collectionName])));
   }
 
-  async insertDocs(collectionName, docs) {
-    const res = await this.db
+  insertDocs(collectionName, docs) {
+    return this.db
       .collection(collectionName)
       .insertMany(docs, { ordered: false });
-    console.log('inserted', collectionName);
-    return res;
   }
 
   close() {
+    this.db = null;
     this.client.close();
   }
 
-  dropAllCollections() {
-    return new Promise(resolve => this.db.listCollections()
-      .forEach(
-        ({ name }) => this.db.collection(name).drop(),
-        resolve,
-      ));
+  async dropAllCollections() {
+    const collections = await this.db.listCollections().toArray();
+    return Promise.all(collections.map(({ name }) => this.db.collection(name).drop()));
   }
 }
 

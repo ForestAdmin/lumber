@@ -60,7 +60,6 @@ const detectReferences = (databaseConnection, fields, collectionName) => {
   logger.info(`Detecting references in collection '${collectionName}'...`);
   const objectIdFields = fields.filter(field => field.type === OBJECT_ID);
   if (!objectIdFields.length) {
-    logger.info(`No field:ObjectID found in collection '${collectionName}'`);
     return [];
   }
   return P.mapSeries(
