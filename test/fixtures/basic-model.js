@@ -1,3 +1,4 @@
+/* eslint no-underscore-dangle: off */
 const { ObjectID } = require('mongodb');
 const _ = require('lodash');
 

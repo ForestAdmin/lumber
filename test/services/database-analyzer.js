@@ -3,7 +3,7 @@ const { expect } = require('chai');
 
 const MongoHelper = require('../utils/mongo-helper');
 const DatabaseAnalyzer = require('../../services/database-analyzer');
-const basicModel = require('../fixtures/basicModel');
+const basicModel = require('../fixtures/basic-model');
 const expectedSimpleModelResult = require('../expected/expected-simple-model-result.json');
 
 describe('Database analyser > MongoDB', () => {
