@@ -173,12 +173,6 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
 
   // Build the db schema.
   await P.mapSeries(showAllTables(databaseConnection, config.dbSchema), async (table) => {
-    // NOTICE: MS SQL returns objects instead of strings.
-    if (typeof table === 'object') {
-      // eslint-disable-next-line no-param-reassign
-      table = table.tableName;
-    }
-
     schema[table] = await analyzeTable(table, config);
   });
 
