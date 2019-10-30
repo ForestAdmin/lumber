@@ -131,7 +131,7 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   const schema = {};
 
   queryInterface = databaseConnection.getQueryInterface();
-  tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection);
+  tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, config.dbSchema);
   columnTypeGetter = new ColumnTypeGetter(databaseConnection, config.dbSchema || 'public', allowWarning);
 
   if (config.dbSchema) {

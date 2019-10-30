@@ -1,4 +1,4 @@
-function TableForeignKeysAnalyzer(databaseConnection) {
+function TableForeignKeysAnalyzer(databaseConnection, schema) {
   const queryInterface = databaseConnection.getQueryInterface();
 
   this.perform = async (table) => {
@@ -51,7 +51,7 @@ function TableForeignKeysAnalyzer(databaseConnection) {
           INNER JOIN sys.columns c2
             ON fkc.referenced_column_id = c2.column_id
               AND fkc.referenced_object_id = c2.object_id
-          WHERE fk.parent_object_id = (SELECT object_id FROM sys.tables WHERE name = :table)`;
+          WHERE fk.parent_object_id = (SELECT object_id FROM sys.tables WHERE name = :table AND schema_id = SCHEMA_ID('${schema}'))`;
         break;
       case 'sqlite':
         query = 'PRAGMA foreign_key_list(:table);';

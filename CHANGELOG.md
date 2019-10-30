@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix install on mssql when there is two tables with the same name in different schemas.
 
 ## RELEASE 2.6.0 - 2019-10-29
 ### Added
