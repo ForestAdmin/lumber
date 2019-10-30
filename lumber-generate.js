@@ -1,7 +1,8 @@
 const P = require('bluebird');
 const program = require('commander');
 const chalk = require('chalk');
-const ora = require('ora');
+// const ora = require('ora');
+const spinners = require('./services/spinners');
 const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/database-analyzer');
 const Dumper = require('./services/dumper');
@@ -35,29 +36,30 @@ program
 
   if (program.db) {
     const connectionPromise = new Database().connect(config);
-    logger.spinner = ora.promise(connectionPromise, 'Connecting to database');
+    spinners.add('database-connection', { text: 'Connecting to database' }, connectionPromise);
     const connection = await connectionPromise;
 
     const schemaPromise = new DatabaseAnalyzer(connection, config, true).perform();
-    logger.spinner = ora.promise(schemaPromise, 'Analyzing your database');
+    spinners.add('database-analysis', { text: 'Analyzing your database' }, schemaPromise);
     schema = await schemaPromise;
   }
 
   const projectCreationPromise = new ProjectCreator(logger)
     .createProject(config.appName, config);
-  logger.spinner = ora.promise(projectCreationPromise, 'Creating your project on forestadmin');
+  spinners.add('project-creation', { text: 'Creating your project on forestadmin' }, projectCreationPromise);
+
   const { envSecret, authSecret } = await projectCreationPromise;
   config.forestEnvSecret = envSecret;
   config.forestAuthSecret = authSecret;
 
-  const spinnerDumper = ora('Creating your project files').start();
-  logger.spinner = spinnerDumper;
+  const spinner = spinners.add('dumper', { text: 'Creating your project files' });
+  logger.spinner = spinner;
   const dumper = await new Dumper(config);
 
   await P.each(Object.keys(schema), async (table) => {
     await dumper.dump(table, schema[table]);
   });
-  spinnerDumper.succeed();
+  spinner.succeed();
 
   logger.success(`Hooray, ${chalk.green('installation success')}!`);
   await eventSender.notifySuccess();

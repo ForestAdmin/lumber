@@ -6,12 +6,24 @@ class Logger {
     this.spinner = null;
   }
 
+  pauseSpinner() {
+    if (this.spinner) {
+      this.spinner.pause();
+    }
+  }
+
+  continueSpinner() {
+    if (this.spinner) {
+      this.spinner.continue();
+    }
+  }
+
   log(message) {
     if (!this.silent) {
-      if (this.spinner && this.spinner.isSpinning) {
-        this.spinner.clear();
-        this.spinner.frame();
-      }
+      // if (this.spinner && this.spinner.isSpinning) {
+      //   this.spinner.clear();
+      //   this.spinner.frame();
+      // }
       console.log(message);
     }
   }

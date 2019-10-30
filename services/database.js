@@ -4,7 +4,7 @@ const { terminate } = require('../utils/terminator');
 
 function Database() {
   async function handleAuthenticationError(error) {
-    terminate(1, {
+    return terminate(1, {
       logs: [
         'Cannot connect to the database due to the following error:',
         error,

@@ -42,6 +42,8 @@ function Authenticator() {
       ? 'http://localhost:4200' : 'https://app.forestadmin.com';
     const url = chalk.cyan.underline(`${endpoint}/authentication-token`);
     logger.info(`To authentify with your google account, please follow this link and copy the authentication token: ${url}`);
+
+    logger.pauseSpinner();
     const { sessionToken } = await inquirer.prompt([{
       type: 'password',
       name: 'sessionToken',
@@ -59,6 +61,7 @@ function Authenticator() {
         return errorMessage;
       },
     }]);
+    logger.continueSpinner();
     this.saveToken(sessionToken);
     return sessionToken;
   };
@@ -94,6 +97,7 @@ function Authenticator() {
       }
 
       if (!password) {
+        logger.pauseSpinner();
         ({ password } = await inquirer.prompt([{
           type: 'password',
           name: 'password',
@@ -103,6 +107,7 @@ function Authenticator() {
             return 'Please enter your password.';
           },
         }]));
+        logger.continueSpinner();
       }
 
       return await this.login(email, password);
@@ -111,10 +116,8 @@ function Authenticator() {
         ? 'Incorrect email or password.'
         : `${unexpectedError} ${chalk.red(error)}`;
 
-      terminate(1, { logs: [message] });
+      return terminate(1, { logs: [message] });
     }
-
-    return null;
   };
 
   this.createAccount = async () => {
@@ -168,7 +171,7 @@ function Authenticator() {
         ? `This account already exists. Please, use the command ${chalk.cyan('lumber login')} to login with this account.`
         : `${unexpectedError}  ${chalk.red(error)}`;
 
-      terminate(1, { logs: [message] });
+      return terminate(1, { logs: [message] });
     }
 
     const token = await this.login(authConfig.email, authConfig.password);

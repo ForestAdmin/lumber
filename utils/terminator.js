@@ -5,7 +5,7 @@ module.exports = {
   async terminate(status, {
     errorCode, errorMessage, logs, context,
   }) {
-    if (status !== 0 && logger.spinner && logger.spinner.isSpinning) {
+    if (status !== 0 && logger.spinner) {
       logger.spinner.fail();
     }
     if (logs.length) {

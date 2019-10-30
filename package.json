@@ -36,11 +36,11 @@
     "mkdirp": "^0.5.1",
     "mongodb": "3.3.0",
     "mysql2": "1.7.0",
-    "ora": "^4.0.2",
     "pg": "^6.1.0",
     "saslprep": "1.0.3",
     "sequelize": "5.21.2",
     "simple-git": "1.126.0",
+    "spinnies": "^0.5.0",
     "superagent": "5.1.0",
     "tedious": "6.4.0",
     "winston": "^2.2.0"
