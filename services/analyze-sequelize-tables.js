@@ -22,6 +22,29 @@ async function analyzePrimaryKeys(schema) {
   return Object.keys(schema).filter(column => schema[column].primaryKey);
 }
 
+async function showAllTables(databaseConnection, schema) {
+  const dbDialect = databaseConnection.getDialect();
+
+  if (['mysql', 'mariadb'].includes(dbDialect)) {
+    return queryInterface.showAllTables();
+  }
+
+  let realSchema = schema;
+  if (!realSchema) {
+    if (dbDialect === 'mssql') {
+      [{ default_schema: realSchema }] = await queryInterface.sequelize.query('SELECT SCHEMA_NAME() as default_schema', { type: queryInterface.sequelize.QueryTypes.SELECT });
+    } else {
+      realSchema = 'public';
+    }
+  }
+
+  return queryInterface.sequelize.query(
+    'SELECT table_name as table_name FROM information_schema.tables WHERE table_schema = ? AND table_type LIKE \'%TABLE\' AND table_name != \'spatial_ref_sys\'',
+    { type: queryInterface.sequelize.QueryTypes.SELECT, replacements: [realSchema] },
+  )
+    .then(results => results.map(table => table.table_name));
+}
+
 function hasTimestamps(fields) {
   let hasCreatedAt = false;
   let hasUpdatedAt = false;
@@ -149,9 +172,7 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   }
 
   // Build the db schema.
-  await P.mapSeries(queryInterface.showAllTables({
-    schema: config.dbSchema,
-  }), async (table) => {
+  await P.mapSeries(showAllTables(databaseConnection, config.dbSchema), async (table) => {
     // NOTICE: MS SQL returns objects instead of strings.
     if (typeof table === 'object') {
       // eslint-disable-next-line no-param-reassign
