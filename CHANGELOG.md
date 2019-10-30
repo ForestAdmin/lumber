@@ -8,6 +8,8 @@
 ### Changed
 - Technical - Remove unused ENCRYPT env variable.
 - Security - Prevent remote environments creation with HTTP protocol.
+- Commands - Remove command run and install.
+- Command Generate - Install Forest Admin middleware.
 
 ## RELEASE 2.7.3 - 2019-11-07
 - Technical - Fix installation issue on Windows (moving `git-hook`/`simple-git` to devDependencies).

@@ -14,7 +14,12 @@ async function Prompter(program, requests) {
     return requests.includes(option);
   }
 
-  const envConfig = { db: program.db };
+  const envConfig = {
+    db: program.db,
+    password: program.password,
+    token: program.token,
+    email: program.email,
+  };
 
   if (program.sourceDirectory) {
     envConfig.sourceDirectory = program.sourceDirectory;
@@ -250,7 +255,7 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('email')) {
-    if (!envConfig.authToken) {
+    if (!envConfig.email) {
       prompts.push({
         type: 'input',
         name: 'email',
