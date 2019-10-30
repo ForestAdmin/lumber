@@ -2,7 +2,6 @@ const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
-const KeyGenerator = require('./key-generator');
 const stringUtils = require('../utils/strings');
 
 const mkdirp = P.promisify(mkdirpSync);
@@ -13,7 +12,9 @@ function Dumper(config) {
   const path = `${process.cwd()}/${config.appName}`;
   const binPath = `${path}/bin`;
   const routesPath = `${path}/routes`;
+  const forestPath = `${path}/forest`;
   const publicPath = `${path}/public`;
+  const viewPath = `${path}/views`;
   const modelsPath = `${path}/models`;
   const middlewaresPath = `${path}/middlewares`;
 
@@ -23,13 +24,16 @@ function Dumper(config) {
   }
 
   function writePackageJson(pathDest) {
+    const orm = config.dbDialect === 'mongodb' ? 'mongoose' : 'sequelize';
     const dependencies = {
       express: '~4.16.3',
       debug: '~4.0.1',
       dotenv: '~6.1.0',
       chalk: '~1.1.3',
       sequelize: '~5.15.1',
+      [`forest-express-${orm}`]: '^4.0.0',
       'require-all': '^3.0.0',
+      'cookie-parser': '1.4.4',
     };
 
     if (config.dbDialect) {
@@ -100,7 +104,7 @@ function Dumper(config) {
     return connectionString;
   }
 
-  function writeDotEnv(pathDest, authSecret) {
+  function writeDotEnv(pathDest) {
     const templatePath = `${__dirname}/../templates/app/env`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
@@ -111,14 +115,15 @@ function Dumper(config) {
       dbSchema: config.dbSchema,
       hostname: config.appHostname,
       port: config.appPort,
-      authSecret,
+      forestEnvSecret: config.forestEnvSecret,
+      forestAuthSecret: config.forestAuthSecret,
     };
 
     fs.writeFileSync(`${pathDest}/.env`, template(settings));
   }
 
   function writeModel(pathDest, table, fields, references, options = {}) {
-    const templatePath = `${__dirname}/../templates/model.txt`;
+    const templatePath = `${__dirname}/../templates/app/models/model.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
 
@@ -165,7 +170,7 @@ function Dumper(config) {
   function writeAppJs(pathDest) {
     const templatePath = `${__dirname}/../templates/app/app.js`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    const text = template({ config });
+    const text = template({ config, forestUrl: process.env.FOREST_URL });
 
     fs.writeFileSync(`${pathDest}/app.js`, text);
   }
@@ -189,7 +194,7 @@ function Dumper(config) {
     fs.writeFileSync(`${pathDest}/Dockerfile`, template(settings));
   }
 
-  function writeDockerCompose(pathDest, authSecret) {
+  function writeDockerCompose(pathDest) {
     const templatePath = `${__dirname}/../templates/app/docker-compose.yml`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
@@ -201,7 +206,8 @@ function Dumper(config) {
       ssl: config.ssl,
       encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
-      authSecret,
+      forestEnvSecret: config.forestEnvSecret,
+      forestAuthSecret: config.forestAuthSecret,
     };
 
     fs.writeFileSync(`${pathDest}/docker-compose.yml`, template(settings));
@@ -214,13 +220,11 @@ function Dumper(config) {
     fs.writeFileSync(`${pathDest}/.dockerignore`, template({}));
   }
 
-  async function writeWelcomeMiddlewareIndex() {
-    await mkdirp(`${middlewaresPath}/welcome`);
-    copyTemplate('middlewares/welcome/index.js', `${middlewaresPath}/welcome/index.js`);
-  }
-
-  function writeWelcomeMiddlewareTemplate() {
-    copyTemplate('middlewares/welcome/template.txt', `${middlewaresPath}/welcome/template.txt`);
+  function writeForestAdminMiddleware(pathDest) {
+    mkdirp.sync(`${process.cwd()}/middlewares`);
+    const templatePath = `${__dirname}/../templates/app/middlewares/forestadmin.txt`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    fs.writeFileSync(`${pathDest}/middlewares/forestadmin.js`, template(config));
   }
 
   this.dump = (table, { fields, references, options }) => {
@@ -231,6 +235,8 @@ function Dumper(config) {
     mkdirp(path),
     mkdirp(binPath),
     mkdirp(routesPath),
+    mkdirp(forestPath),
+    mkdirp(viewPath),
     mkdirp(publicPath),
     mkdirp(middlewaresPath),
   ];
@@ -241,21 +247,22 @@ function Dumper(config) {
 
   return (async () => {
     await P.all(dirs);
-    const authSecret = await new KeyGenerator().generate();
     copyTemplate('bin/www', `${binPath}/www`);
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
+    copyTemplate('views/index.html', `${path}/views/index.html`);
+    copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
 
     if (config.db) { writeModelsIndex(path); }
     writeAppJs(path);
     writePackageJson(path);
     writeDotGitIgnore(path);
     writeDotGitKeep(routesPath);
-    writeDotEnv(path, authSecret);
+    writeDotGitKeep(forestPath);
+    writeDotEnv(path);
     writeDockerfile(path);
-    writeDockerCompose(path, authSecret);
+    writeDockerCompose(path);
     writeDotDockerIgnore(path);
-    await writeWelcomeMiddlewareIndex();
-    writeWelcomeMiddlewareTemplate();
+    writeForestAdminMiddleware(path);
 
     return this;
   })();
