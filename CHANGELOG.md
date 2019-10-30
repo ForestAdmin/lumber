@@ -7,7 +7,7 @@
 ### Changed
 - Commands - Drop environment variables.
 - Commands - Remove command run and install.
-- Command Generate - Now also install forestadmin middleware.
+- Command Generate - Install Forest Admin middleware.
 
 ### Fixed
 - Technical - Fix repository in `package.json`.
