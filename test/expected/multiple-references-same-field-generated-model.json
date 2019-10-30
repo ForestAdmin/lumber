@@ -1,0 +1,55 @@
+{
+  "actors": {
+    "fields": [
+      {
+        "name": "name",
+        "type": "String"
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  },
+  "films": {
+    "fields": [
+      {
+        "name": "author",
+        "type": "mongoose.Schema.Types.ObjectId"
+      },
+      {
+        "name": "refersTo",
+        "type": "String"
+      },
+      {
+        "name": "title",
+        "type": "String"
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  },
+  "persons": {
+    "fields": [
+      {
+        "name": "name",
+        "type": "String"
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  }
+}

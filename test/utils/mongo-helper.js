@@ -10,13 +10,10 @@ class MongoHelper {
     return new Promise((resolve) => {
       this.client.connect((err) => {
         assert.equal(null, err);
-        resolve(this.db());
+        this.db = this.client.db(dbName);
+        resolve(this.db);
       });
     });
-  }
-
-  db() {
-    return this.client.db(dbName);
   }
 
   given(fixtures) {
@@ -24,10 +21,12 @@ class MongoHelper {
       this.insertDocs(collectionName, fixtures[collectionName])));
   }
 
-  insertDocs(collectionName, docs) {
-    return this.db()
+  async insertDocs(collectionName, docs) {
+    const res = await this.db
       .collection(collectionName)
       .insertMany(docs, { ordered: false });
+    console.log('inserted', collectionName);
+    return res;
   }
 
   close() {
@@ -35,9 +34,9 @@ class MongoHelper {
   }
 
   dropAllCollections() {
-    return new Promise(resolve => this.db().listCollections()
+    return new Promise(resolve => this.db.listCollections()
       .forEach(
-        ({ name }) => this.db().collection(name).drop(),
+        ({ name }) => this.db.collection(name).drop(),
         resolve,
       ));
   }
