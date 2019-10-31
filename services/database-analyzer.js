@@ -1,7 +1,6 @@
 const analyzeMongoCollections = require('./analyze-mongo-collections');
 const analyzeSequelizeTables = require('./analyze-sequelize-tables');
 const { DatabaseAnalyzerError } = require('../utils/errors');
-const logger = require('./logger');
 const { terminate } = require('../utils/terminator');
 
 async function reportEmptyDatabase(orm, dialect) {
