@@ -19,6 +19,11 @@ function Authenticator() {
   this.isTokenCorrect = (email, token) => {
     const sessionInfo = parseJwt(token);
     if (sessionInfo) {
+      if ((sessionInfo.exp * 1000) <= Date.now()) {
+        logger.warn('You tried to use a token an expired token');
+        return false;
+      }
+
       if (sessionInfo.data.data.attributes.email === email) {
         return true;
       }
@@ -47,7 +52,9 @@ function Authenticator() {
         if (!input) { return errorMessage; }
 
         const sessionInfo = parseJwt(input);
-        if (sessionInfo && sessionInfo.data.data.attributes.email === email) {
+        if (sessionInfo
+          && sessionInfo.data.data.attributes.email === email
+          && (sessionInfo.exp * 1000) <= Date.now()) {
           return true;
         }
         return errorMessage;

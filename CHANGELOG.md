@@ -10,6 +10,10 @@
 - Commands - Remove command run and install.
 - Command Generate - Install Forest Admin middleware.
 
+### Fixed
+- Command Login - Fix login only enable connection (And not account creation).
+- Command Login - Verify the validity of the token passed in paramaters.
+
 ## RELEASE 2.6.1 - 2019-10-30
 ### Fixed
 - Command Generate - Fix install on mssql when there is two tables with the same name in different schemas.
@@ -24,7 +28,6 @@
 
 ### Fixed
 - Technical - Fix repository in `package.json`.
-- Command Login - Fix login to match old behaviour.
 
 ## RELEASE 2.5.2 - 2019-10-25
 ### Changed
