@@ -105,8 +105,6 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       case 'DATE':
       case 'DATETIME':
       case (type.match(/^TIMESTAMP.*/i) || {}).input:
-      case 'TIMESTAMP WITH TIME ZONE':
-      case 'TIMESTAMP WITHOUT TIME ZONE':
         return 'DATE';
       case 'TIME':
       case 'TIME WITHOUT TIME ZONE':
