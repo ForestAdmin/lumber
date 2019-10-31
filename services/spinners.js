@@ -22,6 +22,7 @@ module.exports = {
       },
       pause() {
         spinnies.remove(key);
+        spinnies.stopAll();
       },
       continue() {
         spinnies.add(key, options);
