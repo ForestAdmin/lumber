@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
 class SequelizeHelper {
-  async connect(url, options) {
+  connect(url) {
     this.sequelize = new Sequelize(url, {
       logging: false,
       pool: { maxConnections: 10, minConnections: 1 },
@@ -14,14 +14,10 @@ class SequelizeHelper {
   }
 
   given(fixtures) {
-    return Promise.all(Object.keys(fixtures).map(collectionName =>
-      this.insertDocs(collectionName, fixtures[collectionName])));
-  }
-
-  insertDocs(collectionName, docs) {
-    return this.db
-      .collection(collectionName)
-      .insertMany(docs, { ordered: false });
+    return Promise.all(fixtures.map((fixture) => {
+      const Model = this.sequelize.define(fixture.name, fixture.attributes);
+      return Model.sync({ force: true });
+    }));
   }
 
   close() {
