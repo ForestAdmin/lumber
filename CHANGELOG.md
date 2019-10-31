@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Technical - Update `package-lock.json` (was not up to date since last release).
 
 ## RELEASE 2.6.1 - 2019-10-30
 ### Fixed
