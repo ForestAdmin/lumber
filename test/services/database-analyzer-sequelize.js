@@ -1,10 +1,12 @@
-/* global describe, before, beforeEach, after, it */
+/* global describe, before, afterEach, after, it */
 const { expect } = require('chai');
 const Sequelize = require('sequelize');
 const SequelizeHelper = require('../utils/sequelize-helper');
 const DatabaseAnalyzer = require('../../services/database-analyzer');
-const singleModel = require('../fixtures/sequelize/single-model');
-const expectedSingleModel = require('../expected/single-model.js');
+const SingleModel = require('../fixtures/sequelize/single-model');
+const expectedSingleModel = require('../expected/single-model');
+const ModelsWithRelation = require('../fixtures/sequelize/models-with-relations');
+const expectedModelsWithRelation = require('../expected/models-with-relations');
 
 describe('Database analyser > Sequelize', () => {
   const databases = [
@@ -18,17 +20,22 @@ describe('Database analyser > Sequelize', () => {
     },
   ];
 
-  databases.forEach((database) => {
-    describe(`with ${database.dialect}`, () => {
+  function performDatabaseAnalysis(connection, dialect) {
+    const databaseAnalyzer = new DatabaseAnalyzer(connection, { dbDialect: dialect });
+    return databaseAnalyzer.perform();
+  }
+
+  databases.forEach(({ connectionUrl, dialect }) => {
+    describe(`with ${dialect}`, () => {
       let sequelizeHelper;
       let databaseConnection;
 
       before(async () => {
         sequelizeHelper = new SequelizeHelper();
-        databaseConnection = await sequelizeHelper.connect(database.connectionUrl);
+        databaseConnection = await sequelizeHelper.connect(connectionUrl);
       });
 
-      beforeEach(() => sequelizeHelper.dropAllTables());
+      afterEach(() => sequelizeHelper.dropAllTables());
 
       after(async () => {
         databaseConnection = null;
@@ -43,20 +50,20 @@ describe('Database analyser > Sequelize', () => {
       });
 
       it('should generate a single model', async () => {
-        await sequelizeHelper.given(singleModel);
-        const databaseAnalyzer = new DatabaseAnalyzer(
-          databaseConnection,
-          { dbDialect: database.dialect },
-        );
-        const model = await databaseAnalyzer.perform();
-        expect(model).is.deep.equal(expectedSingleModel(database.dialect));
+        const singleModel = new SingleModel(databaseConnection);
+        await singleModel.build();
+        const result = await performDatabaseAnalysis(databaseConnection, dialect);
+        expect(result.users).is.deep.equal(expectedSingleModel(dialect).users);
       });
 
-      it('should not create a reference if multiples referenced collections are found', async () => expect(true).to.be.true);
-
-      it('should find the reference even in a db with many nulls', async () => expect(true).to.be.true);
-
-      it('should generate the model with many objectid fields', async () => expect(true).to.be.true);
+      it('should generate models with relations', async () => {
+        const modelsWithRelation = new ModelsWithRelation(databaseConnection);
+        await modelsWithRelation.build();
+        const result = await performDatabaseAnalysis(databaseConnection, dialect);
+        const expected = expectedModelsWithRelation(dialect);
+        expect(result.books).is.deep.equal(expected.books);
+        expect(result.authors).is.deep.equal(expected.authors);
+      });
     });
   });
 });

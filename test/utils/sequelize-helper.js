@@ -24,8 +24,15 @@ class SequelizeHelper {
     this.sequelize.close();
   }
 
-  dropAllTables() {
-    return this.sequelize.drop();
+  async dropAllTables() {
+    const isMysql = this.sequelize.getDialect() === 'mysql';
+    if (isMysql) {
+      await this.sequelize.query('SET FOREIGN_KEY_CHECKS=0;');
+    }
+    await this.sequelize.drop();
+    if (isMysql) {
+      await this.sequelize.query('SET FOREIGN_KEY_CHECKS=1;');
+    }
   }
 }
 
