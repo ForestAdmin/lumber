@@ -11,8 +11,7 @@ const persons = [
 
 const films = [];
 
-// eslint-disable-next-line no-plusplus
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 50; i += 1) {
   films.push({
     _id: ObjectID(),
     title: `Terminator #${i}`,
@@ -26,8 +25,7 @@ films.push({
   author: _.find(persons, { name: 'James Cameron' })._id,
 });
 
-// eslint-disable-next-line no-plusplus
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 50; i += 1) {
   films.push({
     _id: ObjectID(),
     title: `Terminator 2 #${i}`,

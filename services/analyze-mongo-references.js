@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const logger = require('./logger');
 const P = require('bluebird');
+const logger = require('./logger');
 
 const OBJECT_ID = 'mongoose.Schema.Types.ObjectId';
 const SAMPLE_COUNT_TO_FETCH = 10;
@@ -10,21 +10,19 @@ const pickSampleValues = (databaseConnection, collectionName, field) =>
     .aggregate([
       { $match: { [field.name]: { $ne: null } } },
       { $sample: { size: SAMPLE_COUNT_TO_FETCH } },
-      { $project: { _id: `$${field.name}` } },
+      { $project: { _id: false, value: `$${field.name}` } },
     ])
-    .toArray();
+    .toArray()
+    .then(samples => _.map(samples, 'value'));
 
-const findCollectionMatchingSamples = async (databaseConnection, collectionName, samples) => {
-  // eslint-disable-next-line no-underscore-dangle
-  const samplesArray = samples.map(sample => sample._id);
-  return P.mapSeries(databaseConnection.collections(), async (collection) => {
-    const count = await collection.countDocuments({ _id: { $in: samplesArray } });
+const findCollectionMatchingSamples = async (databaseConnection, collectionName, samples) =>
+  P.mapSeries(databaseConnection.collections(), async (collection) => {
+    const count = await collection.countDocuments({ _id: { $in: samples } });
     if (count) {
       return collection.s.namespace.collection;
     }
     return null;
   }).then(matches => _.filter(matches, match => match));
-};
 
 const buildReference = (collectionName, referencedCollection, field) => {
   if (referencedCollection) {
@@ -45,7 +43,7 @@ const filterReferenceCollection = (collectionName, field, referencedCollections)
       logger.info(`${collectionName}.${field.name} => ${referencedCollections[0]}`);
       return referencedCollections[0];
     default:
-      logger.warn(`no references found for ${collectionName}.${field.name} because many collections matches [${referencedCollections}].`);
+      logger.warn(`no references found for ${collectionName}.${field.name} because many collections match [${referencedCollections}].`);
       return null;
   }
 };
@@ -59,9 +57,6 @@ const detectReference = (databaseConnection, field, collectionName) =>
 const detectReferences = (databaseConnection, fields, collectionName) => {
   logger.info(`Detecting references in collection '${collectionName}'...`);
   const objectIdFields = fields.filter(field => field.type === OBJECT_ID);
-  if (!objectIdFields.length) {
-    return [];
-  }
   return P.mapSeries(
     objectIdFields,
     objectIdField => detectReference(databaseConnection, objectIdField, collectionName),
