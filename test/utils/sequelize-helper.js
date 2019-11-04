@@ -1,3 +1,5 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-unused-vars */
 const Sequelize = require('sequelize');
 
 class SequelizeHelper {
@@ -13,11 +15,17 @@ class SequelizeHelper {
     });
   }
 
-  given(fixtures) {
-    return Promise.all(fixtures.map((fixture) => {
-      const Model = this.sequelize.define(fixture.name, fixture.attributes);
-      return Model.sync({ force: true });
-    }));
+  async given(_fixtures) {
+    /*
+    await this.sequelize.drop();
+    // fixtures.reduce((p, fn) => p.then(fn()), Promise.resolve());
+
+    for (let i = 0; i < fixtures.length; i++) {
+      await fixtures[i].sync({ force: true })
+    }
+    */
+
+    // return Promise.all(fixtures.map(fixture => fixture.sync({ force: true })));
   }
 
   close() {
@@ -25,14 +33,7 @@ class SequelizeHelper {
   }
 
   async dropAllTables() {
-    const isMysql = this.sequelize.getDialect() === 'mysql';
-    if (isMysql) {
-      await this.sequelize.query('SET FOREIGN_KEY_CHECKS=0;');
-    }
     await this.sequelize.drop();
-    if (isMysql) {
-      await this.sequelize.query('SET FOREIGN_KEY_CHECKS=1;');
-    }
   }
 }
 

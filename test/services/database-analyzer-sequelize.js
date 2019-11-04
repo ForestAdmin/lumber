@@ -51,14 +51,14 @@ describe('Database analyser > Sequelize', () => {
 
       it('should generate a single model', async () => {
         const singleModel = new SingleModel(databaseConnection);
-        await singleModel.build();
+        await sequelizeHelper.given(singleModel.build());
         const result = await performDatabaseAnalysis(databaseConnection, dialect);
         expect(result.users).is.deep.equal(expectedSingleModel(dialect).users);
       });
 
       it('should generate models with relations', async () => {
         const modelsWithRelation = new ModelsWithRelation(databaseConnection);
-        await modelsWithRelation.build();
+        await sequelizeHelper.given(modelsWithRelation.build());
         const result = await performDatabaseAnalysis(databaseConnection, dialect);
         const expected = expectedModelsWithRelation(dialect);
         expect(result.books).is.deep.equal(expected.books);

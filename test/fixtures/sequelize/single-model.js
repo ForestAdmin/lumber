@@ -4,7 +4,7 @@ class SingleModel {
   constructor(sequelize) {
     this.sequelize = sequelize;
   }
-  async build() {
+  build() {
     const User = this.sequelize.define('user', {
       email: {
         type: Sequelize.STRING,
@@ -25,8 +25,7 @@ class SingleModel {
       updatedAt: { type: Sequelize.DATE },
       resetPasswordToken: { type: Sequelize.STRING },
     });
-    await this.sequelize.drop();
-    return User.sync({ force: true });
+    return [User];
   }
 }
 
