@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix generation of project with a mongo database.
 
 ## RELEASE 2.6.2 - 2019-10-31
 ### Fixed
