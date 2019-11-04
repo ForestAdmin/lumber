@@ -11,7 +11,12 @@ class GeneralPrompter {
   constructor(program, requests) {
     this.prompts = [];
     this.program = program;
-    this.envConfig = { db: program.db };
+    this.envConfig = {
+      db: program.db,
+      password: program.password,
+      token: program.token,
+      email: program.email,
+    };
 
     this.projectPrompt = new ProjectPrompt(program, this.envConfig, requests);
     this.databasePrompt = new DatabasePrompt(program, this.envConfig, this.prompts, requests);
