@@ -80,7 +80,7 @@ describe('Services > Prompter > User prompts', () => {
       const requests = ['passwordCreate'];
       let prompts = [];
 
-      describe('and the auth token have not been passed in', () => {
+      describe('and the auth token has not been passed in', () => {
         after(() => {
           prompts = [];
         });
@@ -118,7 +118,7 @@ describe('Services > Prompter > User prompts', () => {
         });
       });
 
-      describe('and the auth token have already been passed in', () => {
+      describe('and the auth token has already been passed in', () => {
         after(() => {
           prompts = [];
         });
