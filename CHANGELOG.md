@@ -4,6 +4,14 @@
 ### Fixed
 - Command Generate - Generate MongoDB belongsTo.
 
+## RELEASE 2.6.2 - 2019-10-31
+### Fixed
+- Technical - Update `package-lock.json` (was not up to date since last release).
+
+## RELEASE 2.6.1 - 2019-10-30
+### Fixed
+- Command Generate - Fix install on mssql when there is two tables with the same name in different schemas.
+
 ## RELEASE 2.6.0 - 2019-10-29
 ### Added
 - Technical - Add EOF empty line lint rule.
