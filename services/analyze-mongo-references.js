@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const P = require('bluebird');
-const logger = require('./logger');
 
 const OBJECT_ID = 'mongoose.Schema.Types.ObjectId';
 const SAMPLE_COUNT_TO_FETCH = 10;
@@ -37,13 +36,10 @@ const buildReference = (collectionName, referencedCollection, field) => {
 const filterReferenceCollection = (collectionName, field, referencedCollections) => {
   switch (referencedCollections.length) {
     case 0:
-      logger.info(`no references found for ${collectionName}.${field.name}`);
       return null;
     case 1:
-      logger.info(`${collectionName}.${field.name} => ${referencedCollections[0]}`);
       return referencedCollections[0];
     default:
-      logger.warn(`no references found for ${collectionName}.${field.name} because many collections match [${referencedCollections}].`);
       return null;
   }
 };
@@ -55,7 +51,6 @@ const detectReference = (databaseConnection, field, collectionName) =>
     .then(referencedCollection => buildReference(collectionName, referencedCollection, field));
 
 const detectReferences = (databaseConnection, fields, collectionName) => {
-  logger.info(`Detecting references in collection '${collectionName}'...`);
   const objectIdFields = fields.filter(field => field.type === OBJECT_ID);
   return P.mapSeries(
     objectIdFields,
