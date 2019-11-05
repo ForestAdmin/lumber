@@ -166,6 +166,14 @@ function Dumper(config) {
     fs.writeFileSync(`${pathDest}/models/${table}.js`, text);
   }
 
+  function writeForestCollection(table) {
+    const templatePath = `${__dirname}/../templates/app/forest/collection.txt`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    const text = template({ ...config, table });
+
+    fs.writeFileSync(`${path}/forest/${table}.js`, text);
+  }
+
   function writeAppJs(pathDest) {
     const templatePath = `${__dirname}/../templates/app/app.js`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
@@ -227,6 +235,7 @@ function Dumper(config) {
 
   this.dump = (table, { fields, references, options }) => {
     writeModel(path, table, fields, references, options);
+    writeForestCollection(table);
   };
 
   const dirs = [

@@ -1,0 +1,12 @@
+const { collection } = require('forest-express-<% if (dbDialect === 'mongodb') { %>mongoose<% } else { %>sequelize<% } %>');
+
+// This file allows you to add to your Forest UI:
+// - Custom actions: https://docs.forestadmin.com/documentation/reference-guide/actions/create-and-manage-smart-actions
+// - Virtual fields: https://docs.forestadmin.com/documentation/reference-guide/fields/create-and-manage-smart-fields
+// - Virtual relationships: https://docs.forestadmin.com/documentation/reference-guide/relationships/create-a-smart-relationship
+// - Virtual segments: https://docs.forestadmin.com/documentation/reference-guide/segments/smart-segments
+collection('<%= table %>', {
+    actions: [],
+    fields: [],
+    segments: [],
+});
