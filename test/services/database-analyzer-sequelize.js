@@ -12,7 +12,7 @@ describe('Database analyser > Sequelize', () => {
     },
     {
       dialect: 'postgres',
-      connectionUrl: 'postgres://forest:secret@localhost:5436/lumber-sequelize-test',
+      connectionUrl: 'postgres://forest:secret@localhost:54369/lumber-sequelize-test',
     },
   ];
 
