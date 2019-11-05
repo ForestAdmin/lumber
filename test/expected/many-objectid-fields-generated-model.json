@@ -1,0 +1,62 @@
+{
+  "films": {
+    "fields": [
+      {
+        "name": "author",
+        "ref": "persons",
+        "type": "mongoose.Schema.Types.ObjectId"
+      },
+      {
+        "name": "bestActor",
+        "ref": "persons",
+        "type": "mongoose.Schema.Types.ObjectId"
+      },
+      {
+        "name": "title",
+        "type": "String"
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  },
+  "persons": {
+    "fields": [
+      {
+        "name": "cousin",
+        "ref": "persons",
+        "type": "mongoose.Schema.Types.ObjectId"
+      },
+      {
+        "name": "dad",
+        "ref": "persons",
+        "type": "mongoose.Schema.Types.ObjectId"
+      },
+      {
+        "name": "name",
+        "type": "String"
+      },
+      {
+        "name": "preferredFilm",
+        "ref": "films",
+        "type": "mongoose.Schema.Types.ObjectId"
+      },
+      {
+        "name": "son",
+        "ref": "persons",
+        "type": "mongoose.Schema.Types.ObjectId"
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  }
+}

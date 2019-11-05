@@ -2,6 +2,7 @@ const _ = require('lodash');
 const logger = require('./logger');
 const P = require('bluebird');
 const { DatabaseAnalyzerError } = require('../utils/errors');
+const { detectReferences, applyReferences } = require('./analyze-mongo-references');
 
 function isUnderscored(fields) {
   return fields.every(field => field.nameColumn === _.snakeCase(field.nameColumn))
@@ -16,7 +17,7 @@ const mapReduceOptions = {
 // eslint-disable no-undef
 function mapCollection() {
   // eslint-disable-next-line
-  for (let key in this) {
+  for (var key in this) {
     /* eslint-disable no-undef */
     if (this[key] instanceof ObjectId && key !== '_id') {
       emit(key, 'mongoose.Schema.Types.ObjectId');
@@ -96,6 +97,8 @@ function analyzeMongoCollections(databaseConnection) {
         }
 
         const analysis = await analyzeMongoCollection(databaseConnection, collectionName);
+        const references = await detectReferences(databaseConnection, analysis, collectionName);
+        applyReferences(analysis, references);
         schema[collectionName] = {
           fields: analysis,
           references: [],

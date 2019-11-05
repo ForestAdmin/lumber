@@ -2,7 +2,7 @@
 %>const mongoose = require('mongoose');
 
 const schema = mongoose.Schema({<% _.each(fields, (field) => { %>
-  '<%= field.name %>': <%= field.type %>,<% }); %>
+  '<%= field.name %>': <%= field.ref ? `{ type: ${field.type}, ref: '${field.ref}' }` : field.type %>,<% }); %>
 }, {
   timestamps: <%= timestamps %>,
 });
