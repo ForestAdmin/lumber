@@ -2,6 +2,7 @@ const program = require('commander');
 const inquirer = require('inquirer');
 const logger = require('./services/logger');
 const Authenticator = require('./services/authenticator');
+const { EMAIL_REGEX } = require('./utils/regexs');
 
 program
   .description('Log into Forest Admin API')
@@ -20,8 +21,8 @@ program
       name: 'email',
       message: 'What\'s your email address?',
       validate: (input) => {
-        if (input) { return true; }
-        return 'Please enter your email address.';
+        if (EMAIL_REGEX.test(input)) { return true; }
+        return input ? 'Invalid email' : 'Please enter your email address.';
       },
     }]));
   }

@@ -5,11 +5,8 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const api = require('./api');
 const { parseJwt } = require('../utils/authenticator-helper');
+const { EMAIL_REGEX, PASSWORD_REGEX } = require('../utils/regexs');
 const logger = require('./logger');
-
-// NOTICE: The forest password should be composed of digit, at least on capital letter
-//         and one lower case letter. It also accepts special characters except whitespaces.
-const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])\S{8,}$/;
 
 function Authenticator() {
   this.pathToLumberrc = `${os.homedir()}/.lumberrc`;
@@ -143,8 +140,8 @@ function Authenticator() {
       name: 'email',
       message: 'What\'s your email address?',
       validate: (input) => {
-        if (input) { return true; }
-        return 'Please enter your email address.';
+        if (EMAIL_REGEX.test(input)) { return true; }
+        return input ? 'Invalid email' : 'Please enter your email address.';
       },
     }, {
       type: 'password',
@@ -152,7 +149,7 @@ function Authenticator() {
       message: 'Choose a password:',
       validate: (password) => {
         if (password) {
-          if (FORMAT_PASSWORD.test(password)) { return true; }
+          if (PASSWORD_REGEX.test(password)) { return true; }
           return `🔓  Your password security is too weak 🔓\n
           \tPlease make sure it contains at least:\n
           \t> 8 characters\n
