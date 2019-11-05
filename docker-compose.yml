@@ -1,0 +1,20 @@
+postgres :
+  image : postgres:9.4.5
+  container_name : lumber_sequelize_postgres
+  ports :
+    - "54369:5432"
+  environment:
+    - POSTGRES_DB=lumber-sequelize-test
+    - POSTGRES_USER=forest
+    - POSTGRES_PASSWORD=secret
+
+mysql:
+  image: mysql:5.7
+  container_name: lumber_sequelize_mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_DATABASE: lumber-sequelize-test
+    MYSQL_USER: forest
+    MYSQL_PASSWORD: secret
+  ports:
+    - "127.0.0.1:8999:3306"

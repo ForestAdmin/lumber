@@ -5,6 +5,7 @@
 - Field Types - Support `TIMESTAMP(n)`, `SMALLINT(n)` and `BIGINT(n)` column types (MySQL)
 - Command generate - Add comments to generated models.
 - Command Generate - Generate the forest collection files.
+- Command Generate - Add tests on model generation (MySQL and PostgreSQL).
 
 ### Changed
 - Commands - Drop environment variables.
