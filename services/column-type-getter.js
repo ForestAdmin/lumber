@@ -57,7 +57,6 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
 
     switch (type) {
       case 'BIT': // NOTICE: MSSQL type.
-      case 'BIT(1)': // NOTICE: MySQL type.
       case 'BOOLEAN':
         return 'BOOLEAN';
       case 'CHARACTER VARYING':
