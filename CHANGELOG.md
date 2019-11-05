@@ -5,6 +5,7 @@
 - Node version - Define supported node versions (10 and 12) in `package.json`.
 - Command generate - Add comments to generated models.
 - Command Generate - Generate the forest collection files.
+- Command Generate - Add tests on model generation (MySQL and PostgreSQL).
 
 ### Changed
 - Technical - Remove unused ENCRYPT env variable.
