@@ -15,7 +15,8 @@ services:
 
 before_install:
   - docker-compose --version
-  - docker-compose up -d
+  - docker-compose -f docker-compose-min-version.yml up -d
+  - docker-compose -f docker-compose-max-version.yml up -d
   - docker ps
 
 install:
@@ -23,4 +24,4 @@ install:
 
 script:
   - npm run lint
-  - npm run test
+  - npm run test:ci

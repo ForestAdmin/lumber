@@ -3,4 +3,4 @@ MongoDB:
   ports:
     - "27017:27017"
   volumes:
-    - ./data/mongodb:/var/lib/mongodb
+    - ./data/mongodb/3.2:/var/lib/mongodb

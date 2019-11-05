@@ -1,0 +1,6 @@
+MongoDB:
+  image: mongo:4.2
+  ports:
+    - "27018:27017"
+  volumes:
+    - ./data/mongodb/4.2:/var/lib/mongodb

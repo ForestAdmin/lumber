@@ -1,11 +1,15 @@
 const { MongoClient } = require('mongodb');
 const assert = require('assert');
 
-const url = process.env.DATABASE_CONNECTION_URL || 'mongodb://localhost:27017';
+require('./load-env');
+const logger = require('../../services/logger');
+
+const url = process.env.MONGO_URL || 'mongodb://localhost:27017';
 const dbName = 'forest-test';
 
 class MongoHelper {
   connect() {
+    logger.info(`Connecting to MongoDB: ${url}`);
     this.client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
     return new Promise((resolve) => {
       this.client.connect((err) => {

@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - Test on different environments (ie. versions of databases).
+
 ### Fixed
 - Command Generate - Generate MongoDB belongsTo.
 
