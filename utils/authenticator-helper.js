@@ -13,7 +13,7 @@ function parseJwt(token) {
 
     return JSON.parse(jsonPayload);
   } catch (error) {
-    logger.error('Your session token seems to be wrong');
+    logger.error('Your session token is invalid.');
     return null;
   }
 }

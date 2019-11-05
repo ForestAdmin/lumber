@@ -11,7 +11,7 @@
 - Command Generate - Install Forest Admin middleware.
 
 ### Fixed
-- Command Login - Fix login only enable connection (And not account creation).
+- Command Login - Disable account creation.
 - Command Login - Verify the validity of the token passed in paramaters.
 
 ## RELEASE 2.6.1 - 2019-10-30

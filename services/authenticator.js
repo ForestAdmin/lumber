@@ -20,14 +20,14 @@ function Authenticator() {
     const sessionInfo = parseJwt(token);
     if (sessionInfo) {
       if ((sessionInfo.exp * 1000) <= Date.now()) {
-        logger.warn('You tried to use a token an expired token');
+        logger.warn('Your token has expired.');
         return false;
       }
 
       if (sessionInfo.data.data.attributes.email === email) {
         return true;
       }
-      logger.warn('You tried to use a token of another account');
+      logger.warn('Your token is invalid.');
     }
     return false;
   };
