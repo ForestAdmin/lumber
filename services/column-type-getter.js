@@ -82,14 +82,14 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
         return 'UUID';
       case 'JSONB':
         return 'JSONB';
-      case 'SMALLINT':
       case 'INTEGER':
       case 'SERIAL':
       case 'BIGSERIAL':
       case (type.match(/^INT.*/i) || {}).input:
+      case (type.match(/^SMALLINT.*/i) || {}).input:
       case (type.match(/^TINYINT.*/i) || {}).input:
         return 'INTEGER';
-      case 'BIGINT':
+      case (type.match(/^BIGINT.*/i) || {}).input:
         return 'BIGINT';
       case (type.match(/FLOAT.*/i) || {}).input:
         return 'FLOAT';
@@ -103,9 +103,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
         return 'DOUBLE';
       case 'DATE':
       case 'DATETIME':
-      case 'TIMESTAMP':
-      case 'TIMESTAMP WITH TIME ZONE':
-      case 'TIMESTAMP WITHOUT TIME ZONE':
+      case (type.match(/^TIMESTAMP.*/i) || {}).input:
         return 'DATE';
       case 'TIME':
       case 'TIME WITHOUT TIME ZONE':

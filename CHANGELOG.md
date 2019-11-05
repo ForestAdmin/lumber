@@ -6,6 +6,11 @@
 
 ### Fixed
 - Command Generate - Generate MongoDB belongsTo.
+- Field Types - Support `TIMESTAMP(n)`, `SMALLINT(n)` and `BIGINT(n)` column types (MySQL)
+
+## RELEASE 2.6.3 - 2019-11-04
+### Fixed
+- Command Generate - Fix generation of project with a mongo database.
 
 ## RELEASE 2.6.2 - 2019-10-31
 ### Fixed
