@@ -23,10 +23,20 @@ class SequelizeHelper {
     const fixtureFilename = path.join(__dirname, `../fixtures/${dialect}/${tableName}.sql`);
     const expectedFilename = path.join(__dirname, `../expected/${dialect}/${tableName}.json`);
     const fixtureFileContent = await fs.readFileSync(fixtureFilename, 'utf8');
-    await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName}`);
+    await this.drop(tableName, dialect);
     await this.sequelize.query(fixtureFileContent);
     // eslint-disable-next-line import/no-dynamic-require, global-require
     return require(expectedFilename);
+  }
+
+  async drop(tableName, dialect) {
+    if (dialect === 'mysql') {
+      await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 0;');
+      await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName}`);
+      await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
+    } else {
+      await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName} CASCADE`);
+    }
   }
 
   close() {

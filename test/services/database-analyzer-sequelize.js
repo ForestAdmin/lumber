@@ -48,6 +48,13 @@ describe('Database analyser > Sequelize', () => {
         const result = await performDatabaseAnalysis(databaseConnection);
         expect(result.customers).is.deep.equal(expected);
       });
+
+      it('should generate two models with relationship', async () => {
+        await sequelizeHelper.given('customers');
+        const expected = await sequelizeHelper.given('addresses');
+        const result = await performDatabaseAnalysis(databaseConnection);
+        expect(result.addresses).is.deep.equal(expected);
+      });
     });
   });
 });
