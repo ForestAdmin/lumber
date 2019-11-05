@@ -1,5 +1,5 @@
 MongoDB:
-  image: mongo:3.2
+  image: mongo:4.0
   ports:
     - "27017:27017"
   volumes:
