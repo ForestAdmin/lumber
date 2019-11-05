@@ -6,8 +6,7 @@ const chalk = require('chalk');
 const logger = require('./logger');
 const eventSender = require('./event-sender');
 const DirectoryExistenceChecker = require('./directory-existence-checker');
-
-const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/;
+const { EMAIL_REGEX, PASSWORD_REGEX } = require('../utils/regexs');
 
 async function Prompter(program, requests) {
   function isRequested(option) {
@@ -261,8 +260,8 @@ async function Prompter(program, requests) {
         name: 'email',
         message: 'What\'s your email address? ',
         validate: (email) => {
-          if (email) { return true; }
-          return 'Please enter your email address.';
+          if (EMAIL_REGEX.test(email)) { return true; }
+          return email ? 'Invalid email' : 'Please enter your email address.';
         },
       });
     }
@@ -276,7 +275,7 @@ async function Prompter(program, requests) {
         message: 'Choose a password: ',
         validate: (password) => {
           if (password) {
-            if (FORMAT_PASSWORD.test(password)) { return true; }
+            if (PASSWORD_REGEX.test(password)) { return true; }
             return '🔓  Your password security is too weak 🔓\n' +
               ' Please make sure it contains at least:\n' +
               '    > 8 characters\n' +

@@ -12,6 +12,10 @@
 - Commands - Remove command run and install.
 - Command Generate - Install Forest Admin middleware.
 
+### Fixed
+- Command Login - Disable account creation.
+- Command Login - Check token validity before login.
+
 ## RELEASE 2.7.3 - 2019-11-07
 - Technical - Fix installation issue on Windows (moving `git-hook`/`simple-git` to devDependencies).
 

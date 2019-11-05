@@ -1,4 +1,5 @@
 const atob = require('atob');
+const logger = require('../services/logger');
 
 function parseJwt(token) {
   if (!token || !token.includes('.')) { return null; }
@@ -12,7 +13,7 @@ function parseJwt(token) {
 
     return JSON.parse(jsonPayload);
   } catch (error) {
-    console.error('Session token parsing unexpected error:', error);
+    logger.error('Your session token is invalid.');
     return null;
   }
 }
