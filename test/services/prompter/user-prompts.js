@@ -4,12 +4,12 @@ const UserPrompts = require('../../../services/prompter/user-prompts');
 
 describe('Services > Prompter > User prompts', () => {
   describe('Handling email prompt : ', () => {
-    describe('when the email option is requested', () => {
+    describe('When the email option is requested', () => {
       const envConfig = {};
       const requests = ['email'];
       let prompts = [];
 
-      describe('and the email has not been passed in', () => {
+      describe('And the email has not been passed in', () => {
         after(() => {
           prompts = [];
         });
@@ -32,12 +32,12 @@ describe('Services > Prompter > User prompts', () => {
         });
 
         it('should validate that the email has been field', () => {
-          expect(prompts[0].validate('fake@email.com')).to.equal(true);
+          expect(prompts[0].validate('fake@email.com'));
           expect(prompts[0].validate(null)).to.equal('Please enter your email address.');
         });
       });
 
-      describe('and the email has already been passed in', () => {
+      describe('And the email has already been passed in', () => {
         after(() => {
           prompts = [];
         });
@@ -57,7 +57,7 @@ describe('Services > Prompter > User prompts', () => {
       });
     });
 
-    describe('when the email option is not requested', () => {
+    describe('When the email option is not requested', () => {
       const envConfig = {};
       const requests = [];
       const prompts = [];
@@ -74,13 +74,13 @@ describe('Services > Prompter > User prompts', () => {
     });
   });
 
-  describe('handling create password prompt', () => {
-    describe('when the passwordCreate option is requested', () => {
+  describe('Handling create password prompt :', () => {
+    describe('When the passwordCreate option is requested', () => {
       const envConfig = {};
       const requests = ['passwordCreate'];
       let prompts = [];
 
-      describe('and the auth token has not been passed in', () => {
+      describe('And the auth token has not been passed in', () => {
         after(() => {
           prompts = [];
         });
@@ -114,11 +114,11 @@ describe('Services > Prompter > User prompts', () => {
             '    > Numbers';
 
           expect(prompts[0].validate('notStrongEnough')).to.equal(errorMessage);
-          expect(prompts[0].validate('StrongPassword11@')).to.equal(true);
+          expect(prompts[0].validate('StrongPassword11@'));
         });
       });
 
-      describe('and the auth token has already been passed in', () => {
+      describe('And the auth token has already been passed in', () => {
         after(() => {
           prompts = [];
         });
@@ -138,7 +138,7 @@ describe('Services > Prompter > User prompts', () => {
       });
     });
 
-    describe('when the passwordCreate option is not requested', () => {
+    describe('When the passwordCreate option is not requested', () => {
       const envConfig = {};
       const requests = [];
       const prompts = [];
@@ -155,8 +155,8 @@ describe('Services > Prompter > User prompts', () => {
     });
   });
 
-  describe('handling password prompt', () => {
-    describe('when the password option is requested', () => {
+  describe('Handling password prompt :', () => {
+    describe('When the password option is requested', () => {
       const envConfig = {};
       const requests = ['password'];
       const prompts = [];
@@ -180,11 +180,11 @@ describe('Services > Prompter > User prompts', () => {
 
       it('should validate that the password has been field', () => {
         expect(prompts[0].validate(null)).to.equal('Your password cannot be blank.');
-        expect(prompts[0].validate('fakePassword')).to.equal(true);
+        expect(prompts[0].validate('fakePassword'));
       });
     });
 
-    describe('when the password option is not requested', () => {
+    describe('When the password option is not requested', () => {
       const envConfig = {};
       const requests = [];
       const prompts = [];

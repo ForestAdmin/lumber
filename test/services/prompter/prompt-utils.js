@@ -5,9 +5,9 @@ const PromptUtils = require('../../../services/prompter/prompt-utils');
 describe('Services > Prompter > Prompt utils', () => {
   const promptUtils = new PromptUtils(['requestedOption']);
 
-  describe('when checking if an option is requested', () => {
+  describe('When checking if an option is requested', () => {
     it('should return true if the option is present in the requests', () => {
-      expect(promptUtils.isOptionRequested('requestedOption')).to.equal(true);
+      expect(promptUtils.isOptionRequested('requestedOption'));
     });
 
     it('should return false if the option is not present in the requests', () => {
