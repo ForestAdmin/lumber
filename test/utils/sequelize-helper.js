@@ -1,12 +1,15 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-unused-vars */
 const Sequelize = require('sequelize');
+const fs = require('fs');
+const path = require('path');
 
 class SequelizeHelper {
   connect(url) {
     this.sequelize = new Sequelize(url, {
       logging: false,
       pool: { maxConnections: 10, minConnections: 1 },
+      dialectOptions: {
+        multipleStatements: true,
+      },
     });
     return new Promise((resolve, reject) => {
       this.sequelize.authenticate()
@@ -15,17 +18,15 @@ class SequelizeHelper {
     });
   }
 
-  async given(_fixtures) {
-    /*
-    await this.sequelize.drop();
-    // fixtures.reduce((p, fn) => p.then(fn()), Promise.resolve());
-
-    for (let i = 0; i < fixtures.length; i++) {
-      await fixtures[i].sync({ force: true })
-    }
-    */
-
-    // return Promise.all(fixtures.map(fixture => fixture.sync({ force: true })));
+  async given(tableName) {
+    const dialect = this.sequelize.getDialect();
+    const fixtureFilename = path.join(__dirname, `../fixtures/${dialect}/${tableName}.sql`);
+    const expectedFilename = path.join(__dirname, `../expected/${dialect}/${tableName}.json`);
+    const fixtureFileContent = await fs.readFileSync(fixtureFilename, 'utf8');
+    await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName}`);
+    await this.sequelize.query(fixtureFileContent);
+    // eslint-disable-next-line import/no-dynamic-require, global-require
+    return require(expectedFilename);
   }
 
   close() {

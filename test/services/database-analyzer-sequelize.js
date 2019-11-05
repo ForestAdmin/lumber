@@ -1,12 +1,8 @@
-/* global describe, before, afterEach, after, it */
+/* global describe, before, after, it */
 const { expect } = require('chai');
 const Sequelize = require('sequelize');
 const SequelizeHelper = require('../utils/sequelize-helper');
 const DatabaseAnalyzer = require('../../services/database-analyzer');
-const SingleModel = require('../fixtures/sequelize/single-model');
-const expectedSingleModel = require('../expected/single-model');
-const ModelsWithRelation = require('../fixtures/sequelize/models-with-relations');
-const expectedModelsWithRelation = require('../expected/models-with-relations');
 
 describe('Database analyser > Sequelize', () => {
   const databases = [
@@ -35,8 +31,6 @@ describe('Database analyser > Sequelize', () => {
         databaseConnection = await sequelizeHelper.connect(connectionUrl);
       });
 
-      afterEach(() => sequelizeHelper.dropAllTables());
-
       after(async () => {
         databaseConnection = null;
         await sequelizeHelper.close();
@@ -50,19 +44,9 @@ describe('Database analyser > Sequelize', () => {
       });
 
       it('should generate a single model', async () => {
-        const singleModel = new SingleModel(databaseConnection);
-        await sequelizeHelper.given(singleModel.build());
-        const result = await performDatabaseAnalysis(databaseConnection, dialect);
-        expect(result.users).is.deep.equal(expectedSingleModel(dialect).users);
-      });
-
-      it('should generate models with relations', async () => {
-        const modelsWithRelation = new ModelsWithRelation(databaseConnection);
-        await sequelizeHelper.given(modelsWithRelation.build());
-        const result = await performDatabaseAnalysis(databaseConnection, dialect);
-        const expected = expectedModelsWithRelation(dialect);
-        expect(result.books).is.deep.equal(expected.books);
-        expect(result.authors).is.deep.equal(expected.authors);
+        const expected = await sequelizeHelper.given('customers');
+        const result = await performDatabaseAnalysis(databaseConnection);
+        expect(result.customers).is.deep.equal(expected);
       });
     });
   });
