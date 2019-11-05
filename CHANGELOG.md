@@ -6,7 +6,7 @@
 
 ### Fixed
 - Command Generate - Generate MongoDB belongsTo.
-- MSSQl - Fix connection issue using the ssl option. 
+- MSSQL - Fix connection issue using the ssl option. 
 
 ## RELEASE 2.6.3 - 2019-11-04
 ### Fixed
