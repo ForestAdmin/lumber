@@ -15,8 +15,7 @@ services:
 
 before_install:
   - docker-compose --version
-  - docker-compose -f docker-compose-min-version.yml up -d
-  - docker-compose -f docker-compose-max-version.yml up -d
+  - docker-compose up -d
   - docker ps -a
 
 install:
