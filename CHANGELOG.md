@@ -12,7 +12,7 @@
 
 ### Fixed
 - Command Login - Disable account creation.
-- Command Login - Verify the validity of the token passed in paramaters.
+- Command Login - Check token validity before login.
 
 ## RELEASE 2.6.1 - 2019-10-30
 ### Fixed
