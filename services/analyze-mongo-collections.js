@@ -16,8 +16,8 @@ const mapReduceOptions = {
 
 // eslint-disable no-undef
 function mapCollection() {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in this) {
+  // eslint-disable-next-line
+  for (let key in this) {
     /* eslint-disable no-undef */
     if (this[key] instanceof ObjectId && key !== '_id') {
       emit(key, 'mongoose.Schema.Types.ObjectId');
