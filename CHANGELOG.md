@@ -11,6 +11,10 @@
 - Commands - Remove command run and install.
 - Command Generate - Install Forest Admin middleware.
 
+### Fixed
+- Command Login - Disable account creation.
+- Command Login - Check token validity before login.
+
 ## RELEASE 2.6.3 - 2019-11-04
 ### Fixed
 - Command Generate - Fix generation of project with a mongo database.

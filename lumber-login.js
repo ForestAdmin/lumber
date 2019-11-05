@@ -1,6 +1,8 @@
 const program = require('commander');
+const inquirer = require('inquirer');
 const logger = require('./services/logger');
 const Authenticator = require('./services/authenticator');
+const { EMAIL_REGEX } = require('./utils/regexs');
 
 program
   .description('Log into Forest Admin API')
@@ -10,7 +12,24 @@ program
   .parse(process.argv);
 
 (async () => {
-  await new Authenticator().loginFromCommandLine(program);
+  const auth = new Authenticator();
+  let { email } = program;
+
+  if (!email) {
+    ({ email } = await inquirer.prompt([{
+      type: 'input',
+      name: 'email',
+      message: 'What\'s your email address?',
+      validate: (input) => {
+        if (EMAIL_REGEX.test(input)) { return true; }
+        return input ? 'Invalid email' : 'Please enter your email address.';
+      },
+    }]));
+  }
+
+  const token = await auth.loginWithEmailOrTokenArgv({ ...program, email });
+  auth.saveToken(token);
+
   logger.success('Login successful');
   process.exit(0);
 })().catch(async (error) => {

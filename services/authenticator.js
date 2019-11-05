@@ -5,16 +5,33 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const api = require('./api');
 const { parseJwt } = require('../utils/authenticator-helper');
+const { EMAIL_REGEX, PASSWORD_REGEX } = require('../utils/regexs');
 const logger = require('./logger');
 
-// NOTICE: The forest password should be composed of digit, at least on capital letter
-//         and one lower case letter. It also accepts special characters except whitespaces.
-const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])\S{8,}$/;
-
 function Authenticator() {
+  this.pathToLumberrc = `${os.homedir()}/.lumberrc`;
+
+  this.saveToken = token => fs.writeFileSync(this.pathToLumberrc, token);
+
+  this.isTokenCorrect = (email, token) => {
+    const sessionInfo = parseJwt(token);
+    if (sessionInfo) {
+      if ((sessionInfo.exp * 1000) <= Date.now()) {
+        logger.warn('Your token has expired.');
+        return false;
+      }
+
+      if (sessionInfo.data.data.attributes.email === email) {
+        return true;
+      }
+      logger.warn('Your token is invalid.');
+    }
+    return false;
+  };
+
   this.login = async (email, password) => {
     const sessionToken = await api.login(email, password);
-    fs.writeFileSync(`${os.homedir()}/.lumberrc`, sessionToken);
+    this.saveToken(sessionToken);
     return sessionToken;
   };
 
@@ -32,45 +49,45 @@ function Authenticator() {
         if (!input) { return errorMessage; }
 
         const sessionInfo = parseJwt(input);
-        if (sessionInfo && sessionInfo.data.data.attributes.email === email) {
+        if (sessionInfo
+          && sessionInfo.data.data.attributes.email === email
+          && (sessionInfo.exp * 1000) <= Date.now()) {
           return true;
         }
         return errorMessage;
       },
     }]);
-    fs.writeFileSync(`${os.homedir()}/.lumberrc`, sessionToken);
+    this.saveToken(sessionToken);
     return sessionToken;
   };
 
-  this.logout = async () => {
-    const path = `${os.homedir()}/.lumberrc`;
+  this.logout = async () => new P((resolve, reject) => {
+    fs.stat(this.pathToLumberrc, (err) => {
+      if (err === null) {
+        fs.unlinkSync(this.pathToLumberrc);
 
-    return new P((resolve, reject) => {
-      fs.stat(path, (err) => {
-        if (err === null) {
-          fs.unlinkSync(path);
+        resolve(true);
+      } else if (err.code === 'ENOENT') {
+        logger.info('Your were not logged in');
 
-          resolve(true);
-        } else if (err.code === 'ENOENT') {
-          logger.info('Your were not logged in');
-
-          resolve(false);
-        } else {
-          reject(err);
-        }
-      });
+        resolve(false);
+      } else {
+        reject(err);
+      }
     });
-  };
+  });
 
   this.loginWithEmailOrTokenArgv = async (config) => {
     try {
       const { email, token } = config;
       let { password } = config;
 
-      const isGoogleAccount = await api.isGoogleAccount(email);
-      if (token) {
+      if (token && this.isTokenCorrect(email, token)) {
         return token;
-      } else if (isGoogleAccount) {
+      }
+
+      const isGoogleAccount = await api.isGoogleAccount(email);
+      if (isGoogleAccount) {
         return this.loginWithGoogle(email);
       }
 
@@ -123,8 +140,8 @@ function Authenticator() {
       name: 'email',
       message: 'What\'s your email address?',
       validate: (input) => {
-        if (input) { return true; }
-        return 'Please enter your email address.';
+        if (EMAIL_REGEX.test(input)) { return true; }
+        return input ? 'Invalid email' : 'Please enter your email address.';
       },
     }, {
       type: 'password',
@@ -132,7 +149,7 @@ function Authenticator() {
       message: 'Choose a password:',
       validate: (password) => {
         if (password) {
-          if (FORMAT_PASSWORD.test(password)) { return true; }
+          if (PASSWORD_REGEX.test(password)) { return true; }
           return `🔓  Your password security is too weak 🔓\n
           \tPlease make sure it contains at least:\n
           \t> 8 characters\n
@@ -166,21 +183,22 @@ function Authenticator() {
     const { email, token } = config;
     let sessionToken;
     try {
-      sessionToken = token || fs.readFileSync(`${os.homedir()}/.lumberrc`, { encoding: 'utf8' });
-      if (email) {
-        const sessionInfo = parseJwt(sessionToken);
-        if (sessionInfo && sessionInfo.data.data.attributes.email !== email) {
-          throw new Error();
-        }
+      sessionToken = token || fs.readFileSync(this.pathToLumberrc, { encoding: 'utf8' });
+      if (!sessionToken && email) {
+        throw new Error();
       }
-    } catch (err) {
+
+      if (email && !this.isTokenCorrect(email, sessionToken)) {
+        throw new Error();
+      }
+    } catch (error) {
       if (email) {
         return this.loginWithEmailOrTokenArgv(config);
       }
       return this.createAccount();
     }
 
-    fs.writeFileSync(`${os.homedir()}/.lumberrc`, sessionToken);
+    this.saveToken(sessionToken);
     return sessionToken;
   };
 }
