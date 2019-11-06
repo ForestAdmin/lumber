@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## RELEASE 2.7.1 - 2019-11-06
+### Fixed
+- MSSQL - Fix connection issue using the ssl option.
+
 ## RELEASE 2.7.0 - 2019-11-06
 ### Added
 - Field Types - Support `TIMESTAMP(n)`, `SMALLINT(n)` and `BIGINT(n)` column types (MySQL)
