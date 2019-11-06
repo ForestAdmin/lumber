@@ -12,6 +12,7 @@
 - Commands - Drop environment variables.
 - Commands - Remove command run and install.
 - Command Generate - Install Forest Admin middleware.
+- Command Generate - Update log when an error occured during the creation of the project on Forest Admin API.
 
 ### Fixed
 - Command Login - Disable account creation.

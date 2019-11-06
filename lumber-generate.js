@@ -1,7 +1,6 @@
 const P = require('bluebird');
 const program = require('commander');
 const chalk = require('chalk');
-// const ora = require('ora');
 const spinners = require('./services/spinners');
 const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/database-analyzer');
@@ -36,17 +35,17 @@ program
 
   if (program.db) {
     const connectionPromise = new Database().connect(config);
-    spinners.add('database-connection', { text: 'Connecting to database' }, connectionPromise);
+    spinners.add('database-connection', { text: 'Connecting to your database' }, connectionPromise);
     const connection = await connectionPromise;
 
     const schemaPromise = new DatabaseAnalyzer(connection, config, true).perform();
-    spinners.add('database-analysis', { text: 'Analyzing your database' }, schemaPromise);
+    spinners.add('database-analysis', { text: 'Analyzing the database' }, schemaPromise);
     schema = await schemaPromise;
   }
 
   const projectCreationPromise = new ProjectCreator(logger)
     .createProject(config.appName, config);
-  spinners.add('project-creation', { text: 'Creating your project on forestadmin' }, projectCreationPromise);
+  spinners.add('project-creation', { text: 'Creating your project on Forest Admin' }, projectCreationPromise);
 
   const { envSecret, authSecret } = await projectCreationPromise;
   config.forestEnvSecret = envSecret;

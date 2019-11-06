@@ -41,7 +41,7 @@ function Authenticator() {
     const endpoint = process.env.FOREST_URL && process.env.FOREST_URL.includes('localhost')
       ? 'http://localhost:4200' : 'https://app.forestadmin.com';
     const url = chalk.cyan.underline(`${endpoint}/authentication-token`);
-    logger.info(`To authentify with your google account, please follow this link and copy the authentication token: ${url}`);
+    logger.info(`To authenticate with your Google account, please follow this link and copy the authentication token: ${url}`);
 
     logger.pauseSpinner();
     const { sessionToken } = await inquirer.prompt([{

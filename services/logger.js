@@ -20,10 +20,6 @@ class Logger {
 
   log(message) {
     if (!this.silent) {
-      // if (this.spinner && this.spinner.isSpinning) {
-      //   this.spinner.clear();
-      //   this.spinner.frame();
-      // }
       console.log(message);
     }
   }

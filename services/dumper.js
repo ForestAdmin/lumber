@@ -264,22 +264,23 @@ function Dumper(config) {
   return (async () => {
     await P.all(dirs);
 
+    writeDotDockerIgnore(path);
     writeDotEnv(path);
     writeDotGitIgnore(path);
-    writeDotDockerIgnore(path);
+
     writeDockerfile(path);
+    writeAppJs(path);
     writeDockerCompose(path);
     writePackageJson(path);
 
     copyTemplate('bin/www', `${binPath}/www`);
-    copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
-    copyTemplate('views/index.html', `${path}/views/index.html`);
-    copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
-
-    writeForestAdminMiddleware(path);
-    writeDotGitKeep(routesPath);
     writeDotGitKeep(forestPath);
-    writeAppJs(path);
+    copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
+    writeForestAdminMiddleware(path);
+    copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
+    writeDotGitKeep(routesPath);
+    copyTemplate('views/index.html', `${path}/views/index.html`);
+
     if (config.db) { writeModelsIndex(path); }
 
     return this;
