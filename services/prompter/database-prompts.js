@@ -2,7 +2,7 @@ const eventSender = require('../event-sender');
 const logger = require('../logger');
 const PromptUtils = require('./prompt-utils');
 
-class DatabasePrompt extends PromptUtils {
+class DatabasePrompts extends PromptUtils {
   constructor(program, envConfig, prompts, requests) {
     super(requests);
     this.program = program;
@@ -209,4 +209,4 @@ class DatabasePrompt extends PromptUtils {
   }
 }
 
-module.exports = DatabasePrompt;
+module.exports = DatabasePrompts;
