@@ -34,9 +34,9 @@ describe('Services > Prompter > Application prompts', () => {
           resetParams();
         });
 
-        const projectPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
+        const applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
 
-        await projectPrompts.handleHostName();
+        await applicationPrompts.handleHostName();
 
         it('should add a prompt to ask for for it', () => {
           expect(prompts).to.have.lengthOf(1);
@@ -80,13 +80,13 @@ describe('Services > Prompter > Application prompts', () => {
     });
 
     describe('When the appHostname option is not requested', () => {
-      const projectPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
+      const applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
 
       it('should not do anything', async () => {
         expect(envConfig.appHostname).to.equal(undefined);
         expect(prompts).to.have.lengthOf(0);
 
-        await projectPrompts.handleHostName();
+        await applicationPrompts.handleHostName();
 
         expect(envConfig.appHostname).to.equal(undefined);
         expect(prompts).to.have.lengthOf(0);
@@ -105,9 +105,9 @@ describe('Services > Prompter > Application prompts', () => {
           resetParams();
         });
 
-        const projectPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
+        const applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
 
-        await projectPrompts.handleAppPort();
+        await applicationPrompts.handleAppPort();
 
         it('should add a prompt to ask for for it', () => {
           expect(prompts).to.have.lengthOf(1);
@@ -158,13 +158,13 @@ describe('Services > Prompter > Application prompts', () => {
     });
 
     describe('When the appPort option is not requested', () => {
-      const projectPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
+      const applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
 
       it('should not do anything', async () => {
         expect(envConfig.appPort).to.equal(undefined);
         expect(prompts).to.have.lengthOf(0);
 
-        await projectPrompts.handleHostName();
+        await applicationPrompts.handleHostName();
 
         expect(envConfig.appPort).to.equal(undefined);
         expect(prompts).to.have.lengthOf(0);
