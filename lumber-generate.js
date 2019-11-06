@@ -10,6 +10,7 @@ const logger = require('./services/logger');
 const eventSender = require('./services/event-sender');
 const ProjectCreator = require('./services/project-creator');
 const { terminate } = require('./utils/terminator');
+const { UnexpectedError } = require('./utils/errors');
 
 program
   .description('Generate a backend application with an ORM/ODM configured')
@@ -66,8 +67,7 @@ program
 })().catch(async (error) => {
   const logs = [
     'Cannot generate your project.',
-    'An unexpected error occured. Please create a Github issue with following error:',
-    error,
+    UnexpectedError(error),
   ];
 
   await terminate(1, {

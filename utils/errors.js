@@ -1,3 +1,5 @@
+const chalk = require('chalk');
+
 function createLumberError(name) {
   function LumberError(message, details) {
     this.name = name;
@@ -11,4 +13,5 @@ function createLumberError(name) {
 
 exports.DatabaseAnalyzerError = {
   EmptyDatabase: createLumberError('EmptyDatabase'),
+  UnexpectedError: error => `An unexpected error occurred. Please reach out for help in our Slack community or create a Github issue with following error: ${chalk.red(error)}`,
 };

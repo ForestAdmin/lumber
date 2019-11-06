@@ -7,6 +7,7 @@ const api = require('./api');
 const { parseJwt } = require('../utils/authenticator-helper');
 const { EMAIL_REGEX, PASSWORD_REGEX } = require('../utils/regexs');
 const { terminate } = require('../utils/terminator');
+const { UnexpectedError } = require('../utils/errors');
 const logger = require('./logger');
 
 function Authenticator() {
@@ -29,7 +30,6 @@ function Authenticator() {
     }
     return false;
   };
-  const unexpectedError = 'An unexpected error occurred. Please reach out for help in our Slack community or create a Github issue with following error:';
 
   this.login = async (email, password) => {
     const sessionToken = await api.login(email, password);
@@ -114,7 +114,7 @@ function Authenticator() {
     } catch (error) {
       const message = error.message === 'Unauthorized'
         ? 'Incorrect email or password.'
-        : `${unexpectedError} ${chalk.red(error)}`;
+        : UnexpectedError(error);
 
       return terminate(1, { logs: [message] });
     }
@@ -169,7 +169,7 @@ function Authenticator() {
     } catch (error) {
       const message = error.message === 'Conflict'
         ? `This account already exists. Please, use the command ${chalk.cyan('lumber login')} to login with this account.`
-        : `${unexpectedError}  ${chalk.red(error)}`;
+        : UnexpectedError(error);
 
       return terminate(1, { logs: [message] });
     }
