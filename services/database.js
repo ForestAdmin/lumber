@@ -60,8 +60,6 @@ function Database() {
         .catch(error => handleAuthenticationError(error));
     }
 
-    const needsEncryption = isSSL && (databaseDialect === 'mssql');
-
     const connectionOptionsSequelize = { logging: false };
 
     // NOTICE: mysql2 does not accepts unwanted options anymore.
@@ -76,10 +74,15 @@ function Database() {
           ssl: { rejectUnauthorized: isSSL },
         };
       }
+    } else if (databaseDialect === 'mssql') {
+      connectionOptionsSequelize.dialectOptions = {
+        options: {
+          encrypt: isSSL,
+        },
+      };
     } else {
       connectionOptionsSequelize.dialectOptions = {
         ssl: isSSL,
-        encrypt: needsEncryption,
       };
     }
 

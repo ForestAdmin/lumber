@@ -21,9 +21,11 @@ let databaseOptions = {
 if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
 <% if (config.dbDialect === 'mysql') {
 %>  databaseOptions.dialectOptions.ssl = { rejectUnauthorized: true };
+<% } else if (config.dbDialect === 'mssql') {
+%>  databaseOptions.dialectOptions.options = { encrypt: true };
 <% } else {
 %>  databaseOptions.dialectOptions.ssl = true;
-<% } 
+<% }
 %>}
 
 if (process.env.DATABASE_ENCRYPT && JSON.parse(process.env.DATABASE_ENCRYPT.toLowerCase())) {

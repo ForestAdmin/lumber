@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- MSSQL - Fix connection issue using the ssl option.
 
 ## RELEASE 2.7.0 - 2019-11-06
 ### Added
