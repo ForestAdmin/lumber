@@ -18,16 +18,40 @@ const ProjectPrompts = require('../../../services/prompter/project-prompts');
 const FAKE_PROJECT_NAME = 'fakeProject';
 
 describe('Services > Prompter > Project prompts', () => {
+  let envConfig = {};
+  let requests = [];
+
+  function resetParams() {
+    envConfig = {};
+    requests = [];
+  }
+
+  describe('Handling project related prompts', () => {
+    let projectPrompts;
+    let nameHandlerStub;
+
+    before(async () => {
+      projectPrompts = new ProjectPrompts('project', envConfig, requests);
+      nameHandlerStub = sinon.stub(projectPrompts, 'handleName');
+      await projectPrompts.handlePrompts();
+    });
+
+    it('should handle the project name', () => {
+      expect(nameHandlerStub.calledOnce).to.equal(true);
+    });
+  });
+
   describe('Handling project name prompt : ', () => {
     describe('when the appName option is requested', () => {
-      const envConfig = {};
-      const requests = ['appName'];
-
-      const loggerSpy = sinon.spy(logger, 'error');
-      const eventSenderSpy = sinon.spy(eventSender, 'notifyError');
+      let loggerSpy;
+      let eventSenderSpy;
+      let processStub;
 
       before(() => {
-        sinon.stub(process, 'exit');
+        requests.push('appName');
+        loggerSpy = sinon.spy(logger, 'error');
+        eventSenderSpy = sinon.spy(eventSender, 'notifyError');
+        processStub = sinon.stub(process, 'exit');
       });
 
       afterEach(() => {
@@ -36,7 +60,9 @@ describe('Services > Prompter > Project prompts', () => {
       });
 
       after(() => {
-        process.exit.restore();
+        processStub.restore();
+        loggerSpy.restore();
+        eventSenderSpy.restore();
       });
 
       describe('and the projectName has not been passed in', () => {
@@ -45,8 +71,8 @@ describe('Services > Prompter > Project prompts', () => {
         it('should terminate the process with exit code 1', async () => {
           await projectPrompts.handleName();
 
-          expect(process.exit.calledOnce);
-          expect(process.exit.calledWith(1));
+          expect(processStub.calledOnce).to.equal(true);
+          expect(processStub.calledWith(1)).to.equal(true);
         });
 
         it('should log an error message', async () => {
@@ -107,8 +133,6 @@ describe('Services > Prompter > Project prompts', () => {
         });
 
         describe('and the directory to write in is available', async () => {
-          await projectPrompts.handleName();
-
           it('should add the appName to the configuration', async () => {
             expect(envConfig.appName).to.equal(undefined);
 
@@ -121,12 +145,13 @@ describe('Services > Prompter > Project prompts', () => {
     });
 
     describe('when the appName option is not requested', () => {
-      const envConfig = {};
-      const requests = [];
-
-      const projectPrompts = new ProjectPrompts(FAKE_PROJECT_NAME, envConfig, requests);
+      before(() => {
+        resetParams();
+      });
 
       it('should not do anything', async () => {
+        const projectPrompts = new ProjectPrompts(FAKE_PROJECT_NAME, envConfig, requests);
+
         expect(envConfig.appName).to.equal(undefined);
 
         await projectPrompts.handleName();
