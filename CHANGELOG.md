@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.7.0 - 2019-11-06
 ### Added
 - Field Types - Support `TIMESTAMP(n)`, `SMALLINT(n)` and `BIGINT(n)` column types (MySQL)
 - Command Generate - Generate MongoDB belongsTo.
