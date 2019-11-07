@@ -7,7 +7,7 @@ const api = require('./api');
 const { parseJwt } = require('../utils/authenticator-helper');
 const { EMAIL_REGEX, PASSWORD_REGEX } = require('../utils/regexs');
 const { terminate } = require('../utils/terminator');
-const { UnexpectedError } = require('../utils/errors');
+const { ERROR_UNEXPECTED } = require('../utils/messages');
 const logger = require('./logger');
 
 function Authenticator() {
@@ -114,7 +114,7 @@ function Authenticator() {
     } catch (error) {
       const message = error.message === 'Unauthorized'
         ? 'Incorrect email or password.'
-        : UnexpectedError(error);
+        : `${ERROR_UNEXPECTED} ${chalk.red(error)}`;
 
       return terminate(1, { logs: [message] });
     }
@@ -169,7 +169,7 @@ function Authenticator() {
     } catch (error) {
       const message = error.message === 'Conflict'
         ? `This account already exists. Please, use the command ${chalk.cyan('lumber login')} to login with this account.`
-        : UnexpectedError(error);
+        : `${ERROR_UNEXPECTED} ${chalk.red(error)}`;
 
       return terminate(1, { logs: [message] });
     }

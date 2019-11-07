@@ -10,7 +10,7 @@ const logger = require('./services/logger');
 const eventSender = require('./services/event-sender');
 const ProjectCreator = require('./services/project-creator');
 const { terminate } = require('./utils/terminator');
-const { UnexpectedError } = require('./utils/errors');
+const { ERROR_UNEXPECTED } = require('./utils/messages');
 
 program
   .description('Generate a backend application with an ORM/ODM configured')
@@ -67,7 +67,7 @@ program
 })().catch(async (error) => {
   const logs = [
     'Cannot generate your project.',
-    UnexpectedError(error),
+    `${ERROR_UNEXPECTED} ${chalk.red(error)}`,
   ];
 
   await terminate(1, {

@@ -3,7 +3,7 @@ const Authenticator = require('./authenticator');
 const api = require('./api');
 const KeyGenerator = require('./key-generator');
 const { terminate } = require('../utils/terminator');
-const { UnexpectedError } = require('../utils/errors');
+const { ERROR_UNEXPECTED } = require('../utils/messages');
 
 function ProjectCreator() {
   const auth = new Authenticator();
@@ -25,7 +25,7 @@ function ProjectCreator() {
       } else if (error.message === 'Conflict') {
         message = 'A project with this name already exists. Please choose another name.';
       } else {
-        message = UnexpectedError(error);
+        message = `${ERROR_UNEXPECTED} ${chalk.red(error)}`;
       }
 
       return terminate(1, {
