@@ -261,15 +261,18 @@ function Dumper(config) {
 
     copyTemplate('bin/www', `${binPath}/www`);
 
-    Object.keys(schema).forEach(table => writeForestCollection(table));
+    const modelNames = Object.keys(schema)
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+    modelNames.forEach(writeForestCollection);
 
     copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
     writeForestAdminMiddleware();
 
     if (config.db) { writeModelsIndex(path); }
-    Object.keys(schema).forEach((table) => {
-      const { fields, references, options } = schema[table];
-      writeModel(table, fields, references, options);
+    modelNames.forEach((modelName) => {
+      const { fields, references, options } = schema[modelName];
+      writeModel(modelName, fields, references, options);
     });
 
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
