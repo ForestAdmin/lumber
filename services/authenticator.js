@@ -55,7 +55,7 @@ function Authenticator() {
         const sessionInfo = parseJwt(input);
         if (sessionInfo
           && sessionInfo.data.data.attributes.email === email
-          && (sessionInfo.exp * 1000) <= Date.now()) {
+          && (sessionInfo.exp * 1000) > Date.now()) {
           return true;
         }
         return errorMessage;
