@@ -3,7 +3,6 @@ const {
   it,
   after,
   before,
-  afterEach,
 } = require('mocha');
 const { expect } = require('chai');
 const sinon = require('sinon');
@@ -24,6 +23,85 @@ describe('Services > Prompter > Database prompts', () => {
     prompts = [];
   }
 
+  describe('Handling database related prompts', () => {
+    let databasePrompts;
+    let connectionUrlHandlerStub;
+    let dialectHandlerStub;
+    let nameHandlerStub;
+    let schemaHandlerStub;
+    let hostNameHandlerStub;
+    let portHandlerStub;
+    let userHandlerStub;
+    let passwordHandlerStub;
+    let sslHandlerStub;
+    let mongoSrvHandlerStub;
+
+    before(async () => {
+      databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+      connectionUrlHandlerStub = sinon.stub(databasePrompts, 'handleConnectionUrl');
+      dialectHandlerStub = sinon.stub(databasePrompts, 'handleDialect');
+      nameHandlerStub = sinon.stub(databasePrompts, 'handleName');
+      schemaHandlerStub = sinon.stub(databasePrompts, 'handleSchema');
+      hostNameHandlerStub = sinon.stub(databasePrompts, 'handleHostname');
+      portHandlerStub = sinon.stub(databasePrompts, 'handlePort');
+      userHandlerStub = sinon.stub(databasePrompts, 'handleUser');
+      passwordHandlerStub = sinon.stub(databasePrompts, 'handlePassword');
+      sslHandlerStub = sinon.stub(databasePrompts, 'handleSsl');
+      mongoSrvHandlerStub = sinon.stub(databasePrompts, 'handleMongodbSrv');
+      await databasePrompts.handlePrompts();
+    });
+
+    after(() => {
+      connectionUrlHandlerStub.restore();
+      dialectHandlerStub.restore();
+      nameHandlerStub.restore();
+      schemaHandlerStub.restore();
+      hostNameHandlerStub.restore();
+      portHandlerStub.restore();
+      userHandlerStub.restore();
+      passwordHandlerStub.restore();
+      sslHandlerStub.restore();
+      mongoSrvHandlerStub.restore();
+      resetParams();
+    });
+
+    it('should handle the connection url', () => {
+      expect(connectionUrlHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle the dialect', () => {
+      expect(dialectHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle the name', () => {
+      expect(nameHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle the schema', () => {
+      expect(schemaHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle the port', () => {
+      expect(portHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle the user', () => {
+      expect(userHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle the password', () => {
+      expect(passwordHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle ssl usage', () => {
+      expect(sslHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle mongodb srv usage', () => {
+      expect(mongoSrvHandlerStub.calledOnce).to.equal(true);
+    });
+  });
+
   describe('Handling connection url : ', () => {
     describe('When the dbConnectionUrl option is requested', () => {
       describe('and the dbConnectionUrl has already been passed in', () => {
@@ -36,9 +114,9 @@ describe('Services > Prompter > Database prompts', () => {
             resetParams();
           });
 
-          const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
           it('should add the dbConnectionUrl to the configuration', async () => {
+            const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+
             program.connectionUrl = 'postgres://username:password@host:port/database';
 
             await databasePrompts.handleConnectionUrl();
@@ -47,6 +125,8 @@ describe('Services > Prompter > Database prompts', () => {
           });
 
           it('should add the dbDialect to configuration', async () => {
+            const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+
             program.connectionUrl = 'postgres://username:password@host:port/database';
 
             await databasePrompts.handleConnectionUrl();
@@ -55,6 +135,8 @@ describe('Services > Prompter > Database prompts', () => {
           });
 
           it('should add the mongo dbDialect to configuration when using mongo+srv', async () => {
+            const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+
             program.connectionUrl = 'mongodb+srv://username:password@host1:port1/database';
 
             await databasePrompts.handleConnectionUrl();
@@ -64,40 +146,37 @@ describe('Services > Prompter > Database prompts', () => {
         });
 
         describe('and the dbConnectionUrl is invalid', async () => {
-          const loggerSpy = sinon.spy(logger, 'error');
-          const eventSenderSpy = sinon.spy(eventSender, 'notifyError');
-          const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+          let loggerSpy;
+          let eventSenderSpy;
+          let databasePrompts;
+          let processStub;
 
-          before(() => {
-            sinon.stub(process, 'exit');
+          before(async () => {
+            processStub = sinon.stub(process, 'exit');
+            loggerSpy = sinon.spy(logger, 'error');
+            eventSenderSpy = sinon.spy(eventSender, 'notifyError');
             requests.push('dbConnectionUrl');
             program.connectionUrl = 'invalid';
-          });
-
-          afterEach(() => {
-            loggerSpy.resetHistory();
-            eventSenderSpy.resetHistory();
-            process.exit.resetHistory();
+            databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+            await databasePrompts.handleConnectionUrl();
           });
 
           after(() => {
             resetParams();
-            process.exit.restore();
+            loggerSpy.restore();
+            eventSenderSpy.restore();
+            processStub.restore();
           });
 
           it('should terminate the process with exit code 1', async () => {
-            await databasePrompts.handleConnectionUrl();
-
-            expect(process.exit.calledOnce);
-            expect(process.exit.calledWith(1));
+            expect(processStub.calledOnce).to.equal(true);
+            expect(processStub.calledWith(1)).to.equal(true);
           });
 
           it('should log an error message', async () => {
             const message = 'Cannot parse the database dialect. Please, check the syntax of the database connection string.';
 
-            await databasePrompts.handleConnectionUrl();
-
-            expect(loggerSpy.calledOnce);
+            expect(loggerSpy.calledOnce).to.equal(true);
             expect(loggerSpy.getCall(0).args[0]).to.equal(message);
           });
 
@@ -105,9 +184,7 @@ describe('Services > Prompter > Database prompts', () => {
             const firstArgument = 'unknown_error';
             const secondArgument = 'Cannot parse the database dialect. Please, check the syntax of the database connection string.';
 
-            await databasePrompts.handleConnectionUrl();
-
-            expect(eventSenderSpy.calledOnce);
+            expect(eventSenderSpy.calledOnce).to.equal(true);
             expect(eventSenderSpy.getCall(0).args[0]).to.equal(firstArgument);
             expect(eventSenderSpy.getCall(0).args[1]).to.equal(secondArgument);
           });
@@ -133,17 +210,18 @@ describe('Services > Prompter > Database prompts', () => {
   describe('Handling dialect : ', () => {
     describe('When the dbDialect option is requested', () => {
       describe('not using windows', () => {
+        let databasePrompts;
+
         before(() => {
           requests.push('dbDialect');
+
+          databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+          databasePrompts.handleDialect();
         });
 
         after(() => {
           resetParams();
         });
-
-        const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-        databasePrompts.handleDialect();
 
         it('should add a prompt to ask for it', () => {
           expect(prompts).to.have.lengthOf(1);
@@ -162,21 +240,20 @@ describe('Services > Prompter > Database prompts', () => {
       });
 
       describe('using windows', async () => {
+        let databasePrompts;
         let platformStub;
 
         before(() => {
           requests.push('dbDialect');
+          databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
           platformStub = sinon.stub(process, 'platform').value('win');
+          databasePrompts.handleDialect();
         });
 
         after(() => {
           resetParams();
           platformStub.restore();
         });
-
-        const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-        databasePrompts.handleDialect();
 
         it('should change prompt type form `list` to `rawlist`', () => {
           expect(prompts[0].type).to.equal('rawlist');
@@ -185,11 +262,12 @@ describe('Services > Prompter > Database prompts', () => {
     });
 
     describe('When the dbDialect option is not requested', () => {
+      let databasePrompts;
+
       before(() => {
         resetParams();
+        databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
       });
-
-      const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
 
       it('should not do anything', async () => {
         expect(envConfig.dbDialect).to.equal(undefined);
@@ -205,17 +283,17 @@ describe('Services > Prompter > Database prompts', () => {
 
   describe('Handling name : ', () => {
     describe('When the dbName option is requested', () => {
+      let databasePrompts;
+
       before(() => {
         requests.push('dbName');
+        databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+        databasePrompts.handleName();
       });
 
       after(() => {
         resetParams();
       });
-
-      const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-      databasePrompts.handleName();
 
       it('should add a prompt to ask for it', () => {
         expect(prompts).to.have.lengthOf(1);
@@ -257,22 +335,40 @@ describe('Services > Prompter > Database prompts', () => {
 
   describe('Handling schema : ', () => {
     describe('When the dbSchema option is requested', () => {
-      describe('and the dbSchema has not been passed in', () => {
+      describe('and the dbSchema has been been passed in', () => {
+        let databasePrompts;
+
         before(() => {
           requests.push('dbSchema');
-          program.schema = 'fake schema';
+          program.schema = 'fakeSchema';
+          databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+          databasePrompts.handleSchema();
         });
 
         after(() => {
           resetParams();
         });
 
-        const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-        databasePrompts.handleSchema();
-
         it('should add the dbSchema to the configuration', () => {
-          expect(envConfig.dbSchema).to.equal(program.dbSchema);
+          expect(envConfig.dbSchema).to.equal(program.schema);
+        });
+      });
+
+      describe('and the dbSchema has not been passed in', () => {
+        let databasePrompts;
+
+        before(() => {
+          requests.push('dbSchema');
+          databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+          databasePrompts.handleSchema();
+        });
+
+        after(() => {
+          resetParams();
+        });
+
+        it('should not add the dbSchema to the configuration', () => {
+          expect(envConfig.dbSchema).to.equal(undefined);
         });
 
         it('should add a prompt to ask for it', () => {
@@ -299,24 +395,6 @@ describe('Services > Prompter > Database prompts', () => {
           expect(prompts[0].default({ dbDialect: 'mysql' })).to.equal('');
         });
       });
-
-      describe('and the dbSchema has not been passed in', () => {
-        before(() => {
-          requests.push('dbSchema');
-        });
-
-        after(() => {
-          resetParams();
-        });
-
-        const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-        databasePrompts.handleSchema();
-
-        it('should add the dbSchema to the configuration', () => {
-          expect(envConfig.dbSchema).to.equal(program.dbSchema);
-        });
-      });
     });
 
     describe('When the dbSchema option is not requested', () => {
@@ -336,17 +414,17 @@ describe('Services > Prompter > Database prompts', () => {
 
   describe('Handling Hostname : ', () => {
     describe('When the dbHostname option is requested', () => {
+      let databasePrompts;
+
       before(() => {
         requests.push('dbHostname');
+        databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+        databasePrompts.handleHostname();
       });
 
       after(() => {
         resetParams();
       });
-
-      const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-      databasePrompts.handleHostname();
 
       it('should add a prompt to ask for it', () => {
         expect(prompts).to.have.lengthOf(1);
@@ -383,17 +461,17 @@ describe('Services > Prompter > Database prompts', () => {
 
   describe('Handling port : ', () => {
     describe('When the dbPort option is requested', () => {
+      let databasePrompts;
+
       before(() => {
         requests.push('dbPort');
+        databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+        databasePrompts.handlePort();
       });
 
       after(() => {
         resetParams();
       });
-
-      const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-      databasePrompts.handlePort();
 
       it('should add a prompt to ask for it', () => {
         expect(prompts).to.have.lengthOf(1);
@@ -445,17 +523,17 @@ describe('Services > Prompter > Database prompts', () => {
 
   describe('Handling User : ', () => {
     describe('When the dbUser option is requested', () => {
+      let databasePrompts;
+
       before(() => {
         requests.push('dbUser');
+        databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+        databasePrompts.handleUser();
       });
 
       after(() => {
         resetParams();
       });
-
-      const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-      databasePrompts.handleUser();
 
       it('should add a prompt to ask for it', () => {
         expect(prompts).to.have.lengthOf(1);
@@ -497,17 +575,17 @@ describe('Services > Prompter > Database prompts', () => {
 
   describe('Handling Password : ', () => {
     describe('When the dbPassword option is requested', () => {
+      let databasePrompts;
+
       before(() => {
-        requests.push('sll');
+        requests.push('dbPassword');
+        databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+        databasePrompts.handlePassword();
       });
 
       after(() => {
         resetParams();
       });
-
-      const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-      databasePrompts.handlePassword();
 
       it('should add a prompt to ask for it', () => {
         expect(prompts).to.have.lengthOf(1);
@@ -544,16 +622,13 @@ describe('Services > Prompter > Database prompts', () => {
   describe('Handling SSL : ', () => {
     describe('When the sll option is requested', () => {
       describe('and the ssl option has been passed in', () => {
-        let loggerStub;
-
         before(() => {
           requests.push('ssl');
-          program.ssl = true;
         });
 
         describe('if ssl is set to boolean value', () => {
-          after(() => {
-            resetParams();
+          before(() => {
+            program.ssl = 'true';
           });
 
           it('should set the ssl config option to boolean value', () => {
@@ -565,71 +640,50 @@ describe('Services > Prompter > Database prompts', () => {
           });
         });
 
-        describe('if ssl is set to not boolean value', () => {
+        describe('if ssl is set to non boolean value', () => {
+          let databasePrompts;
           let loggerSpy;
           let processStub;
 
           before(() => {
             program.ssl = 'non boolean value';
-            loggerStub = sinon.spy(logger, 'error');
+            loggerSpy = sinon.spy(logger, 'error');
             processStub = sinon.stub(process, 'exit');
+            databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+            databasePrompts.handleSsl();
           });
 
           after(() => {
-            loggerStub.restore();
+            loggerSpy.restore();
             processStub.restore();
             resetParams();
           });
 
-          const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-          databasePrompts.handleSsl();
-
           it('should log an error', () => {
             const message = `Database SSL value must be either "true" or "false" ("${program.ssl}" given).`;
-            expect(loggerSpy.calledOnce);
+            expect(loggerSpy.calledOnce).to.equal(true);
             expect(loggerSpy.getCall(0).args[0]).to.equal(message);
           });
 
           it('should terminate the process with exit code 1', () => {
-            expect(processStub.calledOnce);
-            expect(processStub.getCall(0).args[0].to.equal(1));
+            expect(processStub.calledOnce).to.equal(true);
+            expect(processStub.calledWith(1)).to.equal(true);
           });
-        });
-
-        const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-        databasePrompts.handleSsl();
-
-        it('should add a prompt to ask for it', () => {
-          expect(prompts).to.have.lengthOf(1);
-        });
-
-        it('should add a prompt with the correct configuration', () => {
-          expect(prompts[0].type).to.equal('password');
-          expect(prompts[0].name).to.equal('dbPassword');
-          expect(prompts[0].message).to.equal('What\'s the database password? [optional]');
-          expect(prompts[0].when).to.be.a('function');
-        });
-
-        it('should not be prompted if using sqlite', () => {
-          expect(prompts[0].when({ dbDialect: 'sqlite' })).to.equal(false);
-          expect(prompts[0].when({ dbDialect: 'mysql' })).to.equal(true);
         });
       });
 
       describe('and the ssl option has not been passed in', () => {
+        let databasePrompts;
+
         before(() => {
           requests.push('ssl');
+          databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+          databasePrompts.handleSsl();
         });
 
         after(() => {
           resetParams();
         });
-
-        const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-        databasePrompts.handleSsl();
 
         it('should add a prompt to ask for it', () => {
           expect(prompts).to.have.lengthOf(1);
@@ -667,17 +721,17 @@ describe('Services > Prompter > Database prompts', () => {
 
   describe('Handling Mongodb Srv : ', () => {
     describe('When the mongodbSrv option is requested', () => {
+      let databasePrompts;
+
       before(() => {
         requests.push('mongodbSrv');
+        databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
+        databasePrompts.handleMongodbSrv();
       });
 
       after(() => {
         resetParams();
       });
-
-      const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
-
-      databasePrompts.handleMongodbSrv();
 
       it('should add a prompt to ask for it', () => {
         expect(prompts).to.have.lengthOf(1);
