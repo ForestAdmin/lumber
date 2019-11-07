@@ -1,6 +1,7 @@
 # Change Log
 
 ## [Unreleased]
+- Technical - move git-hook to devDependancies.
 
 ## RELEASE 2.7.2 - 2019-11-07
 ### Fixed
