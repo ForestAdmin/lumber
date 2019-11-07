@@ -196,12 +196,12 @@ describe('Services > Prompter > Database prompts', () => {
       const databasePrompts = new DatabasePrompts(program, envConfig, prompts, requests);
 
       it('should not do anything', async () => {
-        expect(envConfig.appHostname).to.equal(undefined);
+        expect(envConfig.dbConnectionUrl).to.equal(undefined);
         expect(prompts).to.have.lengthOf(0);
 
         await databasePrompts.handleConnectionUrl();
 
-        expect(envConfig.appHostname).to.equal(undefined);
+        expect(envConfig.dbConnectionUrl).to.equal(undefined);
         expect(prompts).to.have.lengthOf(0);
       });
     });
