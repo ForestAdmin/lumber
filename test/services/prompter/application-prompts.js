@@ -5,6 +5,7 @@ const {
   before,
 } = require('mocha');
 const { expect } = require('chai');
+const sinon = require('sinon');
 const ApplicationPrompts = require('../../../services/prompter/application-prompts');
 
 const FAKE_APP_HOST = 'fakeApplicationHost';
@@ -22,6 +23,33 @@ describe('Services > Prompter > Application prompts', () => {
     program = {};
     prompts = [];
   }
+
+  describe('Handling application related prompts', () => {
+    let applicationPrompts;
+    let hostNameHandlerStub;
+    let portHandlerStub;
+
+    before(() => {
+      applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
+      hostNameHandlerStub = sinon.stub(applicationPrompts, 'handleHostName');
+      portHandlerStub = sinon.stub(applicationPrompts, 'handleAppPort');
+      applicationPrompts.handlePrompts();
+    });
+
+    after(() => {
+      hostNameHandlerStub.restore();
+      portHandlerStub.restore();
+      resetParams();
+    });
+
+    it('should handle the host name', () => {
+      expect(hostNameHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle the port', () => {
+      expect(portHandlerStub.calledOnce).to.equal(true);
+    });
+  });
 
   describe('Handling host name : ', () => {
     describe('When the appHostName option is requested', () => {
