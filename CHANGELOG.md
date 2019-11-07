@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Git hooks - Remove git hooks from npm package (fix installation issue on Windows).
 
 ## RELEASE 2.7.1 - 2019-11-06
 ### Fixed
