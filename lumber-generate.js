@@ -1,4 +1,3 @@
-const P = require('bluebird');
 const program = require('commander');
 const chalk = require('chalk');
 const spinners = require('./services/spinners');
@@ -54,11 +53,8 @@ program
 
   const spinner = spinners.add('dumper', { text: 'Creating your project files' });
   logger.spinner = spinner;
-  const dumper = await new Dumper(config);
-
-  await P.each(Object.keys(schema), async (table) => {
-    await dumper.dump(table, schema[table]);
-  });
+  const dumper = new Dumper(config);
+  await dumper.dump(schema);
   spinner.succeed();
 
   logger.success(`Hooray, ${chalk.green('installation success')}!`);

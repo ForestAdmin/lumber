@@ -30,7 +30,7 @@ function Dumper(config) {
     writeFile(to, fs.readFileSync(newFrom, 'utf-8'));
   }
 
-  function writePackageJson(pathDest) {
+  function writePackageJson() {
     const orm = config.dbDialect === 'mongodb' ? 'mongoose' : 'sequelize';
     const dependencies = {
       express: '~4.16.3',
@@ -66,14 +66,14 @@ function Dumper(config) {
       dependencies,
     };
 
-    writeFile(`${pathDest}/package.json`, `${JSON.stringify(pkg, null, 2)}\n`);
+    writeFile(`${path}/package.json`, `${JSON.stringify(pkg, null, 2)}\n`);
   }
 
-  function writeDotGitIgnore(pathDest) {
+  function writeDotGitIgnore() {
     const templatePath = `${__dirname}/../templates/app/gitignore`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
-    writeFile(`${pathDest}/.gitignore`, template({}));
+    writeFile(`${path}/.gitignore`, template({}));
   }
 
   function writeDotGitKeep(pathDest) {
@@ -111,7 +111,7 @@ function Dumper(config) {
     return connectionString;
   }
 
-  function writeDotEnv(pathDest) {
+  function writeDotEnv() {
     const templatePath = `${__dirname}/../templates/app/env`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
@@ -126,10 +126,10 @@ function Dumper(config) {
       forestAuthSecret: config.forestAuthSecret,
     };
 
-    writeFile(`${pathDest}/.env`, template(settings));
+    writeFile(`${path}/.env`, template(settings));
   }
 
-  function writeModel(pathDest, table, fields, references, options = {}) {
+  function writeModel(table, fields, references, options = {}) {
     const templatePath = `${__dirname}/../templates/app/models/model.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
@@ -171,7 +171,7 @@ function Dumper(config) {
       dialect: config.dbDialect,
     });
 
-    writeFile(`${pathDest}/models/${table}.js`, text);
+    writeFile(`${path}/models/${table}.js`, text);
   }
 
   function writeForestCollection(table) {
@@ -179,26 +179,26 @@ function Dumper(config) {
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const text = template({ ...config, table });
 
-    fs.writeFileSync(`${path}/forest/${table}.js`, text);
+    writeFile(`${path}/forest/${table}.js`, text);
   }
 
-  function writeAppJs(pathDest) {
+  function writeAppJs() {
     const templatePath = `${__dirname}/../templates/app/app.js`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const text = template({ config, forestUrl: process.env.FOREST_URL });
 
-    writeFile(`${pathDest}/app.js`, text);
+    writeFile(`${path}/app.js`, text);
   }
 
-  function writeModelsIndex(pathDest) {
+  function writeModelsIndex() {
     const templatePath = `${__dirname}/../templates/app/models/index.js`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const text = template({ config });
 
-    writeFile(`${pathDest}/models/index.js`, text);
+    writeFile(`${path}/models/index.js`, text);
   }
 
-  function writeDockerfile(pathDest) {
+  function writeDockerfile() {
     const templatePath = `${__dirname}/../templates/app/Dockerfile`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
@@ -206,10 +206,10 @@ function Dumper(config) {
       port: config.appPort || DEFAULT_PORT,
     };
 
-    writeFile(`${pathDest}/Dockerfile`, template(settings));
+    writeFile(`${path}/Dockerfile`, template(settings));
   }
 
-  function writeDockerCompose(pathDest) {
+  function writeDockerCompose() {
     const templatePath = `${__dirname}/../templates/app/docker-compose.yml`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
@@ -225,66 +225,66 @@ function Dumper(config) {
       forestAuthSecret: config.forestAuthSecret,
     };
 
-    writeFile(`${pathDest}/docker-compose.yml`, template(settings));
+    writeFile(`${path}/docker-compose.yml`, template(settings));
   }
 
-  function writeDotDockerIgnore(pathDest) {
+  function writeDotDockerIgnore() {
     const templatePath = `${__dirname}/../templates/app/dockerignore`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
-    writeFile(`${pathDest}/.dockerignore`, template({}));
+    writeFile(`${path}/.dockerignore`, template({}));
   }
 
-  function writeForestAdminMiddleware(pathDest) {
+  function writeForestAdminMiddleware() {
     mkdirp.sync(`${process.cwd()}/middlewares`);
     const templatePath = `${__dirname}/../templates/app/middlewares/forestadmin.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    writeFile(`${pathDest}/middlewares/forestadmin.js`, template(config));
+    writeFile(`${path}/middlewares/forestadmin.js`, template(config));
   }
 
-  this.dump = (table, { fields, references, options }) => {
-    writeModel(path, table, fields, references, options);
-    writeForestCollection(table);
-  };
+  this.dump = async (schema) => {
+    const dirs = [
+      mkdirp(path),
+      mkdirp(binPath),
+      mkdirp(routesPath),
+      mkdirp(forestPath),
+      mkdirp(viewPath),
+      mkdirp(publicPath),
+      mkdirp(middlewaresPath),
+    ];
 
-  const dirs = [
-    mkdirp(path),
-    mkdirp(binPath),
-    mkdirp(routesPath),
-    mkdirp(forestPath),
-    mkdirp(viewPath),
-    mkdirp(publicPath),
-    mkdirp(middlewaresPath),
-  ];
+    if (config.db) {
+      dirs.push(mkdirp(modelsPath));
+    }
 
-  if (config.db) {
-    dirs.push(mkdirp(modelsPath));
-  }
-
-  return (async () => {
     await P.all(dirs);
 
-    writeDotDockerIgnore(path);
-    writeDotEnv(path);
-    writeDotGitIgnore(path);
-
-    writeDockerfile(path);
-    writeAppJs(path);
-    writeDockerCompose(path);
-    writePackageJson(path);
-
     copyTemplate('bin/www', `${binPath}/www`);
-    writeDotGitKeep(forestPath);
+
+    Object.keys(schema).forEach(table => writeForestCollection(table));
+
     copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
-    writeForestAdminMiddleware(path);
+    writeForestAdminMiddleware();
+
+    if (config.db) { writeModelsIndex(path); }
+    Object.keys(schema).forEach((table) => {
+      const { fields, references, options } = schema[table];
+      writeModel(table, fields, references, options);
+    });
+
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
     writeDotGitKeep(routesPath);
     copyTemplate('views/index.html', `${path}/views/index.html`);
 
-    if (config.db) { writeModelsIndex(path); }
+    writeDotDockerIgnore();
+    writeDotEnv();
+    writeDotGitIgnore();
 
-    return this;
-  })();
+    writeAppJs();
+    writeDockerCompose();
+    writeDockerfile();
+    writePackageJson();
+  };
 }
 
 module.exports = Dumper;
