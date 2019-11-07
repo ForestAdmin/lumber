@@ -3,9 +3,18 @@
 ## [Unreleased]
 ### Added
 - Technical - Test on different environments (ie. versions of databases).
-- Field Types - Support `TIMESTAMP(n)`, `SMALLINT(n)` and `BIGINT(n)` column types (MySQL)
 
+## RELEASE 2.7.2 - 2019-11-07
 ### Fixed
+- Git hooks - Remove git hooks from npm package (fix installation issue on Windows).
+
+## RELEASE 2.7.1 - 2019-11-06
+### Fixed
+- MSSQL - Fix connection issue using the ssl option.
+
+## RELEASE 2.7.0 - 2019-11-06
+### Added
+- Field Types - Support `TIMESTAMP(n)`, `SMALLINT(n)` and `BIGINT(n)` column types (MySQL)
 - Command Generate - Generate MongoDB belongsTo.
 
 ## RELEASE 2.6.3 - 2019-11-04

@@ -2,3 +2,5 @@ assets
 .env
 .env-example
 .github
+.githooks
+.eslint-bin
