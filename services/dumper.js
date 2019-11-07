@@ -264,8 +264,8 @@ function Dumper(config) {
 
     modelNames.forEach(writeForestCollection);
 
-    copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
     writeForestAdminMiddleware();
+    copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
 
     if (config.db) { writeModelsIndex(path); }
     modelNames.forEach((modelName) => {
