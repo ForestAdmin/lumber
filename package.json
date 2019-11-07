@@ -37,7 +37,6 @@
     "pg": "^6.1.0",
     "saslprep": "1.0.3",
     "sequelize": "5.21.2",
-    "simple-git": "1.126.0",
     "superagent": "5.1.0",
     "tedious": "6.4.0",
     "winston": "^2.2.0"
@@ -50,6 +49,7 @@
     "eslint-plugin-import": "2.12.0",
     "git-hooks": "1.1.10",
     "mocha": "6.2.0",
-    "rimraf": "3.0.0"
+    "rimraf": "3.0.0",
+    "simple-git": "1.126.0"
   }
 }
