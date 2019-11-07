@@ -3,11 +3,11 @@
 ## [Unreleased]
 
 ## RELEASE 2.7.3 - 2019-11-07
-- Technical - move git-hook to devDependancies.
+- Technical - Fix installation issue on Windows (moving `git-hook`/`simple-git` to devDependencies).
 
 ## RELEASE 2.7.2 - 2019-11-07
 ### Fixed
-- Git hooks - Remove git hooks from npm package (fix installation issue on Windows).
+- Technical - Try to fix installation issue on Windows (removing git hooks from npm package).
 
 ## RELEASE 2.7.1 - 2019-11-06
 ### Fixed
