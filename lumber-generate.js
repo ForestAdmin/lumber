@@ -1,6 +1,6 @@
-const P = require('bluebird');
 const program = require('commander');
 const chalk = require('chalk');
+const spinners = require('./services/spinners');
 const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/database-analyzer');
 const Dumper = require('./services/dumper');
@@ -8,6 +8,8 @@ const CommandGenerateConfigGetter = require('./services/command-generate-config-
 const logger = require('./services/logger');
 const eventSender = require('./services/event-sender');
 const ProjectCreator = require('./services/project-creator');
+const { terminate } = require('./utils/terminator');
+const { ERROR_UNEXPECTED } = require('./utils/messages');
 
 program
   .description('Generate a backend application with an ORM/ODM configured')
@@ -30,31 +32,41 @@ program
 
   const config = await new CommandGenerateConfigGetter(program).perform();
   let schema = {};
+
   if (program.db) {
-    const connection = await new Database().connect(config);
-    schema = await new DatabaseAnalyzer(connection, config, true).perform();
+    const connectionPromise = new Database().connect(config);
+    spinners.add('database-connection', { text: 'Connecting to your database' }, connectionPromise);
+    const connection = await connectionPromise;
+
+    const schemaPromise = new DatabaseAnalyzer(connection, config, true).perform();
+    spinners.add('database-analysis', { text: 'Analyzing the database' }, schemaPromise);
+    schema = await schemaPromise;
   }
 
-  const { envSecret, authSecret } = await new ProjectCreator(logger)
+  const projectCreationPromise = new ProjectCreator(logger)
     .createProject(config.appName, config);
+  spinners.add('project-creation', { text: 'Creating your project on Forest Admin' }, projectCreationPromise);
+
+  const { envSecret, authSecret } = await projectCreationPromise;
   config.forestEnvSecret = envSecret;
   config.forestAuthSecret = authSecret;
 
-  const dumper = await new Dumper(config);
-
-  await P.each(Object.keys(schema), async (table) => {
-    await dumper.dump(table, schema[table]);
-  });
+  const spinner = spinners.add('dumper', { text: 'Creating your project files' });
+  logger.spinner = spinner;
+  const dumper = new Dumper(config);
+  await dumper.dump(schema);
+  spinner.succeed();
 
   logger.success(`Hooray, ${chalk.green('installation success')}!`);
   await eventSender.notifySuccess();
   process.exit(0);
 })().catch(async (error) => {
-  logger.error(
+  const logs = [
     'Cannot generate your project.',
-    'An unexpected error occured. Please create a Github issue with following error:',
-  );
-  logger.log(error);
-  await eventSender.notifyError();
-  process.exit(1);
+    `${ERROR_UNEXPECTED} ${chalk.red(error)}`,
+  ];
+
+  await terminate(1, {
+    logs,
+  });
 });

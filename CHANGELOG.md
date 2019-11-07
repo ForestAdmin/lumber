@@ -6,11 +6,13 @@
 - Command generate - Add comments to generated models.
 - Command Generate - Generate the forest collection files.
 - Command Generate - Add tests on model generation (MySQL and PostgreSQL).
+- Command Generate - Add logs about what is happening.
 
 ### Changed
 - Commands - Drop environment variables.
 - Commands - Remove command run and install.
 - Command Generate - Install Forest Admin middleware.
+- Logs - Improve the wording for several existing logs.
 
 ### Fixed
 - Command Login - Disable account creation.

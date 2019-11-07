@@ -1,20 +1,22 @@
 const analyzeMongoCollections = require('./analyze-mongo-collections');
 const analyzeSequelizeTables = require('./analyze-sequelize-tables');
 const { DatabaseAnalyzerError } = require('../utils/errors');
-const logger = require('./logger');
-const eventSender = require('./event-sender');
+const { terminate } = require('../utils/terminator');
 
 async function reportEmptyDatabase(orm, dialect) {
   const logs = [`Your database looks empty! Please create some ${orm === 'mongoose' ? 'collections' : 'tables'} before running the command.`];
   if (orm === 'sequelize') {
     logs.push('If not, check whether you are using a custom database schema (use in that case the --schema option).');
   }
-  logger.error(...logs);
-  await eventSender.notifyError('database_empty', 'Your database is empty.', {
-    orm,
-    dialect,
+  return terminate(1, {
+    logs,
+    errorCode: 'database_empty',
+    errorMessage: 'Your database is empty.',
+    context: {
+      orm,
+      dialect,
+    },
   });
-  return process.exit(1);
 }
 
 function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
