@@ -1,8 +1,8 @@
 const { MongoClient } = require('mongodb');
 const assert = require('assert');
 
-require('./load-env');
-const logger = require('../../services/logger');
+require('../../utils/load-env');
+const logger = require('../../../services/logger');
 
 const url = process.env.MONGO_URL || 'mongodb://localhost:27017';
 const dbName = 'forest-test';

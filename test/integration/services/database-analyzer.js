@@ -2,7 +2,7 @@
 const { expect } = require('chai');
 
 const MongoHelper = require('../utils/mongo-helper');
-const DatabaseAnalyzer = require('../../services/database-analyzer');
+const DatabaseAnalyzer = require('../../../services/database-analyzer');
 const simpleModel = require('../fixtures/simple-model');
 const multipleReferencesModel = require('../fixtures/multiple-references-same-field-model');
 const manyNullsModel = require('../fixtures/many-nulls-model');

@@ -1,5 +1,12 @@
 const dotenv = require('dotenv');
 
-const ENV = process.env.ENV || '.env-test-max-version';
+const logger = require('../../services/logger');
 
-dotenv.config({ path: `${__dirname}/../../${ENV}` });
+const ENV = process.env.ENV || '.env-test';
+
+logger.info(`LOADING ENV ${ENV}`);
+const result = dotenv.config({ path: `${__dirname}/../../${ENV}` });
+
+if (result.error) {
+  throw result.error;
+}

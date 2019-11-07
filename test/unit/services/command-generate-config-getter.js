@@ -1,6 +1,6 @@
 /* global describe, it */
 const { expect } = require('chai');
-const CommandGenerateConfigGetter = require('../../services/command-generate-config-getter');
+const CommandGenerateConfigGetter = require('../../../services/command-generate-config-getter');
 
 describe('Services > Command Generate Config Getter', () => {
   describe('with a command with a "connectionUrl" option', () => {

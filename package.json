@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./assets ./deserializers ./serializers ./services ./test",
     "test": "./node_modules/mocha/bin/mocha 'test/**/*.js'",
-    "test:ci": "ENV=.env-test-min-version.ci npm run test && ENV=.env-test-max-version.ci npm run test",
+    "test:int": "./node_modules/mocha/bin/mocha 'test/integration/**/*.js'",
+    "test:ci": "ENV=.env-test npm run test && ENV=.env-test-old-db npm run test:int",
     "release": "node ./scripts/release.js"
   },
   "bin": {
