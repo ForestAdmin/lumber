@@ -1,20 +1,82 @@
-const { describe, it, after } = require('mocha');
+const {
+  describe,
+  it,
+  after,
+  before,
+} = require('mocha');
 const { expect } = require('chai');
+const sinon = require('sinon');
 const UserPrompts = require('../../../services/prompter/user-prompts');
 
 describe('Services > Prompter > User prompts', () => {
+  let envConfig = {};
+  let requests = [];
+  let prompts = [];
+
+  function resetParams() {
+    envConfig = {};
+    requests = [];
+    prompts = [];
+  }
+
+  describe('Handling user related prompts', () => {
+    let userPrompts;
+    let emailHandlerStub;
+    let createPasswordHandlerStub;
+    let passwordHandlerStub;
+
+    before(() => {
+      userPrompts = new UserPrompts(envConfig, prompts, requests);
+      emailHandlerStub = sinon.stub(userPrompts, 'handleEmail');
+      createPasswordHandlerStub = sinon.stub(userPrompts, 'handleCreatePassword');
+      passwordHandlerStub = sinon.stub(userPrompts, 'handlePassword');
+      userPrompts.handlePrompts();
+    });
+
+    after(() => {
+      emailHandlerStub.restore();
+      createPasswordHandlerStub.restore();
+      passwordHandlerStub.restore();
+      resetParams();
+    });
+
+    it('should handle the email', () => {
+      expect(emailHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle the password creation', () => {
+      expect(createPasswordHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle the password', () => {
+      expect(passwordHandlerStub.calledOnce).to.equal(true);
+    });
+  });
+
   describe('Handling email prompt : ', () => {
+    after(() => {
+      resetParams();
+    });
+
     describe('When the email option is requested', () => {
-      const envConfig = {};
-      const requests = ['email'];
-      let prompts = [];
+      before(() => {
+        requests.push('email');
+      });
+
+      after(() => {
+        resetParams();
+      });
 
       describe('And the email has not been passed in', () => {
+        let userPrompts;
+
+        before(() => {
+          userPrompts = new UserPrompts(envConfig, prompts, requests);
+        });
+
         after(() => {
           prompts = [];
         });
-
-        const userPrompts = new UserPrompts(envConfig, prompts, requests);
 
         it('should add a prompt to ask for it', () => {
           expect(prompts).to.have.lengthOf(0);
@@ -32,20 +94,22 @@ describe('Services > Prompter > User prompts', () => {
         });
 
         it('should validate that the email has been field', () => {
-          expect(prompts[0].validate('fake@email.com'));
+          expect(prompts[0].validate('fake@email.com')).to.equal(true);
           expect(prompts[0].validate(null)).to.equal('Please enter your email address.');
         });
       });
 
       describe('And the email has already been passed in', () => {
+        let userPrompts;
+
+        before(() => {
+          envConfig.email = 'fake@email.com';
+          userPrompts = new UserPrompts(envConfig, prompts, requests);
+        });
+
         after(() => {
           prompts = [];
         });
-
-        const envConfigWithEmail = {
-          email: 'fake@email.com',
-        };
-        const userPrompts = new UserPrompts(envConfigWithEmail, prompts, requests);
 
         it('should not add an additional prompt', () => {
           expect(prompts).to.have.lengthOf(0);
@@ -58,10 +122,6 @@ describe('Services > Prompter > User prompts', () => {
     });
 
     describe('When the email option is not requested', () => {
-      const envConfig = {};
-      const requests = [];
-      const prompts = [];
-
       const userPrompts = new UserPrompts(envConfig, prompts, requests);
 
       it('should not add an additional prompt', () => {
@@ -76,16 +136,24 @@ describe('Services > Prompter > User prompts', () => {
 
   describe('Handling create password prompt :', () => {
     describe('When the passwordCreate option is requested', () => {
-      const envConfig = {};
-      const requests = ['passwordCreate'];
-      let prompts = [];
+      before(() => {
+        requests.push('passwordCreate');
+      });
+
+      after(() => {
+        resetParams();
+      });
 
       describe('And the auth token has not been passed in', () => {
+        let userPrompts;
+
+        before(() => {
+          userPrompts = new UserPrompts(envConfig, prompts, requests);
+        });
+
         after(() => {
           prompts = [];
         });
-
-        const userPrompts = new UserPrompts(envConfig, prompts, requests);
 
         it('should add a prompt to ask for a new password', () => {
           expect(prompts).to.have.lengthOf(0);
@@ -114,19 +182,21 @@ describe('Services > Prompter > User prompts', () => {
             '    > Numbers';
 
           expect(prompts[0].validate('notStrongEnough')).to.equal(errorMessage);
-          expect(prompts[0].validate('StrongPassword11@'));
+          expect(prompts[0].validate('StrongPassword11@')).to.equal(true);
         });
       });
 
       describe('And the auth token has already been passed in', () => {
-        after(() => {
-          prompts = [];
+        let userPrompts;
+
+        before(() => {
+          envConfig.authToken = 'fakeToken';
+          userPrompts = new UserPrompts(envConfig, prompts, requests);
         });
 
-        const envConfigWithAuthToken = {
-          authToken: 'fakeToken',
-        };
-        const userPrompts = new UserPrompts(envConfigWithAuthToken, prompts, requests);
+        after(() => {
+          resetParams();
+        });
 
         it('should not add an additional prompt', () => {
           expect(prompts).to.have.lengthOf(0);
@@ -139,10 +209,6 @@ describe('Services > Prompter > User prompts', () => {
     });
 
     describe('When the passwordCreate option is not requested', () => {
-      const envConfig = {};
-      const requests = [];
-      const prompts = [];
-
       const userPrompts = new UserPrompts(envConfig, prompts, requests);
 
       it('should not add an additional prompt', () => {
@@ -157,11 +223,17 @@ describe('Services > Prompter > User prompts', () => {
 
   describe('Handling password prompt :', () => {
     describe('When the password option is requested', () => {
-      const envConfig = {};
-      const requests = ['password'];
-      const prompts = [];
+      let userPrompts;
 
-      const userPrompts = new UserPrompts(envConfig, prompts, requests);
+      before(() => {
+        requests.push('password');
+
+        userPrompts = new UserPrompts(envConfig, prompts, requests);
+      });
+
+      after(() => {
+        resetParams();
+      });
 
       it('should add a prompt to ask for the user password', () => {
         expect(prompts).to.have.lengthOf(0);
@@ -180,15 +252,11 @@ describe('Services > Prompter > User prompts', () => {
 
       it('should validate that the password has been field', () => {
         expect(prompts[0].validate(null)).to.equal('Your password cannot be blank.');
-        expect(prompts[0].validate('fakePassword'));
+        expect(prompts[0].validate('fakePassword')).to.equal(true);
       });
     });
 
     describe('When the password option is not requested', () => {
-      const envConfig = {};
-      const requests = [];
-      const prompts = [];
-
       const userPrompts = new UserPrompts(envConfig, prompts, requests);
 
       it('should not add an additional prompt', () => {
