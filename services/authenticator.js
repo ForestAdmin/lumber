@@ -6,6 +6,8 @@ const inquirer = require('inquirer');
 const api = require('./api');
 const { parseJwt } = require('../utils/authenticator-helper');
 const { EMAIL_REGEX, PASSWORD_REGEX } = require('../utils/regexs');
+const { terminate } = require('../utils/terminator');
+const { ERROR_UNEXPECTED } = require('../utils/messages');
 const logger = require('./logger');
 
 function Authenticator() {
@@ -39,7 +41,9 @@ function Authenticator() {
     const endpoint = process.env.FOREST_URL && process.env.FOREST_URL.includes('localhost')
       ? 'http://localhost:4200' : 'https://app.forestadmin.com';
     const url = chalk.cyan.underline(`${endpoint}/authentication-token`);
-    logger.info(`To authentify with your google account please follow this link and copy the authentication token: ${url}`);
+    logger.info(`To authenticate with your Google account, please follow this link and copy the authentication token: ${url}`);
+
+    logger.pauseSpinner();
     const { sessionToken } = await inquirer.prompt([{
       type: 'password',
       name: 'sessionToken',
@@ -57,6 +61,7 @@ function Authenticator() {
         return errorMessage;
       },
     }]);
+    logger.continueSpinner();
     this.saveToken(sessionToken);
     return sessionToken;
   };
@@ -92,6 +97,7 @@ function Authenticator() {
       }
 
       if (!password) {
+        logger.pauseSpinner();
         ({ password } = await inquirer.prompt([{
           type: 'password',
           name: 'password',
@@ -101,20 +107,17 @@ function Authenticator() {
             return 'Please enter your password.';
           },
         }]));
+        logger.continueSpinner();
       }
 
       return await this.login(email, password);
     } catch (error) {
-      if (error.message === 'Unauthorized') {
-        logger.error('Incorrect email or password.');
-      } else {
-        logger.error(`An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}`);
-      }
+      const message = error.message === 'Unauthorized'
+        ? 'Incorrect email or password.'
+        : `${ERROR_UNEXPECTED} ${chalk.red(error)}`;
 
-      process.exit(1);
+      return terminate(1, { logs: [message] });
     }
-
-    return null;
   };
 
   this.createAccount = async () => {
@@ -164,13 +167,11 @@ function Authenticator() {
     try {
       await api.createUser(authConfig);
     } catch (error) {
-      if (error.message === 'Conflict') {
-        logger.error(`Your account already exists. Please, use the command ${chalk.cyan('lumber run lumber-forestadmin:login')}.`);
-      } else {
-        logger.error(`An unexpected error occured. Please create a Github issue with following error: ${chalk.red(error)}`);
-      }
+      const message = error.message === 'Conflict'
+        ? `This account already exists. Please, use the command ${chalk.cyan('lumber login')} to login with this account.`
+        : `${ERROR_UNEXPECTED} ${chalk.red(error)}`;
 
-      process.exit(1);
+      return terminate(1, { logs: [message] });
     }
 
     const token = await this.login(authConfig.email, authConfig.password);

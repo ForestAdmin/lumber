@@ -1,9 +1,9 @@
 const P = require('bluebird');
 const _ = require('lodash');
-const logger = require('./logger');
 const ColumnTypeGetter = require('./column-type-getter');
 const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
 const { DatabaseAnalyzerError } = require('../utils/errors');
+const { terminate } = require('../utils/terminator');
 
 let queryInterface;
 let tableForeignKeysAnalyzer;
@@ -166,8 +166,12 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
       .then(result => !!result.length);
 
     if (!schemaExists) {
-      logger.error('This schema does not exists.');
-      return process.exit(1);
+      const message = 'This schema does not exists.';
+      return terminate(1, {
+        errorCode: 'database_authentication_error',
+        errorMessage: message,
+        logs: [message],
+      });
     }
   }
 

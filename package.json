@@ -41,6 +41,7 @@
     "pg": "^6.1.0",
     "saslprep": "1.0.3",
     "sequelize": "5.21.2",
+    "spinnies": "0.5.0",
     "superagent": "5.1.0",
     "tedious": "6.4.0",
     "winston": "^2.2.0"

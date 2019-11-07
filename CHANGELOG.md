@@ -6,12 +6,14 @@
 - Command generate - Add comments to generated models.
 - Command Generate - Generate the forest collection files.
 - Command Generate - Add tests on model generation (MySQL and PostgreSQL).
+- Command Generate - Add logs about what is happening.
 
 ### Changed
 - Technical - Remove unused ENCRYPT env variable.
 - Security - Prevent remote environments creation with HTTP protocol.
 - Commands - Remove command run and install.
 - Command Generate - Install Forest Admin middleware.
+- Logs - Improve the wording for several existing logs.
 
 ### Fixed
 - Command Login - Disable account creation.
