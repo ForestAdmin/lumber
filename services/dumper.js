@@ -243,7 +243,7 @@ function Dumper(config) {
   }
 
   this.dump = async (schema) => {
-    const dirs = [
+    const directories = [
       mkdirp(path),
       mkdirp(binPath),
       mkdirp(routesPath),
@@ -254,10 +254,10 @@ function Dumper(config) {
     ];
 
     if (config.db) {
-      dirs.push(mkdirp(modelsPath));
+      directories.push(mkdirp(modelsPath));
     }
 
-    await P.all(dirs);
+    await P.all(directories);
 
     copyTemplate('bin/www', `${binPath}/www`);
 
