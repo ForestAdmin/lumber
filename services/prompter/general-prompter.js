@@ -18,7 +18,7 @@ class GeneralPrompter {
       email: program.email,
     };
 
-    this.projectPrompt = new ProjectPrompt(program, this.envConfig, requests);
+    this.projectPrompt = new ProjectPrompt(program.args[0], this.envConfig, requests);
     this.databasePrompt = new DatabasePrompt(program, this.envConfig, this.prompts, requests);
     this.applicationPrompt = new ApplicationPrompt(program, this.envConfig, this.prompts, requests);
     this.userPrompt = new UserPrompt(this.envConfig, this.prompts, requests);
