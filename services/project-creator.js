@@ -1,16 +1,11 @@
 const chalk = require('chalk');
-const Authenticator = require('./authenticator');
 const api = require('./api');
 const KeyGenerator = require('./key-generator');
 const { terminate } = require('../utils/terminator');
 const { ERROR_UNEXPECTED } = require('../utils/messages');
 
-function ProjectCreator() {
-  const auth = new Authenticator();
-
+function ProjectCreator(sessionToken) {
   this.createProject = async (projectName, config) => {
-    const sessionToken = await auth.loginFromCommandLine(config);
-
     try {
       const newProject = await api.createProject(config, sessionToken, { name: projectName });
 

@@ -7,6 +7,7 @@ const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
 const logger = require('./services/logger');
 const eventSender = require('./services/event-sender');
+const Authenticator = require('./services/authenticator');
 const ProjectCreator = require('./services/project-creator');
 const { terminate } = require('./utils/terminator');
 const { ERROR_UNEXPECTED } = require('./utils/messages');
@@ -31,6 +32,8 @@ program
   [eventSender.appName] = program.args;
 
   const config = await new CommandGenerateConfigGetter(program).perform();
+  const sessionToken = await new Authenticator().loginFromCommandLine(config);
+
   let schema = {};
 
   if (program.db) {
@@ -43,7 +46,7 @@ program
     schema = await schemaPromise;
   }
 
-  const projectCreationPromise = new ProjectCreator(logger)
+  const projectCreationPromise = new ProjectCreator(sessionToken)
     .createProject(config.appName, config);
   spinners.add('project-creation', { text: 'Creating your project on Forest Admin' }, projectCreationPromise);
 
