@@ -107,7 +107,6 @@ function Dumper(config) {
     const settings = {
       databaseUrl: getDatabaseUrl(),
       ssl: config.ssl,
-      encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
       hostname: config.appHostname,
       port: config.appPort,
@@ -199,7 +198,6 @@ function Dumper(config) {
       port: config.appPort || DEFAULT_PORT,
       databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
       ssl: config.ssl,
-      encrypt: config.ssl && config.dbDialect === 'mssql',
       dbSchema: config.dbSchema,
       authSecret,
     };

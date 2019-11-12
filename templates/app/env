@@ -4,6 +4,5 @@ APPLICATION_PORT=<%= port || 3310 %>
 DATABASE_URL=<%= databaseUrl %><% if (dbSchema) { %>
 DATABASE_SCHEMA=<%= dbSchema %><% } %>
 DATABASE_SSL=<%= ssl || 'false' %>
-DATABASE_ENCRYPT=<%= encrypt || 'false' %>
 
 AUTH_SECRET=<%= authSecret %>

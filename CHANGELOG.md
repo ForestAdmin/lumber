@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Remove unused ENCRYPT env variable.
 
 ## RELEASE 2.7.3 - 2019-11-07
 - Technical - Fix installation issue on Windows (moving `git-hook`/`simple-git` to devDependencies).

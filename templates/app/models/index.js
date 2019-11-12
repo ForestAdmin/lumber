@@ -28,10 +28,6 @@ if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase(
 <% }
 %>}
 
-if (process.env.DATABASE_ENCRYPT && JSON.parse(process.env.DATABASE_ENCRYPT.toLowerCase())) {
-  databaseOptions.dialectOptions.encrypt = true;
-}
-
 let sequelize = new Sequelize(process.env.DATABASE_URL, databaseOptions);
 let db = {};
 
