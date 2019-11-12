@@ -1,14 +1,15 @@
 const AbstractPrompter = require('./abstract-prompter');
 
 class UserPrompts extends AbstractPrompter {
+  static get FORMAT_PASSWORD() { return /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/; }
+
   constructor(requests, envConfig, prompts) {
     super(requests);
     this.envConfig = envConfig;
     this.prompts = prompts;
-    this.FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/;
   }
 
-  handlePrompts() {
+  async handlePrompts() {
     this.handleEmail();
     this.handleCreatePassword();
     this.handlePassword();
@@ -39,7 +40,7 @@ class UserPrompts extends AbstractPrompter {
           message: 'Choose a password: ',
           validate: (password) => {
             if (password) {
-              if (this.FORMAT_PASSWORD.test(password)) { return true; }
+              if (UserPrompts.FORMAT_PASSWORD.test(password)) { return true; }
               return '🔓  Your password security is too weak 🔓\n' +
                 ' Please make sure it contains at least:\n' +
                 '    > 8 characters\n' +

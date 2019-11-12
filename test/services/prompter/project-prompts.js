@@ -31,7 +31,7 @@ describe('Services > Prompter > Project prompts', () => {
     let nameHandlerStub;
 
     before(async () => {
-      projectPrompts = new ProjectPrompts('project', envConfig, requests);
+      projectPrompts = new ProjectPrompts(requests, 'project', envConfig);
       nameHandlerStub = sinon.stub(projectPrompts, 'handleName');
       await projectPrompts.handlePrompts();
     });
@@ -66,7 +66,7 @@ describe('Services > Prompter > Project prompts', () => {
       });
 
       describe('and the projectName has not been passed in', () => {
-        const projectPrompts = new ProjectPrompts(undefined, envConfig, requests);
+        const projectPrompts = new ProjectPrompts(requests, undefined, envConfig);
 
         it('should terminate the process with exit code 1', async () => {
           await projectPrompts.handleName();
@@ -87,7 +87,7 @@ describe('Services > Prompter > Project prompts', () => {
       });
 
       describe('and the projectName has already been passed in', () => {
-        const projectPrompts = new ProjectPrompts(FAKE_PROJECT_NAME, envConfig, requests);
+        const projectPrompts = new ProjectPrompts(requests, FAKE_PROJECT_NAME, envConfig);
 
         describe('and the directory to write in is not available', async () => {
           before(() => {
@@ -150,7 +150,7 @@ describe('Services > Prompter > Project prompts', () => {
       });
 
       it('should not do anything', async () => {
-        const projectPrompts = new ProjectPrompts(FAKE_PROJECT_NAME, envConfig, requests);
+        const projectPrompts = new ProjectPrompts(requests, FAKE_PROJECT_NAME, envConfig);
 
         expect(envConfig.appName).to.equal(undefined);
 

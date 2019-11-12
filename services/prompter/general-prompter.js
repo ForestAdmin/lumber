@@ -37,8 +37,8 @@ class GeneralPrompter {
   async getConfig() {
     await this.projectPrompt.handlePrompts();
     await this.databasePrompt.handlePrompts();
-    this.applicationPrompt.handlePrompts();
-    this.userPrompt.handlePrompts();
+    await this.applicationPrompt.handlePrompts();
+    await this.userPrompt.handlePrompts();
 
     this.config = await inquirer.prompt(this.prompts);
 

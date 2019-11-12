@@ -8,12 +8,12 @@ class ApplicationPrompts extends AbstractPrompter {
     this.prompts = prompts;
   }
 
-  handlePrompts() {
-    this.handleHostName();
-    this.handleAppPort();
+  async handlePrompts() {
+    this.handleHostname();
+    this.handlePort();
   }
 
-  handleHostName() {
+  handleHostname() {
     if (this.isOptionRequested('appHostname')) {
       this.envConfig.appHostname = this.program.applicationHost;
       if (!this.envConfig.appHostname) {
@@ -27,7 +27,7 @@ class ApplicationPrompts extends AbstractPrompter {
     }
   }
 
-  handleAppPort() {
+  handlePort() {
     if (this.isOptionRequested('appPort')) {
       this.envConfig.appPort = this.program.applicationPort;
       if (!this.envConfig.appPort) {

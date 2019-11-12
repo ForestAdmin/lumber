@@ -25,12 +25,12 @@ describe('Services > Prompter > User prompts', () => {
     let createPasswordHandlerStub;
     let passwordHandlerStub;
 
-    before(() => {
-      userPrompts = new UserPrompts(envConfig, prompts, requests);
+    before(async () => {
+      userPrompts = new UserPrompts(requests, envConfig, prompts);
       emailHandlerStub = sinon.stub(userPrompts, 'handleEmail');
       createPasswordHandlerStub = sinon.stub(userPrompts, 'handleCreatePassword');
       passwordHandlerStub = sinon.stub(userPrompts, 'handlePassword');
-      userPrompts.handlePrompts();
+      await userPrompts.handlePrompts();
     });
 
     after(() => {
@@ -71,7 +71,7 @@ describe('Services > Prompter > User prompts', () => {
         let userPrompts;
 
         before(() => {
-          userPrompts = new UserPrompts(envConfig, prompts, requests);
+          userPrompts = new UserPrompts(requests, envConfig, prompts);
         });
 
         after(() => {
@@ -104,7 +104,7 @@ describe('Services > Prompter > User prompts', () => {
 
         before(() => {
           envConfig.email = 'fake@email.com';
-          userPrompts = new UserPrompts(envConfig, prompts, requests);
+          userPrompts = new UserPrompts(requests, envConfig, prompts);
         });
 
         after(() => {
@@ -122,7 +122,7 @@ describe('Services > Prompter > User prompts', () => {
     });
 
     describe('When the email option is not requested', () => {
-      const userPrompts = new UserPrompts(envConfig, prompts, requests);
+      const userPrompts = new UserPrompts(requests, envConfig, prompts);
 
       it('should not add an additional prompt', () => {
         expect(prompts).to.have.lengthOf(0);
@@ -148,7 +148,7 @@ describe('Services > Prompter > User prompts', () => {
         let userPrompts;
 
         before(() => {
-          userPrompts = new UserPrompts(envConfig, prompts, requests);
+          userPrompts = new UserPrompts(requests, envConfig, prompts);
         });
 
         after(() => {
@@ -191,7 +191,7 @@ describe('Services > Prompter > User prompts', () => {
 
         before(() => {
           envConfig.authToken = 'fakeToken';
-          userPrompts = new UserPrompts(envConfig, prompts, requests);
+          userPrompts = new UserPrompts(requests, envConfig, prompts);
         });
 
         after(() => {
@@ -209,7 +209,7 @@ describe('Services > Prompter > User prompts', () => {
     });
 
     describe('When the passwordCreate option is not requested', () => {
-      const userPrompts = new UserPrompts(envConfig, prompts, requests);
+      const userPrompts = new UserPrompts(requests, envConfig, prompts);
 
       it('should not add an additional prompt', () => {
         expect(prompts).to.have.lengthOf(0);
@@ -228,7 +228,7 @@ describe('Services > Prompter > User prompts', () => {
       before(() => {
         requests.push('password');
 
-        userPrompts = new UserPrompts(envConfig, prompts, requests);
+        userPrompts = new UserPrompts(requests, envConfig, prompts);
       });
 
       after(() => {
@@ -257,7 +257,7 @@ describe('Services > Prompter > User prompts', () => {
     });
 
     describe('When the password option is not requested', () => {
-      const userPrompts = new UserPrompts(envConfig, prompts, requests);
+      const userPrompts = new UserPrompts(requests, envConfig, prompts);
 
       it('should not add an additional prompt', () => {
         expect(prompts).to.have.lengthOf(0);

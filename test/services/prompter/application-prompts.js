@@ -26,24 +26,24 @@ describe('Services > Prompter > Application prompts', () => {
 
   describe('Handling application related prompts', () => {
     let applicationPrompts;
-    let hostNameHandlerStub;
+    let hostnameHandlerStub;
     let portHandlerStub;
 
-    before(() => {
-      applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
-      hostNameHandlerStub = sinon.stub(applicationPrompts, 'handleHostName');
-      portHandlerStub = sinon.stub(applicationPrompts, 'handleAppPort');
-      applicationPrompts.handlePrompts();
+    before(async () => {
+      applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+      hostnameHandlerStub = sinon.stub(applicationPrompts, 'handleHostname');
+      portHandlerStub = sinon.stub(applicationPrompts, 'handlePort');
+      await applicationPrompts.handlePrompts();
     });
 
     after(() => {
-      hostNameHandlerStub.restore();
+      hostnameHandlerStub.restore();
       portHandlerStub.restore();
       resetParams();
     });
 
     it('should handle the host name', () => {
-      expect(hostNameHandlerStub.calledOnce).to.equal(true);
+      expect(hostnameHandlerStub.calledOnce).to.equal(true);
     });
 
     it('should handle the port', () => {
@@ -52,21 +52,21 @@ describe('Services > Prompter > Application prompts', () => {
   });
 
   describe('Handling host name : ', () => {
-    describe('When the appHostName option is requested', () => {
-      describe('and the appHostName has not been passed in', () => {
+    describe('When the appHostname option is requested', () => {
+      describe('and the appHostname has not been passed in', () => {
         let applicationPrompts;
 
         before(() => {
           requests.push('appHostname');
-          applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
-          applicationPrompts.handleHostName();
+          applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+          applicationPrompts.handleHostname();
         });
 
         after(() => {
           resetParams();
         });
 
-        it('should add a prompt to ask for for it', () => {
+        it('should add a prompt to ask for it', () => {
           expect(prompts).to.have.lengthOf(1);
         });
 
@@ -82,15 +82,15 @@ describe('Services > Prompter > Application prompts', () => {
         });
       });
 
-      describe('and the appHostName has already been passed in', () => {
+      describe('and the appHostname has already been passed in', () => {
         let applicationPrompts;
 
         before(() => {
           requests.push('appHostname');
           program.applicationHost = FAKE_APP_HOST;
 
-          applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
-          applicationPrompts.handleHostName();
+          applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+          applicationPrompts.handleHostname();
         });
 
         after(() => {
@@ -108,13 +108,13 @@ describe('Services > Prompter > Application prompts', () => {
     });
 
     describe('When the appHostname option is not requested', () => {
-      const applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
+      const applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
 
       it('should not do anything', () => {
         expect(envConfig.appHostname).to.equal(undefined);
         expect(prompts).to.have.lengthOf(0);
 
-        applicationPrompts.handleHostName();
+        applicationPrompts.handleHostname();
 
         expect(envConfig.appHostname).to.equal(undefined);
         expect(prompts).to.have.lengthOf(0);
@@ -129,15 +129,15 @@ describe('Services > Prompter > Application prompts', () => {
 
         before(() => {
           requests.push('appPort');
-          applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
-          applicationPrompts.handleAppPort();
+          applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+          applicationPrompts.handlePort();
         });
 
         after(() => {
           resetParams();
         });
 
-        it('should add a prompt to ask for for it', () => {
+        it('should add a prompt to ask for it', () => {
           expect(prompts).to.have.lengthOf(1);
         });
 
@@ -166,8 +166,8 @@ describe('Services > Prompter > Application prompts', () => {
         before(() => {
           requests.push('appPort');
           program.applicationPort = FAKE_APP_PORT;
-          applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
-          applicationPrompts.handleAppPort();
+          applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+          applicationPrompts.handlePort();
         });
 
         after(() => {
@@ -185,13 +185,13 @@ describe('Services > Prompter > Application prompts', () => {
     });
 
     describe('When the appPort option is not requested', () => {
-      const applicationPrompts = new ApplicationPrompts(program, envConfig, prompts, requests);
+      const applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
 
       it('should not do anything', () => {
         expect(envConfig.appPort).to.equal(undefined);
         expect(prompts).to.have.lengthOf(0);
 
-        applicationPrompts.handleHostName();
+        applicationPrompts.handlePort();
 
         expect(envConfig.appPort).to.equal(undefined);
         expect(prompts).to.have.lengthOf(0);
