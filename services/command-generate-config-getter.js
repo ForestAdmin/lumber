@@ -44,7 +44,7 @@ function CommandGenerateConfigGetter(program) {
     return this.options.forFullPrompt;
   };
 
-  this.perform = async () => new Prompter(program, this.getOptions()).getConfig();
+  this.perform = async () => new Prompter(this.getOptions(), program).getConfig();
 }
 
 module.exports = CommandGenerateConfigGetter;

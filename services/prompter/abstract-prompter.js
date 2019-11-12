@@ -1,4 +1,4 @@
-class PromptUtils {
+class AbstractPrompter {
   constructor(requests) {
     this.requests = requests;
   }
@@ -10,4 +10,4 @@ class PromptUtils {
   }
 }
 
-module.exports = PromptUtils;
+module.exports = AbstractPrompter;

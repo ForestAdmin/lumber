@@ -8,7 +8,7 @@ const ProjectPrompt = require('./project-prompts');
 const UserPrompt = require('./user-prompts');
 
 class GeneralPrompter {
-  constructor(program, requests) {
+  constructor(requests, program) {
     this.prompts = [];
     this.program = program;
     this.envConfig = {
@@ -18,10 +18,10 @@ class GeneralPrompter {
       email: program.email,
     };
 
-    this.projectPrompt = new ProjectPrompt(program.args[0], this.envConfig, requests);
-    this.databasePrompt = new DatabasePrompt(program, this.envConfig, this.prompts, requests);
-    this.applicationPrompt = new ApplicationPrompt(program, this.envConfig, this.prompts, requests);
-    this.userPrompt = new UserPrompt(this.envConfig, this.prompts, requests);
+    this.projectPrompt = new ProjectPrompt(requests, program.args[0], this.envConfig);
+    this.databasePrompt = new DatabasePrompt(requests, program, this.envConfig, this.prompts);
+    this.applicationPrompt = new ApplicationPrompt(requests, program, this.envConfig, this.prompts);
+    this.userPrompt = new UserPrompt(requests, this.envConfig, this.prompts);
 
     this.initSourceDirectory();
   }

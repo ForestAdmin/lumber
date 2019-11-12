@@ -1,7 +1,7 @@
-const PromptUtils = require('./prompt-utils');
+const AbstractPrompter = require('./abstract-prompter');
 
-class UserPrompts extends PromptUtils {
-  constructor(envConfig, prompts, requests) {
+class UserPrompts extends AbstractPrompter {
+  constructor(requests, envConfig, prompts) {
     super(requests);
     this.envConfig = envConfig;
     this.prompts = prompts;

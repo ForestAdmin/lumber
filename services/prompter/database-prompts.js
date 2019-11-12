@@ -1,9 +1,9 @@
 const eventSender = require('../event-sender');
 const logger = require('../logger');
-const PromptUtils = require('./prompt-utils');
+const AbstractPrompter = require('./abstract-prompter');
 
-class DatabasePrompts extends PromptUtils {
-  constructor(program, envConfig, prompts, requests) {
+class DatabasePrompts extends AbstractPrompter {
+  constructor(requests, program, envConfig, prompts) {
     super(requests);
     this.program = program;
     this.envConfig = envConfig;
