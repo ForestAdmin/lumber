@@ -1,6 +1,13 @@
-MongoDB:
+OldMongoDB:
   image: mongo:3.2
   ports:
-    - "27017:27017"
+    - "27015:27017"
   volumes:
-    - ./data/mongodb:/var/lib/mongodb
+    - ./data/mongodb/3.2:/var/lib/mongodb
+
+MongoDB:
+  image: mongo:4.2
+  ports:
+    - "27016:27017"
+  volumes:
+    - ./data/mongodb/4.2:/var/lib/mongodb
