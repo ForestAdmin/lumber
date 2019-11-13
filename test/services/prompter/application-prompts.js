@@ -108,7 +108,16 @@ describe('Services > Prompter > Application prompts', () => {
     });
 
     describe('When the appHostname option is not requested', () => {
-      const applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+      let applicationPrompts;
+
+      before(() => {
+        program.applicationHost = 'Hostname';
+        applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+      });
+
+      after(() => {
+        resetParams();
+      });
 
       it('should not do anything', () => {
         expect(envConfig.appHostname).to.equal(undefined);
@@ -117,6 +126,7 @@ describe('Services > Prompter > Application prompts', () => {
         applicationPrompts.handleHostname();
 
         expect(envConfig.appHostname).to.equal(undefined);
+        expect(envConfig.appHostname).to.not.equal(program.applicationHost);
         expect(prompts).to.have.lengthOf(0);
       });
     });
