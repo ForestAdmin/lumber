@@ -19,6 +19,32 @@ const permissionMiddlewareCreator = new PermissionMiddlewareCreator('<%= modelNa
 // - Native routes are already generated and can be modified
 // - Smart action routes will need to be added as you create new Smart actions - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/actions/create-and-manage-smart-actions
 
+// Retrieve a list of <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/LIST-XXXX
+router.get('/<%= modelNameDasherized %>', ensureAuthenticated, permissionMiddlewareCreator.list(), (request, response, next) => {
+  const recordsGetter = new RecordsGetter(<%= modelName %>);
+  recordsGetter.getAll(request.query)
+    .then(records => recordsGetter.serialize(records))
+    .then(recordsSerialized => response.send(recordsSerialized))
+    .catch(next);
+});
+
+// Retrieve a count of <%= modelNameReadablePlural %> - Check out our documentation for more details: https://docs.forestadmin.com/COUNT-XXXX
+router.get('/<%= modelNameDasherized %>/count', ensureAuthenticated, permissionMiddlewareCreator.list(), (request, response, next) => {
+  const recordsCounter = new RecordsCounter(<%= modelName %>);
+  recordsCounter.count(request.query)
+    .then(count => response.send({ count }))
+    .catch(next);
+});
+
+// Retrieve details of a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/GET-XXXX
+router.get('/<%= modelNameDasherized %>/:recordId', ensureAuthenticated, permissionMiddlewareCreator.details(), (request, response, next) => {
+  const recordGetter = new RecordGetter(<%= modelName %>);
+  recordGetter.get(request.params.recordId)
+    .then(record => recordGetter.serialize(record))
+    .then(recordSerialized => response.send(recordSerialized))
+    .catch(next);
+});
+
 // Create a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/CREATE-XXXX
 router.post('/<%= modelNameDasherized %>', ensureAuthenticated, permissionMiddlewareCreator.create(), (request, response, next) => {
   const recordCreator = new RecordCreator(<%= modelName %>);
@@ -44,32 +70,6 @@ router.delete('/<%= modelNameDasherized %>/:recordId', ensureAuthenticated, perm
   const recordRemover = new RecordRemover(<%= modelName %>);
   recordRemover.remove(request.params.recordId)
     .then(() => response.status(204).send())
-    .catch(next);
-});
-
-// Retrieve details of a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/GET-XXXX
-router.get('/<%= modelNameDasherized %>/:recordId', ensureAuthenticated, permissionMiddlewareCreator.details(), (request, response, next) => {
-  const recordGetter = new RecordGetter(<%= modelName %>);
-  recordGetter.get(request.params.recordId)
-    .then(record => recordGetter.serialize(record))
-    .then(recordSerialized => response.send(recordSerialized))
-    .catch(next);
-});
-
-// Retrieve a list of <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/LIST-XXXX
-router.get('/<%= modelNameDasherized %>', ensureAuthenticated, permissionMiddlewareCreator.list(), (request, response, next) => {
-  const recordsGetter = new RecordsGetter(<%= modelName %>);
-  recordsGetter.getAll(request.query)
-    .then(records => recordsGetter.serialize(records))
-    .then(recordsSerialized => response.send(recordsSerialized))
-    .catch(next);
-});
-
-// Retrieve a count of <%= modelNameReadablePlural %> - Check out our documentation for more details: https://docs.forestadmin.com/COUNT-XXXX
-router.get('/<%= modelNameDasherized %>/count', ensureAuthenticated, permissionMiddlewareCreator.list(), (request, response, next) => {
-  const recordsCounter = new RecordsCounter(<%= modelName %>);
-  recordsCounter.count(request.query)
-    .then(count => response.send({ count }))
     .catch(next);
 });
 
