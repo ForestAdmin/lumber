@@ -251,7 +251,7 @@ async function Prompter(program, requests) {
             return 'Application hostname must be a valid url.';
           }
           if (!/^http((s:\/\/.*)|(s?:\/\/(localhost|127\.0\.0\.1).*))/i.test(hostname)) {
-            return 'HTTPS protocol is mandatory, except for localhost and 127.0.0.1';
+            return 'HTTPS protocol is mandatory, except for localhost and 127.0.0.1.';
           }
           return true;
         },

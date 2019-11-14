@@ -1,7 +1,7 @@
 # Change Log
 
 ## [Unreleased]
-### Added
+### Changed
 - Security - Prevent remote environments creation with HTTP protocol.
 
 ### Changed
