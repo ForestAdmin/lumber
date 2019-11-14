@@ -49,7 +49,7 @@ describe('Services > Prompter > General prompter', () => {
       });
 
       it('should terminate the process', async () => {
-        console.log(await generalPrompter.getConfig());
+        await generalPrompter.getConfig();
 
         const status = terminateStub.getCall(0).args[0];
         const {
