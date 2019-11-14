@@ -6,9 +6,8 @@ const {
 } = require('mocha');
 const { expect } = require('chai');
 const chalk = require('chalk');
-const rmdirSync = require('rmdir-sync');
-const mkdir = require('mkdirp');
 const sinon = require('sinon');
+const fs = require('fs');
 const messages = require('../../../utils/messages');
 const ProjectPrompts = require('../../../services/prompter/project-prompts');
 
@@ -86,11 +85,11 @@ describe('Services > Prompter > Project prompts', () => {
 
         describe('and the directory to write in is not available', () => {
           before(() => {
-            mkdir.sync(`${process.cwd()}/${FAKE_PROJECT_NAME}`);
+            fs.mkdirSync(`${process.cwd()}/${FAKE_PROJECT_NAME}`);
           });
 
           after(() => {
-            rmdirSync(`${process.cwd()}/${FAKE_PROJECT_NAME}`);
+            fs.rmdirSync(`${process.cwd()}/${FAKE_PROJECT_NAME}`);
           });
 
           it('should throw a prompter error', async () => {
