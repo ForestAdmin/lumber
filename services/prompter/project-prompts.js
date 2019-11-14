@@ -17,7 +17,7 @@ class ProjectPrompts extends AbstractPrompter {
 
   async handleName() {
     if (this.isOptionRequested('appName')) {
-      const projectName = this.program.args[0];
+      const [projectName] = this.program.args;
 
       if (!projectName) {
         throw new PrompterError(

@@ -3,6 +3,7 @@ const _ = require('lodash');
 const ApplicationPrompt = require('./application-prompts');
 const DatabasePrompt = require('./database-prompts');
 const ProjectPrompt = require('./project-prompts');
+const PromptError = require('./prompter-error');
 const UserPrompt = require('./user-prompts');
 const Terminator = require('../../utils/terminator');
 
@@ -39,7 +40,7 @@ class GeneralPrompter {
       await this.applicationPrompt.handlePrompts();
       await this.userPrompt.handlePrompts();
     } catch (error) {
-      if (error.errorCode && error.errorMessage && error.logs) {
+      if (error instanceof PromptError) {
         await Terminator.terminate(1, {
           errorCode: error.errorCode,
           errorMessage: error.errorMessage,
