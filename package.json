@@ -52,7 +52,7 @@
     "eslint-config-airbnb-base": "12.1.0",
     "eslint-plugin-import": "2.12.0",
     "mocha": "6.2.0",
-    "rmdir": "1.2.0",
+    "rmdir-sync": "1.0.1",
     "sinon": "7.5.0"
   }
 }

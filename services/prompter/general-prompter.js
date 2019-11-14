@@ -1,11 +1,10 @@
-const expandHomeDir = require('expand-home-dir');
 const inquirer = require('inquirer');
-const path = require('path');
 const _ = require('lodash');
 const ApplicationPrompt = require('./application-prompts');
 const DatabasePrompt = require('./database-prompts');
 const ProjectPrompt = require('./project-prompts');
 const UserPrompt = require('./user-prompts');
+const Terminator = require('../../utils/terminator');
 
 class GeneralPrompter {
   constructor(requests, program) {
@@ -15,13 +14,12 @@ class GeneralPrompter {
       db: program.db,
       password: program.password,
       token: program.token,
-      email: program.email,
     };
 
-    this.projectPrompt = new ProjectPrompt(requests, program.args[0], this.envConfig);
-    this.databasePrompt = new DatabasePrompt(requests, program, this.envConfig, this.prompts);
-    this.applicationPrompt = new ApplicationPrompt(requests, program, this.envConfig, this.prompts);
-    this.userPrompt = new UserPrompt(requests, this.envConfig, this.prompts);
+    this.projectPrompt = new ProjectPrompt(requests, this.envConfig, program);
+    this.databasePrompt = new DatabasePrompt(requests, this.envConfig, this.prompts, program);
+    this.applicationPrompt = new ApplicationPrompt(requests, this.envConfig, this.prompts, program);
+    this.userPrompt = new UserPrompt(requests, this.envConfig, this.prompts, program);
 
     this.initSourceDirectory();
   }
@@ -35,10 +33,22 @@ class GeneralPrompter {
   }
 
   async getConfig() {
-    await this.projectPrompt.handlePrompts();
-    await this.databasePrompt.handlePrompts();
-    await this.applicationPrompt.handlePrompts();
-    await this.userPrompt.handlePrompts();
+    try {
+      await this.projectPrompt.handlePrompts();
+      await this.databasePrompt.handlePrompts();
+      await this.applicationPrompt.handlePrompts();
+      await this.userPrompt.handlePrompts();
+    } catch (error) {
+      if (error.errorCode && error.errorMessage && error.logs) {
+        await Terminator.terminate(1, {
+          errorCode: error.errorCode,
+          errorMessage: error.errorMessage,
+          logs: error.logs,
+        });
+      } else {
+        throw error;
+      }
+    }
 
     this.config = await inquirer.prompt(this.prompts);
 
@@ -53,11 +63,6 @@ class GeneralPrompter {
     // NOTICE: Remove the dbPassword if there's no password for the DB
     // connection.
     if (!this.config.dbPassword) { delete this.config.dbPassword; }
-
-    // NOTICE: Expand the dbStorage ~ path.
-    if (this.config.dbStorage) {
-      this.config.dbStorage = path.resolve(expandHomeDir(this.config.dbStorage));
-    }
   }
 }
 

@@ -3,16 +3,13 @@ const {
   it,
   before,
   after,
-  afterEach,
 } = require('mocha');
-const P = require('bluebird');
 const { expect } = require('chai');
 const chalk = require('chalk');
-const rmdir = require('rmdir');
+const rmdirSync = require('rmdir-sync');
 const mkdir = require('mkdirp');
 const sinon = require('sinon');
-const eventSender = require('../../../services/event-sender');
-const logger = require('../../../services/logger');
+const messages = require('../../../utils/messages');
 const ProjectPrompts = require('../../../services/prompter/project-prompts');
 
 const FAKE_PROJECT_NAME = 'fakeProject';
@@ -20,10 +17,16 @@ const FAKE_PROJECT_NAME = 'fakeProject';
 describe('Services > Prompter > Project prompts', () => {
   let envConfig = {};
   let requests = [];
+  let program = {
+    args: [],
+  };
 
   function resetParams() {
     envConfig = {};
     requests = [];
+    program = {
+      args: [],
+    };
   }
 
   describe('Handling project related prompts', () => {
@@ -31,9 +34,14 @@ describe('Services > Prompter > Project prompts', () => {
     let nameHandlerStub;
 
     before(async () => {
-      projectPrompts = new ProjectPrompts(requests, 'project', envConfig);
+      program.args = [FAKE_PROJECT_NAME];
+      projectPrompts = new ProjectPrompts(requests, envConfig, program);
       nameHandlerStub = sinon.stub(projectPrompts, 'handleName');
       await projectPrompts.handlePrompts();
+    });
+
+    after(() => {
+      resetParams();
     });
 
     it('should handle the project name', () => {
@@ -43,96 +51,65 @@ describe('Services > Prompter > Project prompts', () => {
 
   describe('Handling project name prompt : ', () => {
     describe('when the appName option is requested', () => {
-      let loggerSpy;
-      let eventSenderSpy;
-      let processStub;
-
       before(() => {
         requests.push('appName');
-        loggerSpy = sinon.spy(logger, 'error');
-        eventSenderSpy = sinon.spy(eventSender, 'notifyError');
-        processStub = sinon.stub(process, 'exit');
-      });
-
-      afterEach(() => {
-        loggerSpy.resetHistory();
-        eventSenderSpy.resetHistory();
-      });
-
-      after(() => {
-        processStub.restore();
-        loggerSpy.restore();
-        eventSenderSpy.restore();
       });
 
       describe('and the projectName has not been passed in', () => {
-        const projectPrompts = new ProjectPrompts(requests, undefined, envConfig);
+        let projectPrompts;
 
-        it('should terminate the process with exit code 1', async () => {
-          await projectPrompts.handleName();
-
-          expect(processStub.calledOnce).to.equal(true);
-          expect(processStub.calledWith(1)).to.equal(true);
+        before(() => {
+          projectPrompts = new ProjectPrompts(requests, envConfig, program);
         });
 
-        it('should log an error message', async () => {
-          const firstErrorMessage = 'Missing project name in the command.';
-          const secondErrorMessage = 'Please specify a project name. Type lumber help for more information.';
-
-          await projectPrompts.handleName();
-
-          expect(loggerSpy.getCall(0).args[0]).to.equal(firstErrorMessage);
-          expect(loggerSpy.getCall(0).args[1]).to.equal(secondErrorMessage);
+        it('should throw a prompter error', async () => {
+          try {
+            await projectPrompts.handleName();
+            expect.fail('An error should have been thrown');
+          } catch (e) {
+            expect(e.errorMessage).to.equal(messages.ERROR_MISSING_PROJECT_NAME);
+            expect(e.logs).to.deep.equal([
+              messages.ERROR_MISSING_PROJECT_NAME,
+              messages.HINT_MISSING_PROJECT_NAME,
+            ]);
+          }
         });
       });
 
       describe('and the projectName has already been passed in', () => {
-        const projectPrompts = new ProjectPrompts(requests, FAKE_PROJECT_NAME, envConfig);
+        let projectPrompts;
 
-        describe('and the directory to write in is not available', async () => {
+        before(() => {
+          program.args = [FAKE_PROJECT_NAME];
+          projectPrompts = new ProjectPrompts(requests, envConfig, program);
+        });
+
+        describe('and the directory to write in is not available', () => {
           before(() => {
-            const mkdirAsync = P.promisify(mkdir);
-
-            mkdirAsync.sync(`${process.cwd()}/${FAKE_PROJECT_NAME}`);
+            mkdir.sync(`${process.cwd()}/${FAKE_PROJECT_NAME}`);
           });
 
-          after(async () => {
-            const rmdirAsync = P.promisify(rmdir);
-
-            await rmdirAsync(`${process.cwd()}/${FAKE_PROJECT_NAME}`);
+          after(() => {
+            rmdirSync(`${process.cwd()}/${FAKE_PROJECT_NAME}`);
           });
 
-          it('should terminate the process with exit code 1', async () => {
-            await projectPrompts.handleName();
+          it('should throw a prompter error', async () => {
+            try {
+              await projectPrompts.handleName();
+              expect.fail('An error should have been thrown');
+            } catch (e) {
+              const message = `The directory ${chalk.red(`${process.cwd()}/${program.args[0]}`)} already exists.`;
 
-            expect(process.exit.calledOnce);
-            expect(process.exit.calledWith(1));
-          });
-
-          it('should log an error in the console', async () => {
-            const firstErrorMessage = `The directory ${chalk.red(`${process.cwd()}/${FAKE_PROJECT_NAME}`)} already exists.`;
-            const secondErrorMessage = 'Please retry with another project name.';
-
-            await projectPrompts.handleName();
-
-            expect(loggerSpy.calledOnce);
-            expect(loggerSpy.getCall(0).args[0]).to.equal(firstErrorMessage);
-            expect(loggerSpy.getCall(0).args[1]).to.equal(secondErrorMessage);
-          });
-
-          it('should send an event', async () => {
-            const firstArgument = 'unknown_error';
-            const secondArgument = `The directory ${chalk.red(`${process.cwd()}/${FAKE_PROJECT_NAME}`)} already exists.`;
-
-            await projectPrompts.handleName();
-
-            expect(eventSenderSpy.calledOnce);
-            expect(eventSenderSpy.getCall(0).args[0]).to.equal(firstArgument);
-            expect(eventSenderSpy.getCall(0).args[1]).to.equal(secondArgument);
+              expect(e.errorMessage).to.equal(message);
+              expect(e.logs).to.deep.equal([
+                message,
+                messages.HINT_DIRECTORY_ALREADY_EXISTS,
+              ]);
+            }
           });
         });
 
-        describe('and the directory to write in is available', async () => {
+        describe('and the directory to write in is available', () => {
           it('should add the appName to the configuration', async () => {
             expect(envConfig.appName).to.equal(undefined);
 
@@ -150,7 +127,8 @@ describe('Services > Prompter > Project prompts', () => {
       });
 
       it('should not do anything', async () => {
-        const projectPrompts = new ProjectPrompts(requests, FAKE_PROJECT_NAME, envConfig);
+        program.args = [FAKE_PROJECT_NAME];
+        const projectPrompts = new ProjectPrompts(requests, envConfig, program);
 
         expect(envConfig.appName).to.equal(undefined);
 

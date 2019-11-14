@@ -1,22 +1,21 @@
 const AbstractPrompter = require('./abstract-prompter');
 
 class UserPrompts extends AbstractPrompter {
-  static get FORMAT_PASSWORD() { return /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/; }
-
-  constructor(requests, envConfig, prompts) {
+  constructor(requests, envConfig, prompts, program) {
     super(requests);
     this.envConfig = envConfig;
     this.prompts = prompts;
+    this.program = program;
   }
 
   async handlePrompts() {
     this.handleEmail();
-    this.handleCreatePassword();
     this.handlePassword();
   }
 
   handleEmail() {
     if (this.isOptionRequested('email')) {
+      this.envConfig.email = this.program.email;
       if (!this.envConfig.email) {
         this.prompts.push({
           type: 'input',
@@ -25,30 +24,6 @@ class UserPrompts extends AbstractPrompter {
           validate: (email) => {
             if (email) { return true; }
             return 'Please enter your email address.';
-          },
-        });
-      }
-    }
-  }
-
-  handleCreatePassword() {
-    if (this.isOptionRequested('passwordCreate')) {
-      if (!this.envConfig.authToken) {
-        this.prompts.push({
-          type: 'password',
-          name: 'password',
-          message: 'Choose a password: ',
-          validate: (password) => {
-            if (password) {
-              if (UserPrompts.FORMAT_PASSWORD.test(password)) { return true; }
-              return '🔓  Your password security is too weak 🔓\n' +
-                ' Please make sure it contains at least:\n' +
-                '    > 8 characters\n' +
-                '    > Upper and lower case letters\n' +
-                '    > Numbers';
-            }
-
-            return 'Your password cannot be blank.';
           },
         });
       }

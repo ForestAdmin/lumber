@@ -30,7 +30,7 @@ describe('Services > Prompter > Application prompts', () => {
     let portHandlerStub;
 
     before(async () => {
-      applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+      applicationPrompts = new ApplicationPrompts(requests, envConfig, prompts, program);
       hostnameHandlerStub = sinon.stub(applicationPrompts, 'handleHostname');
       portHandlerStub = sinon.stub(applicationPrompts, 'handlePort');
       await applicationPrompts.handlePrompts();
@@ -58,7 +58,7 @@ describe('Services > Prompter > Application prompts', () => {
 
         before(() => {
           requests.push('appHostname');
-          applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+          applicationPrompts = new ApplicationPrompts(requests, envConfig, prompts, program);
           applicationPrompts.handleHostname();
         });
 
@@ -89,7 +89,7 @@ describe('Services > Prompter > Application prompts', () => {
           requests.push('appHostname');
           program.applicationHost = FAKE_APP_HOST;
 
-          applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+          applicationPrompts = new ApplicationPrompts(requests, envConfig, prompts, program);
           applicationPrompts.handleHostname();
         });
 
@@ -112,7 +112,7 @@ describe('Services > Prompter > Application prompts', () => {
 
       before(() => {
         program.applicationHost = 'Hostname';
-        applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+        applicationPrompts = new ApplicationPrompts(requests, envConfig, prompts, program);
       });
 
       after(() => {
@@ -139,7 +139,7 @@ describe('Services > Prompter > Application prompts', () => {
 
         before(() => {
           requests.push('appPort');
-          applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+          applicationPrompts = new ApplicationPrompts(requests, envConfig, prompts, program);
           applicationPrompts.handlePort();
         });
 
@@ -176,7 +176,7 @@ describe('Services > Prompter > Application prompts', () => {
         before(() => {
           requests.push('appPort');
           program.applicationPort = FAKE_APP_PORT;
-          applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+          applicationPrompts = new ApplicationPrompts(requests, envConfig, prompts, program);
           applicationPrompts.handlePort();
         });
 
@@ -195,7 +195,12 @@ describe('Services > Prompter > Application prompts', () => {
     });
 
     describe('When the appPort option is not requested', () => {
-      const applicationPrompts = new ApplicationPrompts(requests, program, envConfig, prompts);
+      let applicationPrompts;
+
+      before(() => {
+        program.applicationPort = FAKE_APP_PORT;
+        applicationPrompts = new ApplicationPrompts(requests, envConfig, prompts, program);
+      });
 
       it('should not do anything', () => {
         expect(envConfig.appPort).to.equal(undefined);
@@ -204,6 +209,7 @@ describe('Services > Prompter > Application prompts', () => {
         applicationPrompts.handlePort();
 
         expect(envConfig.appPort).to.equal(undefined);
+        expect(envConfig.appPort).to.not.equal(FAKE_APP_PORT);
         expect(prompts).to.have.lengthOf(0);
       });
     });

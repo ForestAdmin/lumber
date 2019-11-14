@@ -1,14 +1,14 @@
 const chalk = require('chalk');
 const DirectoryExistenceChecker = require('../directory-existence-checker');
-const eventSender = require('../event-sender');
-const logger = require('../logger');
 const AbstractPrompter = require('./abstract-prompter');
+const PrompterError = require('./prompter-error');
+const messages = require('../../utils/messages');
 
 class ProjectPrompts extends AbstractPrompter {
-  constructor(requests, projectName, envConfig) {
+  constructor(requests, envConfig, program) {
     super(requests);
-    this.projectName = projectName;
     this.envConfig = envConfig;
+    this.program = program;
   }
 
   async handlePrompts() {
@@ -17,22 +17,27 @@ class ProjectPrompts extends AbstractPrompter {
 
   async handleName() {
     if (this.isOptionRequested('appName')) {
-      if (!this.projectName) {
-        logger.error(
-          'Missing project name in the command.',
-          'Please specify a project name. Type lumber help for more information.',
+      const projectName = this.program.args[0];
+
+      if (!projectName) {
+        throw new PrompterError(
+          messages.ERROR_MISSING_PROJECT_NAME,
+          [
+            messages.ERROR_MISSING_PROJECT_NAME,
+            messages.HINT_MISSING_PROJECT_NAME,
+          ],
         );
-        process.exit(1);
-      } else if (new DirectoryExistenceChecker(process.cwd(), this.projectName).perform()) {
-        const message = `The directory ${chalk.red(`${process.cwd()}/${this.projectName}`)} already exists.`;
-        logger.error(
+      } else if (new DirectoryExistenceChecker(process.cwd(), projectName).perform()) {
+        const message = `The directory ${chalk.red(`${process.cwd()}/${projectName}`)} already exists.`;
+        throw new PrompterError(
           message,
-          'Please retry with another project name.',
+          [
+            message,
+            messages.HINT_DIRECTORY_ALREADY_EXISTS,
+          ],
         );
-        await eventSender.notifyError('unknown_error', message);
-        process.exit(1);
       } else {
-        this.envConfig.appName = this.projectName;
+        this.envConfig.appName = projectName;
       }
     }
   }

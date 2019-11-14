@@ -12,11 +12,13 @@ describe('Services > Prompter > User prompts', () => {
   let envConfig = {};
   let requests = [];
   let prompts = [];
+  let program = {};
 
   function resetParams() {
     envConfig = {};
     requests = [];
     prompts = [];
+    program = {};
   }
 
   describe('Handling user related prompts', () => {
@@ -26,7 +28,7 @@ describe('Services > Prompter > User prompts', () => {
     let passwordHandlerStub;
 
     before(async () => {
-      userPrompts = new UserPrompts(requests, envConfig, prompts);
+      userPrompts = new UserPrompts(requests, envConfig, prompts, program);
       emailHandlerStub = sinon.stub(userPrompts, 'handleEmail');
       createPasswordHandlerStub = sinon.stub(userPrompts, 'handleCreatePassword');
       passwordHandlerStub = sinon.stub(userPrompts, 'handlePassword');
@@ -71,7 +73,7 @@ describe('Services > Prompter > User prompts', () => {
         let userPrompts;
 
         before(() => {
-          userPrompts = new UserPrompts(requests, envConfig, prompts);
+          userPrompts = new UserPrompts(requests, envConfig, prompts, program);
         });
 
         after(() => {
@@ -100,18 +102,27 @@ describe('Services > Prompter > User prompts', () => {
       });
 
       describe('And the email has already been passed in', () => {
-        let userPrompts;
-
         before(() => {
-          envConfig.email = 'fake@email.com';
-          userPrompts = new UserPrompts(requests, envConfig, prompts);
+          program.email = 'fake@email.com';
         });
 
         after(() => {
-          prompts = [];
+          resetParams();
+        });
+
+        it('should add the email to the configuration', async () => {
+          const userPrompts = new UserPrompts(requests, envConfig, prompts, program);
+
+          expect(envConfig.email).to.equal(undefined);
+
+          userPrompts.handleEmail();
+
+          expect(envConfig.email).to.equal('fake@email.com');
         });
 
         it('should not add an additional prompt', () => {
+          const userPrompts = new UserPrompts(requests, envConfig, prompts, program);
+
           expect(prompts).to.have.lengthOf(0);
 
           userPrompts.handleEmail();
@@ -122,99 +133,12 @@ describe('Services > Prompter > User prompts', () => {
     });
 
     describe('When the email option is not requested', () => {
-      const userPrompts = new UserPrompts(requests, envConfig, prompts);
+      const userPrompts = new UserPrompts(requests, envConfig, prompts, program);
 
       it('should not add an additional prompt', () => {
         expect(prompts).to.have.lengthOf(0);
 
         userPrompts.handleEmail();
-
-        expect(prompts).to.have.lengthOf(0);
-      });
-    });
-  });
-
-  describe('Handling create password prompt :', () => {
-    describe('When the passwordCreate option is requested', () => {
-      before(() => {
-        requests.push('passwordCreate');
-      });
-
-      after(() => {
-        resetParams();
-      });
-
-      describe('And the auth token has not been passed in', () => {
-        let userPrompts;
-
-        before(() => {
-          userPrompts = new UserPrompts(requests, envConfig, prompts);
-        });
-
-        after(() => {
-          prompts = [];
-        });
-
-        it('should add a prompt to ask for a new password', () => {
-          expect(prompts).to.have.lengthOf(0);
-
-          userPrompts.handleCreatePassword();
-
-          expect(prompts).to.have.lengthOf(1);
-        });
-
-        it('should add a prompt with the correct configuration', () => {
-          expect(prompts[0].type).to.equal('password');
-          expect(prompts[0].name).to.equal('password');
-          expect(prompts[0].message).to.equal('Choose a password: ');
-          expect(prompts[0].validate).to.be.a('function');
-        });
-
-        it('should validate that the password has been field', () => {
-          expect(prompts[0].validate(null)).to.equal('Your password cannot be blank.');
-        });
-
-        it('should ensure that the password matches security rules', () => {
-          const errorMessage = '🔓  Your password security is too weak 🔓\n' +
-            ' Please make sure it contains at least:\n' +
-            '    > 8 characters\n' +
-            '    > Upper and lower case letters\n' +
-            '    > Numbers';
-
-          expect(prompts[0].validate('notStrongEnough')).to.equal(errorMessage);
-          expect(prompts[0].validate('StrongPassword11@')).to.equal(true);
-        });
-      });
-
-      describe('And the auth token has already been passed in', () => {
-        let userPrompts;
-
-        before(() => {
-          envConfig.authToken = 'fakeToken';
-          userPrompts = new UserPrompts(requests, envConfig, prompts);
-        });
-
-        after(() => {
-          resetParams();
-        });
-
-        it('should not add an additional prompt', () => {
-          expect(prompts).to.have.lengthOf(0);
-
-          userPrompts.handleCreatePassword();
-
-          expect(prompts).to.have.lengthOf(0);
-        });
-      });
-    });
-
-    describe('When the passwordCreate option is not requested', () => {
-      const userPrompts = new UserPrompts(requests, envConfig, prompts);
-
-      it('should not add an additional prompt', () => {
-        expect(prompts).to.have.lengthOf(0);
-
-        userPrompts.handleCreatePassword();
 
         expect(prompts).to.have.lengthOf(0);
       });
@@ -228,7 +152,7 @@ describe('Services > Prompter > User prompts', () => {
       before(() => {
         requests.push('password');
 
-        userPrompts = new UserPrompts(requests, envConfig, prompts);
+        userPrompts = new UserPrompts(requests, envConfig, prompts, program);
       });
 
       after(() => {
@@ -257,7 +181,7 @@ describe('Services > Prompter > User prompts', () => {
     });
 
     describe('When the password option is not requested', () => {
-      const userPrompts = new UserPrompts(requests, envConfig, prompts);
+      const userPrompts = new UserPrompts(requests, envConfig, prompts, program);
 
       it('should not add an additional prompt', () => {
         expect(prompts).to.have.lengthOf(0);

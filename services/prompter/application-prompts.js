@@ -1,11 +1,11 @@
 const AbstractPrompter = require('./abstract-prompter');
 
 class ApplicationPrompts extends AbstractPrompter {
-  constructor(requests, program, envConfig, prompts) {
+  constructor(requests, envConfig, prompts, program) {
     super(requests);
-    this.program = program;
     this.envConfig = envConfig;
     this.prompts = prompts;
+    this.program = program;
   }
 
   async handlePrompts() {

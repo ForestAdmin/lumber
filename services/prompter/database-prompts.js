@@ -1,13 +1,13 @@
-const eventSender = require('../event-sender');
-const logger = require('../logger');
 const AbstractPrompter = require('./abstract-prompter');
+const PrompterError = require('./prompter-error');
+const messages = require('../../utils/messages');
 
 class DatabasePrompts extends AbstractPrompter {
-  constructor(requests, program, envConfig, prompts) {
+  constructor(requests, envConfig, prompts, program) {
     super(requests);
-    this.program = program;
     this.envConfig = envConfig;
     this.prompts = prompts;
+    this.program = program;
   }
 
   async handlePrompts() {
@@ -31,10 +31,12 @@ class DatabasePrompts extends AbstractPrompter {
         [, this.envConfig.dbDialect] = this.envConfig.dbConnectionUrl.match(/(.*):\/\//);
         if (this.envConfig.dbDialect === 'mongodb+srv') { this.envConfig.dbDialect = 'mongodb'; }
       } catch (error) {
-        const message = 'Cannot parse the database dialect. Please, check the syntax of the database connection string.';
-        logger.error(message);
-        await eventSender.notifyError('unknown_error', message);
-        process.exit(1);
+        throw new PrompterError(
+          messages.ERROR_NOT_PARSABLE_CONNECTION_URL,
+          [
+            messages.ERROR_NOT_PARSABLE_CONNECTION_URL,
+          ],
+        );
       }
     }
   }
@@ -50,7 +52,7 @@ class DatabasePrompts extends AbstractPrompter {
 
       // NOTICE: use a rawlist on Windows because of this issue:
       // https://github.com/SBoudrias/Inquirer.js/issues/303
-      if (/^win/.test(process.platform)) {
+      if (/^win32/.test(process.platform)) {
         prompt.type = 'rawlist';
       }
 
@@ -181,8 +183,13 @@ class DatabasePrompts extends AbstractPrompter {
             throw new Error();
           }
         } catch (e) {
-          logger.error(`Database SSL value must be either "true" or "false" ("${ssl}" given).`);
-          process.exit(1);
+          const message = `Database SSL value must be either "true" or "false" ("${ssl}" given).`;
+          throw new PrompterError(
+            message,
+            [
+              message,
+            ],
+          );
         }
       } else {
         this.prompts.push({
