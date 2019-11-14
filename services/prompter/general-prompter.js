@@ -13,7 +13,6 @@ class GeneralPrompter {
     this.program = program;
     this.envConfig = {
       db: program.db,
-      password: program.password,
       token: program.token,
     };
 

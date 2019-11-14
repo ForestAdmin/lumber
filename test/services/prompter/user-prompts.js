@@ -138,13 +138,12 @@ describe('Services > Prompter > User prompts', () => {
     });
   });
 
-  describe('Handling password prompt :', () => {
-    describe('When the password option is requested', () => {
+  describe('Handling password :', () => {
+    describe('When the password has already been passed in', () => {
       let userPrompts;
 
       before(() => {
-        requests.push('password');
-
+        program.password = 'password';
         userPrompts = new UserPrompts(requests, envConfig, prompts, program);
       });
 
@@ -152,36 +151,33 @@ describe('Services > Prompter > User prompts', () => {
         resetParams();
       });
 
-      it('should add a prompt to ask for the user password', () => {
-        expect(prompts).to.have.lengthOf(0);
+      it('should add the password to the configuration', () => {
+        expect(envConfig.password).to.equal(undefined);
 
         userPrompts.handlePassword();
 
-        expect(prompts).to.have.lengthOf(1);
-      });
-
-      it('should add a prompt with the correct configuration', () => {
-        expect(prompts[0].type).to.equal('password');
-        expect(prompts[0].name).to.equal('password');
-        expect(prompts[0].message).to.equal('What\'s your password: ');
-        expect(prompts[0].validate).to.be.a('function');
-      });
-
-      it('should validate that the password has been field', () => {
-        expect(prompts[0].validate(null)).to.equal('Your password cannot be blank.');
-        expect(prompts[0].validate('fakePassword')).to.equal(true);
+        expect(envConfig.password).to.not.equal(undefined);
+        expect(envConfig.password).to.equal('password');
       });
     });
 
-    describe('When the password option is not requested', () => {
-      const userPrompts = new UserPrompts(requests, envConfig, prompts, program);
+    describe('When the password has not been passed in', () => {
+      let userPrompts;
 
-      it('should not add an additional prompt', () => {
-        expect(prompts).to.have.lengthOf(0);
+      before(() => {
+        userPrompts = new UserPrompts(requests, envConfig, prompts, program);
+      });
+
+      after(() => {
+        resetParams();
+      });
+
+      it('should not add the password to the configuration', () => {
+        expect(envConfig.password).to.equal(undefined);
 
         userPrompts.handlePassword();
 
-        expect(prompts).to.have.lengthOf(0);
+        expect(envConfig.password).to.equal(undefined);
       });
     });
   });

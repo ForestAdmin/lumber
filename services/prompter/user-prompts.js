@@ -32,17 +32,7 @@ class UserPrompts extends AbstractPrompter {
   }
 
   handlePassword() {
-    if (this.isOptionRequested('password')) {
-      this.prompts.push({
-        type: 'password',
-        name: 'password',
-        message: 'What\'s your password: ',
-        validate: (password) => {
-          if (password) { return true; }
-          return 'Your password cannot be blank.';
-        },
-      });
-    }
+    this.envConfig.password = this.program.password;
   }
 }
 
