@@ -24,30 +24,23 @@ describe('Services > Prompter > User prompts', () => {
   describe('Handling user related prompts', () => {
     let userPrompts;
     let emailHandlerStub;
-    let createPasswordHandlerStub;
     let passwordHandlerStub;
 
     before(async () => {
       userPrompts = new UserPrompts(requests, envConfig, prompts, program);
       emailHandlerStub = sinon.stub(userPrompts, 'handleEmail');
-      createPasswordHandlerStub = sinon.stub(userPrompts, 'handleCreatePassword');
       passwordHandlerStub = sinon.stub(userPrompts, 'handlePassword');
       await userPrompts.handlePrompts();
     });
 
     after(() => {
       emailHandlerStub.restore();
-      createPasswordHandlerStub.restore();
       passwordHandlerStub.restore();
       resetParams();
     });
 
     it('should handle the email', () => {
       expect(emailHandlerStub.calledOnce).to.equal(true);
-    });
-
-    it('should handle the password creation', () => {
-      expect(createPasswordHandlerStub.calledOnce).to.equal(true);
     });
 
     it('should handle the password', () => {

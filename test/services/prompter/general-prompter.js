@@ -29,7 +29,7 @@ describe('Services > Prompter > General prompter', () => {
       let terminateStub;
 
       before(() => {
-        const promptError = new PrompterError('error message', ['log']);
+        const promptError = new PrompterError('error message', ['logs']);
 
         generalPrompter = new GeneralPrompter(requests, program);
         userPromptsStub = sinon.stub(generalPrompter.userPrompt, 'handlePrompts').rejects(promptError);
