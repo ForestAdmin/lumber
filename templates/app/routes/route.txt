@@ -29,15 +29,6 @@ router.post('/<%= modelNameDasherized %>', ensureAuthenticated, permissionMiddle
     .catch(next);
 });
 
-// Retrieve details of a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/GET-XXXX
-router.get('/<%= modelNameDasherized %>/:recordId', ensureAuthenticated, permissionMiddlewareCreator.details(), (request, response, next) => {
-  const recordGetter = new RecordGetter(<%= modelName %>);
-  recordGetter.get(request.params.recordId)
-    .then(record => recordGetter.serialize(record))
-    .then(recordSerialized => response.send(recordSerialized))
-    .catch(next);
-});
-
 // Update a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/UPDATE-XXXX
 router.put('/<%= modelNameDasherized %>/:recordId', ensureAuthenticated, permissionMiddlewareCreator.update(), (request, response, next) => {
   const recordUpdater = new RecordUpdater(<%= modelName %>);
@@ -53,6 +44,15 @@ router.delete('/<%= modelNameDasherized %>/:recordId', ensureAuthenticated, perm
   const recordRemover = new RecordRemover(<%= modelName %>);
   recordRemover.remove(request.params.recordId)
     .then(() => response.status(204).send())
+    .catch(next);
+});
+
+// Retrieve details of a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/GET-XXXX
+router.get('/<%= modelNameDasherized %>/:recordId', ensureAuthenticated, permissionMiddlewareCreator.details(), (request, response, next) => {
+  const recordGetter = new RecordGetter(<%= modelName %>);
+  recordGetter.get(request.params.recordId)
+    .then(record => recordGetter.serialize(record))
+    .then(recordSerialized => response.send(recordSerialized))
     .catch(next);
 });
 
