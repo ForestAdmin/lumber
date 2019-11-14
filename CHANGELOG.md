@@ -8,6 +8,7 @@
 - Command Generate - Add tests on model generation (MySQL and PostgreSQL).
 - Command Generate - Add logs about what is happening.
 - Technical - Refactor and add tests on prompter.
+- Command Generate - Generate the forest routes to ease the use of `smart routes`.
 
 ### Changed
 - Commands - Drop environment variables.

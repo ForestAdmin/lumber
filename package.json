@@ -37,6 +37,7 @@
     "mongodb": "3.3.0",
     "mysql2": "1.7.0",
     "pg": "^6.1.0",
+    "pluralize": "^8.0.0",
     "saslprep": "1.0.3",
     "sequelize": "5.21.2",
     "simple-git": "1.126.0",

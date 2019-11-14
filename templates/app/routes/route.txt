@@ -1,0 +1,83 @@
+const express = require('express');
+const {
+  ensureAuthenticated,
+  PermissionMiddlewareCreator,
+  RecordsGetter,
+  RecordsCounter,
+  RecordsExporter,
+  RecordGetter,
+  RecordCreator,
+  RecordUpdater,
+  RecordRemover,
+} = require('forest-express-<% if (dbDialect === 'mongodb') { %>mongoose<% } else { %>sequelize<% } %>');
+const { <%= modelName %> } = require('../models');
+
+const router = express.Router();
+const permissionMiddlewareCreator = new PermissionMiddlewareCreator('<%= modelName %>');
+
+// This file contains the logic of every route in Forest Admin for the collection <%= modelName %>:
+// - Native routes are already generated and can be modified
+// - Smart action routes will need to be added as you create new Smart actions - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/actions/create-and-manage-smart-actions
+
+// Retrieve a list of <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/LIST-XXXX
+router.get('/<%= modelNameDasherized %>', ensureAuthenticated, permissionMiddlewareCreator.list(), (request, response, next) => {
+  const recordsGetter = new RecordsGetter(<%= modelName %>);
+  recordsGetter.getAll(request.query)
+    .then(records => recordsGetter.serialize(records))
+    .then(recordsSerialized => response.send(recordsSerialized))
+    .catch(next);
+});
+
+// Retrieve a count of <%= modelNameReadablePlural %> - Check out our documentation for more details: https://docs.forestadmin.com/COUNT-XXXX
+router.get('/<%= modelNameDasherized %>/count', ensureAuthenticated, permissionMiddlewareCreator.list(), (request, response, next) => {
+  const recordsCounter = new RecordsCounter(<%= modelName %>);
+  recordsCounter.count(request.query)
+    .then(count => response.send({ count }))
+    .catch(next);
+});
+
+// Export a list of <%= modelNameReadablePlural %> - Check out our documentation for more details: https://docs.forestadmin.com/EXPORT-XXXX
+router.get('/<%= modelNameDasherized %>.csv', ensureAuthenticated, permissionMiddlewareCreator.export(), (request, response, next) => {
+  const recordsExporter = new RecordsExporter(<%= modelName %>);
+  recordsExporter.streamExport(response, request.query)
+    .catch(next);
+});
+
+// Retrieve details of a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/GET-XXXX
+router.get('/<%= modelNameDasherized %>/:recordId', ensureAuthenticated, permissionMiddlewareCreator.details(), (request, response, next) => {
+  const recordGetter = new RecordGetter(<%= modelName %>);
+  recordGetter.get(request.params.recordId)
+    .then(record => recordGetter.serialize(record))
+    .then(recordSerialized => response.send(recordSerialized))
+    .catch(next);
+});
+
+// Create a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/CREATE-XXXX
+router.post('/<%= modelNameDasherized %>', ensureAuthenticated, permissionMiddlewareCreator.create(), (request, response, next) => {
+  const recordCreator = new RecordCreator(<%= modelName %>);
+  recordCreator.deserialize(request.body)
+    .then(recordToCreate => recordCreator.create(recordToCreate))
+    .then(record => recordCreator.serialize(record))
+    .then(recordSerialized => response.send(recordSerialized))
+    .catch(next);
+});
+
+// Update a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/UPDATE-XXXX
+router.put('/<%= modelNameDasherized %>/:recordId', ensureAuthenticated, permissionMiddlewareCreator.update(), (request, response, next) => {
+  const recordUpdater = new RecordUpdater(<%= modelName %>);
+  recordUpdater.deserialize(request.body)
+    .then(recordToUpdate => recordUpdater.update(recordToUpdate, request.params.recordId))
+    .then(record => recordUpdater.serialize(record))
+    .then(recordSerialized => response.send(recordSerialized))
+    .catch(next);
+});
+
+// Delete a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/DELETE-XXXX
+router.delete('/<%= modelNameDasherized %>/:recordId', ensureAuthenticated, permissionMiddlewareCreator.delete(), (request, response, next) => {
+  const recordRemover = new RecordRemover(<%= modelName %>);
+  recordRemover.remove(request.params.recordId)
+    .then(() => response.status(204).send())
+    .catch(next);
+});
+
+module.exports = router;
