@@ -6,6 +6,7 @@ const chalk = require('chalk');
 const logger = require('./logger');
 const eventSender = require('./event-sender');
 const DirectoryExistenceChecker = require('./directory-existence-checker');
+const { encodeConnectionString } = require('./connection-strings');
 
 const FORMAT_PASSWORD = /^(?=\S*?[A-Z])(?=\S*?[a-z])((?=\S*?[0-9]))\S{8,}$/;
 
@@ -45,7 +46,13 @@ async function Prompter(program, requests) {
   }
 
   if (isRequested('dbConnectionUrl')) {
-    envConfig.dbConnectionUrl = program.connectionUrl || process.env.DATABASE_URL;
+    const connectionString = program.connectionUrl || process.env.DATABASE_URL;
+    try {
+      envConfig.dbConnectionUrl = encodeConnectionString(connectionString);
+    } catch (error) {
+      logger.error(error);
+      process.exit(1);
+    }
 
     try {
       [, envConfig.dbDialect] = envConfig.dbConnectionUrl.match(/(.*):\/\//);

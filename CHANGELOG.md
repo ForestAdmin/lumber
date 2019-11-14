@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- ConnectionString - credentials are uri encoded when possible.
+
 ### Changed
 - Technical - Remove unused ENCRYPT env variable.
 

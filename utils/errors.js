@@ -12,3 +12,12 @@ function createLumberError(name) {
 exports.DatabaseAnalyzerError = {
   EmptyDatabase: createLumberError('EmptyDatabase'),
 };
+
+class InvalidConnectionString extends Error {
+  constructor(message) {
+    super();
+    this.message = message;
+  }
+}
+
+exports.ConnectionStringError = { InvalidConnectionString };
