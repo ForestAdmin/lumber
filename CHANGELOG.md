@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Security - Prevent remote environments creation with HTTP protocol
+
 ### Changed
 - Technical - Remove unused ENCRYPT env variable.
 
