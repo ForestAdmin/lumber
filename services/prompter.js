@@ -245,7 +245,7 @@ async function Prompter(program, requests) {
         type: 'input',
         name: 'appHostname',
         message: 'What\'s the IP/hostname on which your application will be running? ',
-        default: 'localhost',
+        default: 'http://localhost',
         validate: (hostname) => {
           if (!/^https?:\/\/.*/i.test(hostname)) {
             return 'Application hostname must be a valid url.';
