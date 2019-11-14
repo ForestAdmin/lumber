@@ -15,6 +15,7 @@
 - Commands - Remove command run and install.
 - Command Generate - Install Forest Admin middleware.
 - Logs - Improve the wording for several existing logs.
+- Command Generate - Normalize the filenames.
 
 ### Fixed
 - Command Login - Disable account creation.
