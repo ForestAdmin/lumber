@@ -245,7 +245,16 @@ async function Prompter(program, requests) {
         type: 'input',
         name: 'appHostname',
         message: 'What\'s the IP/hostname on which your application will be running? ',
-        default: 'localhost',
+        default: 'http://localhost',
+        validate: (hostname) => {
+          if (!/^https?:\/\/.*/i.test(hostname)) {
+            return 'Application hostname must be a valid url.';
+          }
+          if (!/^http((s:\/\/.*)|(s?:\/\/(localhost|127\.0\.0\.1).*))/i.test(hostname)) {
+            return 'HTTPS protocol is mandatory, except for localhost and 127.0.0.1.';
+          }
+          return true;
+        },
       });
     }
   }
