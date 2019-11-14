@@ -25,17 +25,20 @@ describe('Services > Prompter > User prompts', () => {
     let userPrompts;
     let emailHandlerStub;
     let passwordHandlerStub;
+    let tokenHandlerStub;
 
     before(async () => {
       userPrompts = new UserPrompts(requests, envConfig, prompts, program);
       emailHandlerStub = sinon.stub(userPrompts, 'handleEmail');
       passwordHandlerStub = sinon.stub(userPrompts, 'handlePassword');
+      tokenHandlerStub = sinon.stub(userPrompts, 'handleToken');
       await userPrompts.handlePrompts();
     });
 
     after(() => {
       emailHandlerStub.restore();
       passwordHandlerStub.restore();
+      tokenHandlerStub.restore();
       resetParams();
     });
 
@@ -45,6 +48,10 @@ describe('Services > Prompter > User prompts', () => {
 
     it('should handle the password', () => {
       expect(passwordHandlerStub.calledOnce).to.equal(true);
+    });
+
+    it('should handle the token', () => {
+      expect(tokenHandlerStub.calledOnce).to.equal(true);
     });
   });
 
@@ -178,6 +185,50 @@ describe('Services > Prompter > User prompts', () => {
         userPrompts.handlePassword();
 
         expect(envConfig.password).to.equal(undefined);
+      });
+    });
+  });
+
+  describe('Handling token :', () => {
+    describe('When the token has already been passed in', () => {
+      let userPrompts;
+
+      before(() => {
+        program.token = 'fake token';
+        userPrompts = new UserPrompts(requests, envConfig, prompts, program);
+      });
+
+      after(() => {
+        resetParams();
+      });
+
+      it('should add the token to the configuration', () => {
+        expect(envConfig.token).to.equal(undefined);
+
+        userPrompts.handleToken();
+
+        expect(envConfig.token).to.not.equal(undefined);
+        expect(envConfig.token).to.equal('fake token');
+      });
+    });
+
+    describe('When the token has not been passed in', () => {
+      let userPrompts;
+
+      before(() => {
+        userPrompts = new UserPrompts(requests, envConfig, prompts, program);
+      });
+
+      after(() => {
+        resetParams();
+      });
+
+      it('should not add the token to the configuration', () => {
+        expect(envConfig.token).to.equal(undefined);
+
+        userPrompts.handleToken();
+
+        expect(envConfig.token).to.equal(undefined);
       });
     });
   });

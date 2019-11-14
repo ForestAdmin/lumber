@@ -13,7 +13,6 @@ class GeneralPrompter {
     this.program = program;
     this.envConfig = {
       db: program.db,
-      token: program.token,
     };
 
     this.projectPrompt = new ProjectPrompt(requests, this.envConfig, program);

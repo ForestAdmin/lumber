@@ -11,6 +11,7 @@ class UserPrompts extends AbstractPrompter {
   async handlePrompts() {
     this.handleEmail();
     this.handlePassword();
+    this.handleToken();
   }
 
   handleEmail() {
@@ -33,6 +34,10 @@ class UserPrompts extends AbstractPrompter {
 
   handlePassword() {
     this.envConfig.password = this.program.password;
+  }
+
+  handleToken() {
+    this.envConfig.token = this.program.token;
   }
 }
 
