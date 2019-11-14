@@ -291,18 +291,12 @@ describe('Services > Prompter > Database prompts', () => {
         expect(prompts[0].type).to.equal('input');
         expect(prompts[0].name).to.equal('dbName');
         expect(prompts[0].message).to.equal('What\'s the database name?');
-        expect(prompts[0].when).to.be.a('function');
         expect(prompts[0].validate).to.be.a('function');
       });
 
       it('should validate that the name has been filed', () => {
         expect(prompts[0].validate('')).to.equal('Please specify the database name.');
         expect(prompts[0].validate('name')).to.equal(true);
-      });
-
-      it('should only add the prompt if not using sqlite', () => {
-        expect(prompts[0].when({ dbDialect: 'postgres' })).to.equal(true);
-        expect(prompts[0].when({ dbDialect: 'sqlite' })).to.equal(false);
       });
     });
 
@@ -372,16 +366,16 @@ describe('Services > Prompter > Database prompts', () => {
           expect(prompts[0].default).to.be.a('function');
         });
 
-        it('should be prompted only if using postgresql', () => {
-          expect(prompts[0].when({ dbDialect: 'sqlite' })).to.equal(false);
+        it('should be prompted only if using postgres or mssql', () => {
           expect(prompts[0].when({ dbDialect: 'mongodb' })).to.equal(false);
           expect(prompts[0].when({ dbDialect: 'mysql' })).to.equal(false);
           expect(prompts[0].when({ dbDialect: 'postgres' })).to.equal(true);
+          expect(prompts[0].when({ dbDialect: 'mssql' })).to.equal(true);
         });
 
         it('should set the correct default value', () => {
           expect(prompts[0].default({ dbDialect: 'postgres' })).to.equal('public');
-          expect(prompts[0].default({ dbDialect: 'mysql' })).to.equal('');
+          expect(prompts[0].default({ dbDialect: 'mssql' })).to.equal('');
         });
       });
     });
@@ -424,12 +418,6 @@ describe('Services > Prompter > Database prompts', () => {
         expect(prompts[0].name).to.equal('dbHostname');
         expect(prompts[0].message).to.equal('What\'s the database hostname?');
         expect(prompts[0].default).to.equal('localhost');
-        expect(prompts[0].when).to.be.a('function');
-      });
-
-      it('should not be prompted if using sqlite', () => {
-        expect(prompts[0].when({ dbDialect: 'sqlite' })).to.equal(false);
-        expect(prompts[0].when({ dbDialect: 'mysql' })).to.equal(true);
       });
     });
 
@@ -470,14 +458,8 @@ describe('Services > Prompter > Database prompts', () => {
         expect(prompts[0].type).to.equal('input');
         expect(prompts[0].name).to.equal('dbPort');
         expect(prompts[0].message).to.equal('What\'s the database port?');
-        expect(prompts[0].when).to.be.a('function');
         expect(prompts[0].default).to.be.a('function');
         expect(prompts[0].validate).to.be.a('function');
-      });
-
-      it('should not be prompted if using sqlite', () => {
-        expect(prompts[0].when({ dbDialect: 'sqlite' })).to.equal(false);
-        expect(prompts[0].when({ dbDialect: 'mysql' })).to.equal(true);
       });
 
       it('should set the correct default value', () => {
@@ -485,7 +467,6 @@ describe('Services > Prompter > Database prompts', () => {
         expect(prompts[0].default({ dbDialect: 'mysql' })).to.equal('3306');
         expect(prompts[0].default({ dbDialect: 'mssql' })).to.equal('1433');
         expect(prompts[0].default({ dbDialect: 'mongodb' })).to.equal('27017');
-        expect(prompts[0].default({ dbDialect: 'else' })).to.equal(undefined);
       });
 
       it('should validate the value filed', () => {
@@ -532,18 +513,14 @@ describe('Services > Prompter > Database prompts', () => {
         expect(prompts[0].type).to.equal('input');
         expect(prompts[0].name).to.equal('dbUser');
         expect(prompts[0].message).to.equal('What\'s the database user?');
-        expect(prompts[0].when).to.be.a('function');
         expect(prompts[0].default).to.be.a('function');
-      });
-
-      it('should not be prompted if using sqlite', () => {
-        expect(prompts[0].when({ dbDialect: 'sqlite' })).to.equal(false);
-        expect(prompts[0].when({ dbDialect: 'anything else' })).to.equal(true);
       });
 
       it('should set the correct default value', () => {
         expect(prompts[0].default({ dbDialect: 'mongodb' })).to.equal(undefined);
-        expect(prompts[0].default({ dbDialect: 'anything else' })).to.equal('root');
+        expect(prompts[0].default({ dbDialect: 'mysql' })).to.equal('root');
+        expect(prompts[0].default({ dbDialect: 'mssql' })).to.equal('root');
+        expect(prompts[0].default({ dbDialect: 'postgres' })).to.equal('root');
       });
     });
 
@@ -584,12 +561,6 @@ describe('Services > Prompter > Database prompts', () => {
         expect(prompts[0].type).to.equal('password');
         expect(prompts[0].name).to.equal('dbPassword');
         expect(prompts[0].message).to.equal('What\'s the database password? [optional]');
-        expect(prompts[0].when).to.be.a('function');
-      });
-
-      it('should not be prompted if using sqlite', () => {
-        expect(prompts[0].when({ dbDialect: 'sqlite' })).to.equal(false);
-        expect(prompts[0].when({ dbDialect: 'anything else' })).to.equal(true);
       });
     });
 
@@ -676,12 +647,6 @@ describe('Services > Prompter > Database prompts', () => {
           expect(prompts[0].name).to.equal('ssl');
           expect(prompts[0].message).to.equal('Does your database require a SSL connection? ');
           expect(prompts[0].default).to.equal(false);
-          expect(prompts[0].when).to.be.a('function');
-        });
-
-        it('should not be prompted if using sqlite', () => {
-          expect(prompts[0].when({ dbDialect: 'sqlite' })).to.equal(false);
-          expect(prompts[0].when({ dbDialect: 'anything else' })).to.equal(true);
         });
       });
     });

@@ -66,7 +66,6 @@ class DatabasePrompts extends AbstractPrompter {
         type: 'input',
         name: 'dbName',
         message: 'What\'s the database name?',
-        when: answers => answers.dbDialect !== 'sqlite',
         validate: (dbName) => {
           if (dbName) { return true; }
           return 'Please specify the database name.';
@@ -85,8 +84,8 @@ class DatabasePrompts extends AbstractPrompter {
           message: 'What\'s the database schema? [optional]',
           description: 'Leave blank by default',
           when: (answers) => {
-            // NOTICE: MongoDB, MySQL and SQLite do not require a Schema.
-            const skipDatabases = ['sqlite', 'mongodb', 'mysql'];
+            // NOTICE: MongoDB and MySQL do not require a Schema.
+            const skipDatabases = ['mongodb', 'mysql'];
             return !skipDatabases.includes(answers.dbDialect || this.envConfig.dbDialect);
           },
           default: (args) => {
@@ -104,7 +103,6 @@ class DatabasePrompts extends AbstractPrompter {
         type: 'input',
         name: 'dbHostname',
         message: 'What\'s the database hostname?',
-        when: answers => answers.dbDialect !== 'sqlite',
         default: 'localhost',
       });
     }
@@ -116,7 +114,6 @@ class DatabasePrompts extends AbstractPrompter {
         type: 'input',
         name: 'dbPort',
         message: 'What\'s the database port?',
-        when: answers => answers.dbDialect !== 'sqlite',
         default: (args) => {
           if (args.dbDialect === 'postgres') {
             return '5432';
@@ -149,7 +146,6 @@ class DatabasePrompts extends AbstractPrompter {
         type: 'input',
         name: 'dbUser',
         message: 'What\'s the database user?',
-        when: answers => answers.dbDialect !== 'sqlite',
         default: (args) => {
           if (args.dbDialect === 'mongodb') {
             return undefined;
@@ -166,7 +162,6 @@ class DatabasePrompts extends AbstractPrompter {
       this.prompts.push({
         type: 'password',
         name: 'dbPassword',
-        when: answers => answers.dbDialect !== 'sqlite',
         message: 'What\'s the database password? [optional]',
       });
     }
@@ -196,7 +191,6 @@ class DatabasePrompts extends AbstractPrompter {
           type: 'confirm',
           name: 'ssl',
           message: 'Does your database require a SSL connection? ',
-          when: answers => answers.dbDialect !== 'sqlite',
           default: false,
         });
       }
