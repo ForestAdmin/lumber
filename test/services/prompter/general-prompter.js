@@ -60,7 +60,7 @@ describe('Services > Prompter > General prompter', () => {
         } = terminateStub.getCall(0).args[1];
 
         expect(status).to.equal(1);
-        expect(errorCode).to.equal('prompter_error');
+        expect(errorCode).to.equal('unexpected_error');
         expect(errorMessage).to.equal('error message');
         expect(logs).to.deep.equal(['logs']);
         expect(context).to.equal(undefined);
