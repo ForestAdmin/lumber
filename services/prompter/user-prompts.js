@@ -16,6 +16,7 @@ class UserPrompts extends AbstractPrompter {
   handleEmail() {
     if (this.isOptionRequested('email')) {
       this.envConfig.email = this.program.email;
+
       if (!this.envConfig.email) {
         this.prompts.push({
           type: 'input',
