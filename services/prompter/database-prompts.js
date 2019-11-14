@@ -52,7 +52,7 @@ class DatabasePrompts extends AbstractPrompter {
 
       // NOTICE: use a rawlist on Windows because of this issue:
       // https://github.com/SBoudrias/Inquirer.js/issues/303
-      if (/^win32/.test(process.platform)) {
+      if (/^win/.test(process.platform)) {
         prompt.type = 'rawlist';
       }
 
