@@ -1,4 +1,4 @@
-const Prompter = require('./prompter');
+const Prompter = require('./prompter/general-prompter');
 
 const OPTIONS_DATABASE_MANDATORY = [
   'dbDialect',
@@ -44,7 +44,7 @@ function CommandGenerateConfigGetter(program) {
     return this.options.forFullPrompt;
   };
 
-  this.perform = async () => Prompter(program, this.getOptions());
+  this.perform = async () => new Prompter(this.getOptions(), program).getConfig();
 }
 
 module.exports = CommandGenerateConfigGetter;
