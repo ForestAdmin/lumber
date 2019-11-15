@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Changed
+- Command Generate - Use handlebars to generate models. 
 - Technical - Remove unused ENCRYPT env variable.
 - Security - Prevent remote environments creation with HTTP protocol.
 

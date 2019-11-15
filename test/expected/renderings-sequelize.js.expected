@@ -1,0 +1,47 @@
+module.exports = (sequelize, DataTypes) => {
+  const { Sequelize } = sequelize;
+  const Renderings = sequelize.define('renderings', {
+    createdAt: {
+      type: DataTypes.DATE,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+    },
+    cacheVersion: {
+      type: DataTypes.STRING,
+    },
+    sections: {
+      type: DataTypes.JSONB,
+      defaultValue: Sequelize.literal('[{"name": "Dashboard", "isVisible": true}, {"name": "Data", "isVisible": true}]'),
+    },
+    collectionsPositions: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      defaultValue: Sequelize.literal('ARRAY[]'),
+    },
+  }, {
+    tableName: 'renderings',
+    schema: process.env.DATABASE_SCHEMA,
+  });
+
+  Renderings.associate = (models) => {
+    Renderings.belongsTo(models.environments, {
+      foreignKey: {
+        name: 'environmentId',
+      },
+      as: 'environment',
+    });
+    Renderings.belongsTo(models.teams, {
+      foreignKey: {
+        name: 'teamId',
+      },
+      as: 'team',
+    });
+  };
+
+  return Renderings;
+};
+
+
