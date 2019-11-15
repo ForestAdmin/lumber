@@ -7,6 +7,7 @@
 - Command Generate - Generate the forest collection files.
 - Command Generate - Add tests on model generation (MySQL and PostgreSQL).
 - Command Generate - Add logs about what is happening.
+- Technical - Refactor and add tests on prompter.
 
 ### Changed
 - Commands - Drop environment variables.
