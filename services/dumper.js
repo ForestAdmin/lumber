@@ -70,6 +70,10 @@ function Dumper(config) {
     writeFile(`${path}/package.json`, `${JSON.stringify(pkg, null, 2)}\n`);
   }
 
+  function tableToFilename(table) {
+    return _.kebabCase(table);
+  }
+
   function writeDotGitIgnore() {
     const templatePath = `${__dirname}/../templates/app/gitignore`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
@@ -165,7 +169,7 @@ function Dumper(config) {
       dialect: config.dbDialect,
     });
 
-    const modelNameDasherized = _.kebabCase(table);
+    const modelNameDasherized = tableToFilename(table);
     writeFile(`${path}/models/${modelNameDasherized}.js`, text);
   }
 
@@ -183,7 +187,8 @@ function Dumper(config) {
       dbDialect: config.dbDialect,
     });
 
-    writeFile(`${path}/routes/${modelNameDasherized}.js`, text);
+    const filename = tableToFilename(modelName);
+    writeFile(`${path}/routes/${filename}.js`, text);
   }
 
   function writeForestCollection(table) {
@@ -191,14 +196,14 @@ function Dumper(config) {
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const text = template({ ...config, table });
 
-    const modelNameDasherized = _.kebabCase(table);
+    const modelNameDasherized = tableToFilename(table);
     writeFile(`${path}/forest/${modelNameDasherized}.js`, text);
   }
 
   function writeAppJs() {
-    const templatePath = `${__dirname}/../templates/app/app.js`;
+    const templatePath = `${__dirname}/../templates/app/app.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    const text = template({ config, forestUrl: process.env.FOREST_URL });
+    const text = template({ ...config, forestUrl: process.env.FOREST_URL });
 
     writeFile(`${path}/app.js`, text);
   }
