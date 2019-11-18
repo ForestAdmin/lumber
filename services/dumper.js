@@ -169,8 +169,8 @@ function Dumper(config) {
       dialect: config.dbDialect,
     });
 
-    const modelNameDasherized = tableToFilename(table);
-    writeFile(`${path}/models/${modelNameDasherized}.js`, text);
+    const filename = tableToFilename(table);
+    writeFile(`${path}/models/${filename}.js`, text);
   }
 
   function writeRoute(modelName) {
@@ -196,8 +196,8 @@ function Dumper(config) {
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const text = template({ ...config, table });
 
-    const modelNameDasherized = tableToFilename(table);
-    writeFile(`${path}/forest/${modelNameDasherized}.js`, text);
+    const filname = tableToFilename(table);
+    writeFile(`${path}/forest/${filname}.js`, text);
   }
 
   function writeAppJs() {
