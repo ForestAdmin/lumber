@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const jwt = require('express-jwt');
+const { ensureAuthenticated, PUBLIC_ROUTES } = require('forest-express-<% if (dbDialect === "mongodb") { %>mongoose<% } else { %>sequelize<% } %>');
 
 const app = express();
 
@@ -24,6 +25,13 @@ app.use(jwt({
   secret: process.env.FOREST_AUTH_SECRET,
   credentialsRequired: false,
 }));
+
+app.use('/forest', (request, response, next) => {
+  if (PUBLIC_ROUTES.includes(request.url)) {
+    return next();
+  }
+  return ensureAuthenticated(request, response, next);
+});
 
 requireAll({
   dirname: path.join(__dirname, 'routes'),

@@ -8,6 +8,7 @@
 - Command Generate - Add tests on model generation (MySQL and PostgreSQL).
 - Command Generate - Add logs about what is happening.
 - Technical - Refactor and add tests on prompter.
+- Command Generate - Generate the forest routes to ease the use of `smart routes`.
 
 ### Changed
 - Technical - Remove unused ENCRYPT env variable.
@@ -15,6 +16,7 @@
 - Commands - Remove command run and install.
 - Command Generate - Install Forest Admin middleware.
 - Logs - Improve the wording for several existing logs.
+- Command Generate - Normalize the filenames.
 
 ### Fixed
 - Command Login - Disable account creation.

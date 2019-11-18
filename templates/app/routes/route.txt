@@ -1,0 +1,47 @@
+const express = require('express');
+const { PermissionMiddlewareCreator } = require('forest-express-<% if (dbDialect === 'mongodb') { %>mongoose<% } else { %>sequelize<% } %>');
+const { <%= modelName %> } = require('../models');
+
+const router = express.Router();
+const permissionMiddlewareCreator = new PermissionMiddlewareCreator('<%= modelName %>');
+
+// This file contains the logic of every route in Forest Admin for the collection <%= modelName %>:
+// - Native routes are already generated and can be modified
+// - Smart action routes will need to be added as you create new Smart actions - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/actions/create-and-manage-smart-actions
+
+// Create a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#create-a-record
+router.post('/<%= modelNameDasherized %>', permissionMiddlewareCreator.create(), (request, response, next) => {
+  next();
+});
+
+// Update a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#update-a-record
+router.put('/<%= modelNameDasherized %>/:recordId', permissionMiddlewareCreator.update(), (request, response, next) => {
+  next();
+});
+
+// Delete a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#delete-a-record
+router.delete('/<%= modelNameDasherized %>/:recordId', permissionMiddlewareCreator.delete(), (request, response, next) => {
+  next();
+});
+
+// Get a list of <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#get-a-list-of-records
+router.get('/<%= modelNameDasherized %>', permissionMiddlewareCreator.list(), (request, response, next) => {
+  next();
+});
+
+// Get a number of <%= modelNameReadablePlural %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#get-a-number-of-records
+router.get('/<%= modelNameDasherized %>/count', permissionMiddlewareCreator.list(), (request, response, next) => {
+  next();
+});
+
+// Get a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#get-a-record
+router.get('/<%= modelNameDasherized %>/:recordId', permissionMiddlewareCreator.details(), (request, response, next) => {
+  next();
+});
+
+// Export a list of <%= modelNameReadablePlural %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#export-a-list-of-records
+router.get('/<%= modelNameDasherized %>.csv', permissionMiddlewareCreator.export(), (request, response, next) => {
+  next();
+});
+
+module.exports = router;

@@ -3,6 +3,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
 const chalk = require('chalk');
+const { plural, singular } = require('pluralize');
 const stringUtils = require('../utils/strings');
 const logger = require('./logger');
 
@@ -69,18 +70,15 @@ function Dumper(config) {
     writeFile(`${path}/package.json`, `${JSON.stringify(pkg, null, 2)}\n`);
   }
 
+  function tableToFilename(table) {
+    return _.kebabCase(table);
+  }
+
   function writeDotGitIgnore() {
     const templatePath = `${__dirname}/../templates/app/gitignore`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
     writeFile(`${path}/.gitignore`, template({}));
-  }
-
-  function writeDotGitKeep(pathDest) {
-    const templatePath = `${__dirname}/../templates/app/gitkeep`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-
-    writeFile(`${pathDest}/.gitkeep`, template({}));
   }
 
   function getDatabaseUrl() {
@@ -170,7 +168,26 @@ function Dumper(config) {
       dialect: config.dbDialect,
     });
 
-    writeFile(`${path}/models/${table}.js`, text);
+    const filename = tableToFilename(table);
+    writeFile(`${path}/models/${filename}.js`, text);
+  }
+
+  function writeRoute(modelName) {
+    const templatePath = `${__dirname}/../templates/app/routes/route.txt`;
+    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+
+    const modelNameDasherized = _.kebabCase(modelName);
+    const readableModelName = _.startCase(modelName);
+    const text = template({
+      modelName,
+      modelNameDasherized,
+      modelNameReadablePlural: plural(readableModelName),
+      modelNameReadableSingular: singular(readableModelName),
+      dbDialect: config.dbDialect,
+    });
+
+    const filename = tableToFilename(modelName);
+    writeFile(`${path}/routes/${filename}.js`, text);
   }
 
   function writeForestCollection(table) {
@@ -178,13 +195,14 @@ function Dumper(config) {
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const text = template({ ...config, table });
 
-    writeFile(`${path}/forest/${table}.js`, text);
+    const filname = tableToFilename(table);
+    writeFile(`${path}/forest/${filname}.js`, text);
   }
 
   function writeAppJs() {
-    const templatePath = `${__dirname}/../templates/app/app.js`;
+    const templatePath = `${__dirname}/../templates/app/app.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    const text = template({ config, forestUrl: process.env.FOREST_URL });
+    const text = template({ ...config, forestUrl: process.env.FOREST_URL });
 
     writeFile(`${path}/app.js`, text);
   }
@@ -274,7 +292,9 @@ function Dumper(config) {
     });
 
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
-    writeDotGitKeep(routesPath);
+    modelNames.forEach((modelName) => {
+      writeRoute(modelName);
+    });
     copyTemplate('views/index.html', `${path}/views/index.html`);
 
     writeDotDockerIgnore();
