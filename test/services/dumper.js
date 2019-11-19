@@ -22,9 +22,9 @@ describe('Dumper > MongoDB', () => {
       appPort: 1654,
       db: true,
     };
+
     const dumper = await new Dumper(config);
-    await dumper.dump('films', expectedSimpleGeneratedModel.films);
-    await dumper.dump('persons', expectedSimpleGeneratedModel.persons);
+    await dumper.dump(expectedSimpleGeneratedModel);
 
     const filmsGeneratedFile = fs.readFileSync('./test/output/mongo/models/films.js', 'utf8');
     const filmsExpectedFile = fs.readFileSync('./test/expected/films.js.expected', 'utf-8');

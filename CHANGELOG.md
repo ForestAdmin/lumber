@@ -23,6 +23,8 @@
 - Command Login - Disable account creation.
 - Command Login - Check token validity before login.
 - Command Generate - Prompt for password/token just after the other prompts.
+- Command Generate - Remove extra newline at the end of model file on mongoose.
+- Technical - Fix tests on dumper.
 
 ## RELEASE 2.7.3 - 2019-11-07
 - Technical - Fix installation issue on Windows (moving `git-hook`/`simple-git` to devDependencies).

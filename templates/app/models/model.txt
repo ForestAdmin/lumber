@@ -11,8 +11,7 @@ const schema = mongoose.Schema({<% _.each(fields, (field) => { %>
   timestamps: <%= timestamps %>,
 });
 
-module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');
-<% } else {
+module.exports = mongoose.model('<%= table %>', schema, '<%= table %>');<% } else {
 %>module.exports = (sequelize, DataTypes) => {
   const { Sequelize } = sequelize;
   // This section contains the fields of your model, mapped to your table's columns.
