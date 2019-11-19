@@ -11,6 +11,9 @@
   "bin": {
     "lumber": "lumber.js"
   },
+  "engines": {
+    "node": "^10 || ^12"
+  },
   "author": "Sandro Munda",
   "contributors": [
     "Vincent Molinié <vincentm@forestadmin.com>",

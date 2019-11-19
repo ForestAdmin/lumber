@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Lumber - Mongo schema generates hasMany: array of `_id` referencing other collection.
+- Node version - Define supported node versions (10 and 12) in `package.json`.
 
 ### Changed
 - Technical - Remove unused ENCRYPT env variable.
