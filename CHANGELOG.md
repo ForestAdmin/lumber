@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Templates - Relace unconventional `bin/www` script with `server.js`.
+
 ### Fixed
 - Command Generate - Fix smart routes for models composed of multiple words.
 
