@@ -11,6 +11,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
           SELECT
             tc.constraint_name,
             tc.table_name,
+            tc.constraint_type AS column_type,
             kcu.column_name,
             ccu.table_name AS foreign_table_name,
             ccu.column_name AS foreign_column_name
@@ -19,7 +20,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
             ON tc.constraint_name = kcu.constraint_name
           JOIN information_schema.constraint_column_usage AS ccu
             ON ccu.constraint_name = tc.constraint_name
-          WHERE constraint_type = 'FOREIGN KEY'
+          WHERE (constraint_type = 'FOREIGN KEY' OR constraint_type = 'UNIQUE')
             AND tc.table_name=:table;`;
         break;
       case 'mysql':

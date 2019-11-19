@@ -79,7 +79,22 @@ function hasIdColumn(fields, primaryKeys) {
     || _.includes(primaryKeys, 'id');
 }
 
-function analyzeTable(table, config) {
+async function labelFK([schema, constraints, primaryKeys]) {
+  // NOTICE: Add unique and primary attributes to the foreign keys
+  const foreignKeys = [];
+  for (let i = 0; i < constraints.length; i += 1) {
+    const fk = constraints[i];
+    if (fk.column_type === 'FOREIGN KEY') {
+      fk.unique = _.find(constraints, { column_name: fk.column_name, column_type: 'UNIQUE' }) !== undefined;
+      fk.primary = primaryKeys.includes(fk.column_name);
+    }
+    foreignKeys.push(fk);
+  }
+
+  return [schema, foreignKeys, primaryKeys, []];
+}
+
+function getData(table, config) {
   return P
     .resolve(analyzeFields(table, config))
     .then((schema) => P.all([
@@ -87,24 +102,22 @@ function analyzeTable(table, config) {
       tableForeignKeysAnalyzer.perform(table),
       analyzePrimaryKeys(schema),
     ]))
-    .spread(async (schema, foreignKeys, primaryKeys) => {
-      const fields = [];
-      const references = [];
+    .then(data => labelFK(data));
+}
 
-      await P.each(Object.keys(schema), async (nameColumn) => {
-        const columnInfo = schema[nameColumn];
-        const type = await columnTypeGetter.perform(columnInfo, nameColumn, table);
-        const foreignKey = _.find(foreignKeys, { column_name: nameColumn });
-
-        if (foreignKey
-          && foreignKey.foreign_table_name
-          && foreignKey.column_name
-          && !columnInfo.primaryKey) {
+async function setAssociationType(aggregatedData) {
+  await P.mapSeries(Object.values(aggregatedData), async (table) => {
+    table[1].forEach((fk) => {
+      if (fk.column_type === 'FOREIGN KEY') {
+        const primary = aggregatedData[fk.foreign_table_name][2].includes(fk.foreign_column_name);
+        const unique = _.find(aggregatedData[fk.foreign_table_name][1], { column_name: fk.foreign_column_name, column_type: 'UNIQUE' });
+        if (primary || unique) { // then belongs to
           const reference = {
-            ref: foreignKey.foreign_table_name,
-            foreignKey: foreignKey.column_name,
-            foreignKeyName: _.camelCase(foreignKey.column_name),
-            as: formatAliasName(foreignKey.column_name),
+            ref: fk.foreign_table_name,
+            foreignKey: fk.column_name,
+            foreignKeyName: _.camelCase(fk.column_name),
+            as: formatAliasName(fk.column_name),
+            association: 'belongsTo',
           };
 
           // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
@@ -113,42 +126,85 @@ function analyzeTable(table, config) {
             reference.foreignKeyName = `${reference.foreignKeyName}Key`;
           }
 
-          if (foreignKey.foreign_column_name !== 'id') {
-            reference.targetKey = foreignKey.foreign_column_name;
+          if (fk.foreign_column_name !== 'id') {
+            reference.targetKey = fk.foreign_column_name;
           }
 
-          references.push(reference);
-        } else if (type) {
-          // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
-          //         handle it automatically without necessary declaration.
-          if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
-            const field = {
-              name: _.camelCase(nameColumn),
-              nameColumn,
-              type,
-              primaryKey: columnInfo.primaryKey,
-              defaultValue: columnInfo.defaultValue,
-            };
-
-            fields.push(field);
-          }
+          table[3].push(reference);
         }
-      });
+        let association;
+        if (fk.primary || fk.unique) { // then hasOne
+          association = 'hasOne';
+        } else {
+          association = 'hasMany';
+        }
+        const reference = {
+          ref: fk.table_name,
+          foreignKey: fk.foreign_column_name,
+          foreignKeyName: _.camelCase(fk.foreign_column_name),
+          as: formatAliasName(fk.foreign_column_name),
+          association,
+        };
 
-      const options = {
-        underscored: isUnderscored(fields),
-        timestamps: hasTimestamps(fields),
-        hasIdColumn: hasIdColumn(fields, primaryKeys),
-        hasPrimaryKeys: !_.isEmpty(primaryKeys),
-      };
+        // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
+        //         to handle this specific scenario generating a different foreign key name.
+        if (reference.foreignKeyName === reference.as) {
+          reference.foreignKeyName = `${reference.foreignKeyName}Key`;
+        }
 
-      return {
-        fields,
-        references,
-        primaryKeys,
-        options,
-      };
+        if (fk.foreign_column_name !== 'id') {
+          reference.targetKey = fk.foreign_column_name;
+        }
+
+        aggregatedData[fk.foreign_table_name][3].push(reference);
+      }
     });
+  });
+}
+
+async function analyzeTable([schema, foreignKeys, primaryKeys, references], table) {
+  const fields = [];
+
+  console.log(foreignKeys);
+  console.log(primaryKeys);
+
+  await P.each(Object.keys(schema), async (nameColumn) => {
+    console.log(nameColumn);
+    const columnInfo = schema[nameColumn];
+    const type = await columnTypeGetter.perform(columnInfo, nameColumn, table);
+    const foreignKey = _.find(foreignKeys, { column_name: nameColumn, column_type: 'FOREIGN KEY' });
+    if (!(foreignKey
+          && foreignKey.foreign_table_name
+          && foreignKey.column_name) && type) {
+      // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
+      //         handle it automatically without necessary declaration.
+      if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+        const field = {
+          name: _.camelCase(nameColumn),
+          nameColumn,
+          type,
+          primaryKey: columnInfo.primaryKey,
+          defaultValue: columnInfo.defaultValue,
+        };
+
+        fields.push(field);
+      }
+    }
+  });
+
+  const options = {
+    underscored: isUnderscored(fields),
+    timestamps: hasTimestamps(fields),
+    hasIdColumn: hasIdColumn(fields, primaryKeys),
+    hasPrimaryKeys: !_.isEmpty(primaryKeys),
+  };
+
+  return {
+    fields,
+    references,
+    primaryKeys,
+    options,
+  };
 }
 
 async function analyzeSequelizeTables(databaseConnection, config, allowWarning) {
@@ -156,6 +212,7 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
 
   queryInterface = databaseConnection.getQueryInterface();
   tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, config.dbSchema);
+
   columnTypeGetter = new ColumnTypeGetter(databaseConnection, config.dbSchema || 'public', allowWarning);
 
   if (config.dbSchema) {
@@ -177,8 +234,14 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   }
 
   // Build the db schema.
+  const aggregatedData = {};
   await P.mapSeries(showAllTables(databaseConnection, config.dbSchema), async (table) => {
-    schema[table] = await analyzeTable(table, config);
+    aggregatedData[table] = await getData(table, config);
+  });
+
+  await setAssociationType(aggregatedData);
+  await P.mapSeries(showAllTables(databaseConnection, config.dbSchema), async (table) => {
+    schema[table] = await analyzeTable(aggregatedData[table], table);
   });
 
   if (_.isEmpty(schema)) {
