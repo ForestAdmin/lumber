@@ -39,7 +39,7 @@ function Dumper(config) {
       dotenv: '~6.1.0',
       chalk: '~1.1.3',
       sequelize: '~5.15.1',
-      [`forest-express-${orm}`]: '^4.0.0',
+      [`forest-express-${orm}`]: '^5.2.0',
       'require-all': '^3.0.0',
       'cookie-parser': '1.4.4',
     };

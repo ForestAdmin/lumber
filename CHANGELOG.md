@@ -17,6 +17,7 @@
 - Command Generate - Install Forest Admin middleware.
 - Logs - Improve the wording for several existing logs.
 - Command Generate - Normalize the filenames.
+- Command Generate - Update version of liana.
 
 ### Fixed
 - Command Login - Disable account creation.
