@@ -7,6 +7,14 @@ const persons = [
     _id: ObjectID(),
     name: 'James Cameron',
   },
+  {
+    _id: ObjectID(),
+    name: 'Sam Worthington',
+  },
+  {
+    _id: ObjectID(),
+    name: 'Zoe Saldana',
+  },
 ];
 
 const films = [
@@ -14,6 +22,10 @@ const films = [
     _id: ObjectID(),
     title: 'Terminator',
     author: _.find(persons, { name: 'James Cameron' })._id,
+    actors: [
+      _.find(persons, { name: 'Sam Worthington' })._id,
+      _.find(persons, { name: 'Zoe Saldana' })._id,
+    ],
   },
 ];
 

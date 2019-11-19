@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const schema = mongoose.Schema({
+  'actors': { type: [mongoose.Schema.Types.ObjectId], ref: 'persons' },
   'author': { type: mongoose.Schema.Types.ObjectId, ref: 'persons' },
   'title': String,
 }, {

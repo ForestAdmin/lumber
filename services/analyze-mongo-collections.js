@@ -3,6 +3,7 @@ const logger = require('./logger');
 const P = require('bluebird');
 const { DatabaseAnalyzerError } = require('../utils/errors');
 const { detectReferences, applyReferences } = require('./analyze-mongo-references');
+const { detectHasMany, applyHasMany } = require('./analyze-mongo-hasmany');
 
 function isUnderscored(fields) {
   return fields.every(field => field.nameColumn === _.snakeCase(field.nameColumn))
@@ -14,11 +15,22 @@ const mapReduceOptions = {
   limit: 100,
 };
 
-// eslint-disable no-undef
+/* eslint-disable */
 function mapCollection() {
-  // eslint-disable-next-line
+  function allItemsAreObjectIDs(array) {
+    if (!array.length) return false;
+    var itemToCheckCount = array.length > 3 ? 3 : array.length;
+    var arrayOfObjectIDs = true;
+    for (var i = 0; i < itemToCheckCount; i++) {
+      if (!(array[i] instanceof ObjectId)) {
+        arrayOfObjectIDs = false;
+        break;
+      }
+    }
+    return arrayOfObjectIDs;
+  }
+
   for (var key in this) {
-    /* eslint-disable no-undef */
     if (this[key] instanceof ObjectId && key !== '_id') {
       emit(key, 'mongoose.Schema.Types.ObjectId');
     } else if (this[key] instanceof Date) {
@@ -29,10 +41,15 @@ function mapCollection() {
       emit(key, 'String');
     } else if (typeof this[key] === 'number' && key !== '__v') {
       emit(key, 'Number');
-      /* eslint-enable no-undef */
+    } else if (typeof this[key] === 'object') {
+      if (Array.isArray(this[key]) && allItemsAreObjectIDs(this[key])) {
+        emit(key, '[mongoose.Schema.Types.ObjectId]');
+      }
     }
   }
 }
+
+/* eslint-enable */
 
 function reduceCollection(key, stuff) {
   return stuff.length ? stuff[0] : null;
@@ -99,6 +116,8 @@ function analyzeMongoCollections(databaseConnection) {
         const analysis = await analyzeMongoCollection(databaseConnection, collectionName);
         const references = await detectReferences(databaseConnection, analysis, collectionName);
         applyReferences(analysis, references);
+        const hasMany = await detectHasMany(databaseConnection, analysis, collectionName);
+        applyHasMany(analysis, hasMany);
         schema[collectionName] = {
           fields: analysis,
           references: [],

@@ -2,6 +2,12 @@
   "films": {
     "fields": [
       {
+        "name": "actors",
+        "ref": "persons",
+        "type": "[mongoose.Schema.Types.ObjectId]",
+        "hasMany": true
+      },
+      {
         "name": "author",
         "ref": "persons",
         "type": "mongoose.Schema.Types.ObjectId"
