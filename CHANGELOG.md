@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix smart routes for models composed of multiple words.
 
 ## RELEASE 3.0.0-beta.0 - 2019-11-19
 ### Added
