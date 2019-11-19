@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.0.0-beta.0 - 2019-11-19
 ### Added
 - Node version - Define supported node versions (10 and 12) in `package.json`.
 - Command generate - Add comments to generated models.
