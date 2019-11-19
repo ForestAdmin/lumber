@@ -34,14 +34,15 @@ function Dumper(config) {
   function writePackageJson() {
     const orm = config.dbDialect === 'mongodb' ? 'mongoose' : 'sequelize';
     const dependencies = {
-      express: '~4.16.3',
+      chalk: '~1.1.3',
+      'cookie-parser': '1.4.4',
       debug: '~4.0.1',
       dotenv: '~6.1.0',
-      chalk: '~1.1.3',
-      sequelize: '~5.15.1',
+      express: '~4.16.3',
       [`forest-express-${orm}`]: '^5.2.0',
+      morgan: '1.9.1',
       'require-all': '^3.0.0',
-      'cookie-parser': '1.4.4',
+      sequelize: '~5.15.1',
     };
 
     if (config.dbDialect) {

@@ -6,41 +6,48 @@ const router = express.Router();
 const permissionMiddlewareCreator = new PermissionMiddlewareCreator('<%= modelName %>');
 
 // This file contains the logic of every route in Forest Admin for the collection <%= modelName %>:
-// - Native routes are already generated and can be modified
-// - Smart action routes will need to be added as you create new Smart actions - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/actions/create-and-manage-smart-actions
+// - Native routes are already generated but can be extended/overriden - Learn how to extend a route here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/routes/extend-a-route
+// - Smart action routes will need to be added as you create new Smart Actions - Learn how to create a Smart Action here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/actions/create-and-manage-smart-actions
 
-// Create a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#create-a-record
+// Create a <%= modelNameReadableSingular %>
 router.post('/<%= modelName %>', permissionMiddlewareCreator.create(), (request, response, next) => {
+  // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/routes/default-routes#create-a-record
   next();
 });
 
-// Update a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#update-a-record
+// Update a <%= modelNameReadableSingular %>
 router.put('/<%= modelName %>/:recordId', permissionMiddlewareCreator.update(), (request, response, next) => {
+  // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/routes/default-routes#update-a-record
   next();
 });
 
-// Delete a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#delete-a-record
+// Delete a <%= modelNameReadableSingular %>
 router.delete('/<%= modelName %>/:recordId', permissionMiddlewareCreator.delete(), (request, response, next) => {
+  // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/routes/default-routes#delete-a-record
   next();
 });
 
-// Get a list of <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#get-a-list-of-records
+// Get a list of <%= modelNameReadablePlural %>
 router.get('/<%= modelName %>', permissionMiddlewareCreator.list(), (request, response, next) => {
+  // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/routes/default-routes#get-a-list-of-records
   next();
 });
 
-// Get a number of <%= modelNameReadablePlural %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#get-a-number-of-records
+// Get a number of <%= modelNameReadablePlural %>
 router.get('/<%= modelName %>/count', permissionMiddlewareCreator.list(), (request, response, next) => {
+  // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/routes/default-routes#get-a-number-of-records
   next();
 });
 
-// Get a <%= modelNameReadableSingular %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#get-a-record
+// Get a <%= modelNameReadableSingular %>
 router.get('/<%= modelName %>/:recordId', permissionMiddlewareCreator.details(), (request, response, next) => {
+  // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/routes/default-routes#get-a-record
   next();
 });
 
-// Export a list of <%= modelNameReadablePlural %> - Check out our documentation for more details: https://docs.forestadmin.com/documentation/v/v4/reference-guide/routes/default-routes#export-a-list-of-records
+// Export a list of <%= modelNameReadablePlural %>
 router.get('/<%= modelName %>.csv', permissionMiddlewareCreator.export(), (request, response, next) => {
+  // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/routes/default-routes#export-a-list-of-records
   next();
 });
 

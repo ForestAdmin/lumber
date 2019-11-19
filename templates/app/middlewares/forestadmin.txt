@@ -1,13 +1,10 @@
 const requireAll = require('require-all');
 const chalk = require('chalk');
-const path = require('path');
-<% if (dbDialect === 'mongodb') {%>
+const path = require('path');<% if (dbDialect === 'mongodb') {%>
 const Liana = require('forest-express-mongoose');
-const mongoose = require('mongoose');
-<% } else { %>
+const mongoose = require('mongoose');<% } else { %>
 const Liana = require('forest-express-sequelize');
-const { sequelize } = require('../models');
-<% } %>
+const { sequelize } = require('../models');<% } %>
 
 module.exports = function (app) {
   app.use(Liana.init({

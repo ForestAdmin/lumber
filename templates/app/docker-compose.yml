@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile
     container_name: <%= appName %>
     environment:
-      - APPLICATION_HOST=<%= hostname %>
       - APPLICATION_PORT=<%= port %>
       - DATABASE_URL=<%= databaseUrl %><% if (dbSchema) { %>
       - DATABASE_SCHEMA=<%= dbSchema %><% } %>

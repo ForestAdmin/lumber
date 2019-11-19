@@ -1,8 +1,18 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Command Generate - Add logs to requests on the project generated.
+
+### Changed
+- Command Generate - Update comments in routes.
+
 ### Fixed
 - Command Generate - Fix smart routes for models composed of multiple words.
+- Command Generate - Rename Custom Actions to Smart Actions.
+- Command Generate - Rename Virtual to Smart.
+- Command Generate - Remove useless new lines in model and forest files.
+- Technical - Drop APPLICATION_HOST in .env as it was useless.
 
 ## RELEASE 3.0.0-beta.0 - 2019-11-19
 ### Added
