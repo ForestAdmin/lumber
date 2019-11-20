@@ -11,7 +11,9 @@ services:
       - DATABASE_SCHEMA=<%= dbSchema %><% } %>
       - DATABASE_SSL=<%= ssl || 'false' %>
       - FOREST_AUTH_SECRET=<%= forestAuthSecret %>
-      - FOREST_ENV_SECRET=<%= forestEnvSecret %>
+      - FOREST_ENV_SECRET=<%= forestEnvSecret %><% if (forestUrl) { %>
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - FOREST_URL=<%= forestUrl %><% } %>
     ports:
       - "<%= port %>:<%= port %>"
     volumes:
