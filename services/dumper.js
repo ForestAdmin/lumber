@@ -241,6 +241,7 @@ function Dumper(config) {
       dbSchema: config.dbSchema,
       forestEnvSecret: config.forestEnvSecret,
       forestAuthSecret: config.forestAuthSecret,
+      forestUrl: process.env.FOREST_URL,
     };
 
     writeFile(`${path}/docker-compose.yml`, template(settings));

@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Docker - Fix the coker-compose containerName when project name contains whitespaces.
+- Technical - Ease the installation of docker for forest employees.
 
 ## RELEASE 3.0.0 - 2019-11-20
 ### Added
