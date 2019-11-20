@@ -2,6 +2,7 @@ const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
+const Handlebars = require('handlebars');
 const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
 const stringUtils = require('../utils/strings');
@@ -127,9 +128,12 @@ function Dumper(config) {
     writeFile(`${path}/.env`, template(settings));
   }
 
-  function writeModel(table, fields, references, options = {}) {
-    const templatePath = `${__dirname}/../templates/app/models/model.txt`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+  function writeModel(pathDest, table, fields, references, options = {}) {
+    const templatePath = config.dbDialect === 'mongodb' ?
+      `${__dirname}/../templates/mongo-model.hbs`
+      :
+      `${__dirname}/../templates/sequelize-model.hbs`;
+    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
 
     const fieldsDefinition = fields.map((field) => {
@@ -167,6 +171,7 @@ function Dumper(config) {
       ...options,
       schema: config.dbSchema,
       dialect: config.dbDialect,
+      noId: !options.hasIdColumn && !options.hasPrimaryKeys,
     });
 
     const filename = tableToFilename(table);

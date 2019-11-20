@@ -26,6 +26,7 @@
 - Command Generate - Generate the forest routes to ease the use of `smart routes`.
 
 ### Changed
+- Command Generate - Use handlebars to generate models. 
 - Technical - Remove unused ENCRYPT env variable.
 - Security - Prevent remote environments creation with HTTP protocol.
 - Commands - Remove command run and install.
