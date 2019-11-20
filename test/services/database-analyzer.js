@@ -4,13 +4,15 @@ const MongoHelper = require('../utils/mongo-helper');
 const { describeMongoDatabases } = require('../utils/multiple-database-version-helper');
 const DatabaseAnalyzer = require('../../services/database-analyzer');
 const simpleModel = require('../fixtures/simple-model');
+const hasManyModel = require('../fixtures/hasmany-model');
 const multipleReferencesModel = require('../fixtures/multiple-references-same-field-model');
 const manyNullsModel = require('../fixtures/many-nulls-model');
 const complexModel = require('../fixtures/many-objectid-fields-model');
-const expectedSimpleGeneratedModel = require('../expected/simple-generated-model.json');
-const expectedMultipleReferencesGeneratedModel = require('../expected/multiple-references-same-field-generated-model.json');
-const expectedManyuNullsGeneratedModel = require('../expected/many-nulls-generated-model.json');
-const expectedManyObjectIDFieldsGeneratedModel = require('../expected/many-objectid-fields-generated-model.json');
+const expectedSimpleModel = require('../expected/db-analysis-output/simple.json');
+const expectedHasManyModel = require('../expected/db-analysis-output/hasmany.json');
+const expectedMultipleReferencesModel = require('../expected/db-analysis-output/multiple-references-from-same-field.json');
+const expectedManyuNullsModel = require('../expected/db-analysis-output/many-nulls.json');
+const expectedManyObjectIDFieldsModel = require('../expected/db-analysis-output/many-objectid-fields.json');
 
 describe('Database analyser > MongoDB', () => {
   describeMongoDatabases(mongoUrl => () => {
@@ -40,28 +42,35 @@ describe('Database analyser > MongoDB', () => {
       await mongoHelper.given(simpleModel);
       const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
       const model = await databaseAnalyzer.perform();
-      expect(model).is.deep.equal(expectedSimpleGeneratedModel);
+      expect(model).is.deep.equal(expectedSimpleModel);
+    });
+
+    it('should generate a model with hasmany', async () => {
+      await mongoHelper.given(hasManyModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).is.deep.equal(expectedHasManyModel);
     });
 
     it('should not create a reference if multiples referenced collections are found', async () => {
       await mongoHelper.given(multipleReferencesModel);
       const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
       const model = await databaseAnalyzer.perform();
-      expect(model).is.deep.equal(expectedMultipleReferencesGeneratedModel);
+      expect(model).is.deep.equal(expectedMultipleReferencesModel);
     });
 
     it('should find the reference even in a db with many nulls', async () => {
       await mongoHelper.given(manyNullsModel);
       const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
       const model = await databaseAnalyzer.perform();
-      expect(model).is.deep.equal(expectedManyuNullsGeneratedModel);
+      expect(model).is.deep.equal(expectedManyuNullsModel);
     });
 
     it('should generate the model with many objectid fields', async () => {
       await mongoHelper.given(complexModel);
       const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
       const model = await databaseAnalyzer.perform();
-      expect(model).is.deep.equal(expectedManyObjectIDFieldsGeneratedModel);
+      expect(model).is.deep.equal(expectedManyObjectIDFieldsModel);
     });
   });
 });

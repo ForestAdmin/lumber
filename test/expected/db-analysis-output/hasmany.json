@@ -1,0 +1,43 @@
+{
+  "films": {
+    "fields": [
+      {
+        "hasMany": true,
+        "name": "actors",
+        "ref": "persons",
+        "type": "[mongoose.Schema.Types.ObjectId]"
+      },
+      {
+        "name": "author",
+        "ref": "persons",
+        "type": "mongoose.Schema.Types.ObjectId"
+      },
+      {
+        "name": "title",
+        "type": "String"
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  },
+  "persons": {
+    "fields": [
+      {
+        "name": "name",
+        "type": "String"
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  }
+}

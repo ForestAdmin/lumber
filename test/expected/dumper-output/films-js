@@ -1,0 +1,11 @@
+const mongoose = require('mongoose');
+
+const schema = mongoose.Schema({
+  'author': { type: mongoose.Schema.Types.ObjectId, ref: 'persons' },
+  'title': String,
+}, {
+  timestamps: false,
+});
+
+module.exports = mongoose.model('films', schema, 'films');
+
