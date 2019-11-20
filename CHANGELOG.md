@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.0.0 - 2019-11-20
 ### Added
 - Server - Add server logs on generated projects.
 
