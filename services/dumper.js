@@ -233,6 +233,7 @@ function Dumper(config) {
 
     const settings = {
       appName: config.appName,
+      containerName: _.snakeCase(config.appName),
       hostname: config.appHostname || 'http://localhost',
       port: config.appPort || DEFAULT_PORT,
       databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),

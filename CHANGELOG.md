@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Docker - Fix the coker-compose containerName when project name contains whitespaces.
 
 ## RELEASE 3.0.0 - 2019-11-20
 ### Added
