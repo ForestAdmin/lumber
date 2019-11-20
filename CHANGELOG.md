@@ -4,8 +4,12 @@
 ### Added
 - Server - Add server logs on generated projects.
 
+### Changed
+- Technical - Replace mkdirp by fs.mkdir.
+
 ### Fixed
 - Technical - Drop `APPLICATION_HOST` in `.env` as it was useless.
+- Command Generate - Remove extra newline at the end of model file on mongoose.
 
 ## RELEASE 3.0.0-beta.0 - 2019-11-19
 ### Added

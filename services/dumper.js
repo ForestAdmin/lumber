@@ -1,13 +1,9 @@
-const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
-const mkdirpSync = require('mkdirp');
 const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
 const stringUtils = require('../utils/strings');
 const logger = require('./logger');
-
-const mkdirp = P.promisify(mkdirpSync);
 
 const DEFAULT_PORT = 3310;
 
@@ -253,28 +249,23 @@ function Dumper(config) {
   }
 
   function writeForestAdminMiddleware() {
-    mkdirp.sync(`${process.cwd()}/middlewares`);
     const templatePath = `${__dirname}/../templates/app/middlewares/forestadmin.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     writeFile(`${path}/middlewares/forestadmin.js`, template(config));
   }
 
   this.dump = async (schema) => {
-    const directories = [
-      mkdirp(path),
-      mkdirp(binPath),
-      mkdirp(routesPath),
-      mkdirp(forestPath),
-      mkdirp(viewPath),
-      mkdirp(publicPath),
-      mkdirp(middlewaresPath),
-    ];
+    fs.mkdirSync(path);
+    fs.mkdirSync(binPath);
+    fs.mkdirSync(routesPath);
+    fs.mkdirSync(forestPath);
+    fs.mkdirSync(viewPath);
+    fs.mkdirSync(publicPath);
+    fs.mkdirSync(middlewaresPath);
 
     if (config.db) {
-      directories.push(mkdirp(modelsPath));
+      fs.mkdirSync(modelsPath);
     }
-
-    await P.all(directories);
 
     copyTemplate('bin/www', `${binPath}/www`);
 
