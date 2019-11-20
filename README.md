@@ -91,8 +91,8 @@ and reduce the load of your servers.
 
 <img src="https://www.forestadmin.com/public/img/illustrations-dev/screens/sorting.jpg" alt="Sorting and Pagination">
 
-### Custom action
-A custom action is a button which allows you to trigger an API call to execute
+### Smart action
+A smart action is a button which allows you to trigger an API call to execute
 a custom logic. With virtually no limitations, you can extend the way you
 manipulate data and trigger actions (e.g. refund a customer, apply a coupon,
 ban a user, etc.)

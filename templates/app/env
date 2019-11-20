@@ -1,4 +1,3 @@
-APPLICATION_HOST=<%= hostname || 'http://localhost' %>
 APPLICATION_PORT=<%= port || 3310 %>
 
 DATABASE_URL=<%= databaseUrl %><% if (dbSchema) { %>

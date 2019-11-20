@@ -1,8 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Server - Add server logs on generated projects.
+
 ### Fixed
 - Command Generate - Fix smart routes for models composed of multiple words.
+- Technical - Drop `APPLICATION_HOST` in `.env` as it was useless.
 
 ## RELEASE 3.0.0-beta.0 - 2019-11-19
 ### Added
