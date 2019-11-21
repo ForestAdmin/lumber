@@ -128,11 +128,11 @@ function Dumper(config) {
     writeFile(`${path}/.env`, template(settings));
   }
 
-  function writeModel(pathDest, table, fields, references, options = {}) {
+  function writeModel(table, fields, references, options = {}) {
     const templatePath = config.dbDialect === 'mongodb' ?
-      `${__dirname}/../templates/mongo-model.hbs`
+      `${__dirname}/../templates/app/models/mongo-model.hbs`
       :
-      `${__dirname}/../templates/sequelize-model.hbs`;
+      `${__dirname}/../templates/app/models/sequelize-model.hbs`;
     const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
 
