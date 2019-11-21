@@ -11,10 +11,12 @@ Forest Admin has been designed with scalability in mind to fit requirements from
 
 ## Getting started
 
+Get your admin panel running in minutes by installing Forest Admin:
 [https://app.forestadmin.com/signup](https://app.forestadmin.com/signup)
 
 ## See it in action
 
+Check out our Live demo to see what Forest Admin looks like in practice:
 [https://app.forestadmin.com/23065?livedemo](https://app.forestadmin.com/23065?livedemo)
 
 ## Commands
