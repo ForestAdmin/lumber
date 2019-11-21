@@ -79,19 +79,82 @@ function hasIdColumn(fields, primaryKeys) {
     || _.includes(primaryKeys, 'id');
 }
 
-async function labelFK([schema, constraints, primaryKeys]) {
+async function checkFkUnicity([schema, constraints, primaryKeys]) {
   // NOTICE: Add unique and primary attributes to the foreign keys
   const foreignKeys = [];
+
   for (let i = 0; i < constraints.length; i += 1) {
     const fk = constraints[i];
     if (fk.column_type === 'FOREIGN KEY') {
-      fk.unique = _.find(constraints, { column_name: fk.column_name, column_type: 'UNIQUE' }) !== undefined;
-      fk.primary = primaryKeys.includes(fk.column_name);
+      fk.isInCompositeKey = (
+        fk.unique_indexes !== null
+        && _.find(fk.unique_indexes, (array) => {
+          if (array.length > 1) return array.includes(fk.column_name);
+          return false;
+        }) !== undefined
+        // && fk.unique_indexes.forEach()
+      ) || (
+        primaryKeys
+        && primaryKeys.length > 1
+        && primaryKeys.includes(fk.column_name)
+      );
+
+      fk.unique = _.find(constraints, { column_name: fk.column_name, column_type: 'UNIQUE' }) !== undefined
+        || (
+          fk.unique_indexes !== null
+          && fk.unique_indexes.length === 1
+        && _.find(fk.unique_indexes, (array) => {
+          if (array.length === 1) return array.includes(fk.column_name);
+          return false;
+        }) !== undefined
+        );
+
+      fk.primary = _.isEqual([fk.column_name], primaryKeys);
     }
     foreignKeys.push(fk);
   }
 
   return [schema, foreignKeys, primaryKeys, []];
+}
+
+function checkRefUnicity(table, columnName) {
+  const isPrimary = table[2].includes(columnName);
+  const isUnique = _.find(table[1], { column_name: columnName, column_type: 'UNIQUE' }) !== undefined
+    || _.find(table[1], { unique_indexes: columnName, column_type: 'PRIMARY KEY' }) !== undefined;
+  return isPrimary || isUnique;
+}
+
+function setReference(fk, association, isSource) {
+  let reference = {};
+  if (isSource) {
+    reference = {
+      ref: fk.foreign_table_name,
+      foreignKey: fk.column_name,
+      foreignKeyName: _.camelCase(fk.column_name),
+      as: formatAliasName(fk.column_name),
+      association,
+    };
+  } else {
+    reference = {
+      ref: fk.table_name,
+      foreignKey: fk.foreign_column_name,
+      foreignKeyName: _.camelCase(fk.foreign_column_name),
+      as: formatAliasName(fk.foreign_column_name),
+      association,
+    };
+  }
+
+  // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
+  //         to handle this specific scenario generating a different foreign key name.
+  if (reference.foreignKeyName === reference.as) {
+    reference.foreignKeyName = `${reference.foreignKeyName}Key`;
+  }
+
+  if (fk.foreign_column_name !== 'id') {
+    reference.targetKey = fk.foreign_column_name;
+  }
+
+  return reference;
 }
 
 function getData(table, config) {
@@ -102,61 +165,22 @@ function getData(table, config) {
       tableForeignKeysAnalyzer.perform(table),
       analyzePrimaryKeys(schema),
     ]))
-    .then(data => labelFK(data));
+    .then(data => checkFkUnicity(data));
 }
 
 async function setAssociationType(aggregatedData) {
   await P.mapSeries(Object.values(aggregatedData), async (table) => {
     table[1].forEach((fk) => {
       if (fk.column_type === 'FOREIGN KEY') {
-        const primary = aggregatedData[fk.foreign_table_name][2].includes(fk.foreign_column_name);
-        const unique = _.find(aggregatedData[fk.foreign_table_name][1], { column_name: fk.foreign_column_name, column_type: 'UNIQUE' });
-        if (primary || unique) { // then belongs to
-          const reference = {
-            ref: fk.foreign_table_name,
-            foreignKey: fk.column_name,
-            foreignKeyName: _.camelCase(fk.column_name),
-            as: formatAliasName(fk.column_name),
-            association: 'belongsTo',
-          };
-
-          // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
-          //         to handle this specific scenario generating a different foreign key name.
-          if (reference.foreignKeyName === reference.as) {
-            reference.foreignKeyName = `${reference.foreignKeyName}Key`;
-          }
-
-          if (fk.foreign_column_name !== 'id') {
-            reference.targetKey = fk.foreign_column_name;
-          }
-
-          table[3].push(reference);
+        if (checkRefUnicity(aggregatedData[fk.foreign_table_name], fk.foreign_column_name)) {
+          table[3].push(setReference(fk, 'belongsTo', true));
         }
-        let association;
-        if (fk.primary || fk.unique) { // then hasOne
-          association = 'hasOne';
-        } else {
-          association = 'hasMany';
+        if (fk.primary || fk.unique) aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasOne', false));
+        else aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasMany', false));
+        if (fk.isInCompositeKey) {
+          aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'belongsToMany', false));
+          table[3].push(setReference(fk, 'belongsToMany', true));
         }
-        const reference = {
-          ref: fk.table_name,
-          foreignKey: fk.foreign_column_name,
-          foreignKeyName: _.camelCase(fk.foreign_column_name),
-          as: formatAliasName(fk.foreign_column_name),
-          association,
-        };
-
-        // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
-        //         to handle this specific scenario generating a different foreign key name.
-        if (reference.foreignKeyName === reference.as) {
-          reference.foreignKeyName = `${reference.foreignKeyName}Key`;
-        }
-
-        if (fk.foreign_column_name !== 'id') {
-          reference.targetKey = fk.foreign_column_name;
-        }
-
-        aggregatedData[fk.foreign_table_name][3].push(reference);
       }
     });
   });
@@ -164,12 +188,7 @@ async function setAssociationType(aggregatedData) {
 
 async function analyzeTable([schema, foreignKeys, primaryKeys, references], table) {
   const fields = [];
-
-  console.log(foreignKeys);
-  console.log(primaryKeys);
-
   await P.each(Object.keys(schema), async (nameColumn) => {
-    console.log(nameColumn);
     const columnInfo = schema[nameColumn];
     const type = await columnTypeGetter.perform(columnInfo, nameColumn, table);
     const foreignKey = _.find(foreignKeys, { column_name: nameColumn, column_type: 'FOREIGN KEY' });
