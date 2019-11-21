@@ -48,7 +48,7 @@
       {
         "ref": "environments",
         "foreignKey": "environmentId",
-        "foreignKeyName": "environmentId",
+        "foreignKeyName": "environmentIdUnconventionnal",
         "as": "environment"
       },
       {
@@ -56,6 +56,14 @@
         "foreignKey": "teamId",
         "foreignKeyName": "teamId",
         "as": "team"
+      },
+      {
+        "ref": "otherWithTarget",
+        "foreignKey": "other",
+        "foreignKeyName": "other",
+        "targetKey": "otherId",
+        "targetKeyName": "otherId",
+        "as": "team2"
       }
     ],
     "primaryKeys": [

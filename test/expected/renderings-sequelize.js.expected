@@ -34,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
   Renderings.associate = (models) => {
     Renderings.belongsTo(models.environments, {
       foreignKey: {
-        name: 'environmentId',
+        name: 'environmentIdUnconventionnal',
+        field: 'environmentId',
       },
       as: 'environment',
     });
@@ -44,9 +45,16 @@ module.exports = (sequelize, DataTypes) => {
       },
       as: 'team',
     });
+    Renderings.belongsTo(models.otherWithTarget, {
+      foreignKey: {
+        name: 'other',
+      },
+      target: {
+        name: 'otherId',
+      },
+      as: 'team2',
+    });
   };
 
   return Renderings;
 };
-
-

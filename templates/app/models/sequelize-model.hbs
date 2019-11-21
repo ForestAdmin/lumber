@@ -29,8 +29,8 @@ module.exports = (sequelize, DataTypes) => {
         field: '{{reference.foreignKey}}',{{/if}}
       },{{#if reference.targetKey }}
       target: {
-        name: '{{reference.targetKey}}',<% if (reference.targetKeyColumnUnconventional) { %>
-        field: '{{reference.targetKey}}',<% } %>
+        name: '{{reference.targetKey}}',{{#if reference.targetKeyColumnUnconventional}}
+        field: '{{reference.targetKey}}',{{/if}}
       },{{/if}}{{#if reference.as}}
       as: '{{reference.as}}',{{/if}}
     });
@@ -39,5 +39,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return {{modelName}};
 };
-
-
