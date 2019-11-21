@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Templates - Relace unconventional `bin/www` script with `server.js`.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
