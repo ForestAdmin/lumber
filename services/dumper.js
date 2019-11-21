@@ -64,7 +64,6 @@ function Dumper(config) {
       name: config.appName.replace(/ /g, '_').toLowerCase(),
       version: '0.0.1',
       private: true,
-      scripts: { start: 'node ./bin/www' },
       dependencies,
     };
 
@@ -278,7 +277,7 @@ function Dumper(config) {
 
     await P.all(directories);
 
-    copyTemplate('bin/www', `${binPath}/www`);
+    copyTemplate('server.txt', `${path}/server.js`);
 
     const modelNames = Object.keys(schema)
       .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
