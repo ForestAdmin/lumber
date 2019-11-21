@@ -6,30 +6,18 @@
   <img src="https://github.com/ForestAdmin/lumber/blob/master/assets/lumber-logo.png?raw=true" alt="Lumber logo">
 </p>
 
-Lumber is a CLI tool that helps you create your backend application in minutes.
-At its core, Lumber has been designed with a modular architecture that leverages a set of plugins.
+Lumber is the CLI tool used to install [Forest Admin](https://www.forestadmin.com), the Admin Panel framework.
+Forest Admin has been designed with scalability in mind to fit requirements from small projects to mature companies.
 
-For example, it takes one command to get a REST API, a GraphQL API or a fully operational Admin Panel.
+## Getting started
 
-## Install
-
-```sh
-npm install -g lumber-cli -s
-```
+Get your admin panel running in minutes by installing Forest Admin:
+[https://app.forestadmin.com/signup](https://app.forestadmin.com/signup)
 
 ## See it in action
 
-```
-$ npm install -g lumber-cli -s
-$ lumber generate -c "postgres://erlich:aviato@localhost:5432/meals" Meals
-
-$ cd Meals/ && npm install -s
-$ npm start
-
-Your application is listening on port 3310.
-```
-
-Finally, visit https://app.forestadmin.com/.
+Check out our Live demo to see what Forest Admin looks like in practice:
+[https://app.forestadmin.com/23065?livedemo](https://app.forestadmin.com/23065?livedemo)
 
 ## Commands
 
@@ -56,17 +44,6 @@ Finally, visit https://app.forestadmin.com/.
 
 ## Documentation
 [https://docs.forestadmin.com/documentation/](https://docs.forestadmin.com/documentation/)
-
-## How it works
-
-The Forest Admin NPM package (aka Forest Liana) introspects all your data model
-and dynamically generates the Admin API hosted on your servers. The Forest Admin
-interface is a web application that handles communication between the admin
-user and your application data through the Admin API.
-
-<p align="center" style="margin: 60px 0">
-  <img width="100%" src="https://www.forestadmin.com/public/img/illustrations-dev/schema-1.svg" alt="Howitworks">
-</p>
 
 ## Features
 
