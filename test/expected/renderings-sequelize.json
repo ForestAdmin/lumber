@@ -23,6 +23,11 @@
         "defaultValue": null
       },
       {
+        "name": "testEnum",
+        "nameColumn": "testEnum",
+        "type": "ENUM('LEFT','RIGHT')"
+      },
+      {
         "name": "cacheVersion",
         "nameColumn": "cacheVersion",
         "type": "STRING",
