@@ -64,6 +64,7 @@ function Dumper(config) {
       name: config.appName.replace(/ /g, '_').toLowerCase(),
       version: '0.0.1',
       private: true,
+      scripts: { start: 'node ./server.js' },
       dependencies,
     };
 
