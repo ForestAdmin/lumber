@@ -48,6 +48,8 @@ describe('Dumper > MongoDB', () => {
 
 describe('Dumper > MySQL', () => {
   describe('Handling /models/index.js file', () => {
+    let dumper;
+
     before(async () => {
       const config = {
         appName: 'test/output/mysql',
@@ -60,7 +62,9 @@ describe('Dumper > MySQL', () => {
         db: true,
       };
 
-      await new Dumper(config);
+      dumper = await new Dumper(config);
+
+      await dumper.dump({});
     });
 
     it('Should force type casting for boolean', () => {
@@ -73,6 +77,8 @@ describe('Dumper > MySQL', () => {
 
 describe('Dumper > MSSQL', () => {
   describe('Handling /models/index.js file', () => {
+    let dumper;
+
     before(async () => {
       const config = {
         appName: 'test/output/mssql',
@@ -85,7 +91,9 @@ describe('Dumper > MSSQL', () => {
         db: true,
       };
 
-      await new Dumper(config);
+      dumper = await new Dumper(config);
+
+      await dumper.dump({});
     });
 
     it('Should not force type casting', () => {
@@ -98,6 +106,8 @@ describe('Dumper > MSSQL', () => {
 
 describe('Dumper > pgSQL', () => {
   describe('Handling /models/index.js file', () => {
+    let dumper;
+
     before(async () => {
       const config = {
         appName: 'test/output/postgres',
@@ -110,7 +120,9 @@ describe('Dumper > pgSQL', () => {
         db: true,
       };
 
-      await new Dumper(config);
+      dumper = await new Dumper(config);
+
+      await dumper.dump({});
     });
 
     it('Should not force type casting', () => {
