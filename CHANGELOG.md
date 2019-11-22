@@ -4,6 +4,9 @@
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 
+### Fixed
+- MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries. 
+
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
 - Docker - Fix the docker-compose containerName when project name contains whitespaces.

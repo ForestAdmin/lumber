@@ -18,6 +18,18 @@ let databaseOptions = {
   dialectOptions: {}
 };
 
+<%if(config.dbDialect === 'mysql') {
+%>databaseOptions.dialectOptions.typeCast = ( field, useDefaultTypeCasting ) => {
+  if ( ( field.type === "BIT" ) && ( field.length === 1 ) ) {
+    const bytes = field.buffer();
+    return( bytes[0] === 1 );
+  }
+
+  return( useDefaultTypeCasting() );
+};
+<%}
+%>
+
 if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
 <% if (config.dbDialect === 'mysql') {
 %>  databaseOptions.dialectOptions.ssl = { rejectUnauthorized: true };

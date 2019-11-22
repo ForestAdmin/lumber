@@ -1,4 +1,4 @@
-/* global describe, after, it */
+/* global describe, after, it, before */
 const { expect } = require('chai');
 const rimraf = require('rimraf');
 const fs = require('fs');
@@ -12,7 +12,9 @@ after(() => {
 });
 
 describe('Dumper > MongoDB', () => {
-  it('generate a model file', async () => {
+  let dumper;
+
+  before(async () => {
     const config = {
       appName: 'test/output/mongo',
       dbDialect: 'mongodb',
@@ -24,12 +26,98 @@ describe('Dumper > MongoDB', () => {
       db: true,
     };
 
-    const dumper = await new Dumper(config);
+    dumper = await new Dumper(config);
+  });
+
+  it('generate a model file', async () => {
     await dumper.dump(expectedSimpleGeneratedModel);
 
     const filmsGeneratedFile = fs.readFileSync('./test/output/mongo/models/films.js', 'utf8');
     const filmsExpectedFile = fs.readFileSync('./test/expected/films-mongo.js.expected', 'utf-8');
     expect(filmsGeneratedFile).to.equals(filmsExpectedFile);
+  });
+
+  describe('Handling /models/index.js file', () => {
+    it('Should not force type casting', () => {
+      const indexGeneratedFile = fs.readFileSync('./test/output/mongo/models/index.js', 'utf-8');
+
+      expect(indexGeneratedFile).to.not.include('databaseOptions.dialectOptions.typeCast');
+    });
+  });
+});
+
+describe('Dumper > MySQL', () => {
+  describe('Handling /models/index.js file', () => {
+    before(async () => {
+      const config = {
+        appName: 'test/output/mysql',
+        dbDialect: 'mysql',
+        dbConnectionUrl: 'mysql://localhost:3306',
+        ssl: false,
+        dbSchema: 'public',
+        appHostname: 'localhost',
+        appPort: 1654,
+        db: true,
+      };
+
+      await new Dumper(config);
+    });
+
+    it('Should force type casting for boolean', () => {
+      const indexGeneratedFile = fs.readFileSync('./test/output/mysql/models/index.js', 'utf-8');
+
+      expect(indexGeneratedFile).to.include('databaseOptions.dialectOptions.typeCast');
+    });
+  });
+});
+
+describe('Dumper > MSSQL', () => {
+  describe('Handling /models/index.js file', () => {
+    before(async () => {
+      const config = {
+        appName: 'test/output/mssql',
+        dbDialect: 'mssql',
+        dbConnectionUrl: 'mysql://localhost:1433',
+        ssl: false,
+        dbSchema: 'public',
+        appHostname: 'localhost',
+        appPort: 1654,
+        db: true,
+      };
+
+      await new Dumper(config);
+    });
+
+    it('Should not force type casting', () => {
+      const indexGeneratedFile = fs.readFileSync('./test/output/mssql/models/index.js', 'utf-8');
+
+      expect(indexGeneratedFile).to.not.include('databaseOptions.dialectOptions.typeCast');
+    });
+  });
+});
+
+describe('Dumper > pgSQL', () => {
+  describe('Handling /models/index.js file', () => {
+    before(async () => {
+      const config = {
+        appName: 'test/output/postgres',
+        dbDialect: 'postgres',
+        dbConnectionUrl: 'mysql://localhost:5432',
+        ssl: false,
+        dbSchema: 'public',
+        appHostname: 'localhost',
+        appPort: 1654,
+        db: true,
+      };
+
+      await new Dumper(config);
+    });
+
+    it('Should not force type casting', () => {
+      const indexGeneratedFile = fs.readFileSync('./test/output/postgres/models/index.js', 'utf-8');
+
+      expect(indexGeneratedFile).to.not.include('databaseOptions.dialectOptions.typeCast');
+    });
   });
 });
 
