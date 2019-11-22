@@ -19,13 +19,13 @@ let databaseOptions = {
 };
 
 <%if(config.dbDialect === 'mysql') {
-%>databaseOptions.dialectOptions.typeCast = ( field, useDefaultTypeCasting ) => {
-  if ( ( field.type === "BIT" ) && ( field.length === 1 ) ) {
+%>databaseOptions.dialectOptions.typeCast = (field, useDefaultTypeCasting) => {
+  if ((field.type === "BIT") && (field.length === 1)) {
     const bytes = field.buffer();
-    return( bytes[0] === 1 );
+    return bytes[0] === 1;
   }
 
-  return( useDefaultTypeCasting() );
+  return useDefaultTypeCasting();
 };
 <%}
 %>
