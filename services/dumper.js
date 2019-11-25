@@ -2,6 +2,7 @@ const P = require('bluebird');
 const fs = require('fs');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
+const Handlebars = require('handlebars');
 const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
 const stringUtils = require('../utils/strings');
@@ -128,8 +129,11 @@ function Dumper(config) {
   }
 
   function writeModel(table, fields, references, options = {}) {
-    const templatePath = `${__dirname}/../templates/app/models/model.txt`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    const templatePath = config.dbDialect === 'mongodb' ?
+      `${__dirname}/../templates/app/models/mongo-model.hbs`
+      :
+      `${__dirname}/../templates/app/models/sequelize-model.hbs`;
+    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
 
     const fieldsDefinition = fields.map((field) => {
@@ -147,7 +151,7 @@ function Dumper(config) {
 
       if (reference.targetKey) {
         const expectedConventionalTargetKeyName = underscored
-          ? _.snakeCase(reference.targetKey) : reference.targetKey;
+          ? _.snakeCase(reference.targetKey) : _.camelCase(reference.targetKey);
         const targetKeyColumnUnconventional =
           reference.targetKey !== expectedConventionalTargetKeyName;
         return {
@@ -167,6 +171,7 @@ function Dumper(config) {
       ...options,
       schema: config.dbSchema,
       dialect: config.dbDialect,
+      noId: !options.hasIdColumn && !options.hasPrimaryKeys,
     });
 
     const filename = tableToFilename(table);

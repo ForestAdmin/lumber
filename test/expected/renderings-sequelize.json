@@ -1,0 +1,90 @@
+{
+  "renderings": {
+    "fields": [
+      {
+        "name": "createdAt",
+        "nameColumn": "createdAt",
+        "type": "DATE",
+        "primaryKey": false,
+        "defaultValue": null
+      },
+      {
+        "name": "updatedAt",
+        "nameColumn": "updatedAt",
+        "type": "DATE",
+        "primaryKey": false,
+        "defaultValue": null
+      },
+      {
+        "name": "deletedAt",
+        "nameColumn": "deletedAt",
+        "type": "DATE",
+        "primaryKey": false,
+        "defaultValue": null
+      },
+      {
+        "name": "testEnum",
+        "nameColumn": "testEnum",
+        "type": "ENUM('LEFT','RIGHT')"
+      },
+      {
+        "name": "cacheVersion",
+        "nameColumn": "cacheVersion",
+        "type": "STRING",
+        "primaryKey": false,
+        "defaultValue": null
+      },
+      {
+        "name": "sections",
+        "nameColumn": "sections",
+        "type": "JSONB",
+        "primaryKey": false,
+        "defaultValue": "[{\"name\": \"Dashboard\", \"isVisible\": true}, {\"name\": \"Data\", \"isVisible\": true}]"
+      },
+      {
+        "name": "collectionsPositions",
+        "nameColumn": "collectionsPositions",
+        "type": "ARRAY(DataTypes.INTEGER)",
+        "primaryKey": false,
+        "defaultValue": "ARRAY[]"
+      }
+    ],
+    "references": [
+      {
+        "ref": "environments",
+        "foreignKey": "environmentId",
+        "foreignKeyName": "environmentIdUnconventionnal",
+        "as": "environment"
+      },
+      {
+        "ref": "teams",
+        "foreignKey": "teamId",
+        "foreignKeyName": "teamId",
+        "as": "team"
+      },
+      {
+        "ref": "otherWithTarget",
+        "foreignKey": "other",
+        "foreignKeyName": "other",
+        "targetKey": "otherId",
+        "as": "team2"
+      },
+      {
+        "ref": "film",
+        "foreignKey": "filmKeyName",
+        "foreignKeyName": "filmKeyName",
+        "targetKey": "film_target_key",
+        "as": "films"
+      }
+    ],
+    "primaryKeys": [
+      "id"
+    ],
+    "options": {
+      "underscored": false,
+      "timestamps": true,
+      "hasIdColumn": true,
+      "hasPrimaryKeys": true
+    }
+  }
+}
