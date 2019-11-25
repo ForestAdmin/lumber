@@ -79,10 +79,9 @@ function hasIdColumn(fields, primaryKeys) {
     || _.includes(primaryKeys, 'id');
 }
 
+// NOTICE: Add isComposite, isUnique and isPrimary attributes to the foreign keys
 async function checkFkUnicity([schema, constraints, primaryKeys]) {
-  // NOTICE: Add unique and primary attributes to the foreign keys
   const foreignKeys = [];
-
   for (let i = 0; i < constraints.length; i += 1) {
     const fk = constraints[i];
     if (fk.column_type === 'FOREIGN KEY') {
@@ -99,17 +98,17 @@ async function checkFkUnicity([schema, constraints, primaryKeys]) {
         && primaryKeys.includes(fk.column_name)
       );
 
-      fk.unique = _.find(constraints, { column_name: fk.column_name, column_type: 'UNIQUE' }) !== undefined
+      fk.isUnique = _.find(constraints, { column_name: fk.column_name, column_type: 'UNIQUE' }) !== undefined
         || (
           fk.unique_indexes !== null
           && fk.unique_indexes.length === 1
-        && _.find(fk.unique_indexes, (array) => {
-          if (array.length === 1) return array.includes(fk.column_name);
-          return false;
-        }) !== undefined
+          && _.find(fk.unique_indexes, (array) => {
+            if (array.length === 1) return array.includes(fk.column_name);
+            return false;
+          }) !== undefined
         );
 
-      fk.primary = _.isEqual([fk.column_name], primaryKeys);
+      fk.isPrimary = _.isEqual([fk.column_name], primaryKeys);
     }
     foreignKeys.push(fk);
   }
@@ -117,6 +116,7 @@ async function checkFkUnicity([schema, constraints, primaryKeys]) {
   return [schema, foreignKeys, primaryKeys, []];
 }
 
+// NOTICE: Check the foreign key's reference unicity
 function checkRefUnicity(table, columnName) {
   const isPrimary = table[2].includes(columnName);
   const isUnique = _.find(table[1], { column_name: columnName, column_type: 'UNIQUE' }) !== undefined
@@ -124,6 +124,7 @@ function checkRefUnicity(table, columnName) {
   return isPrimary || isUnique;
 }
 
+// NOTICE: Format the references depending on the type of the association
 function setReference(fk, association, junctionTable) {
   let reference = {};
   if (association === 'belongsTo') {
@@ -174,6 +175,8 @@ function getData(table, config) {
     .then(data => checkFkUnicity(data));
 }
 
+// NOTICE: Use the foreign key and reference properties to determine the associations
+//         and push them as references of the table.
 async function setAssociationType(aggregatedData) {
   await P.mapSeries(Object.values(aggregatedData), async (table) => {
     table[1].forEach((fk) => {
@@ -181,7 +184,7 @@ async function setAssociationType(aggregatedData) {
         if (checkRefUnicity(aggregatedData[fk.foreign_table_name], fk.foreign_column_name)) {
           table[3].push(setReference(fk, 'belongsTo'));
         }
-        if (fk.primary || fk.unique) aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasOne'));
+        if (fk.isPrimary || fk.isUnique) aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasOne'));
         else aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasMany'));
         if (fk.isInCompositeKey) {
           const arrayUniqueIndexes = fk.unique_indexes === null ? [table[2]] : fk.unique_indexes;
@@ -201,6 +204,7 @@ async function setAssociationType(aggregatedData) {
   });
 }
 
+// NOTICE: Set the remaining fields
 async function analyzeTable([schema, foreignKeys, primaryKeys, references], table) {
   const fields = [];
   await P.each(Object.keys(schema), async (nameColumn) => {
@@ -274,6 +278,7 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   });
 
   await setAssociationType(aggregatedData);
+
   await P.mapSeries(showAllTables(databaseConnection, config.dbSchema), async (table) => {
     schema[table] = await analyzeTable(aggregatedData[table], table);
   });

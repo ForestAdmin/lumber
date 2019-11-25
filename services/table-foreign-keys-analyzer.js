@@ -20,39 +20,67 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
             ON tc.constraint_name = kcu.constraint_name
           JOIN information_schema.constraint_column_usage AS ccu
             ON ccu.constraint_name = tc.constraint_name
-          FULL OUTER JOIN (select
-                ix.indexrelid::regclass as index_name,
-                t.relname as table_name,
-                json_agg(DISTINCT a.attname) as unique_indexes
-            from
+          FULL OUTER JOIN (
+            SELECT ix.indexrelid::regclass AS index_name,
+                t.relname AS table_name,
+                json_agg(DISTINCT a.attname) AS unique_indexes
+            FROM
                 pg_class t,
                 pg_class i,
                 pg_index ix,
                 pg_attribute a,
                 pg_namespace ns
-            where
+            WHERE
                 t.oid = ix.indrelid
-                and i.oid = ix.indexrelid
-                and a.attrelid = t.oid
-                and a.attnum = ANY(ix.indkey)
-                and not ix.indisprimary
-                and ix.indisunique
-                and t.relkind = 'r'
-                and not t.relname like 'pg%'
-            group by table_name, index_name) as uidx on uidx.table_name = tc.table_name
-            WHERE tc.table_name=:table
-          group by tc.constraint_name, tc.table_name, tc.constraint_type, kcu.column_name, foreign_table_name, foreign_column_name`;
+                AND i.oid = ix.indexrelid
+                AND a.attrelid = t.oid
+                AND a.attnum = ANY(ix.indkey)
+                AND not ix.indisprimary
+                AND ix.indisunique
+                AND t.relkind = 'r'
+                AND not t.relname like 'pg%'
+            GROUP BY table_name, index_name) AS uidx on uidx.table_name = tc.table_name
+          WHERE tc.table_name=:table
+          GROUP BY tc.constraint_name, tc.table_name, tc.constraint_type, kcu.column_name, foreign_table_name, foreign_column_name`;
         break;
       case 'mysql':
         query = `
-          SELECT
-            TABLE_NAME AS table_name,
-            COLUMN_NAME AS column_name,CONSTRAINT_NAME AS constraint_name,
-            REFERENCED_TABLE_NAME AS foreign_table_name,
-            REFERENCED_COLUMN_NAME AS foreign_column_name
-          FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-          WHERE TABLE_SCHEMA = :databaseName
-            AND TABLE_NAME = :table;`;
+        SELECT constraint_name,
+               table_name,
+               column_name,
+               column_type,
+               foreign_table_name,
+               foreign_column_name,
+               CASE
+                 WHEN cast('[null]' as json) = unique_indexes THEN NULL
+                 ELSE unique_indexes
+               END as unique_indexes 
+        FROM (
+          SELECT tc.CONSTRAINT_NAME AS constraint_name,
+                 tc.TABLE_NAME AS table_name,
+                 kcu.COLUMN_NAME AS column_name,
+                 tc.CONSTRAINT_TYPE AS column_type,
+                 kcu.REFERENCED_TABLE_NAME AS foreign_table_name,
+                 kcu.REFERENCED_COLUMN_NAME AS foreign_column_name,
+                 JSON_ARRAYAGG(uidx.unique_indexes) AS unique_indexes
+          FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS as tc
+          JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS kcu
+            ON tc.TABLE_NAME = kcu.TABLE_NAME 
+            AND tc.constraint_name = kcu.constraint_name
+          LEFT OUTER JOIN (
+            SELECT distinct uidx.INDEX_NAME, uidx.table_name, JSON_ARRAYAGG(uidx.COLUMN_NAME) as unique_indexes 
+            FROM information_schema.STATISTICS AS uidx
+            WHERE INDEX_SCHEMA = :databaseName 
+              AND uidx.NON_UNIQUE = 0
+              AND INDEX_NAME != 'PRIMARY' 
+            GROUP BY table_name, index_name) AS uidx
+            ON uidx.table_name = tc.table_name
+           WHERE tc.TABLE_SCHEMA = :databaseName 
+              AND tc.TABLE_NAME = :table 
+              AND tc.CONSTRAINT_TYPE != 'UNIQUE'
+           GROUP BY constraint_name, table_name, column_type, column_name, foreign_table_name, foreign_column_name
+        ) AS alias 
+        GROUP BY constraint_name, table_name, column_type, column_name, foreign_table_name, foreign_column_name, unique_indexes`;
         replacements.databaseName = queryInterface.sequelize.config.database;
         break;
       case 'mssql':

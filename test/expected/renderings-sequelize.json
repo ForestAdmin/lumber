@@ -67,14 +67,16 @@
         "foreignKey": "other",
         "foreignKeyName": "other",
         "targetKey": "otherId",
-        "as": "team2"
+        "as": "team2",
+        "association": "belongsTo"
       },
       {
         "ref": "film",
         "foreignKey": "filmKeyName",
         "foreignKeyName": "filmKeyName",
         "targetKey": "film_target_key",
-        "as": "films"
+        "as": "films",
+        "association": "belongsTo"
       }
     ],
     "primaryKeys": [
@@ -86,5 +88,6 @@
       "hasIdColumn": true,
       "hasPrimaryKeys": true
     }
+
   }
 }
