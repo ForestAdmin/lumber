@@ -67,15 +67,13 @@
         "foreignKey": "other",
         "foreignKeyName": "other",
         "targetKey": "otherId",
-        "targetKeyName": "otherId",
         "as": "team2"
       },
       {
         "ref": "film",
         "foreignKey": "filmKeyName",
         "foreignKeyName": "filmKeyName",
-        "targetKey": "filmTargetKey",
-        "targetKeyName": "film_target_key",
+        "targetKey": "film_target_key",
         "as": "films"
       }
     ],

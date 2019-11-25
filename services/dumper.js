@@ -151,7 +151,7 @@ function Dumper(config) {
 
       if (reference.targetKey) {
         const expectedConventionalTargetKeyName = underscored
-          ? _.snakeCase(reference.targetKey) : reference.targetKey;
+          ? _.snakeCase(reference.targetKey) : _.camelCase(reference.targetKey);
         const targetKeyColumnUnconventional =
           reference.targetKey !== expectedConventionalTargetKeyName;
         return {
