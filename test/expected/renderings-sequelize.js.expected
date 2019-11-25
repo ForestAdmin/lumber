@@ -57,6 +57,16 @@ module.exports = (sequelize, DataTypes) => {
       },
       as: 'team2',
     });
+    Renderings.belongsTo(models.film, {
+      foreignKey: {
+        name: 'filmKeyName',
+      },
+      target: {
+        name: 'film_target_key',
+        field: 'film_target_key',
+      },
+      as: 'films',
+    });
   };
 
   return Renderings;
