@@ -1,6 +1,5 @@
-#!/usr/bin/env node
 require('dotenv').config();
-const app = require('../app');
+const app = require('./app');
 const debug = require('debug')('{name}:server');
 const http = require('http');
 const chalk = require('chalk');

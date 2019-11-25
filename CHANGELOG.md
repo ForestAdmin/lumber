@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Templates - Replace unconventional `bin/www` script with `server.txt`.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
