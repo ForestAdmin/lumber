@@ -22,7 +22,7 @@ let databaseOptions = {
 %>databaseOptions.dialectOptions.typeCast = (field, useDefaultTypeCasting) => {
   if ((field.type === "BIT") && (field.length === 1)) {
     const bytes = field.buffer();
-    return bytes[0] === 1;
+    return bytes ? bytes[0] === 1 : bytes;
   }
 
   return useDefaultTypeCasting();
