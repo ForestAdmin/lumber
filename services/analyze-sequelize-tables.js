@@ -119,7 +119,7 @@ async function checkFkUnicity([schema, constraints, primaryKeys]) {
 
 // NOTICE: Check the foreign key's reference unicity
 function checkRefUnicity(table, columnName) {
-  const isPrimary = table[2].includes(columnName); // TODO: Think about composite key here ?
+  const isPrimary = table[2].includes(columnName);
   const isUnique = _.find(table[1], { column_name: columnName, column_type: 'UNIQUE' }) !== undefined
     || _.find(table[1], { unique_indexes: columnName, column_type: 'PRIMARY KEY' }) !== undefined;
   return isPrimary || isUnique;
