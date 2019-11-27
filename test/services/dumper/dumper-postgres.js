@@ -3,8 +3,8 @@ const { expect } = require('chai');
 const rimraf = require('rimraf');
 const fs = require('fs');
 
-const renderingModel = require('../expected/renderings-sequelize.json');
-const Dumper = require('../../services/dumper');
+const renderingModel = require('../../expected/renderings-sequelize.json');
+const Dumper = require('../../../services/dumper');
 
 let dumper;
 

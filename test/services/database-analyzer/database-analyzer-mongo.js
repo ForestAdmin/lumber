@@ -1,18 +1,18 @@
 const { expect } = require('chai');
 
-const MongoHelper = require('../utils/mongo-helper');
-const { describeMongoDatabases } = require('../utils/multiple-database-version-helper');
-const DatabaseAnalyzer = require('../../services/database-analyzer');
-const simpleModel = require('../fixtures/simple-model');
-const hasManyModel = require('../fixtures/hasmany-model');
-const multipleReferencesModel = require('../fixtures/multiple-references-same-field-model');
-const manyNullsModel = require('../fixtures/many-nulls-model');
-const complexModel = require('../fixtures/many-objectid-fields-model');
-const expectedSimpleModel = require('../expected/db-analysis-output/simple.json');
-const expectedHasManyModel = require('../expected/db-analysis-output/hasmany.json');
-const expectedMultipleReferencesModel = require('../expected/db-analysis-output/multiple-references-from-same-field.json');
-const expectedManyuNullsModel = require('../expected/db-analysis-output/many-nulls.json');
-const expectedManyObjectIDFieldsModel = require('../expected/db-analysis-output/many-objectid-fields.json');
+const MongoHelper = require('../../utils/mongo-helper');
+const { describeMongoDatabases } = require('../../utils/multiple-database-version-helper');
+const DatabaseAnalyzer = require('../../../services/database-analyzer');
+const simpleModel = require('../../fixtures/simple-model');
+const hasManyModel = require('../../fixtures/hasmany-model');
+const multipleReferencesModel = require('../../fixtures/multiple-references-same-field-model');
+const manyNullsModel = require('../../fixtures/many-nulls-model');
+const complexModel = require('../../fixtures/many-objectid-fields-model');
+const expectedSimpleModel = require('../../expected/mongo/db-analysis-output/simple.json');
+const expectedHasManyModel = require('../../expected/mongo/db-analysis-output/hasmany.json');
+const expectedMultipleReferencesModel = require('../../expected/mongo/db-analysis-output/multiple-references-from-same-field.json');
+const expectedManyuNullsModel = require('../../expected/mongo/db-analysis-output/many-nulls.json');
+const expectedManyObjectIDFieldsModel = require('../../expected/mongo/db-analysis-output/many-objectid-fields.json');
 
 describe('Database analyser > MongoDB', () => {
   describeMongoDatabases(mongoUrl => () => {
