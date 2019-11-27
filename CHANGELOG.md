@@ -1,14 +1,49 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Templates - Replace unconventional `bin/www` script with `server.txt`.
+
+## RELEASE 3.0.1 - 2019-11-20
+### Fixed
+- Docker - Fix the docker-compose containerName when project name contains whitespaces.
+- Technical - Ease the installation of docker for forest employees.
+
+## RELEASE 3.0.0 - 2019-11-20
+### Added
+- Server - Add server logs on generated projects.
+
+### Fixed
+- Command Generate - Fix smart routes for models composed of multiple words.
+- Technical - Drop `APPLICATION_HOST` in `.env` as it was useless.
+
+## RELEASE 3.0.0-beta.0 - 2019-11-19
 ### Added
 - Lumber - Mongo schema generates hasMany: array of `_id` referencing other collection.
 - Node version - Define supported node versions (10 and 12) in `package.json`.
+- Command generate - Add comments to generated models.
+- Command Generate - Generate the forest collection files.
+- Command Generate - Add tests on model generation (MySQL and PostgreSQL).
+- Command Generate - Add logs about what is happening.
+- Technical - Refactor and add tests on prompter.
+- Command Generate - Generate the forest routes to ease the use of `smart routes`.
 
 ### Changed
 - Command Generate - Use handlebars to generate models. 
 - Technical - Remove unused ENCRYPT env variable.
 - Security - Prevent remote environments creation with HTTP protocol.
+- Commands - Remove command run and install.
+- Command Generate - Install Forest Admin middleware.
+- Logs - Improve the wording for several existing logs.
+- Command Generate - Normalize the filenames.
+- Command Generate - Update version of liana.
+
+### Fixed
+- Command Login - Disable account creation.
+- Command Login - Check token validity before login.
+- Command Generate - Prompt for password/token just after the other prompts.
+- Command Generate - Remove extra newline at the end of model file on mongoose.
+- Technical - Fix tests on dumper.
 
 ## RELEASE 2.7.3 - 2019-11-07
 - Technical - Fix installation issue on Windows (moving `git-hook`/`simple-git` to devDependencies).
@@ -25,6 +60,9 @@
 ### Added
 - Field Types - Support `TIMESTAMP(n)`, `SMALLINT(n)` and `BIGINT(n)` column types (MySQL)
 - Command Generate - Generate MongoDB belongsTo.
+
+### Changed
+- Commands - Drop environment variables.
 
 ## RELEASE 2.6.3 - 2019-11-04
 ### Fixed

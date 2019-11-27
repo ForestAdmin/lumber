@@ -1,17 +1,10 @@
 const JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
-function Guest(data) {
+function User(data) {
   return new JSONAPISerializer('users', {
-    attributes: ['email', 'password', 'guest', 'projects'],
-    guest: {
-      ref: 'id',
-      included: false,
-    },
-    projects: {
-      ref: 'id',
-      included: false,
-    },
+    attributes: ['email', 'password', 'firstName', 'lastName'],
+    keyForAttribute: 'underscore_case',
   }).serialize(data);
 }
 
-module.exports = Guest;
+module.exports = User;

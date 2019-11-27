@@ -11,6 +11,6 @@ const packagejson = require('./package.json');
 program
   .version(packagejson.version)
   .command('generate <appName>', 'generate a backend application with an ORM/ODM configured')
-  .command('install <package>', 'install a Lumber plugin')
-  .command('run <plugin:cmd>', 'run a command from a Lumber plugin')
+  .command('login', 'log into Forest Admin API')
+  .command('logout', 'log out from Forest Admin API')
   .parse(process.argv);
