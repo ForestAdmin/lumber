@@ -44,4 +44,12 @@ describe('Dumper > MongoDB', () => {
     expect(generatedFile).to.exist;
     expect(generatedFile).to.equals(expectedFile);
   });
+
+  describe('Handling /models/index.js file', () => {
+    it('Should not force type casting', () => {
+      const indexGeneratedFile = fs.readFileSync('./test/output/mongo/models/index.js', 'utf-8');
+
+      expect(indexGeneratedFile).to.not.include('databaseOptions.dialectOptions.typeCast');
+    });
+  });
 });

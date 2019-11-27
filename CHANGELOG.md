@@ -1,8 +1,14 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Lumber - Mongo schema generates hasMany: array of `_id` referencing other collection.
+
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
+
+### Fixed
+- MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries. 
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
@@ -19,7 +25,6 @@
 
 ## RELEASE 3.0.0-beta.0 - 2019-11-19
 ### Added
-- Lumber - Mongo schema generates hasMany: array of `_id` referencing other collection.
 - Node version - Define supported node versions (10 and 12) in `package.json`.
 - Command generate - Add comments to generated models.
 - Command Generate - Generate the forest collection files.
