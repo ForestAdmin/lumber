@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const rimraf = require('rimraf');
 const fs = require('fs');
 
-const expectedSimpleGeneratedModel = require('../expected/simple-generated-model.json');
+const expectedSimpleGeneratedModel = require('../expected/db-analysis-output/simple.json');
 const renderingModel = require('../expected/renderings-sequelize.json');
 const Dumper = require('../../services/dumper');
 

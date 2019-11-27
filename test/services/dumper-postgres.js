@@ -27,7 +27,7 @@ after(() => {
 
 describe('Dumper > Postgres', () => {
   it('generate a model file', async () => {
-    await dumper.dump('renderings', renderingModel);
+    await dumper.dump(renderingModel);
     const renderingsGeneratedFile = fs.readFileSync('./test/output/postgres/models/renderings.js', 'utf8');
     const renderingsExpectedFile = fs.readFileSync('./test/expected/renderings-sequelize.js.expected', 'utf-8');
     expect(renderingsGeneratedFile).to.equals(renderingsExpectedFile);
