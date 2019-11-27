@@ -22,6 +22,13 @@
       "defaultValue": "1"
     },
     {
+      "name": "paying",
+      "nameColumn": "paying",
+      "type": "BOOLEAN",
+      "primaryKey": false,
+      "defaultValue": null
+    },
+    {
       "name": "createdAt",
       "nameColumn": "created_at",
       "type": "DATE",

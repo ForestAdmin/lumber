@@ -56,6 +56,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
     const mysqlEnumRegex = /ENUM\((.*)\)/i;
 
     switch (type) {
+      case (type === 'BIT(1)' && queryInterface.sequelize.options.dialect === 'mysql' && 'BIT(1)'): // NOTICE: MySQL boolean type.
       case 'BIT': // NOTICE: MSSQL type.
       case 'BOOLEAN':
         return 'BOOLEAN';
