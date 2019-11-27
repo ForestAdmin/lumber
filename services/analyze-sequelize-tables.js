@@ -84,6 +84,7 @@ async function checkFkUnicity([schema, constraints, primaryKeys]) {
   const foreignKeys = [];
   for (let i = 0; i < constraints.length; i += 1) {
     const fk = constraints[i];
+    fk.unique_indexes = JSON.parse(fk.unique_indexes);
     if (fk.column_type === 'FOREIGN KEY') {
       fk.isInCompositeKey = (
         fk.unique_indexes !== null
@@ -118,7 +119,7 @@ async function checkFkUnicity([schema, constraints, primaryKeys]) {
 
 // NOTICE: Check the foreign key's reference unicity
 function checkRefUnicity(table, columnName) {
-  const isPrimary = table[2].includes(columnName);
+  const isPrimary = table[2].includes(columnName); // TODO: Think about composite key here ?
   const isUnique = _.find(table[1], { column_name: columnName, column_type: 'UNIQUE' }) !== undefined
     || _.find(table[1], { unique_indexes: columnName, column_type: 'PRIMARY KEY' }) !== undefined;
   return isPrimary || isUnique;

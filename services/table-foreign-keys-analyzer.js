@@ -39,7 +39,8 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                 AND ix.indisunique
                 AND t.relkind = 'r'
                 AND not t.relname like 'pg%'
-            GROUP BY table_name, index_name) AS uidx on uidx.table_name = tc.table_name
+            GROUP BY table_name, index_name) AS uidx
+            ON uidx.table_name = tc.table_name
           WHERE tc.table_name=:table
           GROUP BY tc.constraint_name, tc.table_name, tc.constraint_type, kcu.column_name, foreign_table_name, foreign_column_name`;
         break;
@@ -68,7 +69,9 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
             ON tc.TABLE_NAME = kcu.TABLE_NAME 
             AND tc.constraint_name = kcu.constraint_name
           LEFT OUTER JOIN (
-            SELECT distinct uidx.INDEX_NAME, uidx.table_name, JSON_ARRAYAGG(uidx.COLUMN_NAME) as unique_indexes 
+            SELECT distinct uidx.INDEX_NAME,
+                   uidx.table_name, 
+                   JSON_ARRAYAGG(uidx.COLUMN_NAME) as unique_indexes 
             FROM information_schema.STATISTICS AS uidx
             WHERE INDEX_SCHEMA = :databaseName 
               AND uidx.NON_UNIQUE = 0
@@ -85,22 +88,159 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
         break;
       case 'mssql':
         query = `
-          SELECT
-            fk.name AS constraint_name,
-            OBJECT_NAME(fk.parent_object_id) AS table_name,
-            c1.name AS column_name,
-            OBJECT_NAME(fk.referenced_object_id) AS foreign_table_name,
-            c2.name AS foreign_column_name
-          FROM sys.foreign_keys fk
-          INNER JOIN sys.foreign_key_columns fkc
-            ON fkc.constraint_object_id = fk.object_id
-          INNER JOIN sys.columns c1
-            ON fkc.parent_column_id = c1.column_id
-              AND fkc.parent_object_id = c1.object_id
-          INNER JOIN sys.columns c2
-            ON fkc.referenced_column_id = c2.column_id
-              AND fkc.referenced_object_id = c2.object_id
-          WHERE fk.parent_object_id = (SELECT object_id FROM sys.tables WHERE name = :table AND schema_id = SCHEMA_ID('${schema}'))`;
+   SELECT constraint_name,
+        table_name,
+        column_name,
+        column_type,
+        foreign_table_name,
+        foreign_column_name,
+        CASE
+          WHEN '[]' = unique_indexes THEN NULL
+          ELSE unique_indexes
+        END as unique_indexes 
+   FROM (
+     SELECT c.constraint_name,
+          c.table_name,
+          c.column_type,
+          c.column_name,
+          c.foreign_table_name,
+          c.foreign_column_name,
+         CONCAT('[',
+           STUFF(
+             (
+               SELECT ', ' + d.unique_indexes
+               FROM (
+                 SELECT ccu.constraint_name,
+                      ccu.table_name AS table_name,
+                      tc.constraint_type AS column_type,
+                      ccu.column_name AS column_name,
+                      kcu.table_name AS foreign_table_name,
+                      kcu.column_name AS foreign_column_name,
+                      uidx.unique_indexes
+                 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+                 JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu
+                   ON ccu.constraint_name = tc.constraint_name
+                 LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
+                   ON ccu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME 
+                 LEFT OUTER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu 
+                   ON kcu.CONSTRAINT_NAME = rc.UNIQUE_CONSTRAINT_NAME
+                 LEFT OUTER JOIN (
+                   SELECT a.ind_name, a.t_name,
+                     CONCAT('[',
+                       STUFF(
+                         (
+                           SELECT ', ' + CONCAT('"', b.unique_indexes, '"')
+                           FROM (
+                             SELECT t.name as t_name, ind.name as ind_name, col.name as unique_indexes
+                             FROM sys.indexes ind 
+                             JOIN sys.index_columns ic 
+                               ON  ind.object_id = ic.object_id 
+                               AND ind.index_id = ic.index_id 
+                             JOIN sys.tables t 
+                               ON ind.object_id = t.object_id 
+                             JOIN sys.columns col
+                               ON ic.object_id = col.object_id 
+                               AND ic.column_id = col.column_id 
+                             WHERE ind.is_primary_key = 0
+                               AND (ind.is_unique = 1 OR ind.is_unique_constraint = 1)
+                           ) b
+                           WHERE b.t_name = a.t_name AND b.ind_name = a.ind_name
+                           FOR XML PATH(''), TYPE
+                         ).value('.','varchar(max)'), 1, 2, ''
+                       ), ']'
+                     ) AS unique_indexes
+                   FROM (
+                     SELECT t.name as t_name, ind.name as ind_name, col.name
+                     FROM sys.indexes ind 
+                     JOIN sys.index_columns ic 
+                       ON  ind.object_id = ic.object_id 
+                       AND ind.index_id = ic.index_id 
+                     JOIN sys.tables t 
+                       ON ind.object_id = t.object_id 
+                     JOIN sys.columns col
+                       ON ic.object_id = col.object_id 
+                       AND ic.column_id = col.column_id 
+                     WHERE ind.is_primary_key = 0
+                       AND (ind.is_unique = 1 OR ind.is_unique_constraint = 1)
+                   ) a
+                   GROUP BY a.t_name, a.ind_name
+                 ) uidx
+                   ON uidx.t_name = tc.table_name
+                 WHERE ccu.table_name = :table AND ccu.table_schema = '${schema}'
+               ) d
+               WHERE c.constraint_name = d.constraint_name
+                 AND c.table_name = d.table_name
+                 AND c.column_type = d.column_type
+                 AND c.column_name = d.column_name
+                 AND c.foreign_table_name = d.foreign_table_name
+                 AND c.foreign_column_name = d.foreign_column_name
+               FOR XML PATH(''), TYPE
+             ).value('.','varchar(max)'), 1, 2, ''
+           ), ']'
+         ) AS unique_indexes
+     FROM (
+       SELECT ccu.constraint_name,
+            ccu.table_name AS table_name,
+            tc.constraint_type AS column_type,
+            ccu.column_name AS column_name,
+            kcu.table_name AS foreign_table_name,
+            kcu.column_name AS foreign_column_name
+       FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+       JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu
+         ON ccu.constraint_name = tc.constraint_name
+       LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
+         ON ccu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME 
+       LEFT OUTER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu 
+         ON kcu.CONSTRAINT_NAME = rc.UNIQUE_CONSTRAINT_NAME
+       LEFT OUTER JOIN (
+         SELECT a.ind_name, a.t_name,
+           CONCAT('[',
+             STUFF(
+               (
+                 SELECT ', ' + CONCAT('"', b.unique_indexes, '"')
+                 FROM (
+                   SELECT t.name as t_name, ind.name as ind_name, col.name as unique_indexes
+                   FROM sys.indexes ind 
+                   JOIN sys.index_columns ic 
+                     ON  ind.object_id = ic.object_id 
+                     AND ind.index_id = ic.index_id 
+                   JOIN sys.tables t 
+                     ON ind.object_id = t.object_id 
+                   JOIN sys.columns col
+                     ON ic.object_id = col.object_id 
+                     AND ic.column_id = col.column_id 
+                   WHERE ind.is_primary_key = 0
+                     AND (ind.is_unique = 1 OR ind.is_unique_constraint = 1)
+                 ) b
+                 WHERE b.t_name = a.t_name AND b.ind_name = a.ind_name
+                 FOR XML PATH(''), TYPE
+               ).value('.','varchar(max)'), 1, 2, ''
+             ), ']'
+           ) AS unique_indexes
+         FROM (
+           SELECT t.name as t_name, ind.name as ind_name, col.name
+           FROM sys.indexes ind 
+           JOIN sys.index_columns ic 
+             ON  ind.object_id = ic.object_id 
+             AND ind.index_id = ic.index_id 
+           JOIN sys.tables t 
+             ON ind.object_id = t.object_id 
+           JOIN sys.columns col
+             ON ic.object_id = col.object_id 
+             AND ic.column_id = col.column_id 
+           WHERE ind.is_primary_key = 0
+             AND (ind.is_unique = 1 OR ind.is_unique_constraint = 1)
+         ) a
+         GROUP BY a.t_name, a.ind_name
+       ) uidx
+         ON uidx.t_name = ccu.table_name
+         WHERE ccu.table_name = :table AND ccu.table_schema = '${schema}'
+     ) as c
+     WHERE column_type != 'UNIQUE'
+     GROUP BY c.constraint_name, c.table_name, c.column_type, c.column_name, c.foreign_table_name, c.foreign_column_name
+     ) alias 
+   GROUP BY constraint_name, table_name, column_type, column_name, foreign_table_name, foreign_column_name, unique_indexes
+        `;
         break;
       case 'sqlite':
         query = 'PRAGMA foreign_key_list(:table);';
