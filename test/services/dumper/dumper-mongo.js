@@ -32,7 +32,6 @@ describe('Dumper > MongoDB', () => {
     const generatedFile = fs.readFileSync('./test/output/mongo/models/films.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/simple-js', 'utf-8');
 
-    expect(generatedFile).to.exist;
     expect(generatedFile).to.equals(expectedFile);
   });
 
@@ -41,7 +40,6 @@ describe('Dumper > MongoDB', () => {
     const generatedFile = fs.readFileSync('./test/output/mongo/models/films.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/hasmany-js', 'utf-8');
 
-    expect(generatedFile).to.exist;
     expect(generatedFile).to.equals(expectedFile);
   });
 

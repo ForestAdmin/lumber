@@ -95,4 +95,3 @@ describe('Dumper > pgSQL', () => {
     });
   });
 });
-
