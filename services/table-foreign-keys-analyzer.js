@@ -53,9 +53,9 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                foreign_table_name,
                foreign_column_name,
                CASE
-                 WHEN cast('[null]' as json) = unique_indexes THEN NULL
+                 WHEN cast('[null]' AS json) = unique_indexes THEN NULL
                  ELSE unique_indexes
-               END as unique_indexes
+               END AS unique_indexes
         FROM (
           SELECT tc.constraint_name AS constraint_name,
                  tc.table_name AS table_name,
@@ -64,14 +64,14 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                  kcu.referenced_table_name AS foreign_table_name,
                  kcu.referenced_column_name AS foreign_column_name,
                  JSON_ARRAYAGG(uidx.unique_indexes) AS unique_indexes
-          FROM information_schema.table_constraints as tc
+          FROM information_schema.table_constraints AS tc
           JOIN information_schema.key_column_usage AS kcu
             ON tc.table_name = kcu.table_name
             AND tc.constraint_name = kcu.constraint_name
           LEFT OUTER JOIN (
             SELECT distinct uidx.index_name,
                    uidx.table_name,
-                   JSON_ARRAYAGG(uidx.column_name) as unique_indexes
+                   JSON_ARRAYAGG(uidx.column_name) AS unique_indexes
             FROM information_schema.statistics AS uidx
             WHERE index_schema = :databaseName
               AND uidx.non_unique = 0
@@ -97,7 +97,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
         CASE
           WHEN '[]' = unique_indexes THEN NULL
           ELSE unique_indexes
-        END as unique_indexes
+        END AS unique_indexes
    FROM (
      SELECT c.constraint_name,
           c.table_name,
@@ -131,7 +131,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                          (
                            SELECT ', ' + CONCAT('"', b.unique_indexes, '"')
                            FROM (
-                             SELECT t.name as t_name, ind.name as ind_name, col.name as unique_indexes
+                             SELECT t.name AS t_name, ind.name AS ind_name, col.name AS unique_indexes
                              FROM sys.indexes ind
                              JOIN sys.index_columns ic
                                ON  ind.object_id = ic.object_id
@@ -150,7 +150,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                        ), ']'
                      ) AS unique_indexes
                    FROM (
-                     SELECT t.name as t_name, ind.name as ind_name, col.name
+                     SELECT t.name AS t_name, ind.name AS ind_name, col.name
                      FROM sys.indexes ind
                      JOIN sys.index_columns ic
                        ON  ind.object_id = ic.object_id
@@ -199,7 +199,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                (
                  SELECT ', ' + CONCAT('"', b.unique_indexes, '"')
                  FROM (
-                   SELECT t.name as t_name, ind.name as ind_name, col.name as unique_indexes
+                   SELECT t.name AS t_name, ind.name AS ind_name, col.name AS unique_indexes
                    FROM sys.indexes ind
                    JOIN sys.index_columns ic
                      ON  ind.object_id = ic.object_id
@@ -218,7 +218,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
              ), ']'
            ) AS unique_indexes
          FROM (
-           SELECT t.name as t_name, ind.name as ind_name, col.name
+           SELECT t.name AS t_name, ind.name AS ind_name, col.name
            FROM sys.indexes ind
            JOIN sys.index_columns ic
              ON  ind.object_id = ic.object_id
@@ -235,7 +235,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
        ) uidx
          ON uidx.t_name = ccu.table_name
          WHERE ccu.table_name = :table AND ccu.table_schema = '${schema}'
-     ) as c
+     ) AS c
      WHERE column_type != 'UNIQUE'
      GROUP BY c.constraint_name, c.table_name, c.column_type, c.column_name, c.foreign_table_name, c.foreign_column_name
      ) alias
