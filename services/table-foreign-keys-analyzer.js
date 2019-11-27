@@ -55,34 +55,34 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                CASE
                  WHEN cast('[null]' as json) = unique_indexes THEN NULL
                  ELSE unique_indexes
-               END as unique_indexes 
+               END as unique_indexes
         FROM (
-          SELECT tc.CONSTRAINT_NAME AS constraint_name,
-                 tc.TABLE_NAME AS table_name,
-                 kcu.COLUMN_NAME AS column_name,
-                 tc.CONSTRAINT_TYPE AS column_type,
-                 kcu.REFERENCED_TABLE_NAME AS foreign_table_name,
-                 kcu.REFERENCED_COLUMN_NAME AS foreign_column_name,
+          SELECT tc.constraint_name AS constraint_name,
+                 tc.table_name AS table_name,
+                 kcu.column_name AS column_name,
+                 tc..constraint_type AS column_type,
+                 kcu.referenced_table_name AS foreign_table_name,
+                 kcu.referenced_column_name AS foreign_column_name,
                  JSON_ARRAYAGG(uidx.unique_indexes) AS unique_indexes
-          FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS as tc
-          JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS kcu
-            ON tc.TABLE_NAME = kcu.TABLE_NAME 
+          FROM information_schema.table_constraints as tc
+          JOIN information_schema.key_column_usage AS kcu
+            ON tc.table_name = kcu.table_name
             AND tc.constraint_name = kcu.constraint_name
           LEFT OUTER JOIN (
-            SELECT distinct uidx.INDEX_NAME,
-                   uidx.table_name, 
-                   JSON_ARRAYAGG(uidx.COLUMN_NAME) as unique_indexes 
-            FROM information_schema.STATISTICS AS uidx
-            WHERE INDEX_SCHEMA = :databaseName 
-              AND uidx.NON_UNIQUE = 0
-              AND INDEX_NAME != 'PRIMARY' 
+            SELECT distinct uidx.index_name,
+                   uidx.table_name,
+                   JSON_ARRAYAGG(uidx.column_name) as unique_indexes
+            FROM information_schema.statistics AS uidx
+            WHERE index_schema = :databaseName
+              AND uidx.non_unique = 0
+              AND index_name != 'PRIMARY'
             GROUP BY table_name, index_name) AS uidx
             ON uidx.table_name = tc.table_name
-           WHERE tc.TABLE_SCHEMA = :databaseName 
-              AND tc.TABLE_NAME = :table 
-              AND tc.CONSTRAINT_TYPE != 'UNIQUE'
+           WHERE tc.table_schema = :databaseName
+              AND tc.table_name = :table
+              AND tc.constraint_type != 'UNIQUE'
            GROUP BY constraint_name, table_name, column_type, column_name, foreign_table_name, foreign_column_name
-        ) AS alias 
+        ) AS alias
         GROUP BY constraint_name, table_name, column_type, column_name, foreign_table_name, foreign_column_name, unique_indexes`;
         replacements.databaseName = queryInterface.sequelize.config.database;
         break;
@@ -97,7 +97,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
         CASE
           WHEN '[]' = unique_indexes THEN NULL
           ELSE unique_indexes
-        END as unique_indexes 
+        END as unique_indexes
    FROM (
      SELECT c.constraint_name,
           c.table_name,
@@ -117,13 +117,13 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                       kcu.table_name AS foreign_table_name,
                       kcu.column_name AS foreign_column_name,
                       uidx.unique_indexes
-                 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
-                 JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu
+                 FROM information_schema.table_constraints tc
+                 JOIN information_schema.constraint_column_usage ccu
                    ON ccu.constraint_name = tc.constraint_name
-                 LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
-                   ON ccu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME 
-                 LEFT OUTER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu 
-                   ON kcu.CONSTRAINT_NAME = rc.UNIQUE_CONSTRAINT_NAME
+                 LEFT OUTER JOIN information_schema.referential_constraints rc
+                   ON ccu.constraint_name = rc.constraint_name
+                 LEFT OUTER JOIN information_schema.key_column_usage kcu
+                   ON kcu.constraint_name = rc.unique_constraint_name
                  LEFT OUTER JOIN (
                    SELECT a.ind_name, a.t_name,
                      CONCAT('[',
@@ -132,15 +132,15 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                            SELECT ', ' + CONCAT('"', b.unique_indexes, '"')
                            FROM (
                              SELECT t.name as t_name, ind.name as ind_name, col.name as unique_indexes
-                             FROM sys.indexes ind 
-                             JOIN sys.index_columns ic 
-                               ON  ind.object_id = ic.object_id 
-                               AND ind.index_id = ic.index_id 
-                             JOIN sys.tables t 
-                               ON ind.object_id = t.object_id 
+                             FROM sys.indexes ind
+                             JOIN sys.index_columns ic
+                               ON  ind.object_id = ic.object_id
+                               AND ind.index_id = ic.index_id
+                             JOIN sys.tables t
+                               ON ind.object_id = t.object_id
                              JOIN sys.columns col
-                               ON ic.object_id = col.object_id 
-                               AND ic.column_id = col.column_id 
+                               ON ic.object_id = col.object_id
+                               AND ic.column_id = col.column_id
                              WHERE ind.is_primary_key = 0
                                AND (ind.is_unique = 1 OR ind.is_unique_constraint = 1)
                            ) b
@@ -151,15 +151,15 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                      ) AS unique_indexes
                    FROM (
                      SELECT t.name as t_name, ind.name as ind_name, col.name
-                     FROM sys.indexes ind 
-                     JOIN sys.index_columns ic 
-                       ON  ind.object_id = ic.object_id 
-                       AND ind.index_id = ic.index_id 
-                     JOIN sys.tables t 
-                       ON ind.object_id = t.object_id 
+                     FROM sys.indexes ind
+                     JOIN sys.index_columns ic
+                       ON  ind.object_id = ic.object_id
+                       AND ind.index_id = ic.index_id
+                     JOIN sys.tables t
+                       ON ind.object_id = t.object_id
                      JOIN sys.columns col
-                       ON ic.object_id = col.object_id 
-                       AND ic.column_id = col.column_id 
+                       ON ic.object_id = col.object_id
+                       AND ic.column_id = col.column_id
                      WHERE ind.is_primary_key = 0
                        AND (ind.is_unique = 1 OR ind.is_unique_constraint = 1)
                    ) a
@@ -185,13 +185,13 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
             ccu.column_name AS column_name,
             kcu.table_name AS foreign_table_name,
             kcu.column_name AS foreign_column_name
-       FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
-       JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu
+       FROM information_schema.table_constraints tc
+       JOIN information_schema.constraint_column_usage ccu
          ON ccu.constraint_name = tc.constraint_name
-       LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
-         ON ccu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME 
-       LEFT OUTER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu 
-         ON kcu.CONSTRAINT_NAME = rc.UNIQUE_CONSTRAINT_NAME
+       LEFT OUTER JOIN information_schema.referential_constraints rc
+         ON ccu.constraint_name = rc.constraint_name
+       LEFT OUTER JOIN information_schema.key_column_usage kcu
+         ON kcu.constraint_name = rc.unique_constraint_name
        LEFT OUTER JOIN (
          SELECT a.ind_name, a.t_name,
            CONCAT('[',
@@ -200,15 +200,15 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                  SELECT ', ' + CONCAT('"', b.unique_indexes, '"')
                  FROM (
                    SELECT t.name as t_name, ind.name as ind_name, col.name as unique_indexes
-                   FROM sys.indexes ind 
-                   JOIN sys.index_columns ic 
-                     ON  ind.object_id = ic.object_id 
-                     AND ind.index_id = ic.index_id 
-                   JOIN sys.tables t 
-                     ON ind.object_id = t.object_id 
+                   FROM sys.indexes ind
+                   JOIN sys.index_columns ic
+                     ON  ind.object_id = ic.object_id
+                     AND ind.index_id = ic.index_id
+                   JOIN sys.tables t
+                     ON ind.object_id = t.object_id
                    JOIN sys.columns col
-                     ON ic.object_id = col.object_id 
-                     AND ic.column_id = col.column_id 
+                     ON ic.object_id = col.object_id
+                     AND ic.column_id = col.column_id
                    WHERE ind.is_primary_key = 0
                      AND (ind.is_unique = 1 OR ind.is_unique_constraint = 1)
                  ) b
@@ -219,15 +219,15 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
            ) AS unique_indexes
          FROM (
            SELECT t.name as t_name, ind.name as ind_name, col.name
-           FROM sys.indexes ind 
-           JOIN sys.index_columns ic 
-             ON  ind.object_id = ic.object_id 
-             AND ind.index_id = ic.index_id 
-           JOIN sys.tables t 
-             ON ind.object_id = t.object_id 
+           FROM sys.indexes ind
+           JOIN sys.index_columns ic
+             ON  ind.object_id = ic.object_id
+             AND ind.index_id = ic.index_id
+           JOIN sys.tables t
+             ON ind.object_id = t.object_id
            JOIN sys.columns col
-             ON ic.object_id = col.object_id 
-             AND ic.column_id = col.column_id 
+             ON ic.object_id = col.object_id
+             AND ic.column_id = col.column_id
            WHERE ind.is_primary_key = 0
              AND (ind.is_unique = 1 OR ind.is_unique_constraint = 1)
          ) a
@@ -238,7 +238,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
      ) as c
      WHERE column_type != 'UNIQUE'
      GROUP BY c.constraint_name, c.table_name, c.column_type, c.column_name, c.foreign_table_name, c.foreign_column_name
-     ) alias 
+     ) alias
    GROUP BY constraint_name, table_name, column_type, column_name, foreign_table_name, foreign_column_name, unique_indexes
         `;
         break;
