@@ -1,8 +1,8 @@
 /* global describe, before, after, it */
 const { expect } = require('chai');
 const Sequelize = require('sequelize');
-const SequelizeHelper = require('../utils/sequelize-helper');
-const DatabaseAnalyzer = require('../../services/database-analyzer');
+const SequelizeHelper = require('../../utils/sequelize-helper');
+const DatabaseAnalyzer = require('../../../services/database-analyzer');
 
 describe('Database analyser > Sequelize', () => {
   const databases = [
