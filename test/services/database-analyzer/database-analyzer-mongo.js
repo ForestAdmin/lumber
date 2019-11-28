@@ -26,9 +26,9 @@ describe('Database analyser > MongoDB', () => {
 
     beforeEach(() => mongoHelper.dropAllCollections());
 
-    after(() => {
+    after(async () => {
       databaseConnection = null;
-      mongoHelper.close();
+      await mongoHelper.close();
     });
 
     it('should connect and insert a document.', async () => {

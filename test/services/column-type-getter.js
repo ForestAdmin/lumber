@@ -27,7 +27,7 @@ describe('Services > Column Type Getter', () => {
 
     after(async () => {
       databaseConnection = null;
-      sequelizeHelper.drop('customers', 'mysql');
+      await sequelizeHelper.drop('customers', 'mysql');
       await sequelizeHelper.close();
     });
 
@@ -52,7 +52,7 @@ describe('Services > Column Type Getter', () => {
 
     after(async () => {
       databaseConnection = null;
-      sequelizeHelper.drop('customers', 'postgres');
+      await sequelizeHelper.drop('customers', 'postgres');
       await sequelizeHelper.close();
     });
 
