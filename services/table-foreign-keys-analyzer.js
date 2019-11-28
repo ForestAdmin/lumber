@@ -60,7 +60,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
           SELECT tc.constraint_name AS constraint_name,
                  tc.table_name AS table_name,
                  kcu.column_name AS column_name,
-                 tc..constraint_type AS column_type,
+                 tc.constraint_type AS column_type,
                  kcu.referenced_table_name AS foreign_table_name,
                  kcu.referenced_column_name AS foreign_column_name,
                  JSON_ARRAYAGG(uidx.unique_indexes) AS unique_indexes

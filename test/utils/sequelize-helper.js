@@ -32,10 +32,14 @@ class SequelizeHelper {
   async drop(tableName, dialect) {
     if (dialect === 'mysql') {
       await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 0;');
-      await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName}`);
+      await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName};`);
       await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
+    } else if (dialect === 'mssql') {
+      // await this.sequelize.query(`ALTER TABLE ${tableName} NOCHECK CONSTRAINT ALL;`);
+      await this.sequelize.query(`IF OBJECT_ID('dbo.${tableName}', 'U') IS NOT NULL DROP TABLE dbo.${tableName};`);
+      // await this.sequelize.query(`ALTER TABLE ${tableName} WITH CHECK CONSTRAINT ALL`);
     } else {
-      await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName} CASCADE`);
+      await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName} CASCADE;`);
     }
   }
 
