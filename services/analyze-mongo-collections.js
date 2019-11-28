@@ -15,13 +15,16 @@ const mapReduceOptions = {
   limit: 100,
 };
 
-/* eslint-disable */
+// NOTICE: This code runs on the MongoDB side (mapReduce feature).
+// The supported JS version is not the same than elsewhere.
+// The code used here must work with MongoDB lower version supported.
+/* eslint-disable vars-on-top, no-var, no-undef, no-restricted-syntax */
 function mapCollection() {
   function allItemsAreObjectIDs(array) {
     if (!array.length) return false;
     var itemToCheckCount = array.length > 3 ? 3 : array.length;
     var arrayOfObjectIDs = true;
-    for (var i = 0; i < itemToCheckCount; i++) {
+    for (var i = 0; i < itemToCheckCount; i += 1) {
       if (!(array[i] instanceof ObjectId)) {
         arrayOfObjectIDs = false;
         break;
