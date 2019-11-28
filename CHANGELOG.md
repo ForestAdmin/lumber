@@ -8,7 +8,8 @@
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 
 ### Fixed
-- MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries. 
+- MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
+- Technical - Fix database connection pool issue on column-type-getter tests. 
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
