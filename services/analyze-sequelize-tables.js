@@ -182,11 +182,7 @@ async function setAssociationType(aggregatedData) {
   await P.mapSeries(Object.values(aggregatedData), async (table) => {
     table[1].forEach((fk) => {
       if (fk.column_type === 'FOREIGN KEY') {
-        if (checkRefUnicity(aggregatedData[fk.foreign_table_name], fk.foreign_column_name)) {
-          table[3].push(setReference(fk, 'belongsTo'));
-        }
-        if (fk.isPrimary || fk.isUnique) aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasOne'));
-        else aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasMany'));
+        let manyToMany = false;
         if (fk.isInCompositeKey) {
           const arrayUniqueIndexes = fk.unique_indexes === null ? [table[2]] : fk.unique_indexes;
           arrayUniqueIndexes.forEach((uniqueIndexes) => {
@@ -196,9 +192,17 @@ async function setAssociationType(aggregatedData) {
                 manyToManyKeys.forEach((foreignKey) => {
                   aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'belongsToMany', foreignKey.foreign_table_name));
                 });
+                manyToMany = true;
               }
             }
           });
+        }
+        if (!manyToMany) {
+          if (checkRefUnicity(aggregatedData[fk.foreign_table_name], fk.foreign_column_name)) {
+            table[3].push(setReference(fk, 'belongsTo'));
+          }
+          if (fk.isPrimary || fk.isUnique) aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasOne'));
+          else aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasMany'));
         }
       }
     });
