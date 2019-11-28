@@ -56,7 +56,7 @@
         "foreignKey": "environmentId",
         "foreignKeyName": "environmentIdUnconventionnal",
         "as": "environment",
-        "association": "belongsT
+        "association": "belongsTo"
       },
       {
         "isBelongsTo": true,
@@ -64,7 +64,7 @@
         "foreignKey": "teamId",
         "foreignKeyName": "teamId",
         "as": "team",
-        "association": "belongsT
+        "association": "belongsTo"
       },
       {
         "isBelongsTo": true,
