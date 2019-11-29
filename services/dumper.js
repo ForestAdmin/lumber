@@ -23,6 +23,7 @@ function Dumper(config) {
   const middlewaresPath = `${path}/middlewares`;
 
   function writeFile(filePath, content) {
+    console.log(filePath);
     fs.writeFileSync(filePath, content);
     logger.log(`  ${chalk.green('create')} ${filePath.substring(path.length + 1)}`);
   }

@@ -1,6 +1,6 @@
 /* global describe, before, after, it */
 const { expect } = require('chai');
-// const rimraf = require('rimraf');
+const rimraf = require('rimraf');
 const fs = require('fs');
 
 const belongsToModel = require('../../expected/sql/db-analysis-output/belongs-to.json');
@@ -24,14 +24,14 @@ before(async () => {
   });
 });
 
-// after(() => {
-//   rimraf.sync('./test/output');
-// });
+after(() => {
+  rimraf.sync('./test/output/sql');
+});
 
 describe('Dumper > SQL', () => {
   it('generate a model file with belongsTo associations', async () => {
     await dumper.dump(belongsToModel);
-    const generatedFile = fs.readFileSync('./test/output/sql/models/belongs-to.js', 'utf8');
+    const generatedFile = fs.readFileSync('./test/output/sql/models/addresses.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/sql/dumper-output/belongs-to', 'utf-8');
 
     expect(generatedFile).to.equals(expectedFile);
@@ -39,7 +39,7 @@ describe('Dumper > SQL', () => {
 
   it('generate a model file with hasMany, hasOne and belongsToMany', async () => {
     await dumper.dump(othersModel);
-    const generatedFile = fs.readFileSync('./test/output/sql/models/others.js', 'utf8');
+    const generatedFile = fs.readFileSync('./test/output/sql/models/users.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/sql/dumper-output/others', 'utf-8');
 
     expect(generatedFile).to.equals(expectedFile);
@@ -47,7 +47,7 @@ describe('Dumper > SQL', () => {
 
   it('generate a model file for a junction table', async () => {
     await dumper.dump(junctionTableModel);
-    const generatedFile = fs.readFileSync('./test/output/sql/models/junction-table.js', 'utf8');
+    const generatedFile = fs.readFileSync('./test/output/sql/models/user-books.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/sql/dumper-output/junction-table', 'utf-8');
 
     expect(generatedFile).to.equals(expectedFile);

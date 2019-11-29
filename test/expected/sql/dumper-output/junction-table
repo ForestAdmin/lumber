@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const { Sequelize } = sequelize;
   // This section contains the fields of your model, mapped to your table's columns.
   // Learn more here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
-  const UsersBooks = sequelize.define('users_books', {
+  const UserBooks = sequelize.define('user_books', {
     checkoutDate: {
       type: DataTypes.DATE,
     },
@@ -12,14 +12,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
     },
   }, {
-    tableName: 'users_books',
+    tableName: 'user_books',
     underscored: true,
     timestamps: false,
     schema: process.env.DATABASE_SCHEMA,
   });
 
-  UsersBooks.associate = (models) => {
+  UserBooks.associate = (models) => {
   };
 
-  return UsersBooks;
+  return UserBooks;
 };

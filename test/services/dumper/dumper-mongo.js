@@ -22,7 +22,7 @@ before(async () => {
 });
 
 after(() => {
-  rimraf.sync('./test/output');
+  rimraf.sync('./test/output/mongo');
 });
 
 describe('Dumper > MongoDB', () => {
