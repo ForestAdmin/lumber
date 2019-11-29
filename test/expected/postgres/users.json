@@ -26,21 +26,18 @@
     {
       "isHasOneOrHasMany":true,
       "ref":"addresses",
-      "association":"hasOne",
-      "foreignKeyName":"undefinedKey"
+      "association":"hasOne"
     },
     {
       "isHasOneOrHasMany":true,
       "ref":"reviews",
-      "association":"hasMany",
-      "foreignKeyName":"undefinedKey"
+      "association":"hasMany"
     },
     {
       "isBelongsToMany":true,
       "ref":"users_books",
       "association":"belongsToMany",
-      "junctionTable":"books",
-      "foreignKeyName":"undefinedKey"
+      "junctionTable":"books"
     }
   ],
   "primaryKeys":["id"],

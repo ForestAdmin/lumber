@@ -1,0 +1,41 @@
+{
+  "addresses": {
+    "fields": [{
+        "name": "street",
+        "nameColumn": "street",
+        "type": "STRING",
+        "primaryKey": false,
+        "defaultValue": null
+      },
+      {
+        "name": "city",
+        "nameColumn": "city",
+        "type": "STRING",
+        "primaryKey": false,
+        "defaultValue": null
+      },
+      {
+        "name": "state",
+        "nameColumn": "state",
+        "type": "STRING",
+        "primaryKey": false,
+        "defaultValue": null
+      }
+    ],
+    "references": [{
+      "isBelongsTo": true,
+      "ref": "users",
+      "foreignKey": "user_id",
+      "foreignKeyName": "userId",
+      "as": "user",
+      "association": "belongsTo"
+    }],
+    "primaryKeys": ["user_id"],
+    "options": {
+      "underscored": false,
+      "timestamps": false,
+      "hasIdColumn": false,
+      "hasPrimaryKeys": true
+    }
+  }
+}

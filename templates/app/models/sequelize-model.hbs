@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     {{/if}}
     {{#if reference.isBelongsToMany}}
     {{../modelName}}.belongsToMany(models.{{reference.junctionTable}}, {
-      through: {{reference.ref}},
+      through: '{{reference.ref}}',
     });
     {{/if}}
     {{/each}}

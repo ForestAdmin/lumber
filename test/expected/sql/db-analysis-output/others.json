@@ -1,0 +1,50 @@
+{
+  "users": {
+    "fields": [{
+        "name": "username",
+        "nameColumn": "username",
+        "type": "STRING",
+        "primaryKey": false,
+        "defaultValue": null
+      },
+      {
+        "name": "enabled",
+        "nameColumn": "enabled",
+        "type": "BOOLEAN",
+        "primaryKey": false,
+        "defaultValue": true
+      },
+      {
+        "name": "lastLogin",
+        "nameColumn": "last_login",
+        "type": "DATE",
+        "primaryKey": false,
+        "defaultValue": "now()"
+      }
+    ],
+    "references": [{
+        "isHasOneOrHasMany": true,
+        "ref": "addresses",
+        "association": "hasOne"
+      },
+      {
+        "isHasOneOrHasMany": true,
+        "ref": "reviews",
+        "association": "hasMany"
+      },
+      {
+        "isBelongsToMany": true,
+        "ref": "users_books",
+        "association": "belongsToMany",
+        "junctionTable": "books"
+      }
+    ],
+    "primaryKeys": ["id"],
+    "options": {
+      "underscored": true,
+      "timestamps": false,
+      "hasIdColumn": true,
+      "hasPrimaryKeys": true
+    }
+  }
+}

@@ -174,6 +174,7 @@ function Dumper(config) {
     });
 
     const filename = tableToFilename(table);
+    console.log(`${path}/models/${filename}.js`);
     writeFile(`${path}/models/${filename}.js`, text);
   }
 

@@ -33,15 +33,13 @@
     {
       "isHasOneOrHasMany":true,
       "ref":"reviews",
-      "association":"hasMany",
-      "foreignKeyName":"undefinedKey"
+      "association":"hasMany"
     },
     {
       "isBelongsToMany":true,
       "ref":"users_books",
       "association":"belongsToMany",
-      "junctionTable":"users",
-      "foreignKeyName":"undefinedKey"
+      "junctionTable":"users"
     }
   ],
   "primaryKeys":["id"],

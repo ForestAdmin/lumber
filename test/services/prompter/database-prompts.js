@@ -375,7 +375,7 @@ describe('Services > Prompter > Database prompts', () => {
 
         it('should set the correct default value', () => {
           expect(prompts[0].default({ dbDialect: 'postgres' })).to.equal('public');
-          expect(prompts[0].default({ dbDialect: 'mssql' })).to.equal('');
+          expect(prompts[0].default({ dbDialect: 'mssql' })).to.equal('dbo');
         });
       });
     });
