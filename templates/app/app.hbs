@@ -53,7 +53,7 @@ requireAll({
 requireAll({
   dirname: path.join(__dirname, 'middlewares'),
   recursive: true,
-  resolve: Module => new Module(app),
+  resolve: Module => Module(app),
 });
 
 module.exports = app;
