@@ -1,0 +1,14 @@
+MongoDB:
+  image: forestadmin/turnkey-mongo
+  ports:
+    - "27000:27017"
+
+postgres :
+  image : forestadmin/turnkey-posgres
+  ports :
+    - "5777:5432"
+
+mysql:
+  image: forestadmin/turnkey-mssql
+  ports:
+    - "3300:3306"
