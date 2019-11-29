@@ -1,35 +1,42 @@
 {
-  "fields": [
+  "fields":[
     {
-      "name": "id",
-      "nameColumn": "id",
-      "type": "STRING",
-      "primaryKey": true,
-      "defaultValue": null
+      "name":"street",
+      "nameColumn":"street",
+      "type":"STRING",
+      "primaryKey":false,
+      "defaultValue":null
     },
     {
-      "name": "city",
-      "nameColumn": "city",
-      "type": "STRING",
-      "primaryKey": false,
-      "defaultValue": null
-    }
-  ],
-  "references": [
+      "name":"city",
+      "nameColumn":"city",
+      "type":"STRING",
+      "primaryKey":false,
+      "defaultValue":null
+    },
     {
-      "as": "customer",
-      "foreignKey": "customer_id",
-      "foreignKeyName": "customerId",
-      "ref": "customers"
+      "name":"state",
+      "nameColumn":"state",
+      "type":"STRING",
+      "primaryKey":false,
+      "defaultValue":null
     }
   ],
-  "primaryKeys": [
-    "id"
+  "references":[
+    {
+      "isBelongsTo":true,
+      "ref":"users",
+      "foreignKey":"user_id",
+      "foreignKeyName":"userId",
+      "as":"user",
+      "association":"belongsTo"
+    }
   ],
-  "options": {
-    "underscored": false,
-    "timestamps": false,
-    "hasIdColumn": true,
-    "hasPrimaryKeys": true
+  "primaryKeys":["user_id"],
+  "options":{
+    "underscored":false,
+    "timestamps":false,
+    "hasIdColumn":false,
+    "hasPrimaryKeys":true
   }
 }

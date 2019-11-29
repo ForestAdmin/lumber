@@ -1,0 +1,26 @@
+{
+  "fields":[
+    {
+      "name":"checkoutDate",
+      "nameColumn":"checkout_date",
+      "type":"DATE",
+      "primaryKey":false,
+      "defaultValue":null
+    },
+    {
+      "name":"returnDate",
+      "nameColumn":"return_date",
+      "type":"DATE",
+      "primaryKey":false,
+      "defaultValue":null
+    }
+  ],
+  "references":[],
+  "primaryKeys":["user_id","book_id"],
+  "options":{
+    "underscored":true,
+    "timestamps":false,
+    "hasIdColumn":false,
+    "hasPrimaryKeys":true
+  }
+}

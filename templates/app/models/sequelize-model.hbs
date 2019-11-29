@@ -20,9 +20,9 @@ module.exports = (sequelize, DataTypes) => {
     schema: process.env.DATABASE_SCHEMA,{{/if}}
   });
 {{#if noId}}  {{modelName}}.removeAttribute('id');{{/if}}
-  // This section contains the relationships for this model. See: https://docs.forestadmin.com/documentation/v/v5/reference-guide/relationships#adding-relationships.
   {{modelName}}.associate = (models) => {
     {{#each references as |reference|}}
+    {{#if reference.isBelongsTo}}
     {{../modelName}}.belongsTo(models.{{reference.ref}}, {
       foreignKey: {
         name: '{{reference.foreignKeyName}}',{{#if reference.foreignKeyColumnUnconventional}}
@@ -34,6 +34,15 @@ module.exports = (sequelize, DataTypes) => {
       },{{/if}}{{#if reference.as}}
       as: '{{reference.as}}',{{/if}}
     });
+    {{/if}}
+    {{#if reference.isHasOneOrHasMany}}
+    {{../modelName}}.{{reference.association}}(models.{{reference.ref}});
+    {{/if}}
+    {{#if reference.isBelongsToMany}}
+    {{../modelName}}.belongsToMany(models.{{reference.junctionTable}}, {
+      through: {{reference.ref}},
+    });
+    {{/if}}
     {{/each}}
   };
 

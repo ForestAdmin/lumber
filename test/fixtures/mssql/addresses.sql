@@ -1,7 +1,9 @@
-CREATE TABLE dbo.addresses (
-	id varchar(35) NOT NULL,
-	customer_id INT NOT NULL,
-	city varchar(127) NOT NULL,
-  CONSTRAINT addresses_customers_id_fk FOREIGN KEY (customer_id) REFERENCES dbo.customers(id),
-	CONSTRAINT pk_addresses PRIMARY KEY (id)
+CREATE TABLE [dbo].addresses (
+  user_id int NOT NULL,
+  street varchar(30) NOT NULL,
+  city varchar(30) NOT NULL,
+  state varchar(30) NOT NULL,
+  CONSTRAINT addresses_pkey PRIMARY KEY (user_id),
+  CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES [dbo].users(id)
 );
+

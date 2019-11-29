@@ -166,7 +166,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                    GROUP BY a.t_name, a.ind_name
                  ) uidx
                    ON uidx.t_name = tc.table_name
-                 WHERE ccu.table_name = :table AND ccu.table_schema = '${schema}'
+                 WHERE ccu.table_name = '${table}' AND ccu.table_schema = '${schema !== undefined ? schema : 'dbo'}'
                ) d
                WHERE c.constraint_name = d.constraint_name
                  AND c.table_name = d.table_name
@@ -234,7 +234,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
          GROUP BY a.t_name, a.ind_name
        ) uidx
          ON uidx.t_name = ccu.table_name
-         WHERE ccu.table_name = :table AND ccu.table_schema = '${schema}'
+         WHERE ccu.table_name = '${table}' AND ccu.table_schema = '${schema !== undefined ? schema : 'dbo'}'
      ) AS c
      WHERE column_type != 'UNIQUE'
      GROUP BY c.constraint_name, c.table_name, c.column_type, c.column_name, c.foreign_table_name, c.foreign_column_name

@@ -84,7 +84,7 @@ async function checkFkUnicity([schema, constraints, primaryKeys]) {
   const foreignKeys = [];
   for (let i = 0; i < constraints.length; i += 1) {
     const fk = constraints[i];
-    fk.unique_indexes = JSON.parse(fk.unique_indexes);
+    if (fk.unique_indexes !== null && fk.unique_indexes === 'string') fk.unique_indexes = JSON.parse(fk.unique_indexes);
     if (fk.column_type === 'FOREIGN KEY') {
       fk.isInCompositeKey = (
         fk.unique_indexes !== null
@@ -216,6 +216,7 @@ async function analyzeTable([schema, foreignKeys, primaryKeys, references], tabl
     const columnInfo = schema[nameColumn];
     const type = await columnTypeGetter.perform(columnInfo, nameColumn, table);
     const foreignKey = _.find(foreignKeys, { column_name: nameColumn, column_type: 'FOREIGN KEY' });
+
     if (!(foreignKey
           && foreignKey.foreign_table_name
           && foreignKey.column_name) && type) {

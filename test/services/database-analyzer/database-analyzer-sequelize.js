@@ -5,17 +5,17 @@ const DatabaseAnalyzer = require('../../../services/database-analyzer');
 
 describe('Database analyser > Sequelize', () => {
   const databases = [
-    {
-      dialect: 'mysql',
-      connectionUrl: 'mysql://forest:secret@localhost:8999/lumber-sequelize-test',
-    },
-    {
-      dialect: 'postgres',
-      connectionUrl: 'postgres://forest:secret@localhost:54369/lumber-sequelize-test',
-    },
+    // {
+    //   dialect: 'mysql',
+    //   connectionUrl: 'mysql://forest:secret@localhost:8999/lumber-sequelize-test',
+    // },
+    // {
+    //   dialect: 'postgres',
+    //   connectionUrl: 'postgres://forest:secret@localhost:54369/lumber-sequelize-test',
+    // },
     {
       dialect: 'mssql',
-      connectionUrl: 'mssql://sa:forest2019:@localhost:1432/master',
+      connectionUrl: 'mssql://sa:forest2019:@localhost:1432/model',
     },
   ];
 
@@ -39,9 +39,10 @@ describe('Database analyser > Sequelize', () => {
         await sequelizeHelper.close();
       });
 
-      it('should connect and create a record.', async () => {
+      it('should connect and create a record', async () => {
         const User = databaseConnection.define('user', { name: { type: Sequelize.STRING } });
-        await User.sync({ force: true });
+        // await User.sync({ force: true }); // here
+        await sequelizeHelper.forceSync(User);
         const user = await User.create({ name: 'Jane' });
         expect(user.name).to.be.equal('Jane');
       });

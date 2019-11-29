@@ -25,10 +25,10 @@ describe('Services > Column Type Getter', () => {
       await sequelizeHelper.given('customers');
     });
 
-    after(() => {
+    after(async () => {
       databaseConnection = null;
-      sequelizeHelper.drop('customers', 'mysql');
-      sequelizeHelper.close();
+      await sequelizeHelper.drop('customers', 'mysql');
+      await sequelizeHelper.close();
     });
 
     it('should handle BIT(1) as boolean type', async () => {
@@ -50,10 +50,10 @@ describe('Services > Column Type Getter', () => {
       await sequelizeHelper.given('customers');
     });
 
-    after(() => {
+    after(async () => {
       databaseConnection = null;
-      sequelizeHelper.drop('customers', 'postgres');
-      sequelizeHelper.close();
+      await sequelizeHelper.drop('customers', 'postgres');
+      await sequelizeHelper.close();
     });
 
     it('should not handle BIT(1)', async () => {
