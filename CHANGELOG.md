@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Command Generate - Add support for MySQL 8.
+- Initialisation - Allow asynchronous middlewares (ie. Liana.init).
 
 ### Changed
 - Tests - Use MySQL 8.0 as the max supported MySQL version.
