@@ -14,7 +14,7 @@ class SequelizeHelper {
     return new Promise((resolve, reject) => {
       this.sequelize.authenticate()
         .then(() => resolve(this.sequelize))
-        .catch(err => reject(err));
+        .catch((err) => reject(err));
     });
   }
 

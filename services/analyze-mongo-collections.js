@@ -1,13 +1,13 @@
 const _ = require('lodash');
-const logger = require('./logger');
 const P = require('bluebird');
+const logger = require('./logger');
 const { DatabaseAnalyzerError } = require('../utils/errors');
 const { detectReferences, applyReferences } = require('./analyze-mongo-references');
 const { detectHasMany, applyHasMany } = require('./analyze-mongo-hasmany');
 
 function isUnderscored(fields) {
-  return fields.every(field => field.nameColumn === _.snakeCase(field.nameColumn))
-    && fields.some(field => field.nameColumn.includes('_'));
+  return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
+    && fields.some((field) => field.nameColumn.includes('_'));
 }
 
 const mapReduceOptions = {
@@ -74,7 +74,7 @@ const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
     return reject(err);
   }
   /* eslint no-underscore-dangle: off */
-  return resolve(results.map(r => ({ name: r._id, type: r.value })));
+  return resolve(results.map((r) => ({ name: r._id, type: r.value })));
 };
 
 function analyzeMongoCollection(databaseConnection, collectionName) {
