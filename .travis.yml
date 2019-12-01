@@ -2,7 +2,7 @@ sudo: required
 
 language: node_js
 
-node_js: 
+node_js:
   - lts/*
   - 10
 
@@ -24,5 +24,5 @@ install:
   - yarn install
 
 script:
-  - npm run lint
-  - npm run test
+  - yarn lint
+  - yarn test
