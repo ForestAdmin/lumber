@@ -20,7 +20,7 @@ class SequelizeHelper {
 
   async forceSync(table) {
     const dialect = this.sequelize.getDialect();
-    const MSSQL_DROP_CONSTRAINT = `
+    const mssqlDropConstraints = `
       DECLARE @SQL varchar(4000)=''
       SELECT @SQL = 
       @SQL + 'ALTER TABLE ' + s.name+'.'+t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) +'];' + CHAR(13)
@@ -35,7 +35,7 @@ class SequelizeHelper {
         .then(() => table.sync({ force: true }))
         .then(() => this.sequelize.query('SET FOREIGN_KEY_CHECKS = 1'));
     } else if (dialect === 'mssql') {
-      await this.sequelize.query(MSSQL_DROP_CONSTRAINT)
+      await this.sequelize.query(mssqlDropConstraints)
         .then(() => table.sync({ force: true }));
     } else {
       await table.sync({ force: true });
@@ -54,7 +54,7 @@ class SequelizeHelper {
   }
 
   async drop(tableName, dialect) {
-    const MSSQL_DROP_CONSTRAINT = `
+    const mssqlDropConstraints = `
       DECLARE @SQL varchar(4000)=''
       SELECT @SQL = 
       @SQL + 'ALTER TABLE ' + s.name+'.'+t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) +'];' + CHAR(13)
@@ -71,7 +71,7 @@ class SequelizeHelper {
       await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName}`);
       await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
     } else if (dialect === 'mssql') {
-      await this.sequelize.query(MSSQL_DROP_CONSTRAINT);
+      await this.sequelize.query(mssqlDropConstraints);
       await this.sequelize.query(`IF OBJECT_ID('dbo.${tableName}', 'U') IS NOT NULL DROP TABLE dbo.${tableName}`);
     } else {
       await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName} CASCADE`);
