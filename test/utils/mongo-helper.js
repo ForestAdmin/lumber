@@ -20,7 +20,7 @@ class MongoHelper {
   }
 
   given(fixtures) {
-    return Promise.all(Object.keys(fixtures).map(collectionName =>
+    return Promise.all(Object.keys(fixtures).map((collectionName) =>
       this.insertDocs(collectionName, fixtures[collectionName])));
   }
 

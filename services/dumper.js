@@ -129,10 +129,9 @@ function Dumper(config) {
   }
 
   function writeModel(table, fields, references, options = {}) {
-    const templatePath = config.dbDialect === 'mongodb' ?
-      `${__dirname}/../templates/app/models/mongo-model.hbs`
-      :
-      `${__dirname}/../templates/app/models/sequelize-model.hbs`;
+    const templatePath = config.dbDialect === 'mongodb'
+      ? `${__dirname}/../templates/app/models/mongo-model.hbs`
+      : `${__dirname}/../templates/app/models/sequelize-model.hbs`;
     const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
 
@@ -146,14 +145,14 @@ function Dumper(config) {
     const referencesDefinition = references.map((reference) => {
       const expectedConventionalForeignKeyName = underscored
         ? _.snakeCase(reference.foreignKey) : reference.foreignKey;
-      const foreignKeyColumnUnconventional =
-        reference.foreignKeyName !== expectedConventionalForeignKeyName;
+      const foreignKeyColumnUnconventional = reference.foreignKeyName
+        !== expectedConventionalForeignKeyName;
 
       if (reference.targetKey) {
         const expectedConventionalTargetKeyName = underscored
           ? _.snakeCase(reference.targetKey) : _.camelCase(reference.targetKey);
-        const targetKeyColumnUnconventional =
-          reference.targetKey !== expectedConventionalTargetKeyName;
+        const targetKeyColumnUnconventional = reference.targetKey
+          !== expectedConventionalTargetKeyName;
         return {
           ...reference,
           foreignKeyColumnUnconventional,

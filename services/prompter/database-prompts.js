@@ -117,11 +117,14 @@ class DatabasePrompts extends AbstractPrompter {
         default: (args) => {
           if (args.dbDialect === 'postgres') {
             return '5432';
-          } else if (args.dbDialect === 'mysql') {
+          }
+          if (args.dbDialect === 'mysql') {
             return '3306';
-          } else if (args.dbDialect === 'mssql') {
+          }
+          if (args.dbDialect === 'mssql') {
             return '1433';
-          } else if (args.dbDialect === 'mongodb') {
+          }
+          if (args.dbDialect === 'mongodb') {
             return '27017';
           }
 
@@ -203,7 +206,7 @@ class DatabasePrompts extends AbstractPrompter {
         type: 'confirm',
         name: 'mongodbSrv',
         message: 'Use a SRV connection string? ',
-        when: answers => answers.dbDialect === 'mongodb',
+        when: (answers) => answers.dbDialect === 'mongodb',
         default: false,
       });
     }

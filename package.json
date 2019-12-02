@@ -4,7 +4,7 @@
   "version": "3.0.1",
   "main": "lumber.js",
   "scripts": {
-    "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./assets ./deserializers ./serializers ./services ./test",
+    "lint": "./node_modules/eslint/bin/eslint.js ./*.js .eslint-bin deserializers scripts serializers services test utils",
     "test": "./node_modules/mocha/bin/mocha 'test/**/*.js'",
     "release": "node ./scripts/release.js"
   },
@@ -51,9 +51,9 @@
   "devDependencies": {
     "@forestadmin/devops": "2.0.0",
     "chai": "4.1.2",
-    "eslint": "4.19.1",
-    "eslint-config-airbnb-base": "12.1.0",
-    "eslint-plugin-import": "2.12.0",
+    "eslint": "6.7.2",
+    "eslint-config-airbnb-base": "14.0.0",
+    "eslint-plugin-import": "2.18.2",
     "git-hooks": "1.1.10",
     "mocha": "6.2.0",
     "rimraf": "3.0.0",

@@ -19,7 +19,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
 
     return queryInterface.sequelize
       .query(query, { replacements, type })
-      .then(result => !!result.length);
+      .then((result) => !!result.length);
   }
 
   function getTypeOfArrayForPostgres(table, columnName) {
@@ -44,8 +44,8 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
 
     return queryInterface.sequelize
       .query(query, { replacements, type })
-      .then(result => result[0])
-      .then(info => ({
+      .then((result) => result[0])
+      .then((info) => ({
         ...info,
         special: info.special ? info.special.slice(1, -1).split(',') : [],
       }));
@@ -69,8 +69,8 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       case 'NVARCHAR': // NOTICE: MSSQL type.
         return 'STRING';
       case 'USER-DEFINED': {
-        if (queryInterface.sequelize.options.dialect === 'postgres' &&
-          await isColumnTypeEnum(columnName)) {
+        if (queryInterface.sequelize.options.dialect === 'postgres'
+          && await isColumnTypeEnum(columnName)) {
           return `ENUM(\n        '${special.join('\',\n        \'')}',\n      )`;
         }
 
