@@ -19,12 +19,14 @@ describe('Database analyser > Sequelize', () => {
       await sequelizeHelper.close();
     });
 
+    // NOTICE: Use .timeout() to avoid error with mssql.
+
     it('should connect and create a record', async () => {
       const User = databaseConnection.define('user', { name: { type: Sequelize.STRING } });
       await sequelizeHelper.forceSync(User);
       const user = await User.create({ name: 'Jane' });
       expect(user.name).to.be.equal('Jane');
-    });
+    }).timeout(5000);
 
     it('should generate a model with a belongsTo association', async () => {
       await sequelizeHelper.given('users', 'others');
@@ -32,7 +34,7 @@ describe('Database analyser > Sequelize', () => {
       const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, dbDialect);
       const model = await databaseAnalyzer.perform();
       expect(model.addresses).is.deep.equal(expectedModel.addresses);
-    });
+    }).timeout(5000);
 
     it('should generate a model with hasOne, hasMany and belongsToMany associations', async () => {
       const expectedModel = await sequelizeHelper.given('users', 'others');
@@ -43,6 +45,6 @@ describe('Database analyser > Sequelize', () => {
       const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, dbDialect);
       const model = await databaseAnalyzer.perform();
       expect(model.users).is.deep.equal(expectedModel.users);
-    });
+    }).timeout(5000);
   });
 });

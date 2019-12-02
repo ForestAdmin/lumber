@@ -61,7 +61,7 @@ class SequelizeHelper {
       FROM sys.Tables t
       INNER JOIN sys.foreign_keys f ON f.parent_object_id = t.object_id
       INNER JOIN sys.schemas     s ON s.schema_id = f.schema_id
-      WHERE t.name = '${tableName}'
+      WHERE OBJECT_NAME(f.referenced_object_id) = '${tableName}'
 
       EXEC (@SQL)
     `;
