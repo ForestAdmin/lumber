@@ -2,16 +2,6 @@ const Sequelize = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 
-const MSSQL_QUERY = `
-DECLARE @SQL varchar(4000)=''
-SELECT @SQL = 
-@SQL + 'ALTER TABLE ' + s.name+'.'+t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) +'];' + CHAR(13)
-FROM sys.Tables t
-INNER JOIN sys.foreign_keys f ON f.parent_object_id = t.object_id
-INNER JOIN sys.schemas     s ON s.schema_id = f.schema_id
-
-EXEC (@SQL)`;
-
 class SequelizeHelper {
   connect(url) {
     this.sequelize = new Sequelize(url, {
@@ -30,12 +20,22 @@ class SequelizeHelper {
 
   async forceSync(table) {
     const dialect = this.sequelize.getDialect();
+    const MSSQL_DROP_CONSTRAINT = `
+      DECLARE @SQL varchar(4000)=''
+      SELECT @SQL = 
+      @SQL + 'ALTER TABLE ' + s.name+'.'+t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) +'];' + CHAR(13)
+      FROM sys.Tables t
+      INNER JOIN sys.foreign_keys f ON f.parent_object_id = t.object_id
+      INNER JOIN sys.schemas     s ON s.schema_id = f.schema_id
+
+      EXEC (@SQL)
+    `;
     if (dialect === 'mysql') {
       await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 0')
         .then(() => table.sync({ force: true }))
         .then(() => this.sequelize.query('SET FOREIGN_KEY_CHECKS = 1'));
     } else if (dialect === 'mssql') {
-      await this.sequelize.query(MSSQL_QUERY)
+      await this.sequelize.query(MSSQL_DROP_CONSTRAINT)
         .then(() => table.sync({ force: true }));
     } else {
       await table.sync({ force: true });
@@ -54,12 +54,24 @@ class SequelizeHelper {
   }
 
   async drop(tableName, dialect) {
+    const MSSQL_DROP_CONSTRAINT = `
+      DECLARE @SQL varchar(4000)=''
+      SELECT @SQL = 
+      @SQL + 'ALTER TABLE ' + s.name+'.'+t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) +'];' + CHAR(13)
+      FROM sys.Tables t
+      INNER JOIN sys.foreign_keys f ON f.parent_object_id = t.object_id
+      INNER JOIN sys.schemas     s ON s.schema_id = f.schema_id
+      WHERE t.name = '${tableName}'
+
+      EXEC (@SQL)
+    `;
+
     if (dialect === 'mysql') {
       await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 0;');
       await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName}`);
       await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
     } else if (dialect === 'mssql') {
-      await this.sequelize.query(MSSQL_QUERY);
+      await this.sequelize.query(MSSQL_DROP_CONSTRAINT);
       await this.sequelize.query(`IF OBJECT_ID('dbo.${tableName}', 'U') IS NOT NULL DROP TABLE dbo.${tableName}`);
     } else {
       await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName} CASCADE`);

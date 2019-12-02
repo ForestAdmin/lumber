@@ -27,6 +27,7 @@ describe('Database analyser > Sequelize', () => {
     });
 
     it('should generate a model with a belongsTo association', async () => {
+      await sequelizeHelper.given('users', 'others');
       const expectedModel = await sequelizeHelper.given('addresses', 'belongs-to');
       const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, dbDialect);
       const model = await databaseAnalyzer.perform();
@@ -34,16 +35,14 @@ describe('Database analyser > Sequelize', () => {
     });
 
     it('should generate a model with hasOne, hasMany and belongsToMany associations', async () => {
-      try {
-        const expectedModel = await sequelizeHelper.given('users', 'others');
-        await sequelizeHelper.given('books', 'others');
-        await sequelizeHelper.given('addresses', 'others');
-        await sequelizeHelper.given('reviews', 'others');
-        await sequelizeHelper.given('user_books', 'others');
-        const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, dbDialect);
-        const model = await databaseAnalyzer.perform();
-        expect(model.users).is.deep.equal(expectedModel.users);
-      } catch (e) { console.error(JSON.stringify(e)); throw e; }
+      const expectedModel = await sequelizeHelper.given('users', 'others');
+      await sequelizeHelper.given('books', 'others');
+      await sequelizeHelper.given('addresses', 'others');
+      await sequelizeHelper.given('reviews', 'others');
+      await sequelizeHelper.given('user_books', 'others');
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, dbDialect);
+      const model = await databaseAnalyzer.perform();
+      expect(model.users).is.deep.equal(expectedModel.users);
     });
   });
 });
