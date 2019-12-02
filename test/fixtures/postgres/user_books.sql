@@ -1,4 +1,4 @@
-CREATE TABLE users_books (
+CREATE TABLE user_books (
   user_id int NOT NULL,
   book_id int NOT NULL,
   checkout_date timestamp,

@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS reviews;
 CREATE TABLE reviews (
   id serial,
   book_id int NOT NULL,

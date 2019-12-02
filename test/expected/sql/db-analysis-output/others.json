@@ -19,7 +19,7 @@
         "nameColumn": "last_login",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": "now()"
+        "defaultValue": null
       }
     ],
     "references": [{
@@ -34,7 +34,7 @@
       },
       {
         "isBelongsToMany": true,
-        "ref": "users_books",
+        "ref": "user_books",
         "association": "belongsToMany",
         "junctionTable": "books"
       }

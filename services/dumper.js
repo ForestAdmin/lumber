@@ -23,7 +23,6 @@ function Dumper(config) {
   const middlewaresPath = `${path}/middlewares`;
 
   function writeFile(filePath, content) {
-    console.log(filePath);
     fs.writeFileSync(filePath, content);
     logger.log(`  ${chalk.green('create')} ${filePath.substring(path.length + 1)}`);
   }
@@ -175,7 +174,6 @@ function Dumper(config) {
     });
 
     const filename = tableToFilename(table);
-    console.log(`${path}/models/${filename}.js`);
     writeFile(`${path}/models/${filename}.js`, text);
   }
 

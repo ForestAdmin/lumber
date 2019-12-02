@@ -22,7 +22,7 @@ describe('Services > Column Type Getter', () => {
     before(async () => {
       sequelizeHelper = new SequelizeHelper();
       databaseConnection = await sequelizeHelper.connect(mysqlDatabase.connectionUrl);
-      await sequelizeHelper.given('customers');
+      await sequelizeHelper.given('customers', 'customers');
     });
 
     after(async () => {
@@ -47,7 +47,7 @@ describe('Services > Column Type Getter', () => {
     before(async () => {
       sequelizeHelper = new SequelizeHelper();
       databaseConnection = await sequelizeHelper.connect(mysqlDatabase.connectionUrl);
-      await sequelizeHelper.given('customers');
+      await sequelizeHelper.given('customers', 'customers');
     });
 
     after(async () => {

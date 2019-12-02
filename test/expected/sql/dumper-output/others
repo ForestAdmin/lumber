@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     lastLogin: {
       type: DataTypes.DATE,
-      defaultValue: Sequelize.literal('now()'),
     },
   }, {
     tableName: 'users',
@@ -27,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     Users.hasOne(models.addresses);
     Users.hasMany(models.reviews);
     Users.belongsToMany(models.books, {
-      through: 'users_books',
+      through: 'user_books',
     });
   };
 

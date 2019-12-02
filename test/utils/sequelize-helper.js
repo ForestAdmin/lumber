@@ -42,10 +42,10 @@ class SequelizeHelper {
     }
   }
 
-  async given(tableName) {
+  async given(tableName, outputName) {
     const dialect = this.sequelize.getDialect();
     const fixtureFilename = path.join(__dirname, `../fixtures/${dialect}/${tableName}.sql`);
-    const expectedFilename = path.join(__dirname, `../expected/${dialect}/${tableName}.json`);
+    const expectedFilename = path.join(__dirname, `../expected/sql/db-analysis-output/${outputName}.json`);
     const fixtureFileContent = await fs.readFileSync(fixtureFilename, 'utf8');
     await this.drop(tableName, dialect);
     await this.sequelize.query(fixtureFileContent);

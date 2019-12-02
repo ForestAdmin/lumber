@@ -223,6 +223,10 @@ async function analyzeTable([schema, foreignKeys, primaryKeys, references], tabl
       // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
       //         handle it automatically without necessary declaration.
       if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+        // NOTICE: Handle bit(1) to boolean conversion
+        if (columnInfo.defaultValue === "b'1'" || columnInfo.defaultValue === '((1))') columnInfo.defaultValue = true;
+        if (columnInfo.defaultValue === "b'1'" || columnInfo.defaultValue === '((0))') columnInfo.defaultValue = false;
+
         const field = {
           name: _.camelCase(nameColumn),
           nameColumn,
