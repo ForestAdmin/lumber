@@ -28,17 +28,17 @@ module.exports = (sequelize, DataTypes) => {
         name: 'userId',
         field: 'user_id',
       },
-      as: 'user',
     });
     Users.hasMany(models.reviews, {
       foreignKey: {
         name: 'userId',
         field: 'user_id',
       },
-      as: 'user',
     });
     Users.belongsToMany(models.books, {
       through: 'user_books',
+      foreignKey: 'user_id',
+      otherKey: 'book_id',
     });
   };
 

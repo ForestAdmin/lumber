@@ -23,7 +23,6 @@
       }
     ],
     "references": [{
-        "as": "user",
         "association": "hasOne",
         "foreignKey": "user_id",
         "foreignKeyName": "userId",
@@ -31,7 +30,6 @@
         "ref": "addresses"
       },
       {
-        "as": "user",
         "association": "hasMany",
         "foreignKey": "user_id",
         "foreignKeyName": "userId",
@@ -42,6 +40,8 @@
         "isBelongsToMany": true,
         "ref": "user_books",
         "association": "belongsToMany",
+        "foreignKey": "user_id",
+        "otherKey": "book_id",
         "junctionTable": "books"
       }
     ],

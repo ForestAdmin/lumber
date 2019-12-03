@@ -1,6 +1,14 @@
 {
   "addresses": {
     "fields": [{
+        "name": "userId",
+        "nameColumn": "user_id",
+        "type": "INTEGER",
+        "primaryKey": true,
+        "defaultValue": null
+
+      },
+      {
         "name": "street",
         "nameColumn": "street",
         "type": "STRING",
@@ -27,12 +35,11 @@
       "ref": "users",
       "foreignKey": "user_id",
       "foreignKeyName": "userId",
-      "as": "user",
       "association": "belongsTo"
     }],
     "primaryKeys": ["user_id"],
     "options": {
-      "underscored": false,
+      "underscored": true,
       "timestamps": false,
       "hasIdColumn": false,
       "hasPrimaryKeys": true

@@ -5,6 +5,10 @@ module.exports = (sequelize, DataTypes) => {
   // This section contains the fields of your model, mapped to your table's columns.
   // Learn more here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
   const Addresses = sequelize.define('addresses', {
+    userId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+    },
     street: {
       type: DataTypes.STRING,
     },
@@ -16,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     tableName: 'addresses',
+    underscored: true,
     timestamps: false,
     schema: process.env.DATABASE_SCHEMA,
   });
@@ -26,7 +31,6 @@ module.exports = (sequelize, DataTypes) => {
         name: 'userId',
         field: 'user_id',
       },
-      as: 'user',
     });
   };
 

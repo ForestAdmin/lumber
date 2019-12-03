@@ -165,7 +165,7 @@ function getData(table, config) {
       tableForeignKeysAnalyzer.perform(table),
       analyzePrimaryKeys(schema),
     ]))
-    .then(data => checkFkUnicity(data));
+    .then((data) => checkFkUnicity(data));
 }
 
 // NOTICE: Use the foreign key and reference properties to determine the associations
@@ -179,7 +179,7 @@ async function setAssociationType(aggregatedData) {
           const arrayUniqueIndexes = [table[2]];
           arrayUniqueIndexes.forEach((uniqueIndexes) => {
             if (uniqueIndexes.length > 1 && uniqueIndexes.includes(fk.column_name)) {
-              const manyToManyKeys = _.filter(table[1], o => o.column_name !== fk.column_name && o.column_type === 'FOREIGN KEY' && uniqueIndexes.includes(o.column_name));
+              const manyToManyKeys = _.filter(table[1], (o) => o.column_name !== fk.column_name && o.column_type === 'FOREIGN KEY' && uniqueIndexes.includes(o.column_name));
               if (manyToManyKeys !== null) {
                 manyToManyKeys.forEach((foreignKey) => {
                   aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'belongsToMany', foreignKey));

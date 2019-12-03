@@ -1,4 +1,3 @@
-/* global describe, before, after, it */
 const { expect } = require('chai');
 const rimraf = require('rimraf');
 const fs = require('fs');
