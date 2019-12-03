@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- Lumber - Mongo schema generates hasMany: array of `_id` referencing other collection.
+- Command Generate - Generate MongoDB HasMany.
 
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
