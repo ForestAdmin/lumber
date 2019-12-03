@@ -23,8 +23,20 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Users.associate = (models) => {
-    Users.hasOne(models.addresses);
-    Users.hasMany(models.reviews);
+    Users.hasOne(models.addresses, {
+      foreignKey: {
+        name: 'userId',
+        field: 'user_id',
+      },
+      as: 'user',
+    });
+    Users.hasMany(models.reviews, {
+      foreignKey: {
+        name: 'userId',
+        field: 'user_id',
+      },
+      as: 'user',
+    });
     Users.belongsToMany(models.books, {
       through: 'user_books',
     });

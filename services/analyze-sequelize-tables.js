@@ -62,17 +62,6 @@ function hasTimestamps(fields) {
   return hasCreatedAt && hasUpdatedAt;
 }
 
-function formatAliasName(columnName) {
-  const alias = _.camelCase(columnName);
-  if (alias.endsWith('Id') && alias.length > 2) {
-    return alias.substring(0, alias.length - 2);
-  }
-  if (alias.endsWith('Uuid') && alias.length > 4) {
-    return alias.substring(0, alias.length - 4);
-  }
-  return alias;
-}
-
 // NOTICE: Look for the id column in both fields and primary keys.
 function hasIdColumn(fields, primaryKeys) {
   return fields.some((field) => field.name === 'id' || field.nameColumn === 'id')
@@ -126,7 +115,7 @@ function checkRefUnicity(table, columnName) {
 }
 
 // NOTICE: Format the references depending on the type of the association
-function setReference(fk, association, junctionTable) {
+function setReference(fk, association, manyToManyFk) {
   let reference = {};
   if (association === 'belongsTo') {
     reference = {
@@ -134,21 +123,24 @@ function setReference(fk, association, junctionTable) {
       ref: fk.foreign_table_name,
       foreignKey: fk.column_name,
       foreignKeyName: _.camelCase(fk.column_name),
-      as: formatAliasName(fk.column_name),
       association,
     };
   } else if (association !== 'belongsToMany') {
     reference = {
       isHasOneOrHasMany: true,
       ref: fk.table_name,
+      foreignKey: fk.column_name,
+      foreignKeyName: _.camelCase(fk.column_name),
       association,
     };
   } else {
     reference = {
       isBelongsToMany: true,
       ref: fk.table_name,
+      foreignKey: fk.column_name,
+      otherKey: manyToManyFk.column_name,
       association,
-      junctionTable,
+      junctionTable: manyToManyFk.foreign_table_name,
     };
   }
 
@@ -184,13 +176,13 @@ async function setAssociationType(aggregatedData) {
       if (fk.column_type === 'FOREIGN KEY') {
         let manyToMany = false;
         if (fk.isInCompositeKey) {
-          const arrayUniqueIndexes = fk.unique_indexes === null ? [table[2]] : fk.unique_indexes;
+          const arrayUniqueIndexes = [table[2]];
           arrayUniqueIndexes.forEach((uniqueIndexes) => {
             if (uniqueIndexes.length > 1 && uniqueIndexes.includes(fk.column_name)) {
               const manyToManyKeys = _.filter(table[1], o => o.column_name !== fk.column_name && o.column_type === 'FOREIGN KEY' && uniqueIndexes.includes(o.column_name));
               if (manyToManyKeys !== null) {
                 manyToManyKeys.forEach((foreignKey) => {
-                  aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'belongsToMany', foreignKey.foreign_table_name));
+                  aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'belongsToMany', foreignKey));
                 });
                 manyToMany = true;
               }
@@ -219,7 +211,7 @@ async function analyzeTable([schema, foreignKeys, primaryKeys, references], tabl
 
     if (!(foreignKey
           && foreignKey.foreign_table_name
-          && foreignKey.column_name) && type) {
+          && foreignKey.column_name && !columnInfo.primaryKey) && type) {
       // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
       //         handle it automatically without necessary declaration.
       if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {

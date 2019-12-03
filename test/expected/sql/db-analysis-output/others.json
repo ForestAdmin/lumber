@@ -23,14 +23,20 @@
       }
     ],
     "references": [{
+        "as": "user",
+        "association": "hasOne",
+        "foreignKey": "user_id",
+        "foreignKeyName": "userId",
         "isHasOneOrHasMany": true,
-        "ref": "addresses",
-        "association": "hasOne"
+        "ref": "addresses"
       },
       {
+        "as": "user",
+        "association": "hasMany",
+        "foreignKey": "user_id",
+        "foreignKeyName": "userId",
         "isHasOneOrHasMany": true,
-        "ref": "reviews",
-        "association": "hasMany"
+        "ref": "reviews"
       },
       {
         "isBelongsToMany": true,
