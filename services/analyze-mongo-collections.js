@@ -16,8 +16,8 @@ const mapReduceOptions = {
 };
 
 // NOTICE: This code runs on the MongoDB side (mapReduce feature).
-// The supported JS version is not the same than elsewhere.
-// The code used here must work with MongoDB lower version supported.
+//         The supported JS version is not the same than elsewhere.
+//         The code used here must work with MongoDB lower version supported.
 /* eslint-disable vars-on-top, no-var, no-undef, no-restricted-syntax */
 function mapCollection() {
   function allItemsAreObjectIDs(array) {
@@ -51,7 +51,6 @@ function mapCollection() {
     }
   }
 }
-
 /* eslint-enable */
 
 function reduceCollection(key, stuff) {
