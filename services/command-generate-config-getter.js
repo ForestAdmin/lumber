@@ -38,7 +38,8 @@ function CommandGenerateConfigGetter(program) {
   this.getOptions = () => {
     if (program.connectionUrl) {
       return this.options.forConnectionUrl;
-    } else if (!program.db) {
+    }
+    if (!program.db) {
       return this.options.forNoDatabase;
     }
     return this.options.forFullPrompt;

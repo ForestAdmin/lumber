@@ -1,4 +1,3 @@
-/* global describe, it */
 const { expect } = require('chai');
 const ColumnTypeGetter = require('../../services/column-type-getter');
 const SequelizeHelper = require('../utils/sequelize-helper');
@@ -16,7 +15,7 @@ describe('Services > Column Type Getter', () => {
   ];
 
   describe('Using mysql', () => {
-    const mysqlDatabase = databases.filter(db => db.dialect === 'mysql')[0];
+    const mysqlDatabase = databases.filter((db) => db.dialect === 'mysql')[0];
     let sequelizeHelper;
     let databaseConnection;
 
@@ -41,7 +40,7 @@ describe('Services > Column Type Getter', () => {
   });
 
   describe('Using pgsql', () => {
-    const mysqlDatabase = databases.filter(db => db.dialect === 'postgres')[0];
+    const mysqlDatabase = databases.filter((db) => db.dialect === 'postgres')[0];
     let sequelizeHelper;
     let databaseConnection;
 

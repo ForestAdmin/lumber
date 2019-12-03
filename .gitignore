@@ -1,6 +1,3 @@
 .DS_Store
 node_modules/
 .env
-
-# Locks
-yarn.lock
