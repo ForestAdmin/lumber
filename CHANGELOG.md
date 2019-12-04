@@ -10,7 +10,7 @@
 - Technical - Use Yarn instead of NPM in the CI.
 - Technical - Rename `.env.example` file.
 - Technical - Upgrade ESLint rules.
-- SQLite support - Removed last bits of SQLite related code.
+- SQLite support - Remove last bits of SQLite related code.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
