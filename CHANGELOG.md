@@ -12,7 +12,7 @@
 - Technical - Upgrade ESLint rules.
 
 ### Fixed
-- MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries. 
+- MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
@@ -38,7 +38,7 @@
 - Command Generate - Generate the forest routes to ease the use of `smart routes`.
 
 ### Changed
-- Command Generate - Use handlebars to generate models. 
+- Command Generate - Use handlebars to generate models.
 - Technical - Remove unused ENCRYPT env variable.
 - Security - Prevent remote environments creation with HTTP protocol.
 - Commands - Remove command run and install.
