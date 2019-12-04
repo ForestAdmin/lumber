@@ -10,8 +10,8 @@ let tableForeignKeysAnalyzer;
 let columnTypeGetter;
 
 function isUnderscored(fields) {
-  return fields.every(field => field.nameColumn === _.snakeCase(field.nameColumn))
-    && fields.some(field => field.nameColumn.includes('_'));
+  return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
+    && fields.some((field) => field.nameColumn.includes('_'));
 }
 
 function analyzeFields(table, config) {
@@ -19,7 +19,7 @@ function analyzeFields(table, config) {
 }
 
 async function analyzePrimaryKeys(schema) {
-  return Object.keys(schema).filter(column => schema[column].primaryKey);
+  return Object.keys(schema).filter((column) => schema[column].primaryKey);
 }
 
 async function showAllTables(databaseConnection, schema) {
@@ -42,7 +42,7 @@ async function showAllTables(databaseConnection, schema) {
     'SELECT table_name as table_name FROM information_schema.tables WHERE table_schema = ? AND table_type LIKE \'%TABLE\' AND table_name != \'spatial_ref_sys\'',
     { type: queryInterface.sequelize.QueryTypes.SELECT, replacements: [realSchema] },
   )
-    .then(results => results.map(table => table.table_name));
+    .then((results) => results.map((table) => table.table_name));
 }
 
 function hasTimestamps(fields) {
@@ -75,14 +75,14 @@ function formatAliasName(columnName) {
 
 // NOTICE: Look for the id column in both fields and primary keys.
 function hasIdColumn(fields, primaryKeys) {
-  return fields.some(field => field.name === 'id' || field.nameColumn === 'id')
+  return fields.some((field) => field.name === 'id' || field.nameColumn === 'id')
     || _.includes(primaryKeys, 'id');
 }
 
 function analyzeTable(table, config) {
   return P
     .resolve(analyzeFields(table, config))
-    .then(schema => P.all([
+    .then((schema) => P.all([
       schema,
       tableForeignKeysAnalyzer.perform(table),
       analyzePrimaryKeys(schema),
@@ -164,7 +164,7 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
         'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?;',
         { type: queryInterface.sequelize.QueryTypes.SELECT, replacements: [config.dbSchema] },
       )
-      .then(result => !!result.length);
+      .then((result) => !!result.length);
 
     if (!schemaExists) {
       const message = 'This schema does not exists.';
