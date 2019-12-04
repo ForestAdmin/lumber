@@ -76,6 +76,13 @@ function Dumper(config) {
     return _.kebabCase(table);
   }
 
+  function getModelName(table) {
+    if (table === 'sessions') {
+      return 'session';
+    }
+    return _.camelCase(table);
+  }
+
   function writeDotGitIgnore() {
     const templatePath = `${__dirname}/../templates/app/gitignore`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
@@ -129,6 +136,7 @@ function Dumper(config) {
   }
 
   function writeModel(table, fields, references, options = {}) {
+    const modelName = getModelName(table);
     const templatePath = config.dbDialect === 'mongodb'
       ? `${__dirname}/../templates/app/models/mongo-model.hbs`
       : `${__dirname}/../templates/app/models/sequelize-model.hbs`;
@@ -155,15 +163,21 @@ function Dumper(config) {
           !== expectedConventionalTargetKeyName;
         return {
           ...reference,
+          ref: getModelName(reference.refTable),
           foreignKeyColumnUnconventional,
           targetKeyColumnUnconventional,
         };
       }
-      return { ...reference, foreignKeyColumnUnconventional };
+      return {
+        ...reference,
+        ref: getModelName(reference.refTable),
+        foreignKeyColumnUnconventional,
+      };
     });
 
     const text = template({
-      modelName: stringUtils.pascalCase(table),
+      modelNameVariable: stringUtils.pascalCase(table),
+      modelName,
       table,
       fields: fieldsDefinition,
       references: referencesDefinition,
@@ -177,12 +191,13 @@ function Dumper(config) {
     writeFile(`${path}/models/${filename}.js`, text);
   }
 
-  function writeRoute(modelName) {
+  function writeRoute(table) {
     const templatePath = `${__dirname}/../templates/app/routes/route.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
 
-    const modelNameDasherized = _.kebabCase(modelName);
-    const readableModelName = _.startCase(modelName);
+    const modelName = getModelName(table);
+    const modelNameDasherized = _.kebabCase(table);
+    const readableModelName = _.startCase(table);
     const text = template({
       modelName,
       modelNameDasherized,
@@ -196,9 +211,10 @@ function Dumper(config) {
   }
 
   function writeForestCollection(table) {
+    const modelName = getModelName(table);
     const templatePath = `${__dirname}/../templates/app/forest/collection.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    const text = template({ ...config, table });
+    const text = template({ ...config, modelName });
 
     const filname = tableToFilename(table);
     writeFile(`${path}/forest/${filname}.js`, text);

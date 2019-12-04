@@ -10,9 +10,11 @@
 - Technical - Use Yarn instead of NPM in the CI.
 - Technical - Rename `.env.example` file.
 - Technical - Upgrade ESLint rules.
+- Command Generate - Camelize the table name to have better model name.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
+- Command Generate - Rename model `sessions` to `session` to avoid conflict with forest routes.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
