@@ -17,7 +17,7 @@
   ],
   "references": [
     {
-      "ref": "customers",
+      "refTable": "customers",
       "foreignKey": "customer_id",
       "foreignKeyName": "customerId",
       "as": "customer"

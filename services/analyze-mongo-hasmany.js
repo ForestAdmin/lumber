@@ -60,7 +60,7 @@ const detectHasMany = (databaseConnection, fields, collectionName) => {
 const applyHasMany = (fields, references) =>
   references.forEach((reference) => {
     const field = _.find(fields, { name: reference.from.fieldName });
-    field.ref = reference.to.collectionName;
+    field.refTable = reference.to.collectionName;
     field.hasMany = true;
   });
 

@@ -3,7 +3,7 @@
     "fields": [
       {
         "name": "author",
-        "ref": "persons",
+        "refTable": "persons",
         "type": "mongoose.Schema.Types.ObjectId"
       },
       {

@@ -51,26 +51,26 @@
     ],
     "references": [
       {
-        "ref": "environments",
+        "refTable": "environments",
         "foreignKey": "environmentId",
         "foreignKeyName": "environmentIdUnconventionnal",
         "as": "environment"
       },
       {
-        "ref": "teams",
+        "refTable": "teams",
         "foreignKey": "teamId",
         "foreignKeyName": "teamId",
         "as": "team"
       },
       {
-        "ref": "otherWithTarget",
+        "refTable": "otherWithTarget",
         "foreignKey": "other",
         "foreignKeyName": "other",
         "targetKey": "otherId",
         "as": "team2"
       },
       {
-        "ref": "film",
+        "refTable": "film",
         "foreignKey": "filmKeyName",
         "foreignKeyName": "filmKeyName",
         "targetKey": "film_target_key",

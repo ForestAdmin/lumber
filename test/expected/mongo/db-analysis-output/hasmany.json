@@ -4,12 +4,12 @@
       {
         "hasMany": true,
         "name": "actors",
-        "ref": "persons",
+        "refTable": "persons",
         "type": "[mongoose.Schema.Types.ObjectId]"
       },
       {
         "name": "author",
-        "ref": "persons",
+        "refTable": "persons",
         "type": "mongoose.Schema.Types.ObjectId"
       },
       {

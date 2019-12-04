@@ -147,7 +147,12 @@ function Dumper(config) {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
       const nameColumnUnconventional = field.nameColumn !== expectedConventionalColumnName
         || (underscored && /[1-9]/g.test(field.name));
-      return { ...field, nameColumnUnconventional };
+      const ref = field.refTable ? getModelName(field.refTable) : undefined;
+      return {
+        ...field,
+        nameColumnUnconventional,
+        ref,
+      };
     });
 
     const referencesDefinition = references.map((reference) => {

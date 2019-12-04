@@ -20,7 +20,7 @@
       "as": "customer",
       "foreignKey": "customer_id",
       "foreignKeyName": "customerId",
-      "ref": "customers"
+      "refTable": "customers"
     }
   ],
   "primaryKeys": [
