@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- Command Generate - Generate MongoDB HasMany.
+- Command Generate - Generate SQL HasMany.
 
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.

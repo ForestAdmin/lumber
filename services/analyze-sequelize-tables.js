@@ -69,78 +69,78 @@ function hasIdColumn(fields, primaryKeys) {
 }
 
 // NOTICE: Add isComposite, isUnique and isPrimary attributes to the foreign keys
-async function checkFkUnicity([schema, constraints, primaryKeys]) {
+async function setForeignKeys(schema, constraints, primaryKeys) {
   const foreignKeys = [];
-  for (let i = 0; i < constraints.length; i += 1) {
-    const fk = constraints[i];
-    if (fk.unique_indexes !== null && fk.unique_indexes === 'string') fk.unique_indexes = JSON.parse(fk.unique_indexes);
-    if (fk.column_type === 'FOREIGN KEY') {
-      fk.isInCompositeKey = (
-        fk.unique_indexes !== null
-        && (_.find(fk.unique_indexes, (array) => {
-          if (array.length > 1) return array.includes(fk.column_name);
-          return false;
-        }) !== undefined)
-        // && fk.unique_indexes.forEach()
-      ) || (
-        primaryKeys
-        && primaryKeys.length > 1
-        && primaryKeys.includes(fk.column_name)
-      );
+  for (let index = 0; index < constraints.length; index += 1) {
+    const foreignKey = constraints[index];
+    const columnName = foreignKey.column_name;
+    let uniqueIndexes = foreignKey.unique_indexes || null;
 
-      fk.isUnique = _.find(constraints, { column_name: fk.column_name, column_type: 'UNIQUE' }) !== undefined
-        || (
-          fk.unique_indexes !== null
-          && fk.unique_indexes.length === 1
-          && _.find(fk.unique_indexes, (array) => {
-            if (array.length === 1) return array.includes(fk.column_name);
-            return false;
-          }) !== undefined
-        );
-
-      fk.isPrimary = _.isEqual([fk.column_name], primaryKeys);
+    // NOTICE: mssql doesn't support aggregation to JSON, we need to parse it
+    if (uniqueIndexes !== null && uniqueIndexes === 'string') {
+      uniqueIndexes = JSON.parse(uniqueIndexes);
     }
-    foreignKeys.push(fk);
+
+    if (foreignKey.column_type === 'FOREIGN KEY') {
+      const hasUniqueConstraintFromIndex = uniqueIndexes !== null
+        && uniqueIndexes.length === 1
+        && _.find(uniqueIndexes, (array) => {
+          if (array.length === 1) return array.includes(columnName);
+          return false;
+        }) !== undefined;
+
+      foreignKey.isInCompositeKey = primaryKeys
+        && primaryKeys.length > 1
+        && primaryKeys.includes(columnName);
+
+      foreignKey.isUnique = _.find(constraints, { column_name: columnName, column_type: 'UNIQUE' }) !== undefined
+        || hasUniqueConstraintFromIndex;
+
+      foreignKey.isPrimary = _.isEqual([columnName], primaryKeys);
+    }
+    foreignKeys.push(foreignKey);
   }
 
-  return [schema, foreignKeys, primaryKeys, []];
+  return {
+    schema, foreignKeys, primaryKeys, references: [],
+  };
 }
 
 // NOTICE: Check the foreign key's reference unicity
-function checkRefUnicity(table, columnName) {
-  const isPrimary = table[2].includes(columnName);
-  const isUnique = _.find(table[1], { column_name: columnName, column_type: 'UNIQUE' }) !== undefined
-    || _.find(table[1], { unique_indexes: columnName, column_type: 'PRIMARY KEY' }) !== undefined;
+function checkReferenceUnicity(primaryKeys, foreignKeys, columnName) {
+  const isPrimary = primaryKeys.includes(columnName);
+  const isUnique = _.find(foreignKeys, { column_name: columnName, column_type: 'UNIQUE' }) !== undefined
+    || _.find(foreignKeys, { unique_indexes: columnName, column_type: 'PRIMARY KEY' }) !== undefined;
   return isPrimary || isUnique;
 }
 
 // NOTICE: Format the references depending on the type of the association
-function setReference(fk, association, manyToManyFk) {
+function setReference(foreignKey, association, manyToManyForeignKey) {
   let reference = {};
   if (association === 'belongsTo') {
     reference = {
       isBelongsTo: true,
-      ref: fk.foreign_table_name,
-      foreignKey: fk.column_name,
-      foreignKeyName: _.camelCase(fk.column_name),
+      ref: foreignKey.foreign_table_name,
+      foreignKey: foreignKey.column_name,
+      foreignKeyName: _.camelCase(foreignKey.column_name),
       association,
     };
-  } else if (association !== 'belongsToMany') {
+  } else if (association === 'belongsToMany') {
     reference = {
-      isHasOneOrHasMany: true,
-      ref: fk.table_name,
-      foreignKey: fk.column_name,
-      foreignKeyName: _.camelCase(fk.column_name),
+      isBelongsToMany: true,
+      ref: foreignKey.table_name,
+      foreignKey: foreignKey.column_name,
+      otherKey: manyToManyForeignKey.column_name,
       association,
+      junctionTable: manyToManyForeignKey.foreign_table_name,
     };
   } else {
     reference = {
-      isBelongsToMany: true,
-      ref: fk.table_name,
-      foreignKey: fk.column_name,
-      otherKey: manyToManyFk.column_name,
+      isHasOneOrHasMany: true,
+      ref: foreignKey.table_name,
+      foreignKey: foreignKey.column_name,
+      foreignKeyName: _.camelCase(foreignKey.column_name),
       association,
-      junctionTable: manyToManyFk.foreign_table_name,
     };
   }
 
@@ -150,8 +150,8 @@ function setReference(fk, association, manyToManyFk) {
     reference.foreignKeyName = `${reference.foreignKeyName}Key`;
   }
 
-  if (fk.foreign_column_name !== 'id') {
-    reference.targetKey = fk.foreign_column_name;
+  if (foreignKey.foreign_column_name !== 'id') {
+    reference.targetKey = foreignKey.foreign_column_name;
   }
 
   return reference;
@@ -165,36 +165,49 @@ function getData(table, config) {
       tableForeignKeysAnalyzer.perform(table),
       analyzePrimaryKeys(schema),
     ]))
-    .then((data) => checkFkUnicity(data));
+    .then(([schema, foreignKeys, primaryKeys]) =>
+      setForeignKeys(schema, foreignKeys, primaryKeys));
 }
 
 // NOTICE: Use the foreign key and reference properties to determine the associations
 //         and push them as references of the table.
-async function setAssociationType(aggregatedData) {
-  await P.mapSeries(Object.values(aggregatedData), async (table) => {
-    table[1].forEach((fk) => {
-      if (fk.column_type === 'FOREIGN KEY') {
-        let manyToMany = false;
-        if (fk.isInCompositeKey) {
-          const arrayUniqueIndexes = [table[2]];
-          arrayUniqueIndexes.forEach((uniqueIndexes) => {
-            if (uniqueIndexes.length > 1 && uniqueIndexes.includes(fk.column_name)) {
-              const manyToManyKeys = _.filter(table[1], (o) => o.column_name !== fk.column_name && o.column_type === 'FOREIGN KEY' && uniqueIndexes.includes(o.column_name));
-              if (manyToManyKeys !== null) {
-                manyToManyKeys.forEach((foreignKey) => {
-                  aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'belongsToMany', foreignKey));
-                });
-                manyToMany = true;
-              }
+async function setAssociationType(databaseSchema) {
+  await P.mapSeries(Object.values(databaseSchema), async (table) => {
+    const { foreignKeys } = table;
+    foreignKeys.forEach((foreignKey) => {
+      if (foreignKey.column_type === 'FOREIGN KEY') {
+        const refTableName = foreignKey.foreign_table_name;
+        const refColumnName = foreignKey.foreign_column_name;
+        let isManyToMany = false;
+        if (foreignKey.isInCompositeKey) {
+          // Check if the foreignKey is in a composite primary key
+          const { primaryKeys } = table;
+          primaryKeys.forEach((primaryKey) => {
+            if (primaryKey === foreignKey.column_name) {
+              const manyToManyKeys = _.filter(foreignKeys, (otherKey) =>
+                otherKey.column_name !== foreignKey.column_name
+                  && otherKey.column_type === 'FOREIGN KEY' && primaryKeys.includes(otherKey.column_name)) || [];
+
+              manyToManyKeys.forEach((manyToManyKey) => {
+                databaseSchema[refTableName].references.push(setReference(foreignKey, 'belongsToMany', manyToManyKey));
+              });
+              isManyToMany = manyToManyKeys !== [];
             }
           });
         }
-        if (!manyToMany) {
-          if (checkRefUnicity(aggregatedData[fk.foreign_table_name], fk.foreign_column_name)) {
-            table[3].push(setReference(fk, 'belongsTo'));
+        if (!isManyToMany) {
+          const refPrimaryKeys = databaseSchema[refTableName].primaryKeys;
+          const refForeignKeys = databaseSchema[refTableName].foreignKeys;
+
+          if (checkReferenceUnicity(refPrimaryKeys, refForeignKeys, refColumnName)) {
+            table.references.push(setReference(foreignKey, 'belongsTo'));
           }
-          if (fk.isPrimary || fk.isUnique) aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasOne'));
-          else aggregatedData[fk.foreign_table_name][3].push(setReference(fk, 'hasMany'));
+          databaseSchema[refTableName].references.push(
+            setReference(
+              foreignKey,
+              foreignKey.isPrimary || foreignKey.isUnique ? 'hasOne' : 'hasMany',
+            ),
+          );
         }
       }
     });
@@ -202,7 +215,7 @@ async function setAssociationType(aggregatedData) {
 }
 
 // NOTICE: Set the remaining fields
-async function analyzeTable([schema, foreignKeys, primaryKeys, references], table) {
+async function analyzeTable(schema, foreignKeys, primaryKeys, references, table) {
   const fields = [];
   await P.each(Object.keys(schema), async (nameColumn) => {
     const columnInfo = schema[nameColumn];
@@ -216,8 +229,8 @@ async function analyzeTable([schema, foreignKeys, primaryKeys, references], tabl
       //         handle it automatically without necessary declaration.
       if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
         // NOTICE: Handle bit(1) to boolean conversion
-        if (columnInfo.defaultValue === "b'1'" || columnInfo.defaultValue === '((1))') columnInfo.defaultValue = true;
-        if (columnInfo.defaultValue === "b'1'" || columnInfo.defaultValue === '((0))') columnInfo.defaultValue = false;
+        if (columnInfo.defaultValue === "b'1'" || columnInfo.defaultValue === '((1))') { columnInfo.defaultValue = true; }
+        if (columnInfo.defaultValue === "b'1'" || columnInfo.defaultValue === '((0))') { columnInfo.defaultValue = false; }
 
         const field = {
           name: _.camelCase(nameColumn),
@@ -248,7 +261,7 @@ async function analyzeTable([schema, foreignKeys, primaryKeys, references], tabl
 }
 
 async function analyzeSequelizeTables(databaseConnection, config, allowWarning) {
-  const schema = {};
+  const lianaSchema = {};
 
   queryInterface = databaseConnection.getQueryInterface();
   tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, config.dbSchema);
@@ -274,25 +287,28 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   }
 
   // Build the db schema.
-  const aggregatedData = {};
+  const databaseSchema = {};
   await P.mapSeries(showAllTables(databaseConnection, config.dbSchema), async (table) => {
-    aggregatedData[table] = await getData(table, config);
+    databaseSchema[table] = await getData(table, config);
   });
 
-  await setAssociationType(aggregatedData);
+  await setAssociationType(databaseSchema);
 
   await P.mapSeries(showAllTables(databaseConnection, config.dbSchema), async (table) => {
-    schema[table] = await analyzeTable(aggregatedData[table], table);
+    const {
+      schema, foreignKeys, primaryKeys, references,
+    } = databaseSchema[table];
+    lianaSchema[table] = await analyzeTable(schema, foreignKeys, primaryKeys, references, table);
   });
 
-  if (_.isEmpty(schema)) {
+  if (_.isEmpty(lianaSchema)) {
     throw new DatabaseAnalyzerError.EmptyDatabase('no tables found', {
       orm: 'sequelize',
       dialect: databaseConnection.getDialect(),
     });
   }
 
-  return schema;
+  return lianaSchema;
 }
 
 module.exports = analyzeSequelizeTables;
