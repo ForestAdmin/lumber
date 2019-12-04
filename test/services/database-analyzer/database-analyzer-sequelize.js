@@ -1,4 +1,3 @@
-/* global describe, before, after, it */
 const { expect } = require('chai');
 const Sequelize = require('sequelize');
 const SequelizeHelper = require('../../utils/sequelize-helper');

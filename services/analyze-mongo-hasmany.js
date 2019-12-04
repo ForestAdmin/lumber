@@ -15,7 +15,7 @@ const pickSampleValues = (databaseConnection, collectionName, field) =>
       { $project: { _id: false, value: `$${field.name}` } },
     ])
     .toArray()
-    .then(samples => _.map(samples, 'value'));
+    .then((samples) => _.map(samples, 'value'));
 
 const findCollectionMatchingSamples = async (databaseConnection, collectionName, samples) =>
   P.mapSeries(databaseConnection.collections(), async (collection) => {
@@ -24,7 +24,7 @@ const findCollectionMatchingSamples = async (databaseConnection, collectionName,
       return collection.s.namespace.collection;
     }
     return null;
-  }).then(matches => _.filter(matches, match => match));
+  }).then((matches) => _.filter(matches, (match) => match));
 
 const filterReferenceCollection = (collectionName, field, referencedCollections) => {
   if (referencedCollections.length === 1) {
@@ -45,16 +45,16 @@ const buildReference = (collectionName, referencedCollection, field) => {
 
 const detectReference = (databaseConnection, field, collectionName) =>
   pickSampleValues(databaseConnection, collectionName, field)
-    .then(samples => findCollectionMatchingSamples(databaseConnection, collectionName, samples))
-    .then(matches => filterReferenceCollection(collectionName, field, matches))
-    .then(referencedCollection => buildReference(collectionName, referencedCollection, field));
+    .then((samples) => findCollectionMatchingSamples(databaseConnection, collectionName, samples))
+    .then((matches) => filterReferenceCollection(collectionName, field, matches))
+    .then((referencedCollection) => buildReference(collectionName, referencedCollection, field));
 
 const detectHasMany = (databaseConnection, fields, collectionName) => {
-  const objectIdFields = fields.filter(field => field.type === OBJECT_ID_ARRAY);
+  const objectIdFields = fields.filter((field) => field.type === OBJECT_ID_ARRAY);
   return P.mapSeries(
     objectIdFields,
-    objectIdField => detectReference(databaseConnection, objectIdField, collectionName),
-  ).then(references => references.filter(reference => reference));
+    (objectIdField) => detectReference(databaseConnection, objectIdField, collectionName),
+  ).then((references) => references.filter((reference) => reference));
 };
 
 const applyHasMany = (fields, references) =>
