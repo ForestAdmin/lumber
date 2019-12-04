@@ -53,8 +53,6 @@ function Dumper(config) {
         dependencies.mysql2 = '~1.7.0';
       } else if (config.dbDialect === 'mssql') {
         dependencies.tedious = '^6.4.0';
-      } else if (config.dbDialect === 'sqlite') {
-        dependencies.sqlite3 = '~4.0.2';
       } else if (config.dbDialect === 'mongodb') {
         delete dependencies.sequelize;
         dependencies.mongoose = '~5.3.6';
@@ -88,8 +86,6 @@ function Dumper(config) {
 
     if (config.dbConnectionUrl) {
       connectionString = config.dbConnectionUrl;
-    } else if (config.dbDialect === 'sqlite') {
-      connectionString = `sqlite://${config.dbStorage}`;
     } else {
       let protocol = config.dbDialect;
       let port = `:${config.dbPort}`;
