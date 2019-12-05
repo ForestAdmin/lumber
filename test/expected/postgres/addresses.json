@@ -6,13 +6,6 @@
       "type": "UUID",
       "primaryKey": true,
       "defaultValue": null
-    },
-    {
-      "name": "city",
-      "nameColumn": "city",
-      "type": "STRING",
-      "primaryKey": false,
-      "defaultValue": null
     }
   ],
   "references": [
@@ -21,6 +14,12 @@
       "foreignKey": "customer_id",
       "foreignKeyName": "customerId",
       "as": "customer"
+    },{
+      "as": "city",
+      "foreignKey": "city",
+      "foreignKeyName": "cityKey",
+      "ref": "addresses",
+      "targetKey": "city"
     }
   ],
   "primaryKeys": [
