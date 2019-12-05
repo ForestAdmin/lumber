@@ -2,6 +2,7 @@ const { expect } = require('chai');
 const Sequelize = require('sequelize');
 const SequelizeHelper = require('../../utils/sequelize-helper');
 const DatabaseAnalyzer = require('../../../services/database-analyzer');
+const TableForeignKeysAnalyzer = require('../../../services/table-foreign-keys-analyzer');
 
 describe('Database analyser > Sequelize', () => {
   const databases = [
@@ -17,7 +18,7 @@ describe('Database analyser > Sequelize', () => {
 
   function performDatabaseAnalysis(connection, dialect) {
     const databaseAnalyzer = new DatabaseAnalyzer(connection, { dbDialect: dialect });
-    return databaseAnalyzer.perform();
+    return databaseAnalyzer.perform('customers');
   }
 
   databases.forEach(({ connectionUrl, dialect }) => {
@@ -33,6 +34,31 @@ describe('Database analyser > Sequelize', () => {
       after(async () => {
         databaseConnection = null;
         await sequelizeHelper.close();
+      });
+
+      it('should give us constraint_name, table_name_ column_type, column_name, foreign_table_name, foreign_column_name, unique_indexes', async () => {
+        const tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, 'public');
+        const constraints = await tableForeignKeysAnalyzer.perform('addresses');
+
+        if (dialect === 'postgres') {
+          expect(Object.keys(constraints[0]).sort()).to.eql([
+            'constraint_name',
+            'table_name',
+            'column_type',
+            'column_name',
+            'foreign_table_name',
+            'foreign_column_name',
+            'unique_indexes',
+          ].sort());
+        } else {
+          expect(Object.keys(constraints[0]).sort()).to.eql([
+            'constraint_name',
+            'table_name',
+            'column_name',
+            'foreign_table_name',
+            'foreign_column_name',
+          ].sort());
+        }
       });
 
       it('should connect and create a record.', async () => {
