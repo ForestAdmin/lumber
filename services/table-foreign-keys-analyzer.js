@@ -9,39 +9,39 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
       case 'postgres':
         query = `
         SELECT 
-            table_constraints.constraint_name,
-            table_constraints.table_name,
-            table_constraints.constraint_type AS column_type,
-            key_column_usage.column_name,
-            constraint_column_usage.table_name AS foreign_table_name,
-            constraint_column_usage.column_name AS foreign_column_name,
-            json_agg(uidx.unique_indexes) filter (where uidx.unique_indexes is not null) AS unique_indexes
-          FROM information_schema.table_constraints AS table_constraints
-          JOIN information_schema.key_column_usage AS key_column_usage
-            ON table_constraints.constraint_name = key_column_usage.constraint_name
-          JOIN information_schema.constraint_column_usage AS constraint_column_usage
-            ON constraint_column_usage.constraint_name = table_constraints.constraint_name
-          FULL OUTER JOIN (
-            SELECT pg_index.indexrelid::regclass AS index_name,
-                pg_class.relname AS table_name,
-                json_agg(DISTINCT pg_attribute.attname) AS unique_indexes
-            FROM
-                pg_class,
-                pg_index,
-                pg_attribute
-            WHERE
-                pg_class.oid = pg_index.indrelid
-                AND pg_class.oid = pg_index.indexrelid
-                AND pg_attribute.attrelid = pg_class.oid
-                AND pg_attribute.attnum = ANY(pg_index.indkey)
-                AND not pg_index.indisprimary
-                AND pg_index.indisunique
-                AND pg_class.relkind = 'r'
-                AND not pg_class.relname like 'pg%'
-            GROUP BY table_name, index_name) AS uidx
-            ON uidx.table_name = table_constraints.table_name
-          WHERE table_constraints.table_name=:table
-          GROUP BY table_constraints.constraint_name, table_constraints.table_name, table_constraints.constraint_type, key_column_usage.column_name, foreign_table_name, foreign_column_name`;
+          table_constraints.constraint_name,
+          table_constraints.table_name,
+          table_constraints.constraint_type AS column_type,
+          key_column_usage.column_name,
+          constraint_column_usage.table_name AS foreign_table_name,
+          constraint_column_usage.column_name AS foreign_column_name,
+          json_agg(uidx.unique_indexes) filter (where uidx.unique_indexes is not null) AS unique_indexes
+        FROM information_schema.table_constraints AS table_constraints
+        JOIN information_schema.key_column_usage AS key_column_usage
+          ON table_constraints.constraint_name = key_column_usage.constraint_name
+        JOIN information_schema.constraint_column_usage AS constraint_column_usage
+          ON constraint_column_usage.constraint_name = table_constraints.constraint_name
+        FULL OUTER JOIN (
+          SELECT pg_index.indexrelid::regclass AS index_name,
+              pg_class1.relname AS table_name,
+              json_agg(DISTINCT pg_attribute.attname) AS unique_indexes
+          FROM
+              pg_class AS pg_class1,
+              pg_class AS pg_class2,
+              pg_index,
+              pg_attribute
+          WHERE
+              pg_class1.oid = pg_index.indrelid
+              AND pg_class2.oid = pg_index.indexrelid
+              AND pg_attribute.attrelid = pg_class1.oid
+              AND pg_attribute.attnum = ANY(pg_index.indkey)
+              AND not pg_index.indisprimary
+              AND pg_index.indisunique
+              AND pg_class1.relkind = 'r'
+              AND not pg_class1.relname like 'pg%'
+          GROUP BY table_name, index_name) AS uidx
+          ON uidx.table_name = table_constraints.table_name
+        GROUP BY table_constraints.constraint_name, table_constraints.table_name, table_constraints.constraint_type, key_column_usage.column_name, foreign_table_name, foreign_column_name`;
         break;
       case 'mysql':
         query = `
