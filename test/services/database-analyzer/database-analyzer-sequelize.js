@@ -1,20 +1,10 @@
 const { expect } = require('chai');
 const Sequelize = require('sequelize');
 const SequelizeHelper = require('../../utils/sequelize-helper');
+const { databases } = require('../../utils/databases-urls');
 const DatabaseAnalyzer = require('../../../services/database-analyzer');
 
 describe('Database analyser > Sequelize', () => {
-  const databases = [
-    {
-      dialect: 'mysql',
-      connectionUrl: 'mysql://forest:secret@localhost:8999/lumber-sequelize-test',
-    },
-    {
-      dialect: 'postgres',
-      connectionUrl: 'postgres://forest:secret@localhost:54369/lumber-sequelize-test',
-    },
-  ];
-
   function performDatabaseAnalysis(connection, dialect) {
     const databaseAnalyzer = new DatabaseAnalyzer(connection, { dbDialect: dialect });
     return databaseAnalyzer.perform();
