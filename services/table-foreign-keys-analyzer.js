@@ -8,40 +8,40 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
     switch (queryInterface.sequelize.options.dialect) {
       case 'postgres':
         query = `
-        SELECT tc.constraint_name,
-            tc.table_name,
-            tc.constraint_type AS column_type,
-            kcu.column_name,
-            ccu.table_name AS foreign_table_name,
-            ccu.column_name AS foreign_column_name,
+        SELECT 
+            table_constraints.constraint_name,
+            table_constraints.table_name,
+            table_constraints.constraint_type AS column_type,
+            key_column_usage.column_name,
+            constraint_column_usage.table_name AS foreign_table_name,
+            constraint_column_usage.column_name AS foreign_column_name,
             json_agg(uidx.unique_indexes) filter (where uidx.unique_indexes is not null) AS unique_indexes
-          FROM information_schema.table_constraints AS tc
-          JOIN information_schema.key_column_usage AS kcu
-            ON tc.constraint_name = kcu.constraint_name
-          JOIN information_schema.constraint_column_usage AS ccu
-            ON ccu.constraint_name = tc.constraint_name
-          FULL OUTER JOIN (select
-                ix.indexrelid::regclass as index_name,
-                t.relname as table_name,
-                json_agg(DISTINCT a.attname) as unique_indexes
-            from
-                pg_class t,
-                pg_class i,
-                pg_index ix,
-                pg_attribute a,
-                pg_namespace ns
-            where
-                t.oid = ix.indrelid
-                and i.oid = ix.indexrelid
-                and a.attrelid = t.oid
-                and a.attnum = ANY(ix.indkey)
-                and not ix.indisprimary
-                and ix.indisunique
-                and t.relkind = 'r'
-                and not t.relname like 'pg%'
-            group by table_name, index_name) as uidx on uidx.table_name = tc.table_name
-            WHERE tc.table_name=:table
-          group by tc.constraint_name, tc.table_name, tc.constraint_type, kcu.column_name, foreign_table_name, foreign_column_name`;
+          FROM information_schema.table_constraints AS table_constraints
+          JOIN information_schema.key_column_usage AS key_column_usage
+            ON table_constraints.constraint_name = key_column_usage.constraint_name
+          JOIN information_schema.constraint_column_usage AS constraint_column_usage
+            ON constraint_column_usage.constraint_name = table_constraints.constraint_name
+          FULL OUTER JOIN (
+            SELECT pg_index.indexrelid::regclass AS index_name,
+                pg_class.relname AS table_name,
+                json_agg(DISTINCT pg_attribute.attname) AS unique_indexes
+            FROM
+                pg_class,
+                pg_index,
+                pg_attribute
+            WHERE
+                pg_class.oid = pg_index.indrelid
+                AND pg_class.oid = pg_index.indexrelid
+                AND pg_attribute.attrelid = pg_class.oid
+                AND pg_attribute.attnum = ANY(pg_index.indkey)
+                AND not pg_index.indisprimary
+                AND pg_index.indisunique
+                AND pg_class.relkind = 'r'
+                AND not pg_class.relname like 'pg%'
+            GROUP BY table_name, index_name) AS uidx
+            ON uidx.table_name = table_constraints.table_name
+          WHERE table_constraints.table_name=:table
+          GROUP BY table_constraints.constraint_name, table_constraints.table_name, table_constraints.constraint_type, key_column_usage.column_name, foreign_table_name, foreign_column_name`;
         break;
       case 'mysql':
         query = `
