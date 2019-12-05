@@ -117,7 +117,7 @@ function checkReferenceUnicity(primaryKeys, foreignKeys, columnName) {
 // NOTICE: Format the references depending on the type of the association
 function setReference(foreignKey, association, manyToManyForeignKey) {
   const reference = {
-    foreignKey: foreignKey.column_name,
+    columnName: foreignKey.column_name,
     foreignKeyName: _.camelCase(foreignKey.column_name),
     association,
   };

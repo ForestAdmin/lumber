@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     {{../modelName}}.belongsTo(models.{{reference.ref}}, {
       foreignKey: {
         name: '{{reference.foreignKeyName}}',{{#if reference.foreignKeyColumnUnconventional}}
-        field: '{{reference.foreignKey}}',{{/if}}
+        field: '{{reference.columnName}}',{{/if}}
       },{{#if reference.targetKey }}
       target: {
         name: '{{reference.targetKey}}',{{#if reference.targetKeyColumnUnconventional}}
@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     {{../modelName}}.{{reference.association}}(models.{{reference.ref}}, {
       foreignKey: {
         name: '{{reference.foreignKeyName}}',{{#if reference.foreignKeyColumnUnconventional}}
-        field: '{{reference.foreignKey}}',{{/if}}
+        field: '{{reference.columnName}}',{{/if}}
       },{{#if reference.targetKey }}
       target: {
         name: '{{reference.targetKey}}',{{#if reference.targetKeyColumnUnconventional}}
@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     {{#if reference.isBelongsToMany}}
     {{../modelName}}.belongsToMany(models.{{reference.junctionTable}}, {
       through: '{{reference.ref}}',
-      foreignKey: '{{reference.foreignKey}}',
+      foreignKey: '{{reference.columnName}}',
       otherKey: '{{reference.otherKey}}',
     });
     {{/if}}
