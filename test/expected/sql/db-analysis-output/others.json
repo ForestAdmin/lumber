@@ -40,6 +40,7 @@
         "isBelongsToMany": true,
         "ref": "user_books",
         "association": "belongsToMany",
+        "foreignKeyName": "userId",
         "foreignKey": "user_id",
         "otherKey": "book_id",
         "junctionTable": "books"

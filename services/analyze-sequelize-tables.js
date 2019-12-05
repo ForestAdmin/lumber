@@ -82,19 +82,19 @@ async function setForeignKeys(schema, constraints, primaryKeys) {
     }
 
     if (foreignKey.column_type === 'FOREIGN KEY') {
-      const hasUniqueConstraintFromIndex = uniqueIndexes !== null
+      const hasUniqueConstraint = uniqueIndexes !== null
         && uniqueIndexes.length === 1
-        && _.find(uniqueIndexes, (array) => {
-          if (array.length === 1) return array.includes(columnName);
+        && !!uniqueIndexes.some((indexColumnName) => {
+          if (indexColumnName.length === 1) return indexColumnName.includes(columnName);
           return false;
-        }) !== undefined;
+        });
 
       foreignKey.isInCompositeKey = primaryKeys
         && primaryKeys.length > 1
         && primaryKeys.includes(columnName);
 
-      foreignKey.isUnique = _.find(constraints, { column_name: columnName, column_type: 'UNIQUE' }) !== undefined
-        || hasUniqueConstraintFromIndex;
+      foreignKey.isUnique = !!constraints.some((constraint) => constraint.column_name === columnName && constraint.column_type === 'UNIQUE')
+        || hasUniqueConstraint;
 
       foreignKey.isPrimary = _.isEqual([columnName], primaryKeys);
     }
@@ -109,44 +109,34 @@ async function setForeignKeys(schema, constraints, primaryKeys) {
 // NOTICE: Check the foreign key's reference unicity
 function checkReferenceUnicity(primaryKeys, foreignKeys, columnName) {
   const isPrimary = primaryKeys.includes(columnName);
-  const isUnique = _.find(foreignKeys, { column_name: columnName, column_type: 'UNIQUE' }) !== undefined
-    || _.find(foreignKeys, { unique_indexes: columnName, column_type: 'PRIMARY KEY' }) !== undefined;
+  const isUnique = !!_.find(foreignKeys, { column_name: columnName, column_type: 'UNIQUE' })
+    || !!_.find(foreignKeys, { unique_indexes: columnName, column_type: 'PRIMARY KEY' });
   return isPrimary || isUnique;
 }
 
 // NOTICE: Format the references depending on the type of the association
 function setReference(foreignKey, association, manyToManyForeignKey) {
-  let reference = {};
+  const reference = {
+    foreignKey: foreignKey.column_name,
+    foreignKeyName: _.camelCase(foreignKey.column_name),
+    association,
+  };
   if (association === 'belongsTo') {
-    reference = {
-      isBelongsTo: true,
-      ref: foreignKey.foreign_table_name,
-      foreignKey: foreignKey.column_name,
-      foreignKeyName: _.camelCase(foreignKey.column_name),
-      association,
-    };
+    reference.isBelongsTo = true;
+    reference.ref = foreignKey.foreign_table_name;
   } else if (association === 'belongsToMany') {
-    reference = {
-      isBelongsToMany: true,
-      ref: foreignKey.table_name,
-      foreignKey: foreignKey.column_name,
-      otherKey: manyToManyForeignKey.column_name,
-      association,
-      junctionTable: manyToManyForeignKey.foreign_table_name,
-    };
+    reference.isBelongsToMany = true;
+    reference.ref = foreignKey.table_name;
+    reference.otherKey = manyToManyForeignKey.column_name;
+    reference.junctionTable = manyToManyForeignKey.foreign_table_name;
   } else {
-    reference = {
-      isHasOneOrHasMany: true,
-      ref: foreignKey.table_name,
-      foreignKey: foreignKey.column_name,
-      foreignKeyName: _.camelCase(foreignKey.column_name),
-      association,
-    };
+    reference.isHasOneOrHasMany = true;
+    reference.ref = foreignKey.table_name;
   }
 
   // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
   //         to handle this specific scenario generating a different foreign key name.
-  if (reference.foreignKeyName !== undefined && reference.foreignKeyName === reference.as) {
+  if (reference.foreignKeyName && reference.foreignKeyName === reference.as) {
     reference.foreignKeyName = `${reference.foreignKeyName}Key`;
   }
 
@@ -157,7 +147,7 @@ function setReference(foreignKey, association, manyToManyForeignKey) {
   return reference;
 }
 
-function getData(table, config) {
+function analyzeTable(table, config) {
   return P
     .resolve(analyzeFields(table, config))
     .then((schema) => P.all([
@@ -171,7 +161,7 @@ function getData(table, config) {
 
 // NOTICE: Use the foreign key and reference properties to determine the associations
 //         and push them as references of the table.
-async function setAssociationType(databaseSchema) {
+async function defineAssociationType(databaseSchema) {
   await P.mapSeries(Object.values(databaseSchema), async (table) => {
     const { foreignKeys } = table;
     foreignKeys.forEach((foreignKey) => {
@@ -215,22 +205,22 @@ async function setAssociationType(databaseSchema) {
 }
 
 // NOTICE: Set the remaining fields
-async function analyzeTable(schema, foreignKeys, primaryKeys, references, table) {
+async function createTableSchema(schema, foreignKeys, primaryKeys, references, table) {
   const fields = [];
   await P.each(Object.keys(schema), async (nameColumn) => {
     const columnInfo = schema[nameColumn];
     const type = await columnTypeGetter.perform(columnInfo, nameColumn, table);
     const foreignKey = _.find(foreignKeys, { column_name: nameColumn, column_type: 'FOREIGN KEY' });
 
-    if (!(foreignKey
-          && foreignKey.foreign_table_name
-          && foreignKey.column_name && !columnInfo.primaryKey) && type) {
+    if ((!foreignKey
+          || !foreignKey.foreign_table_name
+          || !foreignKey.column_name || columnInfo.primaryKey) && type) {
       // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
       //         handle it automatically without necessary declaration.
-      if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+      if (nameColumn !== 'id' || type !== 'INTEGER' || !columnInfo.primaryKey) {
         // NOTICE: Handle bit(1) to boolean conversion
         if (columnInfo.defaultValue === "b'1'" || columnInfo.defaultValue === '((1))') { columnInfo.defaultValue = true; }
-        if (columnInfo.defaultValue === "b'1'" || columnInfo.defaultValue === '((0))') { columnInfo.defaultValue = false; }
+        if (columnInfo.defaultValue === "b'0'" || columnInfo.defaultValue === '((0))') { columnInfo.defaultValue = false; }
 
         const field = {
           name: _.camelCase(nameColumn),
@@ -289,16 +279,19 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   // Build the db schema.
   const databaseSchema = {};
   await P.mapSeries(showAllTables(databaseConnection, config.dbSchema), async (table) => {
-    databaseSchema[table] = await getData(table, config);
+    databaseSchema[table] = await analyzeTable(table, config);
   });
 
-  await setAssociationType(databaseSchema);
+  // Fill the references field for each table schemaÒ
+  await defineAssociationType(databaseSchema);
 
   await P.mapSeries(showAllTables(databaseConnection, config.dbSchema), async (table) => {
     const {
       schema, foreignKeys, primaryKeys, references,
     } = databaseSchema[table];
-    lianaSchema[table] = await analyzeTable(schema, foreignKeys, primaryKeys, references, table);
+    lianaSchema[table] = await createTableSchema(
+      schema, foreignKeys, primaryKeys, references, table,
+    );
   });
 
   if (_.isEmpty(lianaSchema)) {
