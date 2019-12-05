@@ -17,7 +17,7 @@ describe('Database analyser > Sequelize', () => {
 
   function performDatabaseAnalysis(connection, dialect) {
     const databaseAnalyzer = new DatabaseAnalyzer(connection, { dbDialect: dialect });
-    return databaseAnalyzer.perform('customers');
+    return databaseAnalyzer.perform();
   }
 
   databases.forEach(({ connectionUrl, dialect }) => {
