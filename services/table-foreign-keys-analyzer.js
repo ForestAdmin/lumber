@@ -41,6 +41,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
               AND not pg_class1.relname like 'pg%'
           GROUP BY table_name, index_name) AS uidx
           ON uidx.table_name = table_constraints.table_name
+        WHERE table_constraints.table_name=:table
         GROUP BY table_constraints.constraint_name, table_constraints.table_name, table_constraints.constraint_type, key_column_usage.column_name, foreign_table_name, foreign_column_name`;
         break;
       case 'mysql':
