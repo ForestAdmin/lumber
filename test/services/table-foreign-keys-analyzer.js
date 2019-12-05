@@ -1,19 +1,9 @@
 const { expect } = require('chai');
 const SequelizeHelper = require('../utils/sequelize-helper');
+const { databases } = require('../utils/databases-urls');
 const TableForeignKeysAnalyzer = require('../../services/table-foreign-keys-analyzer');
 
 describe('Table analyser > SQL', () => {
-  const databases = [
-    {
-      dialect: 'mysql',
-      connectionUrl: 'mysql://forest:secret@localhost:8999/lumber-sequelize-test',
-    },
-    {
-      dialect: 'postgres',
-      connectionUrl: 'postgres://forest:secret@localhost:54369/lumber-sequelize-test',
-    },
-  ];
-
   databases.forEach(({ connectionUrl, dialect }) => {
     describe(`with ${dialect}`, () => {
       let sequelizeHelper;
