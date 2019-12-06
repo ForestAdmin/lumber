@@ -5,6 +5,9 @@
 - Command Generate - Generate MongoDB HasMany.
 
 ### Changed
+- Technical - Updated error message when wrong password
+
+### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 - Technical - Replace `package-lock.json` by `yarn.lock`.
 - Technical - Use Yarn instead of NPM in the CI.
