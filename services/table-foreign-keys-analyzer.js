@@ -49,44 +49,44 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
         break;
       case 'mysql':
         query = `
-        SELECT constraint_name,
-               table_name,
-               column_name,
-               column_type,
-               foreign_table_name,
-               foreign_column_name,
+        SELECT constraintName,
+               tableName,
+               columnName,
+               columnType,
+               foreignTableName,
+               foreignColumnName,
                CASE
-                 WHEN cast('[null]' AS json) = unique_indexes THEN NULL
-                 ELSE unique_indexes
-               END AS unique_indexes
+                 WHEN cast('[null]' AS json) = uniqueIndexes THEN NULL
+                 ELSE uniqueIndexes
+               END AS uniqueIndexes
         FROM (
-          SELECT table_constraints.constraint_name AS constraint_name,
-                 table_constraints.table_name AS table_name,
-                 key_column_usage.column_name AS column_name,
-                 table_constraints.constraint_type AS column_type,
-                 key_column_usage.referenced_table_name AS foreign_table_name,
-                 key_column_usage.referenced_column_name AS foreign_column_name,
-                 JSON_ARRAYAGG(uidx.unique_indexes) AS unique_indexes
-          FROM information_schema.table_constraints AS table_constraints
-          JOIN information_schema.key_column_usage AS key_column_usage
-            ON table_constraints.table_name = key_column_usage.table_name
-            AND table_constraints.constraint_name = key_column_usage.constraint_name
+          SELECT tableConstraints.constraint_name AS constraintName,
+                 tableConstraints.table_name AS tableName,
+                 keyColumnUsage.column_name AS columnName,
+                 tableConstraints.constraint_type AS columnType,
+                 keyColumnUsage.referenced_table_name AS foreignTableName,
+                 keyColumnUsage.referenced_column_name AS foreignColumnName,
+                 JSON_ARRAYAGG(uidx.uniqueIndexes) AS uniqueIndexes
+          FROM information_schema.table_constraints AS tableConstraints
+          JOIN information_schema.key_column_usage AS keyColumnUsage
+            ON tableConstraints.table_name = keyColumnUsage.table_name
+            AND tableConstraints.constraint_name = keyColumnUsage.constraint_name
           LEFT OUTER JOIN (
-            SELECT distinct uidx.index_name,
-                   uidx.table_name,
-                   JSON_ARRAYAGG(uidx.column_name) AS unique_indexes
+            SELECT distinct uidx.index_name AS indexName,
+                   uidx.table_name AS tableName,
+                   JSON_ARRAYAGG(uidx.column_name) AS uniqueIndexes
             FROM information_schema.statistics AS uidx
-            WHERE index_schema = :databaseName
+            WHERE index_schema = 'lumber-sequelize-test'
               AND uidx.non_unique = 0
-              AND index_name != 'PRIMARY'
-            GROUP BY table_name, index_name) AS uidx
-            ON uidx.table_name = table_constraints.table_name
-           WHERE table_constraints.table_schema = :databaseName
-              AND table_constraints.table_name = :table
-              AND table_constraints.constraint_type != 'UNIQUE'
-           GROUP BY constraint_name, table_name, column_type, column_name, foreign_table_name, foreign_column_name
+              AND uidx.index_name != 'PRIMARY'
+            GROUP BY tableName, indexName) AS uidx
+            ON uidx.tableName = tableConstraints.table_name
+           WHERE tableConstraints.table_schema = 'lumber-sequelize-test'
+              AND tableConstraints.table_name = 'addresses'
+              AND tableConstraints.constraint_type != 'UNIQUE'
+           GROUP BY constraintName, tableName, columnType, columnName, foreignTableName, foreignColumnName
         ) AS alias
-        GROUP BY constraint_name, table_name, column_type, column_name, foreign_table_name, foreign_column_name, unique_indexes`;
+        GROUP BY constraintName, tableName, columnType, columnName, foreignTableName, foreignColumnName, uniqueIndexes`;
         replacements.databaseName = queryInterface.sequelize.config.database;
         break;
       case 'mssql':
