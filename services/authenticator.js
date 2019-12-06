@@ -26,7 +26,7 @@ function Authenticator() {
       if (sessionInfo.data.data.attributes.email === email) {
         return true;
       }
-      logger.warn('Your token is invalid.');
+      logger.warn('Your credentials are invalid.');
     }
     return false;
   };
