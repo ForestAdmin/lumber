@@ -94,17 +94,17 @@ function analyzeTable(table, config) {
       await P.each(Object.keys(schema), async (nameColumn) => {
         const columnInfo = schema[nameColumn];
         const type = await columnTypeGetter.perform(columnInfo, nameColumn, table);
-        const foreignKey = _.find(foreignKeys, { column_name: nameColumn });
+        const foreignKey = _.find(foreignKeys, { columnName: nameColumn });
 
         if (foreignKey
-          && foreignKey.foreign_table_name
-          && foreignKey.column_name
+          && foreignKey.foreignTableName
+          && foreignKey.columnName
           && !columnInfo.primaryKey) {
           const reference = {
-            ref: foreignKey.foreign_table_name,
-            foreignKey: foreignKey.column_name,
-            foreignKeyName: _.camelCase(foreignKey.column_name),
-            as: formatAliasName(foreignKey.column_name),
+            ref: foreignKey.foreignTableName,
+            foreignKey: foreignKey.columnName,
+            foreignKeyName: _.camelCase(foreignKey.columnName),
+            as: formatAliasName(foreignKey.columnName),
           };
 
           // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
@@ -113,8 +113,8 @@ function analyzeTable(table, config) {
             reference.foreignKeyName = `${reference.foreignKeyName}Key`;
           }
 
-          if (foreignKey.foreign_column_name !== 'id') {
-            reference.targetKey = foreignKey.foreign_column_name;
+          if (foreignKey.foreignColumnName !== 'id') {
+            reference.targetKey = foreignKey.foreignColumnName;
           }
 
           references.push(reference);

@@ -9,48 +9,49 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
       case 'postgres':
         query = `
         SELECT 
-          table_constraints.constraint_name,
-          table_constraints.table_name,
-          table_constraints.constraint_type AS column_type,
-          key_column_usage.column_name,
-          constraint_column_usage.table_name AS foreign_table_name,
-          constraint_column_usage.column_name AS foreign_column_name,
-          json_agg(uidx.unique_indexes) filter (where uidx.unique_indexes is not null) AS unique_indexes
-        FROM information_schema.table_constraints AS table_constraints
-        JOIN information_schema.key_column_usage AS key_column_usage
-          ON table_constraints.constraint_name = key_column_usage.constraint_name
-        JOIN information_schema.constraint_column_usage AS constraint_column_usage
-          ON constraint_column_usage.constraint_name = table_constraints.constraint_name
+          "tableConstraints".constraint_name AS "constraintName",
+          "tableConstraints".table_name AS "tableName",
+          "tableConstraints".constraint_type AS "columnType",
+          "keyColumnUsage".column_name AS "columnName",
+          "constraintColumnUsage".table_name AS "foreignTableName",
+          "constraintColumnUsage".column_name AS "foreignColumnName",
+          json_agg("uidx"."uniqueIndexes") filter (where "uidx"."uniqueIndexes" is not null) AS "uniqueIndexes"
+        FROM information_schema.table_constraints AS "tableConstraints"
+        JOIN information_schema.key_column_usage AS "keyColumnUsage"
+          ON "tableConstraints".constraint_name = "keyColumnUsage".constraint_name
+        JOIN information_schema.constraint_column_usage AS "constraintColumnUsage"
+          ON "constraintColumnUsage".constraint_name = "tableConstraints".constraint_name
         FULL OUTER JOIN (
-          SELECT pg_index.indexrelid::regclass AS index_name,
-              pg_class1.relname AS table_name,
-              json_agg(DISTINCT pg_attribute.attname) AS unique_indexes
+          SELECT pg_index.indexrelid::regclass AS "indexName",
+              "pgClass1".relname AS "tableName",
+              json_agg(DISTINCT pg_attribute.attname) AS "uniqueIndexes"
           FROM
-              pg_class AS pg_class1,
-              pg_class AS pg_class2,
+              pg_class AS "pgClass1",
+              pg_class AS "pgClass2",
               pg_index,
               pg_attribute
           WHERE
-              pg_class1.oid = pg_index.indrelid
-              AND pg_class2.oid = pg_index.indexrelid
-              AND pg_attribute.attrelid = pg_class1.oid
+              "pgClass1".oid = pg_index.indrelid
+              AND "pgClass2".oid = pg_index.indexrelid
+              AND pg_attribute.attrelid = "pgClass1".oid
               AND pg_attribute.attnum = ANY(pg_index.indkey)
               AND not pg_index.indisprimary
               AND pg_index.indisunique
-              AND pg_class1.relkind = 'r'
-              AND not pg_class1.relname like 'pg%'
-          GROUP BY table_name, index_name) AS uidx
-          ON uidx.table_name = table_constraints.table_name
-        WHERE table_constraints.table_name=:table
-        GROUP BY table_constraints.constraint_name, table_constraints.table_name, table_constraints.constraint_type, key_column_usage.column_name, foreign_table_name, foreign_column_name`;
+              AND "pgClass1".relkind = 'r'
+              AND not "pgClass1".relname like 'pg%'
+              GROUP BY "tableName", "indexName") AS "uidx"
+              ON "uidx"."tableName" = "tableConstraints".table_name
+            WHERE "tableName" = 'addresses'
+            GROUP BY "constraintName", "tableConstraints".table_name, "columnType", "columnName", "foreignTableName", "foreignColumnName"`;
         break;
       case 'mysql':
         query = `
           SELECT
-            TABLE_NAME AS table_name,
-            COLUMN_NAME AS column_name,CONSTRAINT_NAME AS constraint_name,
-            REFERENCED_TABLE_NAME AS foreign_table_name,
-            REFERENCED_COLUMN_NAME AS foreign_column_name
+            TABLE_NAME AS "tableName",
+            COLUMN_NAME AS "columnName",
+            CONSTRAINT_NAME AS "constraintName",
+            REFERENCED_TABLE_NAME AS "foreignTableName",
+            REFERENCED_COLUMN_NAME AS "foreignColumnName"
           FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
           WHERE TABLE_SCHEMA = :databaseName
             AND TABLE_NAME = :table;`;
