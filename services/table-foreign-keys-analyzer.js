@@ -22,6 +22,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
         JOIN information_schema.constraint_column_usage AS "constraintColumnUsage"
           ON "constraintColumnUsage".constraint_name = "tableConstraints".constraint_name
         FULL OUTER JOIN (
+          -- Get the index name, table name and list of columns of the unique indexes of a table
           SELECT pg_index.indexrelid::regclass AS "indexName",
               "pgClass1".relname AS "tableName",
               json_agg(DISTINCT pg_attribute.attname) AS "uniqueIndexes"
@@ -41,7 +42,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
               AND not "pgClass1".relname like 'pg%'
               GROUP BY "tableName", "indexName") AS "uidx"
               ON "uidx"."tableName" = "tableConstraints".table_name
-            WHERE "tableName" = 'addresses'
+            WHERE "tableName" = :table
             GROUP BY "constraintName", "tableConstraints".table_name, "columnType", "columnName", "foreignTableName", "foreignColumnName"`;
         break;
       case 'mysql':
