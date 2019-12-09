@@ -8,7 +8,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
     switch (queryInterface.sequelize.options.dialect) {
       case 'postgres':
         query = `
-        SELECT 
+        SELECT
           "tableConstraints".constraint_name AS "constraintName",
           "tableConstraints".table_name AS "tableName",
           "tableConstraints".constraint_type AS "columnType",
@@ -24,26 +24,28 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
         FULL OUTER JOIN (
           -- Get the index name, table name and list of columns of the unique indexes of a table
           SELECT pg_index.indexrelid::regclass AS "indexName",
-              "pgClass1".relname AS "tableName",
-              json_agg(DISTINCT pg_attribute.attname) AS "uniqueIndexes"
+            "pgClass1".relname AS "tableName",
+            json_agg(DISTINCT pg_attribute.attname) AS "uniqueIndexes"
           FROM
-              pg_class AS "pgClass1",
-              pg_class AS "pgClass2",
-              pg_index,
-              pg_attribute
+            pg_class AS "pgClass1",
+            pg_class AS "pgClass2",
+            pg_index,
+            pg_attribute
           WHERE
-              "pgClass1".oid = pg_index.indrelid
-              AND "pgClass2".oid = pg_index.indexrelid
-              AND pg_attribute.attrelid = "pgClass1".oid
-              AND pg_attribute.attnum = ANY(pg_index.indkey)
-              AND not pg_index.indisprimary
-              AND pg_index.indisunique
-              AND "pgClass1".relkind = 'r'
-              AND not "pgClass1".relname like 'pg%'
-              GROUP BY "tableName", "indexName") AS "uidx"
-              ON "uidx"."tableName" = "tableConstraints".table_name
-            WHERE "tableName" = :table
-            GROUP BY "constraintName", "tableConstraints".table_name, "columnType", "columnName", "foreignTableName", "foreignColumnName"`;
+            "pgClass1".relname = :table
+            AND "pgClass1".oid = pg_index.indrelid
+            AND "pgClass2".oid = pg_index.indexrelid
+            AND pg_attribute.attrelid = "pgClass1".oid
+            AND pg_attribute.attnum = ANY(pg_index.indkey)
+            AND not pg_index.indisprimary
+            AND pg_index.indisunique
+            AND "pgClass1".relkind = 'r'
+            AND not "pgClass1".relname like 'pg%'
+            GROUP BY "tableName", "indexName"
+        ) AS "uidx"
+        ON "uidx"."tableName" = "tableConstraints".table_name
+        WHERE "uidx"."tableName" = :table OR "tableConstraints".table_name = :table
+        GROUP BY "constraintName", "tableConstraints".table_name, "columnType", "columnName", "foreignTableName", "foreignColumnName"`;
         break;
       case 'mysql':
         query = `
