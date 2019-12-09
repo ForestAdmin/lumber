@@ -5,7 +5,7 @@
 - Command Generate - Generate MongoDB HasMany.
 
 ### Changed
-- Command Generate - Updated PostgresSQL script to add required fields for hasMany detection.
+- Command Generate - Update PostgresSQL script to add required fields for hasMany detection.
 
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
