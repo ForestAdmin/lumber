@@ -8,7 +8,7 @@ const expectedCustomersConstraints = require('../expected/sql/foreign-keys-analy
 const expectedReviewsConstraints = require('../expected/sql/foreign-keys-analysis-output/reviews');
 
 describe('Table foreign keys analyzer > SQL', () => {
-  describeSQLDatabases(({ connectionUrl, dialect }) => () => {
+  describeSQLDatabases(({ connectionUrl, dialect, schema }) => () => {
     let sequelizeHelper;
     let databaseConnection;
 
