@@ -12,6 +12,7 @@
 - Technical - Upgrade ESLint rules.
 - SQLite support - Remove last bits of SQLite related code.
 - Technical - Improve test code to make synchronous Sequelize connection close.
+- Authentication - Updated warning message when the email is not well formatted.
 - Command Generate - Remove the broken `no-db` option.
 
 ### Fixed
