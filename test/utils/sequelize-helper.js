@@ -40,7 +40,7 @@ class SequelizeHelper {
   }
 
   close() {
-    this.sequelize.close();
+    return this.sequelize.close();
   }
 
   async dropAllTables() {
