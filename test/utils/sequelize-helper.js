@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 class SequelizeHelper {
-  async connect(url) {
+  connect(url) {
     this.sequelize = new Sequelize(url, {
       logging: false,
       pool: { maxConnections: 10, minConnections: 1 },
