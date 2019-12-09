@@ -5,7 +5,7 @@
 - Command Generate - Generate MongoDB HasMany.
 
 ### Changed
-- Technical - Removed no-db option
+- Command Generate - Remove the broken `no-db` option.
 
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
