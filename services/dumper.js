@@ -270,11 +270,8 @@ function Dumper(config) {
       mkdirp(viewPath),
       mkdirp(publicPath),
       mkdirp(middlewaresPath),
+      mkdirp(modelsPath),
     ];
-
-    if (config.db) {
-      directories.push(mkdirp(modelsPath));
-    }
 
     await P.all(directories);
 
@@ -288,7 +285,7 @@ function Dumper(config) {
     writeForestAdminMiddleware();
     copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
 
-    if (config.db) { writeModelsIndex(path); }
+    writeModelsIndex(path);
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
       writeModel(modelName, fields, references, options);
