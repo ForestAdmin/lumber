@@ -5,9 +5,6 @@
 - Command Generate - Generate MongoDB HasMany.
 
 ### Changed
-- Authentication - Updated warning message when the email is not well formatted.
-
-### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 - Technical - Replace `package-lock.json` by `yarn.lock`.
 - Technical - Use Yarn instead of NPM in the CI.
@@ -15,6 +12,7 @@
 - Technical - Upgrade ESLint rules.
 - SQLite support - Remove last bits of SQLite related code.
 - Technical - Improve test code to make synchronous Sequelize connection close.
+- Authentication - Updated warning message when the email is not well formatted.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
