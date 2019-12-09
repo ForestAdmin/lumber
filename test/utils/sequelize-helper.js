@@ -2,13 +2,8 @@ const Sequelize = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 class SequelizeHelper {
   async connect(url) {
-    await sleep(10000);
     this.sequelize = new Sequelize(url, {
       logging: false,
       pool: { maxConnections: 10, minConnections: 1 },
