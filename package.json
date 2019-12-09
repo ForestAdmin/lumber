@@ -5,7 +5,7 @@
   "main": "lumber.js",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js .eslint-bin deserializers scripts serializers services test utils",
-    "test": "./node_modules/mocha/bin/mocha 'test/**/*.js'",
+    "test": "./node_modules/mocha/bin/mocha 'test/**/*.js' --timeout 15000",
     "release": "node ./scripts/release.js"
   },
   "bin": {
