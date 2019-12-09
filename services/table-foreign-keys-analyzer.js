@@ -76,13 +76,13 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                    uidx.table_name AS tableName,
                    JSON_ARRAYAGG(uidx.column_name) AS uniqueIndexes
             FROM information_schema.statistics AS uidx
-            WHERE index_schema = 'lumber-sequelize-test'
+            WHERE index_schema = :databaseName
               AND uidx.non_unique = 0
               AND uidx.index_name != 'PRIMARY'
             GROUP BY tableName, indexName) AS uidx
             ON uidx.tableName = tableConstraints.table_name
-           WHERE tableConstraints.table_schema = 'lumber-sequelize-test'
-              AND tableConstraints.table_name = 'addresses'
+           WHERE tableConstraints.table_schema = :databaseName
+              AND tableConstraints.table_name = :table
               AND tableConstraints.constraint_type != 'UNIQUE'
            GROUP BY constraintName, tableName, columnType, columnName, foreignTableName, foreignColumnName
         ) AS alias
