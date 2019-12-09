@@ -6,8 +6,6 @@
 
 ### Changed
 - Command Generate - Remove the broken `no-db` option.
-
-### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 - Technical - Replace `package-lock.json` by `yarn.lock`.
 - Technical - Use Yarn instead of NPM in the CI.
