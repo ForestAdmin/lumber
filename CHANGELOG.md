@@ -5,7 +5,6 @@
 - Command Generate - Generate MongoDB HasMany.
 
 ### Changed
-- Command Generate - Remove the broken `no-db` option.
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 - Technical - Replace `package-lock.json` by `yarn.lock`.
 - Technical - Use Yarn instead of NPM in the CI.
@@ -13,6 +12,7 @@
 - Technical - Upgrade ESLint rules.
 - SQLite support - Remove last bits of SQLite related code.
 - Technical - Improve test code to make synchronous Sequelize connection close.
+- Command Generate - Remove the broken `no-db` option.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
