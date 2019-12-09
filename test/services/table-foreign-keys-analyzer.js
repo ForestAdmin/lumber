@@ -23,7 +23,11 @@ describe('Table foreign keys analyzer > SQL', () => {
       const tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, 'public');
       const constraints = await tableForeignKeysAnalyzer.perform('addresses');
 
-      expect(constraints.sort()).is.deep.equals(expectedData[dialect].sort());
+      expect(constraints.sort((a, b) =>
+        a.constraintName.localeCompare(b.constraintName))).is.deep.equals(
+        expectedData[dialect].sort(((a, b) =>
+          a.constraintName.localeCompare(b.constraintName))),
+      );
     });
   });
 });
