@@ -90,6 +90,7 @@ class DatabasePrompts extends AbstractPrompter {
           },
           default: (args) => {
             if (args.dbDialect === 'postgres') { return 'public'; }
+            if (args.dbDialect === 'mssql') { return 'dbo'; }
             return '';
           },
         });

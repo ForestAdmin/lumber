@@ -1,0 +1,26 @@
+{
+  "fields": [
+    {
+      "name": "city",
+      "nameColumn": "city",
+      "type": "STRING",
+      "primaryKey": false,
+      "defaultValue": null
+    }
+  ],
+  "references": [
+    {
+      "ref": "customers",
+      "foreignKey": "customer_id",
+      "foreignKeyName": "customerId",
+      "as": "customer"
+    }
+  ],
+  "primaryKeys": [ "id" ],
+  "options": {
+    "underscored": false,
+    "timestamps": false,
+    "hasIdColumn": true,
+    "hasPrimaryKeys": true
+  }
+}

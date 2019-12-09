@@ -32,3 +32,12 @@ mysql:
     MYSQL_PASSWORD: secret
   ports:
     - "127.0.0.1:8999:3306"
+
+mssql:
+  image: mcr.microsoft.com/mssql/server:2017-CU8-ubuntu
+  container_name: lumber_sequelize_mssql
+  environment: 
+    ACCEPT_EULA: "Y"
+    SA_PASSWORD: "forest2019:"
+  ports:
+    - "1432:1433"

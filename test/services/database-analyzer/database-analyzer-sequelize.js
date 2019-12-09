@@ -28,13 +28,13 @@ describe('Database analyser > Sequelize', () => {
       await sequelizeHelper.forceSync(User);
       const user = await User.create({ name: 'Jane' });
       expect(user.name).to.be.equal('Jane');
-    });
+    }).timeout(5000);
 
     it('should generate a single model', async () => {
       const expected = await sequelizeHelper.given('customers');
       const result = await performDatabaseAnalysis(databaseConnection);
       expect(result.customers).is.deep.equal(expected);
-    });
+    }).timeout(5000);
 
     it('should generate two models with relationship', async () => {
       await sequelizeHelper.dropAndCreate('customers');
@@ -42,6 +42,6 @@ describe('Database analyser > Sequelize', () => {
       const expected = await sequelizeHelper.given('addresses');
       const result = await performDatabaseAnalysis(databaseConnection);
       expect(result.addresses).is.deep.equal(expected);
-    });
+    }).timeout(5000);
   });
 });

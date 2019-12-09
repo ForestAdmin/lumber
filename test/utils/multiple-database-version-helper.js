@@ -12,6 +12,10 @@ const sqlDatabases = [
     dialect: 'postgres',
     connectionUrl: 'postgres://forest:secret@localhost:54369/lumber-sequelize-test',
   },
+  {
+    dialect: 'mssql',
+    connectionUrl: 'mssql://sa:forest2019:@localhost:1432/model',
+  },
 ];
 
 module.exports = {
