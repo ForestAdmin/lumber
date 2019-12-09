@@ -23,7 +23,7 @@ describe('Table foreign keys analyzer > SQL', () => {
       const tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, 'public');
       const constraints = await tableForeignKeysAnalyzer.perform('addresses');
 
-      expect(constraints).is.deep.equal(expectedData[dialect]);
+      expect(constraints.sort()).is.deep.equals(expectedData[dialect].sort());
     });
   });
 });
