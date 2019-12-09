@@ -5,7 +5,7 @@
 - Command Generate - Generate MongoDB HasMany.
 
 ### Changed
-- Technical - Updated error message when wrong password
+- Authentication - Updated warning message when the email is not well formatted
 
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
