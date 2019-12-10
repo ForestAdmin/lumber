@@ -4,6 +4,9 @@
 ### Added
 - Command Generate - Generate MongoDB HasMany.
 
+### Fixed
+- Custom Domain - Fix the CORS middleware to take CORS env variables into account.
+
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 - Technical - Replace `package-lock.json` by `yarn.lock`.
