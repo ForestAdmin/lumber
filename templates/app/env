@@ -6,3 +6,5 @@ DATABASE_SSL=<%= ssl || 'false' %>
 
 FOREST_AUTH_SECRET=<%= forestAuthSecret %>
 FOREST_ENV_SECRET=<%= forestEnvSecret %>
+
+CORS_ORIGINS=
