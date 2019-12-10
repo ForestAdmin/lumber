@@ -76,18 +76,18 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                    uidx.table_name AS tableName,
                    JSON_ARRAYAGG(uidx.column_name) AS uniqueIndexes
             FROM information_schema.statistics AS uidx
-            WHERE index_schema = :databaseName
+            WHERE index_schema = :schemaName
               AND uidx.non_unique = 0
               AND uidx.index_name != 'PRIMARY'
             GROUP BY tableName, indexName) AS uidx
             ON uidx.tableName = tableConstraints.table_name
-           WHERE tableConstraints.table_schema = :databaseName
+           WHERE tableConstraints.table_schema = :schemaName
               AND tableConstraints.table_name = :table
               AND tableConstraints.constraint_type != 'UNIQUE'
            GROUP BY constraintName, tableName, columnType, columnName, foreignTableName, foreignColumnName
         ) AS alias
         GROUP BY constraintName, tableName, columnType, columnName, foreignTableName, foreignColumnName, uniqueIndexes`;
-        replacements.databaseName = queryInterface.sequelize.config.database;
+        replacements.schemaName = queryInterface.sequelize.config.database;
         break;
       case 'mssql':
         query = `
