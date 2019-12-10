@@ -1,0 +1,56 @@
+{
+  "fields": [
+    {
+      "name": "name",
+      "nameColumn": "name",
+      "type": "STRING",
+      "primaryKey": false,
+      "defaultValue": null
+    },
+    {
+      "name": "description",
+      "nameColumn": "description",
+      "type": "STRING",
+      "primaryKey": false,
+      "defaultValue": null
+    },
+    {
+      "name": "isActive",
+      "nameColumn": "is_active",
+      "type": "INTEGER",
+      "primaryKey": false,
+      "defaultValue": "1"
+    },
+    {
+      "name": "paying",
+      "nameColumn": "paying",
+      "type": "BOOLEAN",
+      "primaryKey": false,
+      "defaultValue": null
+    },
+    {
+      "name": "createdAt",
+      "nameColumn": "created_at",
+      "type": "DATE",
+      "primaryKey": false,
+      "defaultValue": null
+    },
+    {
+      "name": "updatedAt",
+      "nameColumn": "updated_at",
+      "type": "DATE",
+      "primaryKey": false,
+      "defaultValue": null
+    }
+  ],
+  "references": [],
+  "primaryKeys": [
+    "id"
+  ],
+  "options": {
+    "underscored": true,
+    "timestamps": true,
+    "hasIdColumn": true,
+    "hasPrimaryKeys": true
+  }
+}

@@ -18,15 +18,34 @@ class SequelizeHelper {
     });
   }
 
+  async forceSync(table) {
+    const dialect = this.sequelize.getDialect();
+    if (dialect === 'mysql') {
+      await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 0')
+        .then(() => table.sync({ force: true }))
+        .then(() => this.sequelize.query('SET FOREIGN_KEY_CHECKS = 1'));
+    } else {
+      await table.sync({ force: true });
+    }
+  }
+
   async given(tableName) {
     const dialect = this.sequelize.getDialect();
     const fixtureFilename = path.join(__dirname, `../fixtures/${dialect}/${tableName}.sql`);
-    const expectedFilename = path.join(__dirname, `../expected/${dialect}/${tableName}.json`);
+    const expectedFilename = path.join(__dirname, `../expected/sql/db-analysis-output/${dialect}/${tableName}.json`);
     const fixtureFileContent = await fs.readFileSync(fixtureFilename, 'utf8');
     await this.drop(tableName, dialect);
     await this.sequelize.query(fixtureFileContent);
     // eslint-disable-next-line import/no-dynamic-require, global-require
     return require(expectedFilename);
+  }
+
+  async dropAndCreate(tableName) {
+    const dialect = this.sequelize.getDialect();
+    const fixtureFilename = path.join(__dirname, `../fixtures/${dialect}/${tableName}.sql`);
+    const fixtureFileContent = await fs.readFileSync(fixtureFilename, 'utf8');
+    await this.drop(tableName, dialect);
+    return this.sequelize.query(fixtureFileContent);
   }
 
   async drop(tableName, dialect) {
