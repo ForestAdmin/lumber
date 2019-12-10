@@ -4,11 +4,11 @@ MongoDB:
     - "27000:27017"
 
 postgres :
-  image : forestadmin/turnkey-posgres
+  image : forestadmin/turnkey-postgres
   ports :
     - "5777:5432"
 
 mysql:
-  image: forestadmin/turnkey-mssql
+  image: forestadmin/turnkey-mysql
   ports:
     - "3300:3306"
