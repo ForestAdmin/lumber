@@ -7,10 +7,19 @@ const sqlDatabases = [
   {
     dialect: 'mysql',
     connectionUrl: 'mysql://forest:secret@localhost:8999/lumber-sequelize-test',
+    schema: 'public',
   },
   {
     dialect: 'postgres',
     connectionUrl: 'postgres://forest:secret@localhost:54369/lumber-sequelize-test',
+    schema: 'public',
+
+  },
+  {
+    dialect: 'mssql',
+    connectionUrl: 'mssql://sa:forest2019:@localhost:1432/model',
+    schema: 'dbo',
+
   },
 ];
 

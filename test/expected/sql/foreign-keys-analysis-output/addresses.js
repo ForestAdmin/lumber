@@ -58,4 +58,25 @@ const postgres = [
   },
 ];
 
-module.exports = { mysql, postgres };
+const mssql = [
+  {
+    constraintName: 'addresses_pkey',
+    tableName: 'addresses',
+    columnName: 'user_id',
+    columnType: 'PRIMARY KEY',
+    foreignTableName: null,
+    foreignColumnName: null,
+    uniqueIndexes: null,
+  },
+  {
+    constraintName: 'fk_user_id',
+    tableName: 'addresses',
+    columnName: 'user_id',
+    columnType: 'FOREIGN KEY',
+    foreignTableName: 'users',
+    foreignColumnName: 'id',
+    uniqueIndexes: '[["city"]]',
+  },
+];
+
+module.exports = { mysql, postgres, mssql };

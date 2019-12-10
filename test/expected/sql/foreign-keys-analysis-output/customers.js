@@ -22,4 +22,16 @@ const postgres = [
   },
 ];
 
-module.exports = { mysql, postgres };
+const mssql = [
+  {
+    constraintName: 'pk_customers',
+    tableName: 'customers',
+    columnName: 'id',
+    columnType: 'PRIMARY KEY',
+    foreignTableName: null,
+    foreignColumnName: null,
+    uniqueIndexes: null,
+  },
+];
+
+module.exports = { mysql, postgres, mssql };

@@ -1,0 +1,35 @@
+{
+  "fields": [{
+    "name": "userId",
+    "nameColumn": "user_id",
+    "type": "INTEGER",
+    "primaryKey": true,
+    "defaultValue": null
+  }, {
+    "name": "street",
+    "nameColumn": "street",
+    "type": "STRING",
+    "primaryKey": false,
+    "defaultValue": null
+  }, {
+    "name": "city",
+    "nameColumn": "city",
+    "type": "STRING",
+    "primaryKey": false,
+    "defaultValue": null
+  }, {
+    "name": "state",
+    "nameColumn": "state",
+    "type": "STRING",
+    "primaryKey": false,
+    "defaultValue": null
+  }],
+  "references": [],
+  "primaryKeys": ["user_id"],
+  "options": {
+    "underscored": true,
+    "timestamps": false,
+    "hasIdColumn": false,
+    "hasPrimaryKeys": true
+  }
+}

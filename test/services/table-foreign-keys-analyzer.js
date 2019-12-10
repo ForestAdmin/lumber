@@ -8,7 +8,7 @@ const expectedCustomersConstraints = require('../expected/sql/foreign-keys-analy
 const expectedReviewsConstraints = require('../expected/sql/foreign-keys-analysis-output/reviews');
 
 describe('Table foreign keys analyzer > SQL', () => {
-  describeSQLDatabases(({ connectionUrl, dialect }) => () => {
+  describeSQLDatabases(({ connectionUrl, dialect, schema }) => () => {
     let sequelizeHelper;
     let databaseConnection;
 
@@ -28,7 +28,7 @@ describe('Table foreign keys analyzer > SQL', () => {
     });
 
     it('should provide the constraints of a table with one unique constraint', async () => {
-      const tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, 'public');
+      const tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, schema);
       const constraints = await tableForeignKeysAnalyzer.perform('addresses');
 
       expect(_.sortBy(constraints, ['constraintName'])).is.deep.equals(
@@ -37,7 +37,7 @@ describe('Table foreign keys analyzer > SQL', () => {
     });
 
     it('should provide the constraints of a table without any unique constraint', async () => {
-      const tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, 'public');
+      const tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, schema);
       const constraints = await tableForeignKeysAnalyzer.perform('customers');
 
       expect(_.sortBy(constraints, ['constraintName'])).is.deep.equals(
