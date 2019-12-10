@@ -12,6 +12,7 @@ function getFilesModified(callback) {
     }
 
     listFilesModified = status.files
+      .filter((change) => change.index !== 'D')
       .map((file) => file.path)
       .filter((file) => file.endsWith('.js'));
 
