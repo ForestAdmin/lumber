@@ -91,36 +91,36 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
         break;
       case 'mssql':
         query = `
-        SELECT "constraintName"
-          ,"tableName"
-          ,"columnName"
-          ,"columnType"
-          ,"foreignTableName"
-          ,"foreignColumnName"
-          ,CASE 
+        SELECT "constraintName",
+          "tableName",
+          "columnName",
+          "columnType",
+          "foreignTableName",
+          "foreignColumnName",
+          CASE 
             WHEN '[]' = "uniqueIndexes"
               THEN NULL
             ELSE "uniqueIndexes"
             END AS "uniqueIndexes"
         FROM (
-          SELECT "constraintsTable"."constraintName"
-            ,"constraintsTable"."tableName"
-            ,"constraintsTable"."columnName"
-            ,"constraintsTable"."columnType"
-            ,"constraintsTable"."foreignTableName"
-            ,"constraintsTable"."foreignColumnName"
-            ,CONCAT (
-              '['
-              ,STUFF((
+          SELECT "constraintsTable"."constraintName",
+            "constraintsTable"."tableName",
+            "constraintsTable"."columnName",
+            "constraintsTable"."columnType",
+            "constraintsTable"."foreignTableName",
+            "constraintsTable"."foreignColumnName",
+            CONCAT (
+              '[',
+              STUFF((
                   SELECT ', ' + "constraintsAndIndexes"."uniqueIndexes"
                   FROM (
-                    SELECT "constraintColumnUsage".constraint_name AS "constraintName"
-                      ,"constraintColumnUsage".table_name AS "tableName"
-                      ,"tableConstraints".constraint_type AS "columnType"
-                      ,"constraintColumnUsage".column_name AS "columnName"
-                      ,"keyColumnUsage".table_name AS "foreignTableName"
-                      ,"keyColumnUsage".column_name AS "foreignColumnName"
-                      ,"uidx"."uniqueIndexes"
+                    SELECT "constraintColumnUsage".constraint_name AS "constraintName",
+                      "constraintColumnUsage".table_name AS "tableName",
+                      "tableConstraints".constraint_type AS "columnType",
+                      "constraintColumnUsage".column_name AS "columnName",
+                      "keyColumnUsage".table_name AS "foreignTableName",
+                      "keyColumnUsage".column_name AS "foreignColumnName",
+                      "uidx"."uniqueIndexes"
                     FROM information_schema.table_constraints "tableConstraints"
                     JOIN information_schema.constraint_column_usage "constraintColumnUsage"
                       ON "constraintColumnUsage".constraint_name = "tableConstraints".constraint_name
@@ -129,20 +129,20 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                     LEFT OUTER JOIN information_schema.key_column_usage "keyColumnUsage"
                       ON "keyColumnUsage".constraint_name = "referentialConstraints".unique_constraint_name
                     LEFT OUTER JOIN (
-                      SELECT "indexesList1"."ind_name"
-                        ,"indexesList1"."t_name"
-                        ,CONCAT (
-                          '['
-                          ,STUFF((
+                      SELECT "indexesList1"."ind_name",
+                        "indexesList1"."t_name",
+                        CONCAT (
+                          '[',
+                          STUFF((
                               SELECT ', ' + CONCAT (
+                                  '"',
+                                  "indexesList2"."uniqueIndexes",
                                   '"'
-                                  ,"indexesList2"."uniqueIndexes"
-                                  ,'"'
                                   )
                               FROM (
-                                SELECT "tables".name AS "t_name"
-                                  ,"indexes".name AS "ind_name"
-                                  ,"columns".name AS "uniqueIndexes"
+                                SELECT "tables".name AS "t_name",
+                                  "indexes".name AS "ind_name",
+                                  "columns".name AS "uniqueIndexes"
                                 FROM sys.indexes "indexes"
                                 JOIN sys.index_columns "indexColumns"
                                   ON "indexes".object_id = "indexColumns".object_id
@@ -160,15 +160,15 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                                 ) "indexesList2"
                               WHERE "indexesList2"."t_name" = "indexesList1"."t_name"
                                 AND "indexesList2"."ind_name" = "indexesList1"."ind_name"
-                              FOR XML PATH('')
-                                ,TYPE
-                              ).value('.', 'varchar(max)'), 1, 2, '')
-                          ,']'
+                              FOR XML PATH(''),
+                                TYPE
+                              ).value('.', 'varchar(max)'), 1, 2, ''),
+                          ']'
                           ) AS "uniqueIndexes"
                       FROM (
-                        SELECT "tables".name AS "t_name"
-                          ,"indexes".name AS "ind_name"
-                          ,"columns".name
+                        SELECT "tables".name AS "t_name",
+                          "indexes".name AS "ind_name",
+                          "columns".name
                         FROM sys.indexes "indexes"
                         JOIN sys.index_columns "indexColumns"
                           ON "indexes".object_id = "indexColumns".object_id
@@ -184,8 +184,8 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                             OR "indexes".is_unique_constraint = 1
                             )
                         ) "indexesList1"
-                      GROUP BY "indexesList1"."t_name"
-                        ,"indexesList1"."ind_name"
+                      GROUP BY "indexesList1"."t_name",
+                        "indexesList1"."ind_name"
                       ) "uidx"
                       ON "uidx"."t_name" = "tableConstraints".table_name
                     WHERE "constraintColumnUsage".table_name = '${table}'
@@ -197,18 +197,18 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                     AND "constraintsTable"."columnName" = "constraintsAndIndexes"."columnName"
                     AND "constraintsTable"."foreignTableName" = "constraintsAndIndexes"."foreignTableName"
                     AND "constraintsTable"."foreignColumnName" = "constraintsAndIndexes"."foreignColumnName"
-                  FOR XML PATH('')
-                    ,TYPE
-                  ).value('.', 'varchar(max)'), 1, 2, '')
-              ,']'
+                  FOR XML PATH(''),
+                    TYPE
+                  ).value('.', 'varchar(max)'), 1, 2, ''),
+              ']'
               ) AS "uniqueIndexes"
           FROM (
-            SELECT "constraintColumnUsage".constraint_name AS "constraintName"
-              ,"constraintColumnUsage".table_name AS "tableName"
-              ,"tableConstraints".constraint_type AS "columnType"
-              ,"constraintColumnUsage".column_name AS "columnName"
-              ,"keyColumnUsage".table_name AS "foreignTableName"
-              ,"keyColumnUsage".column_name AS "foreignColumnName"
+            SELECT "constraintColumnUsage".constraint_name AS "constraintName",
+              "constraintColumnUsage".table_name AS "tableName",
+              "tableConstraints".constraint_type AS "columnType",
+              "constraintColumnUsage".column_name AS "columnName",
+              "keyColumnUsage".table_name AS "foreignTableName",
+              "keyColumnUsage".column_name AS "foreignColumnName"
             FROM information_schema.table_constraints "tableConstraints"
             JOIN information_schema.constraint_column_usage "constraintColumnUsage"
               ON "constraintColumnUsage".constraint_name = "tableConstraints".constraint_name
@@ -217,20 +217,20 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
             LEFT OUTER JOIN information_schema.key_column_usage "keyColumnUsage"
               ON "keyColumnUsage".constraint_name = "referentialConstraints".unique_constraint_name
             LEFT OUTER JOIN (
-              SELECT "indexesList1"."ind_name"
-                ,"indexesList1"."t_name"
-                ,CONCAT (
-                  '['
-                  ,STUFF((
+              SELECT "indexesList1"."ind_name",
+                "indexesList1"."t_name",
+                CONCAT (
+                  '[',
+                  STUFF((
                       SELECT ', ' + CONCAT (
+                          '"',
+                          "indexesList2"."uniqueIndexes",
                           '"'
-                          ,"indexesList2"."uniqueIndexes"
-                          ,'"'
                           )
                       FROM (
-                        SELECT "tables".name AS "t_name"
-                          ,"indexes".name AS "ind_name"
-                          ,"columns".name AS "uniqueIndexes"
+                        SELECT "tables".name AS "t_name",
+                          "indexes".name AS "ind_name",
+                          "columns".name AS "uniqueIndexes"
                         FROM sys.indexes "indexes"
                         JOIN sys.index_columns "indexColumns"
                           ON "indexes".object_id = "indexColumns".object_id
@@ -248,15 +248,15 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                         ) "indexesList2"
                       WHERE "indexesList2"."t_name" = "indexesList1"."t_name"
                         AND "indexesList2"."ind_name" = "indexesList1"."ind_name"
-                      FOR XML PATH('')
-                        ,TYPE
-                      ).value('.', 'varchar(max)'), 1, 2, '')
-                  ,']'
+                      FOR XML PATH(''),
+                        TYPE
+                      ).value('.', 'varchar(max)'), 1, 2, ''),
+                  ']'
                   ) AS "uniqueIndexes"
               FROM (
-                SELECT "tables".name AS "t_name"
-                  ,"indexes".name AS "ind_name"
-                  ,"columns".name
+                SELECT "tables".name AS "t_name",
+                  "indexes".name AS "ind_name",
+                  "columns".name
                 FROM sys.indexes "indexes"
                 JOIN sys.index_columns "indexColumns"
                   ON "indexes".object_id = "indexColumns".object_id
@@ -272,28 +272,28 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
                     OR "indexes".is_unique_constraint = 1
                     )
                 ) "indexesList1"
-              GROUP BY "indexesList1"."t_name"
-                ,"indexesList1"."ind_name"
+              GROUP BY "indexesList1"."t_name",
+                "indexesList1"."ind_name"
               ) "uidx"
               ON "uidx"."t_name" = "constraintColumnUsage".table_name
             WHERE "constraintColumnUsage".table_name = '${table}'
               AND "constraintColumnUsage".table_schema = '${schema !== undefined ? schema : 'dbo'}'
             ) AS "constraintsTable"
           WHERE "columnType" != 'UNIQUE'
-          GROUP BY "constraintsTable"."constraintName"
-            ,"constraintsTable"."tableName"
-            ,"constraintsTable"."columnType"
-            ,"constraintsTable"."columnName"
-            ,"constraintsTable"."foreignTableName"
-            ,"constraintsTable"."foreignColumnName"
+          GROUP BY "constraintsTable"."constraintName",
+            "constraintsTable"."tableName",
+            "constraintsTable"."columnType",
+            "constraintsTable"."columnName",
+            "constraintsTable"."foreignTableName",
+            "constraintsTable"."foreignColumnName"
           ) "alias"
-        GROUP BY "constraintName"
-          ,"tableName"
-          ,"columnName"
-          ,"columnType"
-          ,"foreignTableName"
-          ,"foreignColumnName"
-          ,"uniqueIndexes"`;
+        GROUP BY "constraintName",
+          "tableName",
+          "columnName",
+          "columnType",
+          "foreignTableName",
+          "foreignColumnName",
+          "uniqueIndexes"`;
         break;
       default:
         break;
