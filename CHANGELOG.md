@@ -18,8 +18,9 @@
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
 - Technical - Fix unexpected test errors while running in the CI.
-- Technical - Fix database connection pool issue on tests. 
+- Technical - Fix database connection pool issue on tests.
 - Technical - Fix lint on deleted files issue.
+- Custom Domain - Fix the CORS middleware to take CORS env variables into account.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
