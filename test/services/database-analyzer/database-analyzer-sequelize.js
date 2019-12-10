@@ -25,7 +25,7 @@ describe('Database analyser > Sequelize', () => {
 
     it('should connect and create a record.', async () => {
       const User = databaseConnection.define('user', { name: { type: Sequelize.STRING } });
-      await User.sync({ force: true });
+      await sequelizeHelper.forceSync(User);
       const user = await User.create({ name: 'Jane' });
       expect(user.name).to.be.equal('Jane');
     });
@@ -37,7 +37,8 @@ describe('Database analyser > Sequelize', () => {
     });
 
     it('should generate two models with relationship', async () => {
-      await sequelizeHelper.given('customers');
+      await sequelizeHelper.dropAndCreate('customers');
+      await sequelizeHelper.dropAndCreate('users');
       const expected = await sequelizeHelper.given('addresses');
       const result = await performDatabaseAnalysis(databaseConnection);
       expect(result.addresses).is.deep.equal(expected);

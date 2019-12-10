@@ -1,0 +1,91 @@
+const mysql = [
+  {
+    tableName: 'reviews',
+    columnName: 'id',
+    constraintName: 'PRIMARY',
+    foreignTableName: null,
+    foreignColumnName: null,
+  },
+  {
+    tableName: 'reviews',
+    columnName: 'book_id',
+    constraintName: 'reviews_book_id_fkey',
+    foreignTableName: 'books',
+    foreignColumnName: 'id',
+  },
+  {
+    tableName: 'reviews',
+    columnName: 'user_id',
+    constraintName: 'reviews_user_id_fkey',
+    foreignTableName: 'users',
+    foreignColumnName: 'id',
+  },
+];
+
+const postgres = [
+  {
+    constraintName: 'published_data_rating_key',
+    tableName: 'reviews',
+    columnType: 'UNIQUE',
+    columnName: 'published_date',
+    foreignTableName: 'reviews',
+    foreignColumnName: 'published_date',
+    uniqueIndexes: [['published_date', 'rating']],
+  },
+  {
+    constraintName: 'published_data_rating_key',
+    tableName: 'reviews',
+    columnType: 'UNIQUE',
+    columnName: 'published_date',
+    foreignTableName: 'reviews',
+    foreignColumnName: 'rating',
+    uniqueIndexes: [['published_date', 'rating']],
+  },
+  {
+    constraintName: 'published_data_rating_key',
+    tableName: 'reviews',
+    columnType: 'UNIQUE',
+    columnName: 'rating',
+    foreignTableName: 'reviews',
+    foreignColumnName: 'published_date',
+    uniqueIndexes: [['published_date', 'rating']],
+  },
+  {
+    constraintName: 'published_data_rating_key',
+    tableName: 'reviews',
+    columnType: 'UNIQUE',
+    columnName: 'rating',
+    foreignTableName: 'reviews',
+    foreignColumnName: 'rating',
+    uniqueIndexes: [['published_date', 'rating']],
+  },
+  {
+    constraintName: 'reviews_book_id_fkey',
+    tableName: 'reviews',
+    columnType: 'FOREIGN KEY',
+    columnName: 'book_id',
+    foreignTableName: 'books',
+    foreignColumnName: 'id',
+    uniqueIndexes: [['published_date', 'rating']],
+  },
+  {
+    constraintName: 'reviews_pkey',
+    tableName: 'reviews',
+    columnType: 'PRIMARY KEY',
+    columnName: 'id',
+    foreignTableName: 'reviews',
+    foreignColumnName: 'id',
+    uniqueIndexes: [['published_date', 'rating']],
+  },
+  {
+    constraintName: 'reviews_user_id_fkey',
+    tableName: 'reviews',
+    columnType: 'FOREIGN KEY',
+    columnName: 'user_id',
+    foreignTableName: 'users',
+    foreignColumnName: 'id',
+    uniqueIndexes: [['published_date', 'rating']],
+  },
+];
+
+module.exports = { mysql, postgres };
