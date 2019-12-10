@@ -20,6 +20,7 @@ class Logger {
 
   log(message) {
     if (!this.silent) {
+      // eslint-disable-next-line no-console
       console.log(message);
     }
   }
@@ -29,12 +30,15 @@ class Logger {
   }
 
   logLines(color, messages) {
-    messages.forEach(message => this.logLine(color, message));
+    messages.forEach((message) => this.logLine(color, message));
   }
 
   success(...messages) { this.logLines('green', messages); }
+
   info(...messages) { this.logLines('blue', messages); }
+
   warn(...messages) { this.logLines('yellow', messages); }
+
   error(...messages) { this.logLines('red', messages); }
 }
 

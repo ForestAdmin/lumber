@@ -15,7 +15,7 @@ const expectedManyuNullsModel = require('../../expected/mongo/db-analysis-output
 const expectedManyObjectIDFieldsModel = require('../../expected/mongo/db-analysis-output/many-objectid-fields.json');
 
 describe('Database analyser > MongoDB', () => {
-  describeMongoDatabases(mongoUrl => () => {
+  describeMongoDatabases((mongoUrl) => () => {
     let mongoHelper;
     let databaseConnection;
 
@@ -26,9 +26,9 @@ describe('Database analyser > MongoDB', () => {
 
     beforeEach(() => mongoHelper.dropAllCollections());
 
-    after(() => {
+    after(async () => {
       databaseConnection = null;
-      mongoHelper.close();
+      await mongoHelper.close();
     });
 
     it('should connect and insert a document.', async () => {

@@ -1,4 +1,3 @@
-/* global describe, it */
 const { expect } = require('chai');
 const CommandGenerateConfigGetter = require('../../services/command-generate-config-getter');
 
@@ -11,18 +10,6 @@ describe('Services > Command Generate Config Getter', () => {
         'dbSchema',
         'ssl',
         'mongodbSrv',
-        'appName',
-        'appHostname',
-        'appPort',
-        'email',
-      ]);
-    });
-  });
-
-  describe('with a command with a "no database" option', () => {
-    it('should require [appName, appHostname, appPort]', () => {
-      const commandGenerateConfigGetter = new CommandGenerateConfigGetter({ db: false });
-      expect(commandGenerateConfigGetter.getOptions()).to.eql([
         'appName',
         'appHostname',
         'appPort',

@@ -21,7 +21,6 @@ program
   .option('-H, --application-host <applicationHost>', 'Hostname of your admin backend application')
   .option('-p, --application-port <applicationPort>', 'Port of your admin backend application')
   .option('-s, --schema <schema>', 'Enter your database schema')
-  .option('--no-db', 'Use Lumber without a database')
   .option('-e, --email <email>', 'Your Forest Admin account email')
   .option('-P, --password <password>', 'Your Forest Admin account password (ignored if token is set)')
   .option('-t, --token <token>', 'Your Forest Admin account token (replaces password)')
@@ -36,15 +35,13 @@ program
 
   let schema = {};
 
-  if (program.db) {
-    const connectionPromise = new Database().connect(config);
-    spinners.add('database-connection', { text: 'Connecting to your database' }, connectionPromise);
-    const connection = await connectionPromise;
+  const connectionPromise = new Database().connect(config);
+  spinners.add('database-connection', { text: 'Connecting to your database' }, connectionPromise);
+  const connection = await connectionPromise;
 
-    const schemaPromise = new DatabaseAnalyzer(connection, config, true).perform();
-    spinners.add('database-analysis', { text: 'Analyzing the database' }, schemaPromise);
-    schema = await schemaPromise;
-  }
+  const schemaPromise = new DatabaseAnalyzer(connection, config, true).perform();
+  spinners.add('database-analysis', { text: 'Analyzing the database' }, schemaPromise);
+  schema = await schemaPromise;
 
   const projectCreationPromise = new ProjectCreator(sessionToken)
     .createProject(config.appName, config);
