@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { sortBy } = require('lodash');
+const _ = require('lodash');
 const SequelizeHelper = require('../utils/sequelize-helper');
 const { describeSQLDatabases } = require('../utils/multiple-database-version-helper');
 const TableForeignKeysAnalyzer = require('../../services/table-foreign-keys-analyzer');
@@ -31,8 +31,8 @@ describe('Table foreign keys analyzer > SQL', () => {
       const tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, 'public');
       const constraints = await tableForeignKeysAnalyzer.perform('addresses');
 
-      expect(sortBy(constraints, ['constraintName'])).is.deep.equals(
-        sortBy(expectedAddressesConstraints[dialect], ['constraintName']),
+      expect(_.sortBy(constraints, ['constraintName'])).is.deep.equals(
+        _.sortBy(expectedAddressesConstraints[dialect], ['constraintName']),
       );
     });
 
@@ -40,8 +40,8 @@ describe('Table foreign keys analyzer > SQL', () => {
       const tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, 'public');
       const constraints = await tableForeignKeysAnalyzer.perform('customers');
 
-      expect(sortBy(constraints, ['constraintName'])).is.deep.equals(
-        sortBy(expectedCustomersConstraints[dialect], ['constraintName']),
+      expect(_.sortBy(constraints, ['constraintName'])).is.deep.equals(
+        _.sortBy(expectedCustomersConstraints[dialect], ['constraintName']),
       );
     });
 
@@ -56,19 +56,21 @@ describe('Table foreign keys analyzer > SQL', () => {
       ];
       const tableForeignKeysAnalyzer = new TableForeignKeysAnalyzer(databaseConnection, 'public');
       const constraints = await tableForeignKeysAnalyzer.perform('reviews');
-      const sortedConstraints = sortBy(constraints, sortingFields);
-      const expectedSortedConstraints = sortBy(expectedReviewsConstraints[dialect], sortingFields);
+      const sortedConstraints = _.sortBy(constraints, sortingFields);
+      const expectedSortedConstraints = _.sortBy(
+        expectedReviewsConstraints[dialect], sortingFields,
+      );
 
       // Get an array of unique indexes for the table (MySQL doesn't order json aggregates)
       const uniqueIndexesList = [...new Set(
-        sortedConstraints.map((constraint) => constraint.uniqueIndexes)
-          .flat().map((v) => JSON.stringify(v)),
+        _.flatten(sortedConstraints.map((constraint) => constraint.uniqueIndexes))
+          .map((v) => JSON.stringify(v)),
       )].map((v) => JSON.parse(v));
 
       const expectedUniqueIndexes = [...new Set(
-        expectedSortedConstraints
-          .map((constraint) => constraint.uniqueIndexes)
-          .flat().map((v) => JSON.stringify(v)),
+        _.flatten(expectedSortedConstraints
+          .map((constraint) => constraint.uniqueIndexes))
+          .map((v) => JSON.stringify(v)),
       )].map((v) => JSON.parse(v));
 
       // Comprare the lists of unique indexes
