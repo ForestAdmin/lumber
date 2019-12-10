@@ -2,23 +2,20 @@ const mysql = [
   {
     tableName: 'addresses',
     columnName: 'user_id',
+    columnType: 'PRIMARY KEY',
     constraintName: 'PRIMARY',
     foreignTableName: null,
     foreignColumnName: null,
-  },
-  {
-    tableName: 'addresses',
-    columnName: 'city',
-    constraintName: 'city',
-    foreignTableName: null,
-    foreignColumnName: null,
+    uniqueIndexes: [['city']],
   },
   {
     tableName: 'addresses',
     columnName: 'user_id',
+    columnType: 'FOREIGN KEY',
     constraintName: 'fk_user_id',
     foreignTableName: 'users',
     foreignColumnName: 'id',
+    uniqueIndexes: [['city']],
   },
 ];
 

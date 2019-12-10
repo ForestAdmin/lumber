@@ -2,9 +2,11 @@ const mysql = [
   {
     tableName: 'customers',
     columnName: 'id',
+    columnType: 'PRIMARY KEY',
     constraintName: 'PRIMARY',
     foreignTableName: null,
     foreignColumnName: null,
+    uniqueIndexes: null,
   },
 ];
 

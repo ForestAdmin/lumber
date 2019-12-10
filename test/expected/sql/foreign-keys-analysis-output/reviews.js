@@ -2,23 +2,29 @@ const mysql = [
   {
     tableName: 'reviews',
     columnName: 'id',
+    columnType: 'PRIMARY KEY',
     constraintName: 'PRIMARY',
     foreignTableName: null,
     foreignColumnName: null,
+    uniqueIndexes: [['published_date', 'rating']],
   },
   {
     tableName: 'reviews',
     columnName: 'book_id',
+    columnType: 'FOREIGN KEY',
     constraintName: 'reviews_book_id_fkey',
     foreignTableName: 'books',
     foreignColumnName: 'id',
+    uniqueIndexes: [['published_date', 'rating']],
   },
   {
     tableName: 'reviews',
     columnName: 'user_id',
+    columnType: 'FOREIGN KEY',
     constraintName: 'reviews_user_id_fkey',
     foreignTableName: 'users',
     foreignColumnName: 'id',
+    uniqueIndexes: [['published_date', 'rating']],
   },
 ];
 
