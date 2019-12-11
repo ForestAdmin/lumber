@@ -4,4 +4,4 @@ CREATE TABLE users (
   enabled boolean DEFAULT TRUE,
   last_login timestamp NOT NULL,
   PRIMARY KEY (id)
-); 
+);

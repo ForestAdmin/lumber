@@ -6,4 +6,4 @@ CREATE TABLE [dbo].books (
   isbn int,
   CONSTRAINT books_pkey PRIMARY KEY (id),
   CONSTRAINT books_isbn_key UNIQUE (isbn ASC)
-); 
+);

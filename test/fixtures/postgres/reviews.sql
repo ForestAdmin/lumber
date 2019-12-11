@@ -9,4 +9,4 @@ CREATE TABLE reviews (
   FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT published_data_rating_key UNIQUE (published_date,rating)
-); 
+);

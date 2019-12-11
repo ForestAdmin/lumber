@@ -1,4 +1,3 @@
-
 CREATE TABLE [dbo].reviews (
   id int NOT NULL,
   book_id int NOT NULL,

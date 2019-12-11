@@ -5,4 +5,4 @@ CREATE TABLE books (
   published_date date NOT NULL,
   isbn int,
   CONSTRAINT books_isbn_key UNIQUE (isbn ASC)
-); 
+);
