@@ -22,7 +22,7 @@ class SequelizeHelper {
     const dialect = this.sequelize.getDialect();
     const mssqlDropConstraints = `
       DECLARE @SQL VARCHAR(4000)=''
-      SELECT @SQL = 
+      SELECT @SQL =
       @SQL + 'ALTER TABLE ' + s.name+'.'+t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) +'];' + CHAR(13)
       FROM sys.Tables t
       INNER JOIN sys.foreign_keys f ON f.parent_object_id = t.object_id
@@ -64,7 +64,7 @@ class SequelizeHelper {
   async drop(tableName, dialect) {
     const mssqlDropConstraints = `
       DECLARE @SQL VARCHAR(4000)=''
-      SELECT @SQL = 
+      SELECT @SQL =
       @SQL + 'ALTER TABLE ' + s.name+'.'+t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) +'];' + CHAR(13)
       FROM sys.Tables t
       INNER JOIN sys.foreign_keys f ON f.parent_object_id = t.object_id
