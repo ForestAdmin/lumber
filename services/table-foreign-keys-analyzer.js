@@ -50,7 +50,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
       case 'mysql':
         query = `
         SELECT constraintName,
-               tableName,
+          tableName,
                columnName,
                columnType,
                foreignTableName,
