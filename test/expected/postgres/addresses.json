@@ -14,7 +14,7 @@
       "foreignKey": "customer_id",
       "foreignKeyName": "customerId",
       "as": "customer"
-    },{
+    }, {
       "as": "city",
       "foreignKey": "city",
       "foreignKeyName": "cityKey",
