@@ -91,10 +91,10 @@ function analyzeTable(table, config) {
       const fields = [];
       const references = [];
 
-      await P.each(Object.keys(schema), async (nameColumn) => {
-        const columnInfo = schema[nameColumn];
-        const type = await columnTypeGetter.perform(columnInfo, nameColumn, table);
-        const foreignKey = _.find(foreignKeys, { columnName: nameColumn });
+      await P.each(Object.keys(schema), async (columnName) => {
+        const columnInfo = schema[columnName];
+        const type = await columnTypeGetter.perform(columnInfo, columnName, table);
+        const foreignKey = _.find(foreignKeys, { columnName });
 
         if (foreignKey
           && foreignKey.foreignTableName
@@ -121,10 +121,10 @@ function analyzeTable(table, config) {
         } else if (type) {
           // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
           //         handle it automatically without necessary declaration.
-          if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+          if (!(columnName === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
             const field = {
-              name: _.camelCase(nameColumn),
-              nameColumn,
+              name: _.camelCase(columnName),
+              nameColumn: columnName,
               type,
               primaryKey: columnInfo.primaryKey,
               defaultValue: columnInfo.defaultValue,
