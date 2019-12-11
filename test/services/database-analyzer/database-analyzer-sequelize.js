@@ -7,8 +7,7 @@ const DatabaseAnalyzer = require('../../../services/database-analyzer');
 describe('Database analyser > Sequelize', () => {
   describeSQLDatabases(({ connectionUrl, dialect }) => () => {
     function performDatabaseAnalysis(connection) {
-      const databaseAnalyzer = new DatabaseAnalyzer(connection, { dbDialect: dialect });
-      return databaseAnalyzer.perform();
+      return new DatabaseAnalyzer(connection, { dbDialect: dialect }).perform();
     }
     let sequelizeHelper;
     let databaseConnection;
@@ -28,7 +27,7 @@ describe('Database analyser > Sequelize', () => {
       await sequelizeHelper.forceSync(User);
       const user = await User.create({ name: 'Jane' });
       expect(user.name).to.be.equal('Jane');
-    }).timeout(5000);
+    });
 
     it('should generate a single model', async () => {
       const expected = await sequelizeHelper.given('customers');
