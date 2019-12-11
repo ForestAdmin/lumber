@@ -17,7 +17,6 @@ before(async () => {
     dbSchema: 'public',
     appHostname: 'localhost',
     appPort: 1654,
-    db: true,
   });
 });
 
