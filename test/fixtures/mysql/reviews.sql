@@ -8,5 +8,4 @@ CREATE TABLE reviews (
   CONSTRAINT reviews_book_id_fkey FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT reviews_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT published_data_rating_key UNIQUE (published_date,rating)
-
-); 
+);
