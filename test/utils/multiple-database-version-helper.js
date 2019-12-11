@@ -1,27 +1,32 @@
-const mongoDatabases = [
-  { version: '3.2', url: 'mongodb://localhost:27015' },
-  { version: '4.2', url: 'mongodb://localhost:27016' },
-];
+const {
+  DATABASE_URL_MONGODB_3_2,
+  DATABASE_URL_MONGODB_4_2,
+  DATABASE_URL_MSSQL,
+  DATABASE_URL_MYSQL,
+  DATABASE_URL_POSTGRESQL,
+} = require('./database-urls');
 
-const sqlDatabases = [
-  {
-    dialect: 'mysql',
-    connectionUrl: 'mysql://forest:secret@localhost:8999/lumber-sequelize-test',
-    schema: 'public',
-  },
-  {
-    dialect: 'postgres',
-    connectionUrl: 'postgres://forest:secret@localhost:54369/lumber-sequelize-test',
-    schema: 'public',
+const mongoDatabases = [{
+  version: '3.2',
+  url: DATABASE_URL_MONGODB_3_2,
+}, {
+  version: '4.2',
+  url: DATABASE_URL_MONGODB_4_2,
+}];
 
-  },
-  {
-    dialect: 'mssql',
-    connectionUrl: 'mssql://sa:forest2019:@localhost:1432/model',
-    schema: 'dbo',
-
-  },
-];
+const sqlDatabases = [{
+  dialect: 'mysql',
+  connectionUrl: DATABASE_URL_MYSQL,
+  schema: 'public',
+}, {
+  dialect: 'postgres',
+  connectionUrl: DATABASE_URL_POSTGRESQL,
+  schema: 'public',
+}, {
+  dialect: 'mssql',
+  connectionUrl: DATABASE_URL_MSSQL,
+  schema: 'dbo',
+}];
 
 module.exports = {
   describeMongoDatabases(tests) {
