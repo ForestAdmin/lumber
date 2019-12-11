@@ -51,30 +51,30 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
         query = `
         SELECT constraintName,
           tableName,
-               columnName,
-               columnType,
-               foreignTableName,
-               foreignColumnName,
-               CASE
-                 WHEN cast('[null]' AS json) = uniqueIndexes THEN NULL
-                 ELSE uniqueIndexes
-               END AS uniqueIndexes
+          columnName,
+          columnType,
+          foreignTableName,
+          foreignColumnName,
+          CASE
+              WHEN cast('[null]' AS json) = uniqueIndexes THEN NULL
+              ELSE uniqueIndexes
+          END AS uniqueIndexes
         FROM (
           SELECT tableConstraints.constraint_name AS constraintName,
-                 tableConstraints.table_name AS tableName,
-                 keyColumnUsage.column_name AS columnName,
-                 tableConstraints.constraint_type AS columnType,
-                 keyColumnUsage.referenced_table_name AS foreignTableName,
-                 keyColumnUsage.referenced_column_name AS foreignColumnName,
-                 JSON_ARRAYAGG(uidx.uniqueIndexes) AS uniqueIndexes
+            tableConstraints.table_name AS tableName,
+            keyColumnUsage.column_name AS columnName,
+            tableConstraints.constraint_type AS columnType,
+            keyColumnUsage.referenced_table_name AS foreignTableName,
+            keyColumnUsage.referenced_column_name AS foreignColumnName,
+            JSON_ARRAYAGG(uidx.uniqueIndexes) AS uniqueIndexes
           FROM information_schema.table_constraints AS tableConstraints
           JOIN information_schema.key_column_usage AS keyColumnUsage
             ON tableConstraints.table_name = keyColumnUsage.table_name
             AND tableConstraints.constraint_name = keyColumnUsage.constraint_name
           LEFT OUTER JOIN (
             SELECT distinct uidx.index_name AS indexName,
-                   uidx.table_name AS tableName,
-                   JSON_ARRAYAGG(uidx.column_name) AS uniqueIndexes
+              uidx.table_name AS tableName,
+              JSON_ARRAYAGG(uidx.column_name) AS uniqueIndexes
             FROM information_schema.statistics AS uidx
             WHERE index_schema = :schemaName
               AND uidx.non_unique = 0
