@@ -44,11 +44,8 @@ class SequelizeHelper {
 
   async given(tableName) {
     const dialect = this.sequelize.getDialect();
-    const fixtureFilename = path.join(__dirname, `../fixtures/${dialect}/${tableName}.sql`);
     const expectedFilename = path.join(__dirname, `../expected/sql/db-analysis-output/${dialect}/${tableName}.json`);
-    const fixtureFileContent = await fs.readFileSync(fixtureFilename, 'utf8');
-    await this.drop(tableName, dialect);
-    await this.sequelize.query(fixtureFileContent);
+    await this.dropAndCreate(tableName);
     // eslint-disable-next-line import/no-dynamic-require, global-require
     return require(expectedFilename);
   }
