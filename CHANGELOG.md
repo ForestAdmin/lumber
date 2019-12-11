@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Command Generate - Generate MongoDB HasMany.
+- Technical - Add tests on MSSQL databases.
 
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
