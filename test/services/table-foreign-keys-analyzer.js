@@ -7,7 +7,7 @@ const expectedAddressesConstraints = require('../expected/sql/foreign-keys-analy
 const expectedCustomersConstraints = require('../expected/sql/foreign-keys-analysis-output/customers');
 const expectedReviewsConstraints = require('../expected/sql/foreign-keys-analysis-output/reviews');
 
-describe('Table foreign keys analyzer > SQL', () => {
+describe('Services > Table Foreign Keys Analyzer', () => {
   describeSQLDatabases(({ connectionUrl, dialect, schema }) => () => {
     let sequelizeHelper;
     let databaseConnection;
@@ -61,7 +61,7 @@ describe('Table foreign keys analyzer > SQL', () => {
         expectedReviewsConstraints[dialect], sortingFields,
       );
 
-      // Get an array of unique indexes for the table (MySQL doesn't order json aggregates)
+      // NOTICE: Get an array of unique indexes for the table (MySQL doesn't order json aggregates)
       const uniqueIndexesList = [...new Set(
         _.flatten(sortedConstraints.map((constraint) => constraint.uniqueIndexes))
           .map((v) => JSON.stringify(v)),
@@ -73,12 +73,12 @@ describe('Table foreign keys analyzer > SQL', () => {
           .map((v) => JSON.stringify(v)),
       )].map((v) => JSON.parse(v));
 
-      // Comprare the lists of unique indexes
+      // NOTICE: Compare the lists of unique indexes
       expect(uniqueIndexesList.length).is.equals(expectedUniqueIndexes.length);
       uniqueIndexesList.forEach((uniqueIndex, index) =>
         expect(uniqueIndex.sort()).is.deep.equals(expectedUniqueIndexes[index].sort()));
 
-      // Compare the reste of the objects
+      // NOTICE: Compare the other objects
       expect(
         sortedConstraints
           .map(({ uniqueIndexes, ...otherFields }) => otherFields),
