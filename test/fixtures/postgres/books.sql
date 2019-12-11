@@ -1,9 +1,9 @@
 CREATE TABLE books (
-  id serial,
+  id SERIAL,
   title VARCHAR(100) NOT NULL,
   author VARCHAR(100) NOT NULL,
-  published_date timestamp NOT NULL,
-  isbn int,
+  published_date TIMESTAMP NOT NULL,
+  isbn INT,
   PRIMARY KEY (id),
   UNIQUE (isbn)
 );

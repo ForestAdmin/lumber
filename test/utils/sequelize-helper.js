@@ -21,7 +21,7 @@ class SequelizeHelper {
   async forceSync(table) {
     const dialect = this.sequelize.getDialect();
     const mssqlDropConstraints = `
-      DECLARE @SQL varchar(4000)=''
+      DECLARE @SQL VARCHAR(4000)=''
       SELECT @SQL = 
       @SQL + 'ALTER TABLE ' + s.name+'.'+t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) +'];' + CHAR(13)
       FROM sys.Tables t
@@ -63,7 +63,7 @@ class SequelizeHelper {
 
   async drop(tableName, dialect) {
     const mssqlDropConstraints = `
-      DECLARE @SQL varchar(4000)=''
+      DECLARE @SQL VARCHAR(4000)=''
       SELECT @SQL = 
       @SQL + 'ALTER TABLE ' + s.name+'.'+t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) +'];' + CHAR(13)
       FROM sys.Tables t

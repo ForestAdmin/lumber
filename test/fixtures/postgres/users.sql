@@ -1,7 +1,7 @@
 CREATE TABLE users (
-  id serial,
+  id SERIAL,
   username VARCHAR(25) NOT NULL,
-  enabled boolean DEFAULT TRUE,
-  last_login timestamp NOT NULL,
+  enabled BOOLEAN DEFAULT TRUE,
+  last_login TIMESTAMP NOT NULL,
   PRIMARY KEY (id)
 );

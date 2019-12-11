@@ -1,6 +1,6 @@
 CREATE TABLE users (
-  id int auto_increment PRIMARY KEY,
-  username varchar(25) NOT NULL,
-  enabled bit(1) DEFAULT 1,
-  last_login date NOT NULL
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(25) NOT NULL,
+  enabled BIT(1) DEFAULT 1,
+  last_login DATE NOT NULL
 );
