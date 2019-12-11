@@ -23,7 +23,6 @@ describe('Dumper > SQL', () => {
           dbSchema: 'public',
           appHostname: 'localhost',
           appPort: 1654,
-          db: true,
         };
 
         dumper = await new Dumper(config);
@@ -52,7 +51,6 @@ describe('Dumper > SQL', () => {
           dbSchema: 'public',
           appHostname: 'localhost',
           appPort: 1654,
-          db: true,
         };
 
         dumper = await new Dumper(config);
