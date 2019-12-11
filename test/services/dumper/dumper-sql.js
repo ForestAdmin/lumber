@@ -2,6 +2,7 @@ const { expect } = require('chai');
 const rimraf = require('rimraf');
 const fs = require('fs');
 
+const renderingModel = require('../../expected/sql/renderings-sequelize.json');
 const Dumper = require('../../../services/dumper');
 
 after(() => {
@@ -68,26 +69,33 @@ describe('Dumper > SQL', () => {
   });
 
   describe('postgresSQL', () => {
+    let dumper;
+
+    before(async () => {
+      const config = {
+        appName: 'test/output/postgres',
+        dbDialect: 'postgres',
+        dbConnectionUrl: 'postgres://localhost:27017',
+        ssl: false,
+        dbSchema: 'public',
+        appHostname: 'localhost',
+        appPort: 1654,
+        db: true,
+      };
+
+      dumper = await new Dumper(config);
+
+      await dumper.dump({});
+    });
+
+    it('generate a model file', async () => {
+      await dumper.dump(renderingModel);
+      const renderingsGeneratedFile = fs.readFileSync('./test/output/postgres/models/renderings.js', 'utf8');
+      const renderingsExpectedFile = fs.readFileSync('./test/expected/sql/dumper-output/renderings-sequelize.js.expected', 'utf-8');
+      expect(renderingsGeneratedFile).to.equals(renderingsExpectedFile);
+    });
+
     describe('Handling /models/index.js file', () => {
-      let dumper;
-
-      before(async () => {
-        const config = {
-          appName: 'test/output/postgres',
-          dbDialect: 'postgres',
-          dbConnectionUrl: 'mysql://localhost:5432',
-          ssl: false,
-          dbSchema: 'public',
-          appHostname: 'localhost',
-          appPort: 1654,
-          db: true,
-        };
-
-        dumper = await new Dumper(config);
-
-        await dumper.dump({});
-      });
-
       it('Should not force type casting', () => {
         const indexGeneratedFile = fs.readFileSync('./test/output/postgres/models/index.js', 'utf-8');
 
