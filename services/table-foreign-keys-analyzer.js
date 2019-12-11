@@ -43,7 +43,7 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
             AND not "pgClass1".relname like 'pg%'
             GROUP BY "tableName", "indexName"
         ) AS "uidx"
-        ON "uidx"."tableName" = "tableConstraints".table_name
+          ON "uidx"."tableName" = "tableConstraints".table_name
         WHERE "uidx"."tableName" = :table OR "tableConstraints".table_name = :table
         GROUP BY "constraintName", "tableConstraints".table_name, "columnType", "columnName", "foreignTableName", "foreignColumnName"`;
         break;
