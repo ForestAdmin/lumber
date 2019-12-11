@@ -6,7 +6,9 @@ const renderingModel = require('../../expected/sql/renderings-sequelize.json');
 const Dumper = require('../../../services/dumper');
 
 after(() => {
-  rimraf.sync('./test/output');
+  rimraf.sync('./test/output/mssql');
+  rimraf.sync('./test/output/mysql');
+  rimraf.sync('./test/output/postgres');
 });
 
 describe('Dumper > SQL', () => {
