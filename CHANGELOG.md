@@ -22,6 +22,7 @@
 - Technical - Fix database connection pool issue on tests.
 - Technical - Fix pre-commit hook when deleting a file.
 - Custom Domain - Fix the CORS middleware to take CORS env variables into account.
+- Technical - Fix bad database connection url for some PostgreSQL tests.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
