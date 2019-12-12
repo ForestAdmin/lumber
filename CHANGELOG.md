@@ -15,6 +15,7 @@
 - Technical - Improve test code to make synchronous Sequelize connection close.
 - Authentication - Updated warning message when the email is not well formatted.
 - Command Generate - Remove the broken `no-db` option.
+- Technical - Improve tests consistency.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
