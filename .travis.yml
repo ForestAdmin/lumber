@@ -25,4 +25,4 @@ install:
 
 script:
   - yarn lint
-  - yarn test
+  - sleep 15; yarn test

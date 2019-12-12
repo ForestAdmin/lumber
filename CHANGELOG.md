@@ -16,6 +16,7 @@
 - Authentication - Updated warning message when the email is not well formatted.
 - Command Generate - Remove the broken `no-db` option.
 - Technical - Improve tests consistency.
+- Technical - Make the tests fast locally without CI test failures.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.

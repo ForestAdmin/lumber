@@ -5,7 +5,7 @@
   "main": "lumber.js",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js .eslint-bin deserializers scripts serializers services test utils",
-    "test": "sleep 15; ./node_modules/mocha/bin/mocha 'test/**/*.js'",
+    "test": "./node_modules/mocha/bin/mocha 'test/**/*.js'",
     "release": "node ./scripts/release.js"
   },
   "bin": {
