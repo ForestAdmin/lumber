@@ -1,16 +1,16 @@
 {
   "fields": [
     {
-      "name": "id",
-      "nameColumn": "id",
-      "type": "STRING",
+      "name": "userId",
+      "nameColumn": "user_id",
+      "type": "INTEGER",
       "primaryKey": true,
       "defaultValue": null
     },
     {
-      "name": "customerId",
-      "nameColumn": "customer_id",
-      "type": "INTEGER",
+      "name": "street",
+      "nameColumn": "street",
+      "type": "STRING",
       "primaryKey": false,
       "defaultValue": null
     },
@@ -20,14 +20,21 @@
       "type": "STRING",
       "primaryKey": false,
       "defaultValue": null
+    },
+    {
+      "name": "state",
+      "nameColumn": "state",
+      "type": "STRING",
+      "primaryKey": false,
+      "defaultValue": null
     }
   ],
   "references": [],
-  "primaryKeys": ["id"],
+  "primaryKeys": ["user_id"],
   "options": {
     "underscored": true,
     "timestamps": false,
-    "hasIdColumn": true,
+    "hasIdColumn": false,
     "hasPrimaryKeys": true
   }
 }

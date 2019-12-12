@@ -17,16 +17,16 @@
     {
       "name": "isActive",
       "nameColumn": "is_active",
-      "type": "INTEGER",
+      "type": "BOOLEAN",
       "primaryKey": false,
-      "defaultValue": "1"
+      "defaultValue": "((1))"
     },
     {
       "name": "paying",
       "nameColumn": "paying",
       "type": "BOOLEAN",
       "primaryKey": false,
-      "defaultValue": null
+      "defaultValue": "((0))"
     },
     {
       "name": "createdAt",
