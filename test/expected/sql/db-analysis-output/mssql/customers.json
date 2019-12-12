@@ -44,9 +44,7 @@
     }
   ],
   "references": [],
-  "primaryKeys": [
-    "id"
-  ],
+  "primaryKeys": ["id"],
   "options": {
     "underscored": true,
     "timestamps": true,

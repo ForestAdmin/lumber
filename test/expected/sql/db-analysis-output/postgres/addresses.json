@@ -3,7 +3,7 @@
     {
       "name": "id",
       "nameColumn": "id",
-      "type": "UUID",
+      "type": "STRING",
       "primaryKey": true,
       "defaultValue": null
     },
@@ -23,9 +23,7 @@
       "as": "customer"
     }
   ],
-  "primaryKeys": [
-    "id"
-  ],
+  "primaryKeys": ["id"],
   "options": {
     "underscored": false,
     "timestamps": false,

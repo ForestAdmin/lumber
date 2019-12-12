@@ -17,12 +17,11 @@ before(async () => {
     dbSchema: 'public',
     appHostname: 'localhost',
     appPort: 1654,
-    db: true,
   });
 });
 
 after(() => {
-  rimraf.sync('./test/output');
+  rimraf.sync('./test/output/mongo');
 });
 
 describe('Dumper > MongoDB', () => {

@@ -1,0 +1,33 @@
+{
+  "fields": [
+    {
+      "name": "id",
+      "nameColumn": "id",
+      "type": "STRING",
+      "primaryKey": true,
+      "defaultValue": null
+    },
+    {
+      "name": "customerId",
+      "nameColumn": "customer_id",
+      "type": "INTEGER",
+      "primaryKey": false,
+      "defaultValue": null
+    },
+    {
+      "name": "city",
+      "nameColumn": "city",
+      "type": "STRING",
+      "primaryKey": false,
+      "defaultValue": null
+    }
+  ],
+  "references": [],
+  "primaryKeys": ["id"],
+  "options": {
+    "underscored": true,
+    "timestamps": false,
+    "hasIdColumn": true,
+    "hasPrimaryKeys": true
+  }
+}

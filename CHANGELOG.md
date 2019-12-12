@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Command Generate - Generate MongoDB HasMany.
+- Technical - Add tests on MSSQL databases.
 
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
@@ -14,6 +15,7 @@
 - Technical - Improve test code to make synchronous Sequelize connection close.
 - Authentication - Updated warning message when the email is not well formatted.
 - Command Generate - Remove the broken `no-db` option.
+- Technical - Improve tests consistency.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
@@ -21,6 +23,7 @@
 - Technical - Fix database connection pool issue on tests.
 - Technical - Fix pre-commit hook when deleting a file.
 - Custom Domain - Fix the CORS middleware to take CORS env variables into account.
+- Technical - Fix bad database connection url for some PostgreSQL tests.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed

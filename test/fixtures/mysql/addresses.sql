@@ -1,7 +1,6 @@
-create table addresses (
-  id varchar(36) not null,
-  customer_id int unsigned null,
-  city varchar(127) not null,
-  constraint addresses_pk primary key (id),
-  constraint addresses_customers_id_fk foreign key (customer_id) references customers (id)
+CREATE TABLE addresses (
+  id VARCHAR(36) NOT NULL PRIMARY KEY,
+  customer_id INT UNSIGNED NULL,
+  city VARCHAR(30) NOT NULL UNIQUE,
+  CONSTRAINT fk_customer_id FOREIGN KEY (customer_id) REFERENCES customers (id)
 );

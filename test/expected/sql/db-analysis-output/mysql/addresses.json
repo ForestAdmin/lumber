@@ -17,15 +17,13 @@
   ],
   "references": [
     {
-      "as": "customer",
+      "ref": "customers",
       "foreignKey": "customer_id",
       "foreignKeyName": "customerId",
-      "ref": "customers"
+      "as": "customer"
     }
   ],
-  "primaryKeys": [
-    "id"
-  ],
+  "primaryKeys": ["id"],
   "options": {
     "underscored": false,
     "timestamps": false,
