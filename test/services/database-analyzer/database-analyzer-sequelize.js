@@ -37,7 +37,6 @@ describe('Database analyser > Sequelize', () => {
 
     it('should generate two models with relationship', async () => {
       await sequelizeHelper.dropAndCreate('customers');
-      await sequelizeHelper.dropAndCreate('users');
       const expected = await sequelizeHelper.given('addresses');
       const result = await performDatabaseAnalysis(databaseConnection);
       expect(result.addresses).is.deep.equal(expected);
