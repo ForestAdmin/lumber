@@ -1,6 +1,13 @@
 {
   "fields": [
     {
+      "name": "id",
+      "nameColumn": "id",
+      "type": "STRING",
+      "primaryKey": true,
+      "defaultValue": null
+    },
+    {
       "name": "customerId",
       "nameColumn": "customer_id",
       "type": "INTEGER",

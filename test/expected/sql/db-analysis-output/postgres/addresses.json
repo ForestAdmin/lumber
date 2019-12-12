@@ -1,6 +1,13 @@
 {
   "fields": [
     {
+      "name": "id",
+      "nameColumn": "id",
+      "type": "STRING",
+      "primaryKey": true,
+      "defaultValue": null
+    },
+    {
       "name": "city",
       "nameColumn": "city",
       "type": "STRING",

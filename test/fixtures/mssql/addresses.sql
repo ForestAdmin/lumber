@@ -1,5 +1,5 @@
 CREATE TABLE [dbo].addresses (
-  id INT NOT NULL,
+  id VARCHAR(36) NOT NULL,
   customer_id INT,
   city VARCHAR(30) NOT NULL UNIQUE,
   CONSTRAINT addresses_pkey PRIMARY KEY (id),
