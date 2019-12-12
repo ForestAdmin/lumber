@@ -91,20 +91,20 @@ function analyzeTable(table, config) {
       const fields = [];
       const references = [];
 
-      await P.each(Object.keys(schema), async (columnName) => {
-        const columnInfo = schema[columnName];
-        const type = await columnTypeGetter.perform(columnInfo, columnName, table);
-        const foreignKey = _.find(foreignKeys, { columnName });
+      await P.each(Object.keys(schema), async (nameColumn) => {
+        const columnInfo = schema[nameColumn];
+        const type = await columnTypeGetter.perform(columnInfo, nameColumn, table);
+        const foreignKey = _.find(foreignKeys, { column_name: nameColumn });
 
         if (foreignKey
-          && foreignKey.foreignTableName
-          && foreignKey.columnName
+          && foreignKey.foreign_table_name
+          && foreignKey.column_name
           && !columnInfo.primaryKey) {
           const reference = {
-            ref: foreignKey.foreignTableName,
-            foreignKey: foreignKey.columnName,
-            foreignKeyName: _.camelCase(foreignKey.columnName),
-            as: formatAliasName(foreignKey.columnName),
+            ref: foreignKey.foreign_table_name,
+            foreignKey: foreignKey.column_name,
+            foreignKeyName: _.camelCase(foreignKey.column_name),
+            as: formatAliasName(foreignKey.column_name),
           };
 
           // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
@@ -113,18 +113,18 @@ function analyzeTable(table, config) {
             reference.foreignKeyName = `${reference.foreignKeyName}Key`;
           }
 
-          if (foreignKey.foreignColumnName !== 'id') {
-            reference.targetKey = foreignKey.foreignColumnName;
+          if (foreignKey.foreign_column_name !== 'id') {
+            reference.targetKey = foreignKey.foreign_column_name;
           }
 
           references.push(reference);
         } else if (type) {
           // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
           //         handle it automatically without necessary declaration.
-          if (!(columnName === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+          if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
             const field = {
-              name: _.camelCase(columnName),
-              nameColumn: columnName,
+              name: _.camelCase(nameColumn),
+              nameColumn,
               type,
               primaryKey: columnInfo.primaryKey,
               defaultValue: columnInfo.defaultValue,

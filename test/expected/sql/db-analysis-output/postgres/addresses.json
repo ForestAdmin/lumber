@@ -13,6 +13,12 @@
       "primaryKey": false,
       "defaultValue": null
     }, {
+      "name": "city",
+      "nameColumn": "city",
+      "type": "STRING",
+      "primaryKey": false,
+      "defaultValue": null
+    }, {
       "name": "state",
       "nameColumn": "state",
       "type": "STRING",
@@ -24,12 +30,6 @@
       "foreignKey": "customer_id",
       "foreignKeyName": "customerId",
       "as": "customer"
-    }, {
-      "ref": "addresses",
-      "foreignKey": "city",
-      "foreignKeyName": "cityKey",
-      "as": "city",
-      "targetKey": "city"
     }
   ],
   "primaryKeys": ["user_id"],

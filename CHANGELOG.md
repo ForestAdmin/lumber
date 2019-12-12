@@ -15,7 +15,6 @@
 - Technical - Improve test code to make synchronous Sequelize connection close.
 - Authentication - Updated warning message when the email is not well formatted.
 - Command Generate - Remove the broken `no-db` option.
-- Command Generate - Update PostgresSQL script to add required fields for hasMany detection.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
