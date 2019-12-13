@@ -21,6 +21,7 @@
 - Technical - Reorganize analysis services.
 - Technical - Add more tests on the dumper service.
 - Technical - Add tests on the table constraints getter service.
+- Command Generate - Update PostgresSQL script to add required fields for hasMany detection.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.

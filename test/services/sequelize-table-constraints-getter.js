@@ -5,6 +5,7 @@ const { describeSequelizeDatabases } = require('../utils/multiple-database-versi
 const TableConstraintsGetter = require('../../services/analyzer/sequelize-table-constraints-getter');
 const expectedAddressesConstraints = require('../expected/sequelize/constraints-getter-output/addresses.js.expected');
 const expectedCustomersConstraints = require('../expected/sequelize/constraints-getter-output/customers.js.expected');
+const expectedReviewsConstraints = require('../expected/sql/foreign-keys-analysis-output/reviews');
 
 describe('Services > Sequelize Table Constraints Getter', () => {
   describeSequelizeDatabases(({ connectionUrl, dialect, schema }) => () => {
@@ -14,8 +15,11 @@ describe('Services > Sequelize Table Constraints Getter', () => {
     before(async () => {
       sequelizeHelper = new SequelizeHelper();
       databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      await sequelizeHelper.dropAndCreate('users');
+      await sequelizeHelper.dropAndCreate('books');
       await sequelizeHelper.dropAndCreate('customers');
       await sequelizeHelper.dropAndCreate('addresses');
+      await sequelizeHelper.dropAndCreate('reviews');
     });
 
     after(async () => {
@@ -38,6 +42,49 @@ describe('Services > Sequelize Table Constraints Getter', () => {
 
       expect(_.sortBy(constraints, ['constraintName'])).deep.equals(
         _.sortBy(expectedCustomersConstraints[dialect], ['constraintName']),
+      );
+    });
+
+    it('should provide the constraints of a table with a composite unique constraint', async () => {
+      const sortingFields = [
+        'constraintName',
+        'tableName',
+        'columnType',
+        'columnName',
+        'foreignTableName',
+        'foreignColumnName',
+      ];
+      const tableConstraintsGetter = new TableConstraintsGetter(databaseConnection, schema);
+      const constraints = await tableConstraintsGetter.perform('reviews');
+      const sortedConstraints = _.sortBy(constraints, sortingFields);
+      const expectedSortedConstraints = _.sortBy(
+        expectedReviewsConstraints[dialect],
+        sortingFields,
+      );
+
+      // NOTICE: Get an array of unique indexes for the table (MySQL doesn't order json aggregates)
+      const uniqueIndexesList = _.compact(_.flatten(_.uniqWith(
+        sortedConstraints.map((constraint) => (Array.isArray(constraint.uniqueIndexes)
+          ? constraint.uniqueIndexes
+          : JSON.parse(constraint.uniqueIndexes))),
+        _.isEqual,
+      )));
+
+      const expectedUniqueIndexes = _.compact(_.flatten(_.uniqWith(
+        expectedSortedConstraints.map((constraint) => constraint.uniqueIndexes),
+        _.isEqual,
+      )));
+
+      // NOTICE: Compare the lists of unique indexes
+      expect(uniqueIndexesList.length).equals(expectedUniqueIndexes.length);
+      uniqueIndexesList.forEach((uniqueIndex, index) =>
+        expect(uniqueIndex.sort()).deep.equals(expectedUniqueIndexes[index].sort()));
+
+      // NOTICE: Compare the other objects
+      expect(
+        sortedConstraints.map(({ uniqueIndexes, ...otherFields }) => otherFields),
+      ).deep.equals(
+        expectedSortedConstraints.map(({ uniqueIndexes, ...otherFields }) => otherFields),
       );
     });
   });
