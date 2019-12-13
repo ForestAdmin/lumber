@@ -1,4 +1,3 @@
-/* global describe, it */
 const { expect } = require('chai');
 const ColumnTypeGetter = require('../../services/column-type-getter');
 const SequelizeHelper = require('../utils/sequelize-helper');
@@ -16,7 +15,7 @@ describe('Services > Column Type Getter', () => {
   ];
 
   describe('Using mysql', () => {
-    const mysqlDatabase = databases.filter(db => db.dialect === 'mysql')[0];
+    const mysqlDatabase = databases.filter((db) => db.dialect === 'mysql')[0];
     let sequelizeHelper;
     let databaseConnection;
 
@@ -26,10 +25,10 @@ describe('Services > Column Type Getter', () => {
       await sequelizeHelper.given('customers');
     });
 
-    after(() => {
+    after(async () => {
       databaseConnection = null;
-      sequelizeHelper.drop('customers', 'mysql');
-      sequelizeHelper.close();
+      await sequelizeHelper.drop('customers', 'mysql');
+      await sequelizeHelper.close();
     });
 
     it('should handle BIT(1) as boolean type', async () => {
@@ -41,7 +40,7 @@ describe('Services > Column Type Getter', () => {
   });
 
   describe('Using pgsql', () => {
-    const mysqlDatabase = databases.filter(db => db.dialect === 'postgres')[0];
+    const mysqlDatabase = databases.filter((db) => db.dialect === 'postgres')[0];
     let sequelizeHelper;
     let databaseConnection;
 
@@ -51,10 +50,10 @@ describe('Services > Column Type Getter', () => {
       await sequelizeHelper.given('customers');
     });
 
-    after(() => {
+    after(async () => {
       databaseConnection = null;
-      sequelizeHelper.drop('customers', 'postgres');
-      sequelizeHelper.close();
+      await sequelizeHelper.drop('customers', 'postgres');
+      await sequelizeHelper.close();
     });
 
     it('should not handle BIT(1)', async () => {

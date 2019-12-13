@@ -13,7 +13,7 @@ const logger = require('./logger');
 function Authenticator() {
   this.pathToLumberrc = `${os.homedir()}/.lumberrc`;
 
-  this.saveToken = token => fs.writeFileSync(this.pathToLumberrc, token);
+  this.saveToken = (token) => fs.writeFileSync(this.pathToLumberrc, token);
 
   this.isTokenCorrect = (email, token) => {
     const sessionInfo = parseJwt(token);
@@ -26,7 +26,7 @@ function Authenticator() {
       if (sessionInfo.data.data.attributes.email === email) {
         return true;
       }
-      logger.warn('Your token is invalid.');
+      logger.warn('Your credentials are invalid.');
     }
     return false;
   };

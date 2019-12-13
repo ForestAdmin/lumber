@@ -27,7 +27,6 @@ function CommandGenerateConfigGetter(program) {
       ...OPTIONS_DATABASE_OPTIONAL,
       ...OPTIONS_APPLICATION,
     ],
-    forNoDatabase: OPTIONS_APPLICATION,
     forFullPrompt: [
       ...OPTIONS_DATABASE_MANDATORY,
       ...OPTIONS_DATABASE_OPTIONAL,
@@ -38,9 +37,8 @@ function CommandGenerateConfigGetter(program) {
   this.getOptions = () => {
     if (program.connectionUrl) {
       return this.options.forConnectionUrl;
-    } else if (!program.db) {
-      return this.options.forNoDatabase;
     }
+
     return this.options.forFullPrompt;
   };
 

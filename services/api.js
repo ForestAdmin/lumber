@@ -11,13 +11,13 @@ function API() {
   this.endpoint = process.env.FOREST_URL || 'https://api.forestadmin.com';
   this.userAgent = `lumber@${pkg.version}`;
 
-  this.isGoogleAccount = async email => agent
+  this.isGoogleAccount = async (email) => agent
     .get(`${this.endpoint}/api/users/google/${email}`)
     .set('forest-origin', 'Lumber')
     .set('Content-Type', 'application/json')
     .set('User-Agent', this.userAgent)
     .send()
-    .then(response => response.body.data.isGoogleAccount)
+    .then((response) => response.body.data.isGoogleAccount)
     .catch(() => false);
 
   this.login = async (email, password) => agent
@@ -26,15 +26,15 @@ function API() {
     .set('Content-Type', 'application/json')
     .set('User-Agent', this.userAgent)
     .send({ email, password })
-    .then(response => response.body.token);
+    .then((response) => response.body.token);
 
-  this.createUser = async user => agent
+  this.createUser = async (user) => agent
     .post(`${this.endpoint}/api/users`)
     .set('forest-origin', 'Lumber')
     .set('Content-Type', 'application/json')
     .set('User-Agent', this.userAgent)
     .send(new UserSerializer(user))
-    .then(response => UserDeserializer.deserialize(response.body));
+    .then((response) => UserDeserializer.deserialize(response.body));
 
   this.createProject = async (config, sessionToken, project) => {
     let newProject;
@@ -47,7 +47,7 @@ function API() {
         .set('User-Agent', this.userAgent)
         .set('Authorization', `Bearer ${sessionToken}`)
         .send(new ProjectSerializer(project))
-        .then(response => ProjectDeserializer.deserialize(response.body));
+        .then((response) => ProjectDeserializer.deserialize(response.body));
     } catch (error) {
       if (error.message === 'Conflict') {
         const { projectId } = error.response.body.errors[0].meta;
@@ -62,7 +62,7 @@ function API() {
           .set('forest-origin', 'Lumber')
           .set('User-Agent', this.userAgent)
           .send()
-          .then(response => ProjectDeserializer.deserialize(response.body));
+          .then((response) => ProjectDeserializer.deserialize(response.body));
 
         // NOTICE: Avoid to erase an existing project that has been already initialized.
         if (newProject.initializedAt) { throw error; }
@@ -82,7 +82,7 @@ function API() {
       .set('User-Agent', this.userAgent)
       .set('Authorization', `Bearer ${sessionToken}`)
       .send(new EnvironmentSerializer(newProject.defaultEnvironment))
-      .then(response => EnvironmentDeserializer.deserialize(response.body));
+      .then((response) => EnvironmentDeserializer.deserialize(response.body));
 
     newProject.defaultEnvironment.secretKey = updatedEnvironment.secretKey;
 

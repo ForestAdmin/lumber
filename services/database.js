@@ -17,7 +17,7 @@ function Database() {
   function sequelizeAuthenticate(connection) {
     return connection.authenticate()
       .then(() => connection)
-      .catch(error => handleAuthenticationError(error));
+      .catch((error) => handleAuthenticationError(error));
   }
 
   this.connect = (options) => {
@@ -60,8 +60,8 @@ function Database() {
       }
 
       return MongoClient.connect(connectionUrl, connectionOptionsMongoClient)
-        .then(client => client.db(options.dbName))
-        .catch(error => handleAuthenticationError(error));
+        .then((client) => client.db(options.dbName))
+        .catch((error) => handleAuthenticationError(error));
     }
 
     const connectionOptionsSequelize = { logging: false };

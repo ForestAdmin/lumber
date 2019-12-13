@@ -53,8 +53,6 @@ function Dumper(config) {
         dependencies.mysql2 = '~1.7.0';
       } else if (config.dbDialect === 'mssql') {
         dependencies.tedious = '^6.4.0';
-      } else if (config.dbDialect === 'sqlite') {
-        dependencies.sqlite3 = '~4.0.2';
       } else if (config.dbDialect === 'mongodb') {
         delete dependencies.sequelize;
         dependencies.mongoose = '~5.3.6';
@@ -88,8 +86,6 @@ function Dumper(config) {
 
     if (config.dbConnectionUrl) {
       connectionString = config.dbConnectionUrl;
-    } else if (config.dbDialect === 'sqlite') {
-      connectionString = `sqlite://${config.dbStorage}`;
     } else {
       let protocol = config.dbDialect;
       let port = `:${config.dbPort}`;
@@ -129,10 +125,9 @@ function Dumper(config) {
   }
 
   function writeModel(table, fields, references, options = {}) {
-    const templatePath = config.dbDialect === 'mongodb' ?
-      `${__dirname}/../templates/app/models/mongo-model.hbs`
-      :
-      `${__dirname}/../templates/app/models/sequelize-model.hbs`;
+    const templatePath = config.dbDialect === 'mongodb'
+      ? `${__dirname}/../templates/app/models/mongo-model.hbs`
+      : `${__dirname}/../templates/app/models/sequelize-model.hbs`;
     const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
 
@@ -146,14 +141,14 @@ function Dumper(config) {
     const referencesDefinition = references.map((reference) => {
       const expectedConventionalForeignKeyName = underscored
         ? _.snakeCase(reference.foreignKey) : reference.foreignKey;
-      const foreignKeyColumnUnconventional =
-        reference.foreignKeyName !== expectedConventionalForeignKeyName;
+      const foreignKeyColumnUnconventional = reference.foreignKeyName
+        !== expectedConventionalForeignKeyName;
 
       if (reference.targetKey) {
         const expectedConventionalTargetKeyName = underscored
           ? _.snakeCase(reference.targetKey) : _.camelCase(reference.targetKey);
-        const targetKeyColumnUnconventional =
-          reference.targetKey !== expectedConventionalTargetKeyName;
+        const targetKeyColumnUnconventional = reference.targetKey
+          !== expectedConventionalTargetKeyName;
         return {
           ...reference,
           foreignKeyColumnUnconventional,
@@ -275,11 +270,8 @@ function Dumper(config) {
       mkdirp(viewPath),
       mkdirp(publicPath),
       mkdirp(middlewaresPath),
+      mkdirp(modelsPath),
     ];
-
-    if (config.db) {
-      directories.push(mkdirp(modelsPath));
-    }
 
     await P.all(directories);
 
@@ -293,7 +285,7 @@ function Dumper(config) {
     writeForestAdminMiddleware();
     copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
 
-    if (config.db) { writeModelsIndex(path); }
+    writeModelsIndex(path);
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
       writeModel(modelName, fields, references, options);

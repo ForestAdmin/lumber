@@ -1,5 +1,7 @@
 APPLICATION_PORT=<%= port || 3310 %>
 
+CORS_ORIGINS=
+
 DATABASE_URL=<%= databaseUrl %><% if (dbSchema) { %>
 DATABASE_SCHEMA=<%= dbSchema %><% } %>
 DATABASE_SSL=<%= ssl || 'false' %>

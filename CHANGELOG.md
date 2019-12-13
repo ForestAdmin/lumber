@@ -4,12 +4,25 @@
 ### Added
 - Lumber - Add databases turnkeys sources.
 - Lumber - Mongo schema generates hasMany: array of `_id` referencing other collection.
+- Command Generate - Generate MongoDB HasMany.
 
 ### Changed
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
+- Technical - Replace `package-lock.json` by `yarn.lock`.
+- Technical - Use Yarn instead of NPM in the CI.
+- Technical - Rename `.env.example` file.
+- Technical - Upgrade ESLint rules.
+- SQLite support - Remove last bits of SQLite related code.
+- Technical - Improve test code to make synchronous Sequelize connection close.
+- Authentication - Updated warning message when the email is not well formatted.
+- Command Generate - Remove the broken `no-db` option.
 
 ### Fixed
-- MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries. 
+- MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
+- Technical - Fix unexpected test errors while running in the CI.
+- Technical - Fix database connection pool issue on tests.
+- Technical - Fix pre-commit hook when deleting a file.
+- Custom Domain - Fix the CORS middleware to take CORS env variables into account.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
@@ -35,7 +48,7 @@
 - Command Generate - Generate the forest routes to ease the use of `smart routes`.
 
 ### Changed
-- Command Generate - Use handlebars to generate models. 
+- Command Generate - Use handlebars to generate models.
 - Technical - Remove unused ENCRYPT env variable.
 - Security - Prevent remote environments creation with HTTP protocol.
 - Commands - Remove command run and install.

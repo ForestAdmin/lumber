@@ -53,9 +53,6 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
               AND fkc.referenced_object_id = c2.object_id
           WHERE fk.parent_object_id = (SELECT object_id FROM sys.tables WHERE name = :table AND schema_id = SCHEMA_ID('${schema}'))`;
         break;
-      case 'sqlite':
-        query = 'PRAGMA foreign_key_list(:table);';
-        break;
       default:
         break;
     }
