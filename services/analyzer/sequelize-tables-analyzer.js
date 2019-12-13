@@ -1,12 +1,12 @@
 const P = require('bluebird');
 const _ = require('lodash');
 const ColumnTypeGetter = require('./sequelize-column-type-getter');
-const TableConstraintsAnalyzer = require('./sequelize-table-constraints-getter');
+const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
 const { DatabaseAnalyzerError } = require('../../utils/errors');
 const { terminate } = require('../../utils/terminator');
 
 let queryInterface;
-let tableConstraintsAnalyzer;
+let tableConstraintsGetter;
 let columnTypeGetter;
 
 function isUnderscored(fields) {
@@ -84,7 +84,7 @@ function analyzeTable(table, config) {
     .resolve(analyzeFields(table, config))
     .then((schema) => P.all([
       schema,
-      tableConstraintsAnalyzer.perform(table),
+      tableConstraintsGetter.perform(table),
       analyzePrimaryKeys(schema),
     ]))
     .spread(async (schema, foreignKeys, primaryKeys) => {
@@ -155,7 +155,7 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   const schema = {};
 
   queryInterface = databaseConnection.getQueryInterface();
-  tableConstraintsAnalyzer = new TableConstraintsAnalyzer(databaseConnection, config.dbSchema);
+  tableConstraintsGetter = new TableConstraintsGetter(databaseConnection, config.dbSchema);
   columnTypeGetter = new ColumnTypeGetter(databaseConnection, config.dbSchema || 'public', allowWarning);
 
   if (config.dbSchema) {
