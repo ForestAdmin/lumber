@@ -20,7 +20,7 @@ describe('Dumper > SQL', () => {
         const config = {
           appName: 'test/output/mysql',
           dbDialect: 'mysql',
-          dbConnectionUrl: 'mysql://localhost:3306',
+          dbConnectionUrl: 'mysql://localhost:8999',
           ssl: false,
           dbSchema: 'public',
           appHostname: 'localhost',
@@ -48,7 +48,7 @@ describe('Dumper > SQL', () => {
         const config = {
           appName: 'test/output/mssql',
           dbDialect: 'mssql',
-          dbConnectionUrl: 'mysql://localhost:1433',
+          dbConnectionUrl: 'mssql://localhost:1432',
           ssl: false,
           dbSchema: 'public',
           appHostname: 'localhost',
@@ -68,14 +68,14 @@ describe('Dumper > SQL', () => {
     });
   });
 
-  describe('postgresSQL', () => {
+  describe('postgreSQL', () => {
     let dumper;
 
     before(async () => {
       const config = {
         appName: 'test/output/postgres',
         dbDialect: 'postgres',
-        dbConnectionUrl: 'postgres://localhost:27017',
+        dbConnectionUrl: 'postgres://localhost:54369',
         ssl: false,
         dbSchema: 'public',
         appHostname: 'localhost',
