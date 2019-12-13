@@ -5,7 +5,7 @@ const { describeSequelizeDatabases } = require('../utils/multiple-database-versi
 const TableConstraintsGetter = require('../../services/analyzer/sequelize-table-constraints-getter');
 const expectedAddressesConstraints = require('../expected/sequelize/constraints-getter-output/addresses.js.expected');
 const expectedCustomersConstraints = require('../expected/sequelize/constraints-getter-output/customers.js.expected');
-const expectedReviewsConstraints = require('../expected/sql/foreign-keys-analysis-output/reviews');
+const expectedReviewsConstraints = require('../expected/sequelize/constraints-getter-output/reviews.js.expected');
 
 describe('Services > Sequelize Table Constraints Getter', () => {
   describeSequelizeDatabases(({ connectionUrl, dialect, schema }) => () => {
