@@ -34,7 +34,7 @@ module.exports = {
       describe(`Using Mongo Database v${mongoDatabase.version}`, tests(mongoDatabase.url));
     });
   },
-  describeSQLDatabases(tests) {
+  describeSequelizeDatabases(tests) {
     sqlDatabases.forEach((sqlDatabase) => {
       describe(`Using ${sqlDatabase.dialect} Database`, tests(sqlDatabase));
     });

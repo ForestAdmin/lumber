@@ -1,11 +1,11 @@
 const { expect } = require('chai');
 const Sequelize = require('sequelize');
 const SequelizeHelper = require('../../utils/sequelize-helper');
-const { describeSQLDatabases } = require('../../utils/multiple-database-version-helper');
+const { describeSequelizeDatabases } = require('../../utils/multiple-database-version-helper');
 const DatabaseAnalyzer = require('../../../services/analyzer/database-analyzer');
 
 describe('Database analyser > Sequelize', () => {
-  describeSQLDatabases(({ connectionUrl, dialect }) => () => {
+  describeSequelizeDatabases(({ connectionUrl, dialect }) => () => {
     function performDatabaseAnalysis(connection) {
       return new DatabaseAnalyzer(connection, { dbDialect: dialect }).perform();
     }
