@@ -17,3 +17,9 @@ Edit fixtures files, build, then push.
 
 **Start all services (==containers) defined in docker-compose.yml**
 `docker-compose up`
+
+**TO RUN INDIVIDUALLY---**
+`docker run -p 27000:27017 forestadmin/turnkey-mongo`
+
+**TO RUN ALL IN BACKGROUND**
+`docker-compose up -d`

@@ -12,3 +12,8 @@ mysql:
   image: forestadmin/turnkey-mysql
   ports:
     - "3300:3306"
+
+#mssql:
+#  image: forestadmin/turnkey-mssql
+#  ports:
+#    - "1432:1433"
