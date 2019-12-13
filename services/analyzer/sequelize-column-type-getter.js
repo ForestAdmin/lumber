@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const logger = require('./logger');
+const logger = require('../logger');
 
 function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
   const queryInterface = databaseConnection.getQueryInterface();

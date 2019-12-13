@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const ColumnTypeGetter = require('../../services/column-type-getter');
+const ColumnTypeGetter = require('../../services/analyzer/sequelize-column-type-getter');
 const SequelizeHelper = require('../utils/sequelize-helper');
 const { DATABASE_URL_MYSQL, DATABASE_URL_POSTGRESQL } = require('../utils/database-urls');
 

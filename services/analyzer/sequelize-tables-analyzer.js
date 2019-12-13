@@ -1,9 +1,9 @@
 const P = require('bluebird');
 const _ = require('lodash');
-const ColumnTypeGetter = require('./column-type-getter');
-const TableForeignKeysAnalyzer = require('./table-foreign-keys-analyzer');
-const { DatabaseAnalyzerError } = require('../utils/errors');
-const { terminate } = require('../utils/terminator');
+const ColumnTypeGetter = require('./sequelize-column-type-getter');
+const TableForeignKeysAnalyzer = require('./sequelize-table-constraints-getter');
+const { DatabaseAnalyzerError } = require('../../utils/errors');
+const { terminate } = require('../../utils/terminator');
 
 let queryInterface;
 let tableForeignKeysAnalyzer;

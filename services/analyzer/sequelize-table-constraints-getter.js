@@ -1,4 +1,4 @@
-function TableForeignKeysAnalyzer(databaseConnection, schema) {
+function TableConstraintsGetter(databaseConnection, schema) {
   const queryInterface = databaseConnection.getQueryInterface();
 
   this.perform = async (table) => {
@@ -62,4 +62,4 @@ function TableForeignKeysAnalyzer(databaseConnection, schema) {
   };
 }
 
-module.exports = TableForeignKeysAnalyzer;
+module.exports = TableConstraintsGetter;

@@ -2,7 +2,7 @@ const { expect } = require('chai');
 
 const MongoHelper = require('../../utils/mongo-helper');
 const { describeMongoDatabases } = require('../../utils/multiple-database-version-helper');
-const DatabaseAnalyzer = require('../../../services/database-analyzer');
+const DatabaseAnalyzer = require('../../../services/analyzer/database-analyzer');
 const simpleModel = require('../../fixtures/mongo/simple-model');
 const hasManyModel = require('../../fixtures/mongo/hasmany-model');
 const multipleReferencesModel = require('../../fixtures/mongo/multiple-references-same-field-model');
