@@ -4,30 +4,38 @@ module.exports = (sequelize, DataTypes) => {
   const { Sequelize } = sequelize;
   // This section contains the fields of your model, mapped to your table's columns.
   // Learn more here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
-  const Addresses = sequelize.define('addresses', {
-    userId: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-    },
-    street: {
+  const Users = sequelize.define('users', {
+    username: {
       type: DataTypes.STRING,
     },
-    city: {
-      type: DataTypes.STRING,
+    enabled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: Sequelize.literal('true'),
     },
-    state: {
-      type: DataTypes.STRING,
+    lastLogin: {
+      type: DataTypes.DATE,
     },
   }, {
-    tableName: 'addresses',
+    tableName: 'users',
     underscored: true,
     timestamps: false,
     schema: process.env.DATABASE_SCHEMA,
   });
 
   // This section contains the relationships for this model. See: https://docs.forestadmin.com/documentation/v/v5/reference-guide/relationships#adding-relationships.
-  Addresses.associate = (models) => {
-    Addresses.belongsTo(models.users, {
+  Users.associate = (models) => {
+    Users.belongsToMany(models.books, {
+      through: 'user_books',
+      foreignKey: 'user_id',
+      otherKey: 'book_id',
+    });
+    Users.hasMany(models.reviews, {
+      foreignKey: {
+        name: 'userId',
+        field: 'user_id',
+      },
+    });
+    Users.hasOne(models.addresses, {
       foreignKey: {
         name: 'userId',
         field: 'user_id',
@@ -35,5 +43,5 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  return Addresses;
+  return Users;
 };

@@ -33,13 +33,22 @@ describe('Database analyser > Sequelize', () => {
       const expected = await sequelizeHelper.given('customers');
       const result = await performDatabaseAnalysis(databaseConnection);
       expect(result.customers).is.deep.equal(expected.customers);
-    }).timeout(5000);
+    }).timeout(10000);
 
-    it('should generate two models with relationship', async () => {
-      await sequelizeHelper.dropAndCreate('customers');
+    it('should generate a model with a belongsTo association', async () => {
       const expected = await sequelizeHelper.given('addresses');
       const result = await performDatabaseAnalysis(databaseConnection);
       expect(result.addresses).is.deep.equal(expected.addresses);
-    }).timeout(5000);
+    }).timeout(10000);
+
+    it('should generate a model with hasOne, hasMany and belongsToMany associations', async () => {
+      const expected = await sequelizeHelper.given('users');
+      await sequelizeHelper.dropAndCreate('books');
+      await sequelizeHelper.dropAndCreate('addresses');
+      await sequelizeHelper.dropAndCreate('reviews');
+      await sequelizeHelper.dropAndCreate('user_books');
+      const result = await performDatabaseAnalysis(databaseConnection);
+      expect(result.users).is.deep.equal(expected.users);
+    }).timeout(10000);
   });
 });

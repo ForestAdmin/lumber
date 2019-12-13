@@ -62,21 +62,54 @@ function hasTimestamps(fields) {
   return hasCreatedAt && hasUpdatedAt;
 }
 
-function formatAliasName(columnName) {
-  const alias = _.camelCase(columnName);
-  if (alias.endsWith('Id') && alias.length > 2) {
-    return alias.substring(0, alias.length - 2);
-  }
-  if (alias.endsWith('Uuid') && alias.length > 4) {
-    return alias.substring(0, alias.length - 4);
-  }
-  return alias;
-}
-
 // NOTICE: Look for the id column in both fields and primary keys.
 function hasIdColumn(fields, primaryKeys) {
   return fields.some((field) => field.name === 'id' || field.nameColumn === 'id')
     || _.includes(primaryKeys, 'id');
+}
+
+// NOTICE: Check the foreign key's reference unicity
+function checkUnicity(primaryKeys, uniqueIndexes, columnName) {
+  const isUnique = uniqueIndexes !== null
+    && uniqueIndexes.find((indexColumnName) =>
+      indexColumnName.length === 1 && indexColumnName.includes(columnName));
+
+  const isPrimary = _.isEqual([columnName], primaryKeys);
+  return { isPrimary, isUnique };
+}
+
+// NOTICE: Format the references depending on the type of the association
+function createReference(foreignKey, association, manyToManyForeignKey) {
+  const reference = {
+    columnName: foreignKey.columnName,
+    foreignKeyName: _.camelCase(foreignKey.columnName),
+    association,
+  };
+
+  if (association === 'belongsTo') {
+    reference.isNotBelongsToMany = true;
+    reference.ref = foreignKey.foreignTableName;
+  } else if (association === 'belongsToMany') {
+    reference.isBelongsToMany = true;
+    reference.ref = manyToManyForeignKey.foreignTableName;
+    reference.otherKey = manyToManyForeignKey.columnName;
+    reference.junctionTable = foreignKey.tableName;
+  } else {
+    reference.isNotBelongsToMany = true;
+    reference.ref = foreignKey.tableName;
+  }
+
+  // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
+  //         to handle this specific scenario generating a different foreign key name.
+  if (reference.foreignKeyName && reference.foreignKeyName === reference.as) {
+    reference.foreignKeyName = `${reference.foreignKeyName}Key`;
+  }
+
+  if (foreignKey.foreignColumnName !== 'id') {
+    reference.targetKey = foreignKey.foreignColumnName;
+  }
+
+  return reference;
 }
 
 async function analyzeTable(table, config) {
@@ -84,47 +117,85 @@ async function analyzeTable(table, config) {
 
   return {
     schema,
-    foreignKeys: await tableConstraintsGetter.perform(table),
+    constraints: await tableConstraintsGetter.perform(table),
     primaryKeys: await analyzePrimaryKeys(schema),
   };
 }
 
+// NOTICE: Use the foreign key and reference properties to determine the associations
+//         and push them as references of the table.
+function defineAssociationType(databaseSchema) {
+  Object.values(databaseSchema).forEach((table) => {
+    const { constraints, primaryKeys } = table;
+    constraints.forEach((constraint) => {
+      const { columnName } = constraint;
+      const uniqueIndexes = constraint.uniqueIndexes || null;
+
+      if (constraint.columnType === 'FOREIGN KEY') {
+        const isInCompositeKey = primaryKeys
+          && primaryKeys.length > 1
+          && primaryKeys.includes(columnName);
+
+        const { isPrimary, isUnique } = checkUnicity(primaryKeys, uniqueIndexes, columnName);
+
+        const refTableName = constraint.foreignTableName;
+        const refColumnName = constraint.foreignColumnName;
+        let isManyToMany = false;
+
+        if (isInCompositeKey) {
+          // Check if the foreignKey is in a composite primary key
+          primaryKeys.forEach((primaryKey) => {
+            if (primaryKey === constraint.columnName) {
+              const manyToManyKeys = _.filter(constraints, (otherKey) =>
+                otherKey.columnName !== constraint.columnName
+                  && otherKey.columnType === 'FOREIGN KEY' && primaryKeys.includes(otherKey.columnName)) || [];
+
+              manyToManyKeys.forEach((manyToManyKey) => {
+                databaseSchema[refTableName].references.push(createReference(constraint, 'belongsToMany', manyToManyKey));
+              });
+              isManyToMany = manyToManyKeys !== [];
+            }
+          });
+        }
+        if (!isManyToMany) {
+          const refPrimaryKeys = databaseSchema[refTableName].primaryKeys;
+          const refUniqueConstraint = databaseSchema[refTableName].constraints
+            .find(({ columnType }) => columnType === 'UNIQUE');
+          const refUniqueIndexes = refUniqueConstraint ? refUniqueConstraint.uniqueIndexes : null;
+          const refUnicity = checkUnicity(refPrimaryKeys, refUniqueIndexes, refColumnName);
+
+          if (refUnicity.isPrimary || refUnicity.isUnique) {
+            table.references.push(createReference(constraint, 'belongsTo'));
+          }
+          databaseSchema[refTableName].references.push(
+            createReference(
+              constraint,
+              (isPrimary || isUnique) ? 'hasOne' : 'hasMany',
+            ),
+          );
+        }
+      }
+    });
+  });
+}
+
 async function createTableSchema({
   schema,
-  foreignKeys,
+  constraints,
   primaryKeys,
+  references,
 }, tableName) {
   const fields = [];
-  const references = [];
 
   await P.each(Object.keys(schema), async (columnName) => {
     const columnInfo = schema[columnName];
     const type = await columnTypeGetter.perform(columnInfo, columnName, tableName);
-    const foreignKey = _.find(foreignKeys, { column_name: columnName });
+    const foreignKey = _.find(constraints, { columnName, columnType: 'FOREIGN KEY' });
+    const isValidField = type && (!foreignKey
+      || !foreignKey.foreignTableName
+      || !foreignKey.columnName || columnInfo.primaryKey);
 
-    if (foreignKey
-      && foreignKey.foreign_table_name
-      && foreignKey.column_name
-      && !columnInfo.primaryKey) {
-      const reference = {
-        ref: foreignKey.foreign_table_name,
-        foreignKey: foreignKey.column_name,
-        foreignKeyName: _.camelCase(foreignKey.column_name),
-        as: formatAliasName(foreignKey.column_name),
-      };
-
-      // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
-      //         to handle this specific scenario generating a different foreign key name.
-      if (reference.foreignKeyName === reference.as) {
-        reference.foreignKeyName = `${reference.foreignKeyName}Key`;
-      }
-
-      if (foreignKey.foreign_column_name !== 'id') {
-        reference.targetKey = foreignKey.foreign_column_name;
-      }
-
-      references.push(reference);
-    } else if (type) {
+    if (isValidField) {
       // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
       //         handle it automatically without necessary declaration.
       if (!(columnName === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
@@ -160,7 +231,7 @@ async function createTableSchema({
 
   return {
     fields,
-    references,
+    references: _.sortBy(references, 'association'),
     primaryKeys,
     options,
   };
@@ -192,11 +263,24 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   }
 
   // Build the db schema.
+  const databaseSchema = {};
   const tableNames = await showAllTables(databaseConnection, config.dbSchema);
 
-  await P.each(tableNames, async (tableName) => {
-    const tableAnalysis = await analyzeTable(tableName, config);
-    schemaAllTables[tableName] = await createTableSchema(tableAnalysis, tableName);
+  await P.each(tableNames, async (table) => {
+    const { schema, constraints, primaryKeys } = await analyzeTable(table, config);
+    databaseSchema[table] = {
+      schema,
+      constraints,
+      primaryKeys,
+      references: [],
+    };
+  });
+
+  // Fill the references field for each table schema
+  defineAssociationType(databaseSchema);
+
+  await P.each(tableNames, async (table) => {
+    schemaAllTables[table] = await createTableSchema(databaseSchema[table]);
   });
 
   if (_.isEmpty(schemaAllTables)) {
