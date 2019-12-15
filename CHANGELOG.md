@@ -19,6 +19,7 @@
 - Technical - Make the tests fast locally without CI test failures.
 - Technical - Add more tests consistency.
 - Technical - Reorganize analysis services.
+- Technical - Add more tests on the dumper service.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
