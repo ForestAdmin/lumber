@@ -138,8 +138,8 @@ function defineAssociationType(databaseSchema) {
 
         const { isPrimary, isUnique } = checkUnicity(primaryKeys, uniqueIndexes, columnName);
 
-        const refTableName = constraint.foreignTableName;
-        const refColumnName = constraint.foreignColumnName;
+        const referenceTableName = constraint.foreignTableName;
+        const referenceColumnName = constraint.foreignColumnName;
         let isManyToMany = false;
 
         if (isInCompositeKey) {
@@ -151,23 +151,29 @@ function defineAssociationType(databaseSchema) {
                   && otherKey.columnType === 'FOREIGN KEY' && primaryKeys.includes(otherKey.columnName)) || [];
 
               manyToManyKeys.forEach((manyToManyKey) => {
-                databaseSchema[refTableName].references.push(createReference(constraint, 'belongsToMany', manyToManyKey));
+                databaseSchema[referenceTableName].references.push(createReference(constraint, 'belongsToMany', manyToManyKey));
               });
               isManyToMany = manyToManyKeys !== [];
             }
           });
         }
         if (!isManyToMany) {
-          const refPrimaryKeys = databaseSchema[refTableName].primaryKeys;
-          const refUniqueConstraint = databaseSchema[refTableName].constraints
+          const referencePrimaryKeys = databaseSchema[referenceTableName].primaryKeys;
+          const referenceUniqueConstraint = databaseSchema[referenceTableName].constraints
             .find(({ columnType }) => columnType === 'UNIQUE');
-          const refUniqueIndexes = refUniqueConstraint ? refUniqueConstraint.uniqueIndexes : null;
-          const refUnicity = checkUnicity(refPrimaryKeys, refUniqueIndexes, refColumnName);
+          const referenceUniqueIndexes = referenceUniqueConstraint
+            ? referenceUniqueConstraint.uniqueIndexes
+            : null;
+          const referenceUnicity = checkUnicity(
+            referencePrimaryKeys,
+            referenceUniqueIndexes,
+            referenceColumnName,
+          );
 
-          if (refUnicity.isPrimary || refUnicity.isUnique) {
+          if (referenceUnicity.isPrimary || referenceUnicity.isUnique) {
             table.references.push(createReference(constraint, 'belongsTo'));
           }
-          databaseSchema[refTableName].references.push(
+          databaseSchema[referenceTableName].references.push(
             createReference(
               constraint,
               (isPrimary || isUnique) ? 'hasOne' : 'hasMany',
