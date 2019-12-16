@@ -35,8 +35,7 @@
         "association": "belongsTo",
         "ref": "users",
         "foreignKey": "user_id",
-        "foreignKeyName": "userId",
-        "isBelongsToMany": false
+        "foreignKeyName": "userId"
       }
     ],
     "primaryKeys": ["user_id"],

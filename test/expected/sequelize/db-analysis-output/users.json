@@ -29,7 +29,6 @@
         "ref": "books",
         "foreignKey": "user_id",
         "foreignKeyName": "userId",
-        "isBelongsToMany": true,
         "junctionTable": "user_books",
         "otherKey": "book_id"
       },
@@ -37,15 +36,13 @@
         "association": "hasMany",
         "ref": "reviews",
         "foreignKey": "user_id",
-        "foreignKeyName": "userId",
-        "isBelongsToMany": false
+        "foreignKeyName": "userId"
       },
       {
         "association": "hasOne",
         "ref": "addresses",
         "foreignKey": "user_id",
-        "foreignKeyName": "userId",
-        "isBelongsToMany": false
+        "foreignKeyName": "userId"
       }
     ],
     "primaryKeys": ["id"],
