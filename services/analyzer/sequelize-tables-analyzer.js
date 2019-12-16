@@ -62,6 +62,17 @@ function hasTimestamps(fields) {
   return hasCreatedAt && hasUpdatedAt;
 }
 
+function formatAliasName(columnName) {
+  const alias = _.camelCase(columnName);
+  if (alias.endsWith('Id') && alias.length > 2) {
+    return alias.substring(0, alias.length - 2);
+  }
+  if (alias.endsWith('Uuid') && alias.length > 4) {
+    return alias.substring(0, alias.length - 4);
+  }
+  return alias;
+}
+
 // NOTICE: Look for the id column in both fields and primary keys.
 function hasIdColumn(fields, primaryKeys) {
   return fields.some((field) => field.name === 'id' || field.nameColumn === 'id')
@@ -88,6 +99,7 @@ function createReference(foreignKey, association, manyToManyForeignKey) {
 
   if (association === 'belongsTo') {
     reference.ref = foreignKey.foreignTableName;
+    reference.as = formatAliasName(foreignKey.columnName);
   } else if (association === 'belongsToMany') {
     reference.ref = manyToManyForeignKey.foreignTableName;
     reference.otherKey = manyToManyForeignKey.columnName;
