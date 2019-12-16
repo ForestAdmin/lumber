@@ -266,9 +266,9 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   const databaseSchema = {};
   const tableNames = await showAllTables(databaseConnection, config.dbSchema);
 
-  await P.each(tableNames, async (table) => {
-    const { schema, constraints, primaryKeys } = await analyzeTable(table, config);
-    databaseSchema[table] = {
+  await P.each(tableNames, async (tableName) => {
+    const { schema, constraints, primaryKeys } = await analyzeTable(tableName, config);
+    databaseSchema[tableName] = {
       schema,
       constraints,
       primaryKeys,
@@ -279,8 +279,8 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   // Fill the references field for each table schema
   defineAssociationType(databaseSchema);
 
-  await P.each(tableNames, async (table) => {
-    schemaAllTables[table] = await createTableSchema(databaseSchema[table]);
+  await P.each(tableNames, async (tableName) => {
+    schemaAllTables[tableName] = await createTableSchema(databaseSchema[tableName], tableName);
   });
 
   if (_.isEmpty(schemaAllTables)) {
