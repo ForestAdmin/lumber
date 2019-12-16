@@ -1,0 +1,15 @@
+const mssql = [];
+
+const mysql = [
+  {
+    table_name: 'customers',
+    column_name: 'id',
+    constraint_name: 'PRIMARY',
+    foreign_column_name: null,
+    foreign_table_name: null,
+  }
+];
+
+const postgres = [];
+
+module.exports = { mssql, mysql, postgres };

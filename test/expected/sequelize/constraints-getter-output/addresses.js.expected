@@ -1,0 +1,45 @@
+const mssql = [
+  {
+    table_name: 'addresses',
+    column_name: 'user_id',
+    constraint_name: 'fk_user_id',
+    foreign_table_name: 'users',
+    foreign_column_name: 'id',
+  },
+];
+
+const mysql = [
+  {
+    table_name: 'addresses',
+    column_name: 'user_id',
+    constraint_name: 'PRIMARY',
+    foreign_table_name: null,
+    foreign_column_name: null,
+  },
+  {
+    table_name: 'addresses',
+    column_name: 'city',
+    constraint_name: 'unique_city',
+    foreign_table_name: null,
+    foreign_column_name: null,
+  },
+  {
+    table_name: 'addresses',
+    column_name: 'user_id',
+    constraint_name: 'fk_user_id',
+    foreign_table_name: 'users',
+    foreign_column_name: 'id',
+  },
+];
+
+const postgres = [
+  {
+    table_name: 'addresses',
+    column_name: 'user_id',
+    constraint_name: 'fk_user_id',
+    foreign_table_name: 'users',
+    foreign_column_name: 'id',
+  },
+];
+
+module.exports = { mssql, mysql, postgres };
