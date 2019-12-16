@@ -89,14 +89,18 @@ async function analyzeTable(table, config) {
   };
 }
 
-async function createTableSchema({ schema, foreignKeys, primaryKeys }, tableName) {
+async function createTableSchema({
+  schema,
+  foreignKeys,
+  primaryKeys,
+}, tableName) {
   const fields = [];
   const references = [];
 
-  await P.each(Object.keys(schema), async (nameColumn) => {
-    const columnInfo = schema[nameColumn];
-    const type = await columnTypeGetter.perform(columnInfo, nameColumn, tableName);
-    const foreignKey = _.find(foreignKeys, { column_name: nameColumn });
+  await P.each(Object.keys(schema), async (columnName) => {
+    const columnInfo = schema[columnName];
+    const type = await columnTypeGetter.perform(columnInfo, columnName, tableName);
+    const foreignKey = _.find(foreignKeys, { column_name: columnName });
 
     if (foreignKey
       && foreignKey.foreign_table_name
@@ -123,7 +127,7 @@ async function createTableSchema({ schema, foreignKeys, primaryKeys }, tableName
     } else if (type) {
       // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
       //         handle it automatically without necessary declaration.
-      if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+      if (!(columnName === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
         // NOTICE: Handle bit(1) to boolean conversion
         let { defaultValue } = columnInfo;
 
@@ -135,8 +139,8 @@ async function createTableSchema({ schema, foreignKeys, primaryKeys }, tableName
         }
 
         const field = {
-          name: _.camelCase(nameColumn),
-          nameColumn,
+          name: _.camelCase(columnName),
+          nameColumn: columnName,
           type,
           primaryKey: columnInfo.primaryKey,
           defaultValue,
