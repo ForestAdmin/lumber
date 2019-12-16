@@ -27,12 +27,6 @@ module.exports = (sequelize, DataTypes) => {
 
   // This section contains the relationships for this model. See: https://docs.forestadmin.com/documentation/v/v5/reference-guide/relationships#adding-relationships.
   Addresses.associate = (models) => {
-    Addresses.belongsTo(models.users, {
-      foreignKey: {
-        name: 'userId',
-        field: '',
-      },
-    });
   };
 
   return Addresses;

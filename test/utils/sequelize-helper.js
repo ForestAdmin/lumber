@@ -41,8 +41,7 @@ class SequelizeHelper {
   }
 
   async given(tableName) {
-    const dialect = this.sequelize.getDialect();
-    const expectedFilename = path.join(__dirname, `../expected/sequelize/db-analysis-output/${dialect}/${tableName}.json`);
+    const expectedFilename = path.join(__dirname, `../expected/sequelize/db-analysis-output/${tableName}.json`);
     await this.dropAndCreate(tableName);
     // eslint-disable-next-line import/no-dynamic-require, global-require
     return require(expectedFilename);

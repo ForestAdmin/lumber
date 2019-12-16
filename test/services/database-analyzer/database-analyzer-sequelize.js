@@ -32,14 +32,14 @@ describe('Database analyser > Sequelize', () => {
     it('should generate a single model', async () => {
       const expected = await sequelizeHelper.given('customers');
       const result = await performDatabaseAnalysis(databaseConnection);
-      expect(result.customers).is.deep.equal(expected);
+      expect(result.customers).is.deep.equal(expected.customers);
     }).timeout(5000);
 
     it('should generate two models with relationship', async () => {
       await sequelizeHelper.dropAndCreate('customers');
       const expected = await sequelizeHelper.given('addresses');
       const result = await performDatabaseAnalysis(databaseConnection);
-      expect(result.addresses).is.deep.equal(expected);
+      expect(result.addresses).is.deep.equal(expected.addresses);
     }).timeout(5000);
   });
 });
