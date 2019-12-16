@@ -79,89 +79,91 @@ function hasIdColumn(fields, primaryKeys) {
     || _.includes(primaryKeys, 'id');
 }
 
-function analyzeTable(table, config) {
-  return analyzeFields(table, config)
-    .then((schema) => P.all([
-      schema,
-      tableConstraintsGetter.perform(table),
-      analyzePrimaryKeys(schema),
-    ]))
-    .spread(async (schema, foreignKeys, primaryKeys) => {
-      const fields = [];
-      const references = [];
+async function analyzeTable(table, config) {
+  const schema = await analyzeFields(table, config);
 
-      await P.each(Object.keys(schema), async (nameColumn) => {
-        const columnInfo = schema[nameColumn];
-        const type = await columnTypeGetter.perform(columnInfo, nameColumn, table);
-        const foreignKey = _.find(foreignKeys, { column_name: nameColumn });
+  return {
+    schema,
+    foreignKeys: await tableConstraintsGetter.perform(table),
+    primaryKeys: await analyzePrimaryKeys(schema),
+  };
+}
 
-        if (foreignKey
-          && foreignKey.foreign_table_name
-          && foreignKey.column_name
-          && !columnInfo.primaryKey) {
-          const reference = {
-            ref: foreignKey.foreign_table_name,
-            foreignKey: foreignKey.column_name,
-            foreignKeyName: _.camelCase(foreignKey.column_name),
-            as: formatAliasName(foreignKey.column_name),
-          };
+async function createTableSchema({ schema, foreignKeys, primaryKeys }, tableName) {
+  const fields = [];
+  const references = [];
 
-          // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
-          //         to handle this specific scenario generating a different foreign key name.
-          if (reference.foreignKeyName === reference.as) {
-            reference.foreignKeyName = `${reference.foreignKeyName}Key`;
-          }
+  await P.each(Object.keys(schema), async (nameColumn) => {
+    const columnInfo = schema[nameColumn];
+    const type = await columnTypeGetter.perform(columnInfo, nameColumn, tableName);
+    const foreignKey = _.find(foreignKeys, { column_name: nameColumn });
 
-          if (foreignKey.foreign_column_name !== 'id') {
-            reference.targetKey = foreignKey.foreign_column_name;
-          }
+    if (foreignKey
+      && foreignKey.foreign_table_name
+      && foreignKey.column_name
+      && !columnInfo.primaryKey) {
+      const reference = {
+        ref: foreignKey.foreign_table_name,
+        foreignKey: foreignKey.column_name,
+        foreignKeyName: _.camelCase(foreignKey.column_name),
+        as: formatAliasName(foreignKey.column_name),
+      };
 
-          references.push(reference);
-        } else if (type) {
-          // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
-          //         handle it automatically without necessary declaration.
-          if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
-            // NOTICE: Handle bit(1) to boolean conversion
-            let { defaultValue } = columnInfo;
+      // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
+      //         to handle this specific scenario generating a different foreign key name.
+      if (reference.foreignKeyName === reference.as) {
+        reference.foreignKeyName = `${reference.foreignKeyName}Key`;
+      }
 
-            if (["b'1'", '((1))'].includes(defaultValue)) {
-              defaultValue = true;
-            }
-            if (["b'0'", '((0))'].includes(defaultValue)) {
-              defaultValue = false;
-            }
+      if (foreignKey.foreign_column_name !== 'id') {
+        reference.targetKey = foreignKey.foreign_column_name;
+      }
 
-            const field = {
-              name: _.camelCase(nameColumn),
-              nameColumn,
-              type,
-              primaryKey: columnInfo.primaryKey,
-              defaultValue,
-            };
+      references.push(reference);
+    } else if (type) {
+      // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
+      //         handle it automatically without necessary declaration.
+      if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+        // NOTICE: Handle bit(1) to boolean conversion
+        let { defaultValue } = columnInfo;
 
-            fields.push(field);
-          }
+        if (["b'1'", '((1))'].includes(defaultValue)) {
+          defaultValue = true;
         }
-      });
+        if (["b'0'", '((0))'].includes(defaultValue)) {
+          defaultValue = false;
+        }
 
-      const options = {
-        underscored: isUnderscored(fields),
-        timestamps: hasTimestamps(fields),
-        hasIdColumn: hasIdColumn(fields, primaryKeys),
-        hasPrimaryKeys: !_.isEmpty(primaryKeys),
-      };
+        const field = {
+          name: _.camelCase(nameColumn),
+          nameColumn,
+          type,
+          primaryKey: columnInfo.primaryKey,
+          defaultValue,
+        };
 
-      return {
-        fields,
-        references,
-        primaryKeys,
-        options,
-      };
-    });
+        fields.push(field);
+      }
+    }
+  });
+
+  const options = {
+    underscored: isUnderscored(fields),
+    timestamps: hasTimestamps(fields),
+    hasIdColumn: hasIdColumn(fields, primaryKeys),
+    hasPrimaryKeys: !_.isEmpty(primaryKeys),
+  };
+
+  return {
+    fields,
+    references,
+    primaryKeys,
+    options,
+  };
 }
 
 async function analyzeSequelizeTables(databaseConnection, config, allowWarning) {
-  const schema = {};
+  const schemaAllTables = {};
 
   queryInterface = databaseConnection.getQueryInterface();
   tableConstraintsGetter = new TableConstraintsGetter(databaseConnection, config.dbSchema);
@@ -186,18 +188,21 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   }
 
   // Build the db schema.
-  await P.mapSeries(showAllTables(databaseConnection, config.dbSchema), async (table) => {
-    schema[table] = await analyzeTable(table, config);
+  const tableNames = await showAllTables(databaseConnection, config.dbSchema);
+
+  await P.each(tableNames, async (tableName) => {
+    const tableAnalysis = await analyzeTable(tableName, config);
+    schemaAllTables[tableName] = await createTableSchema(tableAnalysis, tableName);
   });
 
-  if (_.isEmpty(schema)) {
+  if (_.isEmpty(schemaAllTables)) {
     throw new DatabaseAnalyzerError.EmptyDatabase('no tables found', {
       orm: 'sequelize',
       dialect: databaseConnection.getDialect(),
     });
   }
 
-  return schema;
+  return schemaAllTables;
 }
 
 module.exports = analyzeSequelizeTables;
