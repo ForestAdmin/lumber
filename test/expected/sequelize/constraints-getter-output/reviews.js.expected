@@ -47,6 +47,24 @@ const mssql = [
 ];
 
 const mysql = [
+    {
+    tableName: 'reviews',
+    columnName: 'published_date',
+    columnType: 'UNIQUE',
+    constraintName: 'published_date_rating_key',
+    foreignTableName: null,
+    foreignColumnName: null,
+    uniqueIndexes: [['published_date', 'rating']],
+  },
+  {
+    tableName: 'reviews',
+    columnName: 'rating',
+    columnType: 'UNIQUE',
+    constraintName: 'published_date_rating_key',
+    foreignTableName: null,
+    foreignColumnName: null,
+    uniqueIndexes: [['published_date', 'rating']],
+  },
   {
     tableName: 'reviews',
     columnName: 'id',

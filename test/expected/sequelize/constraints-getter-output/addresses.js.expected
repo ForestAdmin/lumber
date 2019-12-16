@@ -47,6 +47,15 @@ const mysql = [
     foreignColumnName: 'id',
     uniqueIndexes: [['city']],
   },
+  {
+    tableName: 'addresses',
+    columnName: 'city',
+    columnType: 'UNIQUE',
+    constraintName: 'unique_city',
+    foreignColumnName: null,
+    foreignTableName: null,
+    uniqueIndexes: [['city']],
+  },
 ];
 
 const postgres = [

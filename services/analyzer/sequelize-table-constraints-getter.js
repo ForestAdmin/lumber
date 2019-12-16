@@ -98,7 +98,6 @@ function TableConstraintsGetter(databaseConnection, schema) {
               ON uidx.tableName = tableConstraints.table_name
             WHERE tableConstraints.table_schema = :schemaName
               AND tableConstraints.table_name = :table
-              AND tableConstraints.constraint_type != 'UNIQUE'
             GROUP BY
               constraintName,
               tableName,
