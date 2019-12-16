@@ -19,14 +19,14 @@
       "nameColumn": "is_active",
       "type": "BOOLEAN",
       "primaryKey": false,
-      "defaultValue": "b'1'"
+      "defaultValue": true
     },
     {
       "name": "paying",
       "nameColumn": "paying",
       "type": "BOOLEAN",
       "primaryKey": false,
-      "defaultValue": "b'0'"
+      "defaultValue": false
     },
     {
       "name": "createdAt",

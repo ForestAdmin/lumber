@@ -122,12 +122,22 @@ function analyzeTable(table, config) {
           // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
           //         handle it automatically without necessary declaration.
           if (!(nameColumn === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+            // NOTICE: Handle bit(1) to boolean conversion
+            let { defaultValue } = columnInfo;
+
+            if (["b'1'", '((1))'].includes(defaultValue)) {
+              defaultValue = true;
+            }
+            if (["b'0'", '((0))'].includes(defaultValue)) {
+              defaultValue = false;
+            }
+
             const field = {
               name: _.camelCase(nameColumn),
               nameColumn,
               type,
               primaryKey: columnInfo.primaryKey,
-              defaultValue: columnInfo.defaultValue,
+              defaultValue,
             };
 
             fields.push(field);
