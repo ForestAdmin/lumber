@@ -55,7 +55,6 @@
         "ref": "environments",
         "foreignKey": "environmentId",
         "foreignKeyName": "environmentIdUnconventionnal",
-        "columnName": "environmentId",
         "as": "environment"
       },
       {

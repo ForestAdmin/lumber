@@ -26,12 +26,12 @@ module.exports = (sequelize, DataTypes) => {
     {{../modelName}}.{{reference.association}}(models.{{reference.ref}}, {
     {{#if reference.isBelongsToMany}}
       through: '{{reference.junctionTable}}',
-      foreignKey: '{{reference.columnName}}',
+      foreignKey: '{{reference.foreignKey}}',
       otherKey: '{{reference.otherKey}}',
     {{else}}
       foreignKey: {
         name: '{{reference.foreignKeyName}}',{{#if reference.foreignKeyColumnUnconventional}}
-        field: '{{reference.columnName}}',{{/if}}
+        field: '{{reference.foreignKey}}',{{/if}}
       },{{#if reference.targetKey }}
       target: {
         name: '{{reference.targetKey}}',{{#if reference.targetKeyColumnUnconventional}}

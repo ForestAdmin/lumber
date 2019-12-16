@@ -34,7 +34,7 @@
       {
         "association": "belongsTo",
         "ref": "users",
-        "columnName": "user_id",
+        "foreignKey": "user_id",
         "foreignKeyName": "userId",
         "isBelongsToMany": false
       }
