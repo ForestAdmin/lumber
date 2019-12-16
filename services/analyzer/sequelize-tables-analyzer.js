@@ -80,8 +80,7 @@ function hasIdColumn(fields, primaryKeys) {
 }
 
 function analyzeTable(table, config) {
-  return P
-    .resolve(analyzeFields(table, config))
+  return analyzeFields(table, config)
     .then((schema) => P.all([
       schema,
       tableConstraintsGetter.perform(table),
