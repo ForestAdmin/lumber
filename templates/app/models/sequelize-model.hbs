@@ -23,7 +23,13 @@ module.exports = (sequelize, DataTypes) => {
   // This section contains the relationships for this model. See: https://docs.forestadmin.com/documentation/v/v5/reference-guide/relationships#adding-relationships.
   {{modelName}}.associate = (models) => {
     {{#each references as |reference|}}
-    {{#if reference.isNotBelongsToMany}}
+    {{#if reference.isBelongsToMany}}
+    {{../modelName}}.belongsToMany(models.{{reference.ref}}, {
+      through: '{{reference.junctionTable}}',
+      foreignKey: '{{reference.columnName}}',
+      otherKey: '{{reference.otherKey}}',
+    });
+    {{else}}
     {{../modelName}}.{{reference.association}}(models.{{reference.ref}}, {
       foreignKey: {
         name: '{{reference.foreignKeyName}}',{{#if reference.foreignKeyColumnUnconventional}}
@@ -34,13 +40,6 @@ module.exports = (sequelize, DataTypes) => {
         field: '{{reference.targetKey}}',{{/if}}
       },{{/if}}{{#if reference.as}}
       as: '{{reference.as}}',{{/if}}
-    });
-    {{/if}}
-    {{#if reference.isBelongsToMany}}
-    {{../modelName}}.belongsToMany(models.{{reference.ref}}, {
-      through: '{{reference.junctionTable}}',
-      foreignKey: '{{reference.columnName}}',
-      otherKey: '{{reference.otherKey}}',
     });
     {{/if}}
     {{/each}}

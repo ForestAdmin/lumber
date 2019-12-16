@@ -38,14 +38,14 @@
         "ref": "reviews",
         "columnName": "user_id",
         "foreignKeyName": "userId",
-        "isNotBelongsToMany": true
+        "isBelongsToMany": false
       },
       {
         "association": "hasOne",
         "ref": "addresses",
         "columnName": "user_id",
         "foreignKeyName": "userId",
-        "isNotBelongsToMany": true
+        "isBelongsToMany": false
       }
     ],
     "primaryKeys": ["id"],

@@ -36,7 +36,7 @@
         "ref": "users",
         "columnName": "user_id",
         "foreignKeyName": "userId",
-        "isNotBelongsToMany": true
+        "isBelongsToMany": false
       }
     ],
     "primaryKeys": ["user_id"],

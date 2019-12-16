@@ -87,7 +87,7 @@ function createReference(foreignKey, association, manyToManyForeignKey) {
   };
 
   if (association === 'belongsTo') {
-    reference.isNotBelongsToMany = true;
+    reference.isBelongsToMany = false;
     reference.ref = foreignKey.foreignTableName;
   } else if (association === 'belongsToMany') {
     reference.isBelongsToMany = true;
@@ -95,7 +95,7 @@ function createReference(foreignKey, association, manyToManyForeignKey) {
     reference.otherKey = manyToManyForeignKey.columnName;
     reference.junctionTable = foreignKey.tableName;
   } else {
-    reference.isNotBelongsToMany = true;
+    reference.isBelongsToMany = false;
     reference.ref = foreignKey.tableName;
   }
 

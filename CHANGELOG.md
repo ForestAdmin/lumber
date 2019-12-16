@@ -22,6 +22,7 @@
 - Technical - Add more tests on the dumper service.
 - Technical - Add tests on the table constraints getter service.
 - Command Generate - Detect hasOne, hasMany and belongsToMany SQL relationships.
+- Command Generate - Cast default column value to boolean when the type is `bit`.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
