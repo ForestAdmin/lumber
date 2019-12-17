@@ -25,10 +25,11 @@ describe('Utils > Mongo Primitive Type', () => {
       expect(getPrimitiveType(new ObjectId('objectIdFake'))).to.equal('mongoose.Schema.Types.ObjectId');
     });
 
-    it('Should return undefined', () => {
-      expect(getPrimitiveType(undefined)).to.equal(undefined);
-      expect(getPrimitiveType([])).to.equal(undefined);
-      expect(getPrimitiveType({})).to.equal(undefined);
+    it('Should return null', () => {
+      expect(getPrimitiveType(null)).to.equal(null);
+      expect(getPrimitiveType(undefined)).to.equal(null);
+      expect(getPrimitiveType([])).to.equal(null);
+      expect(getPrimitiveType({})).to.equal(null);
     });
   });
 
@@ -43,6 +44,7 @@ describe('Utils > Mongo Primitive Type', () => {
 
     it('Should return false', () => {
       expect(isTypePrimitive(undefined)).to.equal(false);
+      expect(isTypePrimitive(null)).to.equal(false);
       expect(isTypePrimitive([])).to.equal(false);
       expect(isTypePrimitive({})).to.equal(false);
     });

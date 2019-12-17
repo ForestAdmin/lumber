@@ -1,6 +1,6 @@
 const { ObjectId } = require('mongodb');
 
-const PRIMITIVE_TYPE = ['string', 'number', 'boolean'];
+const PRIMITIVE_TYPES = ['string', 'number', 'boolean'];
 
 function getPrimitiveType(value) {
   if (typeof value === 'object' && value instanceof Date) {
@@ -19,7 +19,7 @@ function getPrimitiveType(value) {
     case 'string':
       return 'String';
     default:
-      return undefined;
+      return null;
   }
 }
 
@@ -32,10 +32,11 @@ function isTypePrimitive(value) {
     return true;
   }
 
-  return PRIMITIVE_TYPE.includes(typeof value);
+  return PRIMITIVE_TYPES.includes(typeof value);
 }
 
 module.exports = {
+  PRIMITIVE_TYPES,
   getPrimitiveType,
   isTypePrimitive,
 };
