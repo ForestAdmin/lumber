@@ -1,5 +1,6 @@
 const P = require('bluebird');
 const _ = require('lodash');
+const { plural } = require('pluralize');
 const ColumnTypeGetter = require('./sequelize-column-type-getter');
 const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
 const { DatabaseAnalyzerError } = require('../../utils/errors');
@@ -106,6 +107,9 @@ function createReference(foreignKey, association, manyToManyForeignKey) {
     reference.junctionTable = foreignKey.tableName;
   } else {
     reference.ref = foreignKey.tableName;
+    reference.as = _.camelCase(
+      plural(`${formatAliasName(reference.foreignKeyName)}_${foreignKey.tableName}`),
+    );
   }
 
   // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
