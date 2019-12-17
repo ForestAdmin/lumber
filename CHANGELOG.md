@@ -22,6 +22,7 @@
 - Technical - Reorganize analysis services.
 - Technical - Add more tests on the dumper service.
 - Technical - Add tests on the table constraints getter service.
+- Command Generate - Better detection of belongsTo relationship based on foreign keys that also are primary keys.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
