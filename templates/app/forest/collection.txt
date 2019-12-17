@@ -6,7 +6,7 @@ const { collection } = require('forest-express-<% if (dbDialect === 'mongodb') {
 // - Smart relationships: https://docs.forestadmin.com/documentation/reference-guide/relationships/create-a-smart-relationship
 // - Smart segments: https://docs.forestadmin.com/documentation/reference-guide/segments/smart-segments
 collection('<%= table %>', {
-    actions: [],
-    fields: [],
-    segments: [],
+  actions: [],
+  fields: [],
+  segments: [],
 });
