@@ -32,7 +32,7 @@ function isTypePrimitive(value) {
     return true;
   }
 
-  return PRIMITIVE_TYPES.includes(typeof value);
+  return PRIMITIVE_TYPES.indexOf(typeof value) > -1;
 }
 
 module.exports = {

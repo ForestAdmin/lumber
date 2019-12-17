@@ -3,6 +3,8 @@ const {
   isTypePrimitive,
 } = require('../../utils/mongo-primitive-type');
 
+/* eslint-disable vars-on-top, no-var */
+
 function analyseEmbedded(embeddedObject) {
   if (!embeddedObject) {
     return null;
@@ -143,7 +145,7 @@ function areAnalysesSameEmbeddedType(arrayOfAnalysis) {
     return true;
   }
 
-  for (let i = 0, j = 1; j < arrayOfAnalysis.length; i += 1, j += 1) {
+  for (var i = 0, j = 1; j < arrayOfAnalysis.length; i += 1, j += 1) {
     if (!haveSameEmbeddedType(arrayOfAnalysis[i], arrayOfAnalysis[j])) {
       return false;
     }
@@ -192,7 +194,7 @@ function mergeEmbeddedDetections(keyAnalyses) {
     return 'Object';
   }
   const firstAnalysis = keyAnalyses[0];
-  let structure;
+  var structure;
 
   if (Array.isArray(firstAnalysis)) {
     structure = [];
