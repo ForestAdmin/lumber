@@ -4,6 +4,25 @@ const logger = require('../logger');
 const { DatabaseAnalyzerError } = require('../../utils/errors');
 const { detectReferences, applyReferences } = require('./mongo-references-analyzer');
 const { detectHasMany, applyHasMany } = require('./mongo-hasmany-analyzer');
+const {
+  getPrimitiveType,
+  isTypePrimitive,
+  PRIMITIVE_TYPES,
+} = require('../utils/mongo-primitive-type');
+const {
+  analyseEmbedded,
+  analyseArray,
+  analysePrimitive,
+  analyse,
+  hasEmbeddedTypes,
+  mergeEmbeddedDetections,
+  applyType,
+  areAnalysesSameEmbeddedType,
+  haveSameEmbeddedType,
+  deserializeAnalysis,
+  serializeAnalysis,
+  deserializeAnalyses,
+} = require('./analyse-mongo-embedded');
 
 function isUnderscored(fields) {
   return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
@@ -13,6 +32,23 @@ function isUnderscored(fields) {
 const mapReduceOptions = {
   out: { inline: 1 },
   limit: 100,
+  scope: {
+    PRIMITIVE_TYPES,
+    analyseEmbedded,
+    analyseArray,
+    analysePrimitive,
+    analyse,
+    getPrimitiveType,
+    isTypePrimitive,
+    hasEmbeddedTypes,
+    mergeEmbeddedDetections,
+    applyType,
+    areAnalysesSameEmbeddedType,
+    haveSameEmbeddedType,
+    deserializeAnalysis,
+    deserializeAnalyses,
+    serializeAnalysis,
+  },
 };
 
 // NOTICE: This code runs on the MongoDB side (mapReduce feature).
@@ -47,6 +83,11 @@ function mapCollection() {
     } else if (typeof this[key] === 'object') {
       if (Array.isArray(this[key]) && allItemsAreObjectIDs(this[key])) {
         emit(key, '[mongoose.Schema.Types.ObjectId]');
+      } else if (key !== '_id') {
+        var analysis = serializeAnalysis(analyse(this[key]));
+        if (analysis) {
+          emit(key, analysis);
+        }
       }
     }
   }
@@ -54,6 +95,11 @@ function mapCollection() {
 /* eslint-enable */
 
 function reduceCollection(key, stuff) {
+  if (hasEmbeddedTypes(stuff)) {
+    const parsedAnalyses = deserializeAnalyses(stuff);
+    return serializeAnalysis(mergeEmbeddedDetections(parsedAnalyses));
+  }
+
   return stuff.length ? stuff[0] : null;
 }
 
@@ -73,7 +119,12 @@ const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
     return reject(err);
   }
   /* eslint no-underscore-dangle: off */
-  return resolve(results.map((r) => ({ name: r._id, type: r.value })));
+  return resolve(results.map((r) => {
+    if (r.value && r.value.type === 'embedded') {
+      return { name: r._id, type: deserializeAnalysis(r.value) };
+    }
+    return { name: r._id, type: r.value };
+  }));
 };
 
 function analyzeMongoCollection(databaseConnection, collectionName) {
