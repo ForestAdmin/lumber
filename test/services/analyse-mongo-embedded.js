@@ -11,7 +11,7 @@ const {
   serializeAnalysis,
   deserializeAnalyses,
   deserializeAnalysis,
-} = require('../../services/analyse-mongo-embedded');
+} = require('../../services/analyzer/mongo-embedded-analyzer');
 
 describe('Services > Mongo Embedded Analyser', () => {
   describe('Analysing', () => {

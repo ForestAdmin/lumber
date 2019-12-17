@@ -1,7 +1,7 @@
 const {
   getPrimitiveType,
   isTypePrimitive,
-} = require('../utils/mongo-primitive-type');
+} = require('../../utils/mongo-primitive-type');
 
 function analyseEmbedded(embeddedObject) {
   if (!embeddedObject) {

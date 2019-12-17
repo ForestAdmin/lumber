@@ -8,7 +8,7 @@ const {
   getPrimitiveType,
   isTypePrimitive,
   PRIMITIVE_TYPES,
-} = require('../utils/mongo-primitive-type');
+} = require('../../utils/mongo-primitive-type');
 const {
   analyseEmbedded,
   analyseArray,
@@ -22,7 +22,7 @@ const {
   deserializeAnalysis,
   serializeAnalysis,
   deserializeAnalyses,
-} = require('./analyse-mongo-embedded');
+} = require('./mongo-embedded-analyzer');
 
 function isUnderscored(fields) {
   return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
