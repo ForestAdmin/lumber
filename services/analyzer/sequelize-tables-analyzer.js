@@ -1,10 +1,15 @@
 const P = require('bluebird');
 const _ = require('lodash');
-const { plural } = require('pluralize');
+const { plural, singular } = require('pluralize');
 const ColumnTypeGetter = require('./sequelize-column-type-getter');
 const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
 const { DatabaseAnalyzerError } = require('../../utils/errors');
 const { terminate } = require('../../utils/terminator');
+
+const ASSOCIATION_TYPE_BELONGS_TO = 'belongsTo';
+const ASSOCIATION_TYPE_BELONGS_TO_MANY = 'belongsToMany';
+const ASSOCIATION_TYPE_HAS_MANY = 'hasMany';
+const ASSOCIATION_TYPE_HAS_ONE = 'hasOne';
 
 let queryInterface;
 let tableConstraintsGetter;
@@ -91,25 +96,29 @@ function checkUnicity(primaryKeys, uniqueIndexes, columnName) {
 }
 
 // NOTICE: Format the references depending on the type of the association
-function createReference(foreignKey, association, manyToManyForeignKey) {
+function createReference(tableName, association, foreignKey, manyToManyForeignKey) {
   const reference = {
     foreignKey: foreignKey.columnName,
     foreignKeyName: _.camelCase(foreignKey.columnName),
     association,
   };
 
-  if (association === 'belongsTo') {
+  if (association === ASSOCIATION_TYPE_BELONGS_TO) {
     reference.ref = foreignKey.foreignTableName;
     reference.as = formatAliasName(foreignKey.columnName);
-  } else if (association === 'belongsToMany') {
+  } else if (association === ASSOCIATION_TYPE_BELONGS_TO_MANY) {
     reference.ref = manyToManyForeignKey.foreignTableName;
     reference.otherKey = manyToManyForeignKey.columnName;
     reference.junctionTable = foreignKey.tableName;
   } else {
     reference.ref = foreignKey.tableName;
-    reference.as = _.camelCase(
-      plural(`${formatAliasName(reference.foreignKeyName)}_${foreignKey.tableName}`),
-    );
+
+    const formater = association === ASSOCIATION_TYPE_HAS_MANY ? plural : singular;
+    const prefix = (singular(tableName) === formatAliasName(reference.foreignKeyName))
+      ? ''
+      : `${formatAliasName(reference.foreignKeyName)}_`;
+
+    reference.as = _.camelCase(formater(`${prefix}${foreignKey.tableName}`));
   }
 
   // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
@@ -164,7 +173,14 @@ function defineAssociationType(databaseSchema) {
                   && otherKey.columnType === 'FOREIGN KEY' && primaryKeys.includes(otherKey.columnName)) || [];
 
               manyToManyKeys.forEach((manyToManyKey) => {
-                databaseSchema[referenceTableName].references.push(createReference(constraint, 'belongsToMany', manyToManyKey));
+                databaseSchema[referenceTableName].references.push(
+                  createReference(
+                    referenceTableName,
+                    ASSOCIATION_TYPE_BELONGS_TO_MANY,
+                    constraint,
+                    manyToManyKey,
+                  ),
+                );
               });
               isManyToMany = manyToManyKeys !== [];
             }
@@ -184,12 +200,19 @@ function defineAssociationType(databaseSchema) {
           );
 
           if (referenceUnicity.isPrimary || referenceUnicity.isUnique) {
-            table.references.push(createReference(constraint, 'belongsTo'));
+            table.references.push(
+              createReference(
+                null,
+                ASSOCIATION_TYPE_BELONGS_TO,
+                constraint,
+              ),
+            );
           }
           databaseSchema[referenceTableName].references.push(
             createReference(
+              referenceTableName,
+              (isPrimary || isUnique) ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
               constraint,
-              (isPrimary || isUnique) ? 'hasOne' : 'hasMany',
             ),
           );
         }

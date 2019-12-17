@@ -34,14 +34,14 @@ module.exports = (sequelize, DataTypes) => {
         name: 'userId',
         field: 'user_id',
       },
-      as: 'userReviews',
+      as: 'reviews',
     });
     Users.hasOne(models.addresses, {
       foreignKey: {
         name: 'userId',
         field: 'user_id',
       },
-      as: 'userAddresses',
+      as: 'address',
     });
   };
 

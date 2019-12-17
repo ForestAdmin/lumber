@@ -33,14 +33,14 @@
         "otherKey": "book_id"
       },
       {
-        "as": "userReviews",
+        "as": "reviews",
         "association": "hasMany",
         "ref": "reviews",
         "foreignKey": "user_id",
         "foreignKeyName": "userId"
       },
       {
-        "as": "userAddresses",
+        "as": "address",
         "association": "hasOne",
         "ref": "addresses",
         "foreignKey": "user_id",
