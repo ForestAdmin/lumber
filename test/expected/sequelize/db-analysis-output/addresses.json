@@ -30,7 +30,15 @@
         "defaultValue": null
       }
     ],
-    "references": [],
+    "references": [
+      {
+        "association": "belongsTo",
+        "ref": "users",
+        "foreignKey": "user_id",
+        "foreignKeyName": "userId",
+        "as": "user"
+      }
+    ],
     "primaryKeys": ["user_id"],
     "options": {
       "underscored": true,

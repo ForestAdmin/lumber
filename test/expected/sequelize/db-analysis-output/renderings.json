@@ -51,18 +51,21 @@
     ],
     "references": [
       {
+        "association": "belongsTo",
         "ref": "environments",
         "foreignKey": "environmentId",
         "foreignKeyName": "environmentIdUnconventionnal",
         "as": "environment"
       },
       {
+        "association": "belongsTo",
         "ref": "teams",
         "foreignKey": "teamId",
         "foreignKeyName": "teamId",
         "as": "team"
       },
       {
+        "association": "belongsTo",
         "ref": "otherWithTarget",
         "foreignKey": "other",
         "foreignKeyName": "other",
@@ -70,6 +73,7 @@
         "as": "team2"
       },
       {
+        "association": "belongsTo",
         "ref": "film",
         "foreignKey": "filmKeyName",
         "foreignKeyName": "filmKeyName",
