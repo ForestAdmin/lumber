@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 // Learn more here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
 const schema = mongoose.Schema({
 {{#each fields as |field|}}
-  '{{field.name}}': {{#if field.ref}}{ type: {{field.type}}, ref: '{{field.ref}}' }{{else}}{{field.type}}{{/if}},
+  '{{field.name}}': {{#if field.ref}}{ type: {{field.type}}, ref: '{{field.ref}}' }{{else if (isObject field.type)}}{{>renderNested type=field.type level=1}}{{else}}{{field.type}}{{/if}},
 {{/each}}
 }, {
   timestamps: {{timestamps}},
