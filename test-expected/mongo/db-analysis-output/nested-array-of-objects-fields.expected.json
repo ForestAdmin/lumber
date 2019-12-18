@@ -1,0 +1,32 @@
+{
+  "persons": {
+    "fields": [
+      {
+        "name": "name",
+        "type": "String"
+      },
+      {
+        "name": "propArrayOfObjects",
+        "type": [
+          {
+            "_id": "mongoose.Schema.Types.ObjectId",
+            "one": "String",
+            "two": "String"
+          },
+          {
+            "_id": "mongoose.Schema.Types.ObjectId",
+            "one": "String",
+            "two": "String"
+          }
+        ]
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  }
+}
