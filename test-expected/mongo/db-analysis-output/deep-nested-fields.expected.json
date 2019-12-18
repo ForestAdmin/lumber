@@ -1,0 +1,92 @@
+{
+  "persons": {
+    "fields": [
+      {
+        "name": "name",
+        "type": "String"
+      },
+      {
+        "name": "very",
+        "type": {
+          "deep": {
+            "model": {
+              "arrayMixed": [
+                "Number",
+                "String",
+                "Boolean",
+                "Date"
+              ],
+              "arrayOfComplexObjects": [
+                {
+                  "propGroup": {
+                    "answer": "Boolean",
+                    "date": "Date"
+                  },
+                  "so": {
+                    "nested": {
+                      "arrayMixed": [
+                        "Number",
+                        "String",
+                        "Boolean",
+                        "Date"
+                      ],
+                      "arrayOfNumber": [
+                        "Number",
+                        "Number",
+                        "Number"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "propGroup": {
+                    "number": "Number",
+                    "sentence": "String"
+                  },
+                  "so": {
+                    "nested": {
+                      "arrayMixed": [
+                        "Number",
+                        "String",
+                        "Boolean",
+                        "Date"
+                      ],
+                      "arrayOfNumber": [
+                        "Number",
+                        "Number",
+                        "Number"
+                      ]
+                    }
+                  }
+                }
+              ],
+              "arrayOfNumber": [
+                "Number",
+                "Number",
+                "Number"
+              ],
+              "arrayWithComplexObject": [
+                {
+                  "name": "String",
+                  "propGroup": {
+                    "answer": "Boolean",
+                    "date": "Date",
+                    "number": "Number",
+                    "sentence": "String"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  }
+}
