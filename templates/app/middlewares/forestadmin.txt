@@ -1,4 +1,3 @@
-const requireAll = require('require-all');
 const chalk = require('chalk');
 const path = require('path');<% if (dbDialect === 'mongodb') {%>
 const Liana = require('forest-express-mongoose');

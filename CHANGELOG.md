@@ -32,7 +32,8 @@
 - Custom Domain - Fix the CORS middleware to take CORS env variables into account.
 - Technical - Fix bad database connection url for some PostgreSQL tests.
 - Fields Detection - Fix MySQL and MSSQL boolean columns default values generated in models files.
-- Templates - Fix indentation (from 4 to 2 spaces) in collection files.
+- Command Generate - Fix indentation (from 4 to 2 spaces) in collection files.
+- Command Generate - Remove an unused dependency in "forestadmin" middleware.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
