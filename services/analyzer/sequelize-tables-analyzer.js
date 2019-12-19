@@ -114,9 +114,9 @@ function createReference(tableName, association, foreignKey, manyToManyForeignKe
     reference.ref = foreignKey.tableName;
 
     const formater = association === ASSOCIATION_TYPE_HAS_MANY ? plural : singular;
-    const prefix = (singular(tableName) === formatAliasName(reference.foreignKeyName))
+    const prefix = (singular(tableName) === formatAliasName(_.camelCase(foreignKey.columnName)))
       ? ''
-      : `${formatAliasName(reference.foreignKeyName)}_`;
+      : `${formatAliasName(_.camelCase(foreignKey.columnName))}_`;
 
     reference.as = _.camelCase(formater(`${prefix}${foreignKey.tableName}`));
   }
