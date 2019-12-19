@@ -97,9 +97,10 @@ function checkUnicity(primaryKeys, uniqueIndexes, columnName) {
 
 // NOTICE: Format the references depending on the type of the association
 function createReference(tableName, association, foreignKey, manyToManyForeignKey) {
+  const foreignKeyName = _.camelCase(foreignKey.columnName);
   const reference = {
     foreignKey: foreignKey.columnName,
-    foreignKeyName: _.camelCase(foreignKey.columnName),
+    foreignKeyName: `${foreignKeyName}Key`,
     association,
   };
 
@@ -114,17 +115,11 @@ function createReference(tableName, association, foreignKey, manyToManyForeignKe
     reference.ref = foreignKey.tableName;
 
     const formater = association === ASSOCIATION_TYPE_HAS_MANY ? plural : singular;
-    const prefix = (singular(tableName) === formatAliasName(reference.foreignKeyName))
+    const prefix = (singular(tableName) === formatAliasName(foreignKeyName))
       ? ''
-      : `${formatAliasName(reference.foreignKeyName)}_`;
+      : `${formatAliasName(foreignKeyName)}_`;
 
     reference.as = _.camelCase(formater(`${prefix}${foreignKey.tableName}`));
-  }
-
-  // NOTICE: If the foreign key name and alias are the same, Sequelize will crash, we need
-  //         to handle this specific scenario generating a different foreign key name.
-  if (reference.foreignKeyName && reference.foreignKeyName === reference.as) {
-    reference.foreignKeyName = `${reference.foreignKeyName}Key`;
   }
 
   if (foreignKey.foreignColumnName !== 'id') {

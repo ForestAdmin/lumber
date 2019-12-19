@@ -31,14 +31,14 @@ module.exports = (sequelize, DataTypes) => {
     });
     Users.hasMany(models.reviews, {
       foreignKey: {
-        name: 'userId',
+        name: 'userIdKey',
         field: 'user_id',
       },
       as: 'reviews',
     });
     Users.hasOne(models.addresses, {
       foreignKey: {
-        name: 'userId',
+        name: 'userIdKey',
         field: 'user_id',
       },
       as: 'address',

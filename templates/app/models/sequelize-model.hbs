@@ -30,8 +30,8 @@ module.exports = (sequelize, DataTypes) => {
       otherKey: '{{reference.otherKey}}',
     {{else}}
       foreignKey: {
-        name: '{{reference.foreignKeyName}}',{{#if reference.foreignKeyColumnUnconventional}}
-        field: '{{reference.foreignKey}}',{{/if}}
+        name: '{{reference.foreignKeyName}}',
+        field: '{{reference.foreignKey}}',
       },{{#if reference.targetKey }}
       target: {
         name: '{{reference.targetKey}}',{{#if reference.targetKeyColumnUnconventional}}
