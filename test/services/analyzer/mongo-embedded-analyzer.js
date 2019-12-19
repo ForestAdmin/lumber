@@ -11,85 +11,55 @@ const {
   serializeAnalysis,
   deserializeAnalyses,
   deserializeAnalysis,
-} = require('../../services/analyzer/mongo-embedded-analyzer');
+} = require('../../../services/analyzer/mongo-embedded-analyzer');
 
 describe('Services > Mongo Embedded Analyser', () => {
   describe('Analysing', () => {
     describe('Performing global analysis', () => {
       it('Should detect that the value to analyse is an array', () => {
-        const analysis = analyse([1, 2, 3]);
-        expect(analysis).to.be.an.instanceOf(Array);
+        expect(analyse([1, 2, 3])).to.be.an.instanceOf(Array);
       });
 
       it('Should detect that the value to analyse is an object', () => {
-        const analysis = analyse({ one: 1, two: 2 });
-        expect(analysis).to.be.an.instanceOf(Object);
+        expect(analyse({ one: 1, two: 2 })).to.be.an.instanceOf(Object);
       });
 
       it('Should detect that the value to analyse is a primitive value', () => {
-        let analysis = analyse('1');
-        expect(analysis).to.equal('String');
-
-        analysis = analyse(1);
-        expect(analysis).to.equal('Number');
-
-        analysis = analyse(true);
-        expect(analysis).to.equal('Boolean');
-
-        analysis = analyse(new Date());
-        expect(analysis).to.equal('Date');
-
-        analysis = analyse(new ObjectId('objectIdFake'));
-        expect(analysis).to.equal('mongoose.Schema.Types.ObjectId');
+        expect(analyse('1')).to.equal('String');
+        expect(analyse(1)).to.equal('Number');
+        expect(analyse(true)).to.equal('Boolean');
+        expect(analyse(new Date())).to.equal('Date');
+        expect(analyse(new ObjectId('objectIdFake'))).to.equal('mongoose.Schema.Types.ObjectId');
       });
     });
 
     describe('Handling primitive types', () => {
       it('Should return null if value is not primitive', () => {
-        let analysis = analysePrimitive({});
-        expect(analysis).to.equal(null);
-
-        analysis = analysePrimitive([]);
-        expect(analysis).to.equal(null);
-
-        analysis = analysePrimitive(undefined);
-        expect(analysis).to.equal(null);
-
-        analysis = analysePrimitive(null);
-        expect(analysis).to.equal(null);
+        expect(analyse({})).to.equal(null);
+        expect(analyse([])).to.equal(null);
+        expect(analyse(undefined)).to.equal(null);
+        expect(analyse(null)).to.equal(null);
       });
 
       it('Should return the correct primitive type depending on the value', () => {
-        let analysis = analysePrimitive('1');
-        expect(analysis).to.equal('String');
-
-        analysis = analysePrimitive(1);
-        expect(analysis).to.equal('Number');
-
-        analysis = analysePrimitive(true);
-        expect(analysis).to.equal('Boolean');
-
-        analysis = analysePrimitive(new Date());
-        expect(analysis).to.equal('Date');
-
-        analysis = analysePrimitive(new ObjectId('objectIdFake'));
-        expect(analysis).to.equal('mongoose.Schema.Types.ObjectId');
+        expect(analyse('')).to.equal('String');
+        expect(analyse('1')).to.equal('String');
+        expect(analyse(1)).to.equal('Number');
+        expect(analyse(NaN)).to.equal('Number');
+        expect(analyse(1.11)).to.equal('Number');
+        expect(analyse(true)).to.equal('Boolean');
+        expect(analyse(false)).to.equal('Boolean');
+        expect(analyse(new Date())).to.equal('Date');
+        expect(analyse(new ObjectId('objectIdFake'))).to.equal('mongoose.Schema.Types.ObjectId');
       });
     });
 
     describe('Handling array types', () => {
       it('Should return null if array is empty, undefined, or not an array', () => {
-        let arrayTypeDetection = analyseArray([]);
-        expect(arrayTypeDetection).to.equal(null);
-
-        arrayTypeDetection = analyseArray(undefined);
-        expect(arrayTypeDetection).to.equal(null);
-
-        arrayTypeDetection = analyseArray({});
-        expect(arrayTypeDetection).to.equal(null);
-
-        arrayTypeDetection = analyseArray('string');
-        expect(arrayTypeDetection).to.equal(null);
+        expect(analyseArray([])).to.equal(null);
+        expect(analyseArray(undefined)).to.equal(null);
+        expect(analyseArray({})).to.equal(null);
+        expect(analyseArray('string')).to.equal(null);
       });
 
       it('Should return array of Primitive type if array contains primitive types', () => {
@@ -183,81 +153,6 @@ describe('Services > Mongo Embedded Analyser', () => {
   }); */
 
   describe('Utils', () => {
-    describe('Serializing analyses', () => {
-      it('Should wrap analyses in a recognizable embedded object and compatible with mapReduce', () => {
-        const fakeAnalyses = ['String', { one: 'Number' }, 'Boolean'];
-        const wrappedAnalyses = serializeAnalysis(fakeAnalyses);
-
-        expect(wrappedAnalyses).to.be.an.instanceOf(Object);
-        expect(wrappedAnalyses.type).to.equal('embedded');
-        expect(typeof wrappedAnalyses.schema).to.equal('string');
-      });
-
-      it('Should return null if nothing has to be serialized', () => {
-        expect(serializeAnalysis(undefined)).to.equal(null);
-        expect(serializeAnalysis(null)).to.equal(null);
-      });
-    });
-
-    describe('Deserializing analysis', () => {
-      it('Should deserialize to a single parsed analysis', () => {
-        const stringifiedAnalysis = JSON.stringify([{ one: 'Number', array: ['Boolean'] }]);
-        const serializedAnalysis = { type: 'embedded', schema: stringifiedAnalysis };
-
-        const deserializedAnalysis = deserializeAnalysis(serializedAnalysis);
-
-        expect(deserializedAnalysis).to.be.an.instanceOf(Object);
-        expect(deserializedAnalysis.type).to.equal(undefined);
-        expect(deserializedAnalysis.schema).to.equal(undefined);
-      });
-
-      it('Should return null if nothing has to be deserialized', () => {
-        expect(deserializeAnalysis(undefined)).to.equal(null);
-        expect(deserializeAnalysis(null)).to.equal(null);
-      });
-    });
-
-    describe('Deserializing fields analysis', () => {
-      it('Should only deserialize embedded analysis and leave simple analyses as they are', () => {
-        const stringifiedEmbeddedAnalysis = JSON.stringify([{ one: 'Number', array: ['Boolean'] }]);
-        const notEmbeddedAnalysis = 'String';
-        const serializedAnalyses = [
-          { type: 'embedded', schema: stringifiedEmbeddedAnalysis },
-          notEmbeddedAnalysis,
-        ];
-
-        const deserializedAnalyses = deserializeAnalyses(serializedAnalyses);
-
-        expect(deserializedAnalyses[0]).to.be.an.instanceOf(Object);
-        expect(deserializedAnalyses[1]).to.equal('String');
-      });
-
-      it('Should deserialize to a multiple parsed analysis', () => {
-        const stringifiedAnalyses = JSON.stringify([
-          {
-            one: 'Number', array: ['Boolean'],
-          },
-          {
-            one: 'Number', array: ['Boolean'],
-          },
-        ]);
-        const serializedAnalyses = [{ type: 'embedded', schema: stringifiedAnalyses }];
-
-        const deserializedAnalyses = deserializeAnalyses(serializedAnalyses);
-
-        expect(deserializedAnalyses).to.be.an.instanceOf(Array);
-        expect(deserializedAnalyses.length).to.equal(1);
-        expect(deserializedAnalyses[0]).to.be.an.instanceOf(Object);
-        expect(deserializedAnalyses.type).to.equal(undefined);
-        expect(deserializedAnalyses.schema).to.equal(undefined);
-      });
-
-      it('Should return null if nothing has to be deserialized', () => {
-        expect(deserializeAnalysis(undefined)).to.equal(null);
-        expect(deserializeAnalysis(null)).to.equal(null);
-      });
-    });
-
     describe('Checking if analyses array contains embedded types', () => {
       it('Should return true if at least one of the analyses contains embedded types', () => {
         const result = hasEmbeddedTypes([
@@ -328,8 +223,14 @@ describe('Services > Mongo Embedded Analyser', () => {
     });
 
     describe('Checking if every analysis have the same type', () => {
-      it('Should return true if analyses are empty', () => {
-        expect(areAnalysesSameEmbeddedType([])).to.equal(true);
+      it('Should return false if analyses is not an array, or an empty array', () => {
+        expect(areAnalysesSameEmbeddedType([])).to.equal(false);
+        expect(areAnalysesSameEmbeddedType(undefined)).to.equal(false);
+        expect(areAnalysesSameEmbeddedType(null)).to.equal(false);
+        expect(areAnalysesSameEmbeddedType('not an array')).to.equal(false);
+        expect(areAnalysesSameEmbeddedType(true)).to.equal(false);
+        expect(areAnalysesSameEmbeddedType(false)).to.equal(false);
+        expect(areAnalysesSameEmbeddedType(0)).to.equal(false);
       });
 
       it('Should return true if analyses contains only one analysis', () => {
