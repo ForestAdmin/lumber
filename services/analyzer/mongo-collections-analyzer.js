@@ -93,14 +93,20 @@ function mapCollection() {
   }
 }
 /* eslint-enable */
-
-function reduceCollection(key, stuff) {
-  if (hasEmbeddedTypes(stuff)) {
-    const parsedAnalyses = deserializeAnalyses(stuff);
-    return serializeAnalysis(mergeEmbeddedDetections(parsedAnalyses));
+function reduceCollection(key, analyses) {
+  if (hasEmbeddedTypes(analyses)) {
+    const formatedAnalysis = { type: 'embedded', analyses: [], multipleAnalysis: true };
+    analyses.forEach((analysis) => {
+      if (analysis.type === 'embedded') {
+        formatedAnalysis.schema.push(analysis.schema);
+      } else {
+        formatedAnalysis.schema.push(analysis);
+      }
+    });
+    return formatedAnalysis;
   }
 
-  return stuff.length ? stuff[0] : null;
+  return analyses.length ? analyses[0] : null;
 }
 
 const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
@@ -121,7 +127,14 @@ const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
   /* eslint no-underscore-dangle: off */
   return resolve(results.map((r) => {
     if (r.value && r.value.type === 'embedded') {
-      return { name: r._id, type: deserializeAnalysis(r.value) };
+      let mergedAnalyses;
+
+      if (r.value.multipleAnalysis) {
+        mergedAnalyses = mergeEmbeddedDetections(r.value.schema);
+      } else {
+        mergedAnalyses = mergeEmbeddedDetections([r.value.schema]);
+      }
+      return { name: r._id, type: mergedAnalyses };
     }
     return { name: r._id, type: r.value };
   }));

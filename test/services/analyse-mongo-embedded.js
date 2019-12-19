@@ -156,6 +156,25 @@ describe('Services > Mongo Embedded Analyser', () => {
         expect(typeof embeddedWithNestedDetection.level_1.level_2 === 'object').to.equal(true);
         expect(embeddedWithNestedDetection.level_1.level_2.number).to.equal('Number');
       });
+
+      it('Should not handle `_id` keys', () => {
+        const embeddedWithIdKey = {
+          _id: ObjectId(),
+          embeddedValue: {
+            _id: ObjectId(),
+            stringValue: 'my value',
+          },
+        };
+
+        const analysis = analyseEmbedded(embeddedWithIdKey);
+
+        // eslint-disable-next-line no-underscore-dangle
+        expect(analysis._id).to.equal(undefined);
+        expect(analysis.embeddedValue).to.be.an.instanceOf(Object);
+        // eslint-disable-next-line no-underscore-dangle
+        expect(analysis.embeddedValue._id).to.equal(undefined);
+        expect(analysis.embeddedValue.stringValue).to.equal('String');
+      });
     });
   });
 

@@ -13,11 +13,13 @@ function analyseEmbedded(embeddedObject) {
   const schema = {};
 
   Object.keys(embeddedObject).forEach((key) => {
-    // eslint-disable-next-line no-use-before-define
-    const analysis = analyse(embeddedObject[key]);
+    if (key !== '_id') {
+      // eslint-disable-next-line no-use-before-define
+      const analysis = analyse(embeddedObject[key]);
 
-    if (analysis) {
-      schema[key] = analysis;
+      if (analysis) {
+        schema[key] = analysis;
+      }
     }
   });
 
@@ -160,7 +162,7 @@ function serializeAnalysis(fieldAnalysis) {
   }
 
   const analysis = { type: 'embedded' };
-  analysis.schema = JSON.stringify(fieldAnalysis);
+  analysis.schema = fieldAnalysis;
 
   return analysis;
 }
@@ -170,7 +172,12 @@ function deserializeAnalysis(analysis) {
     return null;
   }
 
-  return JSON.parse(analysis.schema);
+  const deserialized = JSON.parse(analysis.schema);
+  if (Array.isArray(deserialized)) {
+    return deserialized;
+  }
+
+  return [deserialized];
 }
 
 function deserializeAnalyses(fieldAnalyses) {
