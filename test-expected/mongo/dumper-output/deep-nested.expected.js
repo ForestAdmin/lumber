@@ -9,27 +9,30 @@ const schema = mongoose.Schema({
   'very': mongoose.Schema({
     deep: mongoose.Schema({
       model: mongoose.Schema({
-        arrayMixed: [Number],
-        arrayOfComplexObjects: [mongoose.Schema({
-          propGroup: mongoose.Schema({
-            answer: Boolean,
-            date: Date,
-          }),
-          so: mongoose.Schema({
-            nested: mongoose.Schema({
-              arrayMixed: [Number],
-              arrayOfNumber: [Number],
-            }),
-          }),
-        })],
         arrayOfNumber: [Number],
+        arrayMixed: [mongoose.Mixed],
+        arrayOfObjectIds: [mongoose.Schema.Types.ObjectId],
         arrayWithComplexObject: [mongoose.Schema({
           name: String,
           propGroup: mongoose.Schema({
             answer: Boolean,
             date: Date,
-            number: Number,
             sentence: String,
+            number: Number,
+          }),
+        })],
+        arrayOfComplexObjects: [mongoose.Schema({
+          propGroup: mongoose.Schema({
+            answer: Boolean,
+            date: Date,
+            sentence: String,
+            number: Number,
+          }),
+          so: mongoose.Schema({
+            nested: mongoose.Schema({
+              arrayMixed: [mongoose.Mixed],
+              arrayOfNumber: [Number],
+            }),
           }),
         })],
       }),

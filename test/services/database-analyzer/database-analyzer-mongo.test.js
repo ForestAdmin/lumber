@@ -10,6 +10,7 @@ const nestedObjectModel = require('../../../test-fixtures/mongo/nested-object-mo
 const nestedArrayOfObjectsModel = require('../../../test-fixtures/mongo/nested-array-of-objects-model');
 const nestedArrayOfNumbersModel = require('../../../test-fixtures/mongo/nested-array-of-numbers-model');
 const deepNestedModel = require('../../../test-fixtures/mongo/deep-nested-model');
+const multipleNestedArrayOfObjectsModel = require('../../../test-fixtures/mongo/nested-array-of-objects-model');
 const expectedSimpleModel = require('../../../test-expected/mongo/db-analysis-output/simple.expected.json');
 const expectedHasManyModel = require('../../../test-expected/mongo/db-analysis-output/hasmany.expected.json');
 const expectedMultipleReferencesModel = require('../../../test-expected/mongo/db-analysis-output/multiple-references-from-same-field.expected.json');
@@ -19,6 +20,7 @@ const expectedNestedObjectModel = require('../../../test-expected/mongo/db-analy
 const expectedNestedArrayOfObjectsModel = require('../../../test-expected/mongo/db-analysis-output/nested-array-of-objects-fields.expected.json');
 const expectedNestedArrayOfNumbersModel = require('../../../test-expected/mongo/db-analysis-output/nested-array-of-numbers-fields.expected.json');
 const expectedDeepNestedModel = require('../../../test-expected/mongo/db-analysis-output/deep-nested-fields.expected.json');
+const expectedMultipleNestedArrayOfObjectsModel = require('../../../test-expected/mongo/db-analysis-output/multiple-nested-array-of-objects-fields.expected.json');
 
 function getMongoHelper(mongoUrl) {
   return new MongoHelper(mongoUrl);
@@ -109,5 +111,6 @@ describe('services > database analyser > MongoDB', () => {
     it('should generate the model with a nested array of numbers', () => testAnalyser(nestedArrayOfNumbersModel, expectedNestedArrayOfNumbersModel));
     it('should generate the model with a nested array of objects', () => testAnalyser(nestedArrayOfObjectsModel, expectedNestedArrayOfObjectsModel));
     it('should generate the model with a deep nested objects/arrays', () => testAnalyser(deepNestedModel, expectedDeepNestedModel));
+    it('should generate the model with multiple records containing deep nested objects/arrays', () => testAnalyser(multipleNestedArrayOfObjectsModel, expectedMultipleNestedArrayOfObjectsModel));
   });
 });

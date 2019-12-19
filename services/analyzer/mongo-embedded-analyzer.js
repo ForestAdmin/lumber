@@ -1,6 +1,6 @@
 const {
-  getPrimitiveType,
-  isTypePrimitive,
+  getMongooseTypeFromValue,
+  isOfMongooseType,
 } = require('../../utils/mongo-primitive-type');
 
 /* eslint-disable vars-on-top, no-var */
@@ -49,13 +49,9 @@ function analyseArray(arrayValue) {
   return analyses.length ? analyses : null;
 }
 
-function analysePrimitive(value) {
-  return getPrimitiveType(value);
-}
-
 function analyse(value) {
-  if (isTypePrimitive(value)) {
-    return analysePrimitive(value);
+  if (isOfMongooseType(value)) {
+    return getMongooseTypeFromValue(value);
   }
 
   if (Array.isArray(value)) {
@@ -77,7 +73,7 @@ function hasEmbeddedTypes(analyses) {
 }
 
 function applyType(type, structure, currentKey) {
-  if (isTypePrimitive(type)) {
+  if (isOfMongooseType(type)) {
     if (!structure[currentKey]) {
       // eslint-disable-next-line no-param-reassign
       structure[currentKey] = type;
@@ -143,12 +139,14 @@ function haveSameEmbeddedType(type1, type2) {
 }
 
 function areAnalysesSameEmbeddedType(arrayOfAnalysis) {
-  if (!arrayOfAnalysis && arrayOfAnalysis.length < 2) {
-    return true;
+  if (!Array.isArray(arrayOfAnalysis) || !arrayOfAnalysis.length) {
+    return false;
   }
 
-  for (var i = 0, j = 1; j < arrayOfAnalysis.length; i += 1, j += 1) {
-    if (!haveSameEmbeddedType(arrayOfAnalysis[i], arrayOfAnalysis[j])) {
+  const firstAnalysis = arrayOfAnalysis[0];
+
+  for (var i = 1; i < arrayOfAnalysis.length; i += 1) {
+    if (!haveSameEmbeddedType(arrayOfAnalysis[i], firstAnalysis)) {
       return false;
     }
   }
@@ -225,7 +223,6 @@ function mergeEmbeddedDetections(keyAnalyses) {
 module.exports = {
   analyseEmbedded,
   analyseArray,
-  analysePrimitive,
   analyse,
   hasEmbeddedTypes,
   mergeEmbeddedDetections,

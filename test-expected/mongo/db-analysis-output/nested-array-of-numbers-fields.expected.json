@@ -8,8 +8,6 @@
       {
         "name": "propArrayOfNumbers",
         "type": [
-          "Number",
-          "Number",
           "Number"
         ]
       }

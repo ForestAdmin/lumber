@@ -5,23 +5,21 @@ const { DatabaseAnalyzerError } = require('../../utils/errors');
 const { detectReferences, applyReferences } = require('./mongo-references-analyzer');
 const { detectHasMany, applyHasMany } = require('./mongo-hasmany-analyzer');
 const {
-  getPrimitiveType,
-  isTypePrimitive,
-  PRIMITIVE_TYPES,
+  getMongooseTypeFromValue,
+  isOfMongooseType,
 } = require('../../utils/mongo-primitive-type');
 const {
-  analyseEmbedded,
-  analyseArray,
-  analysePrimitive,
   analyse,
-  hasEmbeddedTypes,
-  mergeEmbeddedDetections,
+  analyseArray,
+  analyseEmbedded,
   applyType,
   areAnalysesSameEmbeddedType,
-  haveSameEmbeddedType,
-  deserializeAnalysis,
-  serializeAnalysis,
   deserializeAnalyses,
+  deserializeAnalysis,
+  hasEmbeddedTypes,
+  haveSameEmbeddedType,
+  mergeEmbeddedDetections,
+  serializeAnalysis,
 } = require('./mongo-embedded-analyzer');
 
 function isUnderscored(fields) {
@@ -33,13 +31,11 @@ const mapReduceOptions = {
   out: { inline: 1 },
   limit: 100,
   scope: {
-    PRIMITIVE_TYPES,
     analyseEmbedded,
     analyseArray,
-    analysePrimitive,
     analyse,
-    getPrimitiveType,
-    isTypePrimitive,
+    getMongooseTypeFromValue,
+    isOfMongooseType,
     hasEmbeddedTypes,
     mergeEmbeddedDetections,
     applyType,
@@ -84,9 +80,10 @@ function mapCollection() {
       if (Array.isArray(this[key]) && allItemsAreObjectIDs(this[key])) {
         emit(key, '[mongoose.Schema.Types.ObjectId]');
       } else if (key !== '_id') {
-        var analysis = serializeAnalysis(analyse(this[key]));
+        var analysis = analyse(this[key]);
         if (analysis) {
-          emit(key, analysis);
+          // Notice: Wrap the analysis of embedded in a recognizable object for further treatment
+          emit(key, { type: 'embedded', schema: analysis });
         }
       }
     }
@@ -95,12 +92,12 @@ function mapCollection() {
 /* eslint-enable */
 function reduceCollection(key, analyses) {
   if (hasEmbeddedTypes(analyses)) {
-    const formatedAnalysis = { type: 'embedded', analyses: [], multipleAnalysis: true };
+    const formatedAnalysis = { type: 'embedded', schemas: [] };
     analyses.forEach((analysis) => {
       if (analysis.type === 'embedded') {
-        formatedAnalysis.schema.push(analysis.schema);
+        formatedAnalysis.schemas.push(analysis.schema);
       } else {
-        formatedAnalysis.schema.push(analysis);
+        formatedAnalysis.schemas.push(analysis);
       }
     });
     return formatedAnalysis;
@@ -127,13 +124,9 @@ const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
   /* eslint no-underscore-dangle: off */
   return resolve(results.map((r) => {
     if (r.value && r.value.type === 'embedded') {
-      let mergedAnalyses;
+      const schemas = r.value.schemas ? r.value.schemas : [r.value.schema];
+      const mergedAnalyses = mergeEmbeddedDetections(schemas);
 
-      if (r.value.multipleAnalysis) {
-        mergedAnalyses = mergeEmbeddedDetections(r.value.schema);
-      } else {
-        mergedAnalyses = mergeEmbeddedDetections([r.value.schema]);
-      }
       return { name: r._id, type: mergedAnalyses };
     }
     return { name: r._id, type: r.value };

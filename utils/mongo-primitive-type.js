@@ -1,8 +1,12 @@
 const { ObjectId } = require('mongodb');
 
-const PRIMITIVE_TYPES = ['string', 'number', 'boolean'];
-
-function getPrimitiveType(value) {
+/**
+ * Retrieves simple mongoose type from value if detectable
+ * Simple types are 'Date', 'Boolean', 'Number', 'String', 'mongoose.Schema.Types.ObjectId'
+ * @param value
+ * @returns {string|null} return
+ */
+function getMongooseTypeFromValue(value) {
   if (typeof value === 'object' && value instanceof Date) {
     return 'Date';
   }
@@ -23,20 +27,16 @@ function getPrimitiveType(value) {
   }
 }
 
-function isTypePrimitive(value) {
-  if (typeof value === 'object' && value instanceof Date) {
-    return true;
-  }
-
-  if (typeof value === 'object' && value instanceof ObjectId) {
-    return true;
-  }
-
-  return PRIMITIVE_TYPES.indexOf(typeof value) > -1;
+/**
+ * Checks if the value corresponds to a mongoose type
+ * @param value
+ * @returns {boolean}
+ */
+function isOfMongooseType(value) {
+  return !!getMongooseTypeFromValue(value);
 }
 
 module.exports = {
-  PRIMITIVE_TYPES,
-  getPrimitiveType,
-  isTypePrimitive,
+  getMongooseTypeFromValue,
+  isOfMongooseType,
 };

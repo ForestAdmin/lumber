@@ -10,60 +10,14 @@
         "type": {
           "deep": {
             "model": {
-              "arrayMixed": [
-                "Number",
-                "String",
-                "Boolean",
-                "Date"
-              ],
-              "arrayOfComplexObjects": [
-                {
-                  "propGroup": {
-                    "answer": "Boolean",
-                    "date": "Date"
-                  },
-                  "so": {
-                    "nested": {
-                      "arrayMixed": [
-                        "Number",
-                        "String",
-                        "Boolean",
-                        "Date"
-                      ],
-                      "arrayOfNumber": [
-                        "Number",
-                        "Number",
-                        "Number"
-                      ]
-                    }
-                  }
-                },
-                {
-                  "propGroup": {
-                    "number": "Number",
-                    "sentence": "String"
-                  },
-                  "so": {
-                    "nested": {
-                      "arrayMixed": [
-                        "Number",
-                        "String",
-                        "Boolean",
-                        "Date"
-                      ],
-                      "arrayOfNumber": [
-                        "Number",
-                        "Number",
-                        "Number"
-                      ]
-                    }
-                  }
-                }
-              ],
               "arrayOfNumber": [
-                "Number",
-                "Number",
                 "Number"
+              ],
+              "arrayMixed": [
+                "mongoose.Mixed"
+              ],
+              "arrayOfObjectIds": [
+                "mongoose.Schema.Types.ObjectId"
               ],
               "arrayWithComplexObject": [
                 {
@@ -71,8 +25,28 @@
                   "propGroup": {
                     "answer": "Boolean",
                     "date": "Date",
-                    "number": "Number",
-                    "sentence": "String"
+                    "sentence": "String",
+                    "number": "Number"
+                  }
+                }
+              ],
+              "arrayOfComplexObjects": [
+                {
+                  "propGroup": {
+                    "answer": "Boolean",
+                    "date": "Date",
+                    "sentence": "String",
+                    "number": "Number"
+                  },
+                  "so": {
+                    "nested": {
+                      "arrayMixed": [
+                        "mongoose.Mixed"
+                      ],
+                      "arrayOfNumber": [
+                        "Number"
+                      ]
+                    }
                   }
                 }
               ]

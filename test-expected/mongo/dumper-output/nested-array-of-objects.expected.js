@@ -7,7 +7,6 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema({
   'name': String,
   'propArrayOfObjects': [mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     one: String,
     two: String,
   })],
