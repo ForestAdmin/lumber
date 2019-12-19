@@ -37,20 +37,22 @@ module.exports = (sequelize, DataTypes) => {
   Renderings.associate = (models) => {
     Renderings.belongsTo(models.environments, {
       foreignKey: {
-        name: 'environmentIdUnconventionnal',
+        name: 'environmentIdUnconventionnalKey',
         field: 'environmentId',
       },
       as: 'environment',
     });
     Renderings.belongsTo(models.teams, {
       foreignKey: {
-        name: 'teamId',
+        name: 'teamIdKey',
+        field: 'teamId',
       },
       as: 'team',
     });
     Renderings.belongsTo(models.otherWithTarget, {
       foreignKey: {
-        name: 'other',
+        name: 'otherKey',
+        field: 'other',
       },
       target: {
         name: 'otherId',
@@ -59,7 +61,8 @@ module.exports = (sequelize, DataTypes) => {
     });
     Renderings.belongsTo(models.film, {
       foreignKey: {
-        name: 'filmKeyName',
+        name: 'filmKeyNameKey',
+        field: 'filmKeyName',
       },
       target: {
         name: 'film_target_key',

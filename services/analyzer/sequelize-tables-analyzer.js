@@ -97,9 +97,10 @@ function checkUnicity(primaryKeys, uniqueIndexes, columnName) {
 
 // NOTICE: Format the references depending on the type of the association
 function createReference(tableName, association, foreignKey, manyToManyForeignKey) {
+  const foreignKeyName = _.camelCase(foreignKey.columnName);
   const reference = {
     foreignKey: foreignKey.columnName,
-    foreignKeyName: `${_.camelCase(foreignKey.columnName)}Key`,
+    foreignKeyName: `${foreignKeyName}Key`,
     association,
   };
 
@@ -114,9 +115,9 @@ function createReference(tableName, association, foreignKey, manyToManyForeignKe
     reference.ref = foreignKey.tableName;
 
     const formater = association === ASSOCIATION_TYPE_HAS_MANY ? plural : singular;
-    const prefix = (singular(tableName) === formatAliasName(_.camelCase(foreignKey.columnName)))
+    const prefix = (singular(tableName) === formatAliasName(foreignKeyName))
       ? ''
-      : `${formatAliasName(_.camelCase(foreignKey.columnName))}_`;
+      : `${formatAliasName(foreignKeyName)}_`;
 
     reference.as = _.camelCase(formater(`${prefix}${foreignKey.tableName}`));
   }

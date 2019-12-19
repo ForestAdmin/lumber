@@ -54,21 +54,21 @@
         "association": "belongsTo",
         "ref": "environments",
         "foreignKey": "environmentId",
-        "foreignKeyName": "environmentIdUnconventionnal",
+        "foreignKeyName": "environmentIdUnconventionnalKey",
         "as": "environment"
       },
       {
         "association": "belongsTo",
         "ref": "teams",
         "foreignKey": "teamId",
-        "foreignKeyName": "teamId",
+        "foreignKeyName": "teamIdKey",
         "as": "team"
       },
       {
         "association": "belongsTo",
         "ref": "otherWithTarget",
         "foreignKey": "other",
-        "foreignKeyName": "other",
+        "foreignKeyName": "otherKey",
         "targetKey": "otherId",
         "as": "team2"
       },
@@ -76,7 +76,7 @@
         "association": "belongsTo",
         "ref": "film",
         "foreignKey": "filmKeyName",
-        "foreignKeyName": "filmKeyName",
+        "foreignKeyName": "filmKeyNameKey",
         "targetKey": "film_target_key",
         "as": "films"
       }
