@@ -3,7 +3,6 @@
 ## [Unreleased]
 ### Added
 - Lumber - Add databases turnkeys sources.
-- Lumber - Mongo schema generates hasMany: array of `_id` referencing other collection.
 - Command Generate - Generate MongoDB HasMany.
 
 ### Changed
