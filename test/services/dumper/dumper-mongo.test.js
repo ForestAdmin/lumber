@@ -3,6 +3,10 @@ const fs = require('fs');
 
 const simpleModel = require('../../../test-expected/mongo/db-analysis-output/simple.expected.json');
 const hasManyModel = require('../../../test-expected/mongo/db-analysis-output/hasmany.expected.json');
+const nestedObjectModel = require('../../../test-expected/mongo/db-analysis-output/nested-object-fields.expected.json');
+const nestedArrayOfNumbersModel = require('../../../test-expected/mongo/db-analysis-output/nested-array-of-numbers-fields.expected.json');
+const nestedArrayOfObjectsModel = require('../../../test-expected/mongo/db-analysis-output/nested-array-of-objects-fields.expected.json');
+const deepNestedModel = require('../../../test-expected/mongo/db-analysis-output/deep-nested-fields.expected.json');
 const Dumper = require('../../../services/dumper');
 
 function getDumper() {
@@ -51,5 +55,37 @@ describe('services > dumper > MongoDB', () => {
       expect(indexGeneratedFile).toStrictEqual(expect.not.stringMatching('databaseOptions.dialectOptions.typeCast'));
       cleanOutput();
     });
+  });
+
+  it('generate a model file with a nested object', async () => {
+    await dumper.dump(nestedObjectModel);
+    const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/nested-object-js', 'utf-8');
+
+    expect(generatedFile).to.equals(expectedFile);
+  });
+
+  it('generate a model file with a nested array of numbers', async () => {
+    await dumper.dump(nestedArrayOfNumbersModel);
+    const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/nested-array-of-numbers-js', 'utf-8');
+
+    expect(generatedFile).to.equals(expectedFile);
+  });
+
+  it('generate a model file with a nested array of objects', async () => {
+    await dumper.dump(nestedArrayOfObjectsModel);
+    const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/nested-array-of-objects-js', 'utf-8');
+
+    expect(generatedFile).to.equals(expectedFile);
+  });
+
+  it('generate a model file with a deep nested objects/array', async () => {
+    await dumper.dump(deepNestedModel);
+    const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/deep-nested-js', 'utf-8');
+
+    expect(generatedFile).to.equals(expectedFile);
   });
 });
