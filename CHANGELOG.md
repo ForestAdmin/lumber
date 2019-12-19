@@ -34,7 +34,6 @@
 - Fields Detection - Fix MySQL and MSSQL boolean columns default values generated in models files.
 - Command Generate - Fix indentation (from 4 to 2 spaces) in collection files.
 - Command Generate - Remove an unused dependency in "forestadmin" middleware.
-- Command Generate - Fix conflict between aliases and foreignKey names.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
