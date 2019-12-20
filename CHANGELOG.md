@@ -23,6 +23,7 @@
 - Technical - Add more tests on the dumper service.
 - Technical - Add tests on the table constraints getter service.
 - Command Generate - Better detection of belongsTo relationship based on foreign keys that also are primary keys.
+- Technical - Use handlebars to generate models.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
@@ -59,7 +60,6 @@
 - Command Generate - Generate the forest routes to ease the use of `smart routes`.
 
 ### Changed
-- Command Generate - Use handlebars to generate models.
 - Technical - Remove unused ENCRYPT env variable.
 - Security - Prevent remote environments creation with HTTP protocol.
 - Commands - Remove command run and install.
