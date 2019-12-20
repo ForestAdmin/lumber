@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.1.0 - 2019-12-20
 ### Added
 - Command Generate - Generate MongoDB HasMany.
 - Technical - Add tests on MSSQL databases.
