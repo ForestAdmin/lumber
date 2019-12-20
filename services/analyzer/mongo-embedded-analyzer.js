@@ -3,9 +3,9 @@ const {
   isOfMongooseType,
 } = require('../../utils/mongo-primitive-type');
 
-/* eslint-disable vars-on-top, no-var */
+/* eslint-disable vars-on-top, no-var, no-use-before-define, no-param-reassign */
 
-function analyseEmbedded(embeddedObject) {
+function getMongooseEmbeddedSchema(embeddedObject) {
   if (!embeddedObject) {
     return null;
   }
@@ -14,8 +14,7 @@ function analyseEmbedded(embeddedObject) {
 
   Object.keys(embeddedObject).forEach((key) => {
     if (key !== '_id') {
-      // eslint-disable-next-line no-use-before-define
-      const analysis = analyse(embeddedObject[key]);
+      const analysis = getMongooseSchema(embeddedObject[key]);
 
       if (analysis) {
         schema[key] = analysis;
@@ -30,7 +29,7 @@ function analyseEmbedded(embeddedObject) {
   return schema;
 }
 
-function analyseArray(arrayValue) {
+function getMongooseArraySchema(arrayValue) {
   if (!arrayValue || arrayValue.length === 0 || !Array.isArray(arrayValue)) {
     return null;
   }
@@ -38,8 +37,7 @@ function analyseArray(arrayValue) {
   const analyses = [];
 
   arrayValue.forEach((value) => {
-    // eslint-disable-next-line no-use-before-define
-    const analysis = analyse(value);
+    const analysis = getMongooseSchema(value);
 
     if (analysis) {
       analyses.push(analysis);
@@ -49,17 +47,17 @@ function analyseArray(arrayValue) {
   return analyses.length ? analyses : null;
 }
 
-function analyse(value) {
+function getMongooseSchema(value) {
   if (isOfMongooseType(value)) {
     return getMongooseTypeFromValue(value);
   }
 
   if (Array.isArray(value)) {
-    return analyseArray(value);
+    return getMongooseArraySchema(value);
   }
 
   if (typeof value === 'object') {
-    return analyseEmbedded(value);
+    return getMongooseEmbeddedSchema(value);
   }
 
   return null;
@@ -72,70 +70,25 @@ function hasEmbeddedTypes(analyses) {
   return analyses.filter((analysis) => analysis.type === 'embedded').length > 0;
 }
 
-function applyType(type, structure, currentKey) {
-  if (isOfMongooseType(type)) {
-    if (!structure[currentKey]) {
-      // eslint-disable-next-line no-param-reassign
-      structure[currentKey] = type;
-    } else if (structure[currentKey] !== type) {
-      // eslint-disable-next-line no-param-reassign
-      structure[currentKey] = 'mongoose.Mixed';
-    }
-  } else if (Array.isArray(type)) {
-    if (structure[currentKey] === 'mongoose.Mixed') {
-      // Notice: Conflicted type
-      // eslint-disable-next-line no-param-reassign
-      structure[currentKey] = 'mongoose.Mixed';
-    } else if (Array.isArray(structure[currentKey]) === Array.isArray(type)) {
-      const nestedStructure = structure[currentKey];
-      type.forEach((valueAnalysed) => {
-        applyType(valueAnalysed, nestedStructure, 0);
-      });
-    } else if (structure[currentKey]
-      && Array.isArray(structure[currentKey]) !== Array.isArray(type)) {
-      // eslint-disable-next-line no-param-reassign
-      structure[currentKey] = 'mongoose.Mixed';
-    } else {
-      const nestedStructure = [];
-      // eslint-disable-next-line no-param-reassign
-      structure[currentKey] = nestedStructure;
-      type.forEach((valueAnalysed) => {
-        applyType(valueAnalysed, nestedStructure, 0);
-      });
-    }
-  } else if (typeof type === 'object') {
-    if (structure[currentKey] !== undefined) {
-      if (structure[currentKey] === 'mongoose.Mixed' || typeof structure[currentKey] !== 'object') {
-        // Notice: Conflicted type
-        // eslint-disable-next-line no-param-reassign
-        structure[currentKey] = 'mongoose.Mixed';
-      } else if (typeof structure[currentKey] === 'object') {
-        const nestedStructure = structure[currentKey];
-        Object.keys(type).forEach((key) => {
-          applyType(type[key], nestedStructure, key);
-        });
-      } else {
-        const nestedStructure = {};
-        // eslint-disable-next-line no-param-reassign
-        structure[currentKey] = nestedStructure;
-        Object.keys(type).forEach((key) => {
-          applyType(type[key], nestedStructure, key);
-        });
-      }
-    } else {
-      const nestedStructure = {};
-      // eslint-disable-next-line no-param-reassign
-      structure[currentKey] = nestedStructure;
-      Object.keys(type).forEach((key) => {
-        applyType(type[key], nestedStructure, key);
-      });
-    }
-  }
-}
-
 function haveSameEmbeddedType(type1, type2) {
   return typeof type1 === typeof type2
     && Array.isArray(type1) === Array.isArray(type2);
+}
+
+function areSchemaTypesMixed(type1, type2) {
+  if (type1 === 'mongoose.Mixed' || type2 === 'mongoose.Mixed') {
+    return true;
+  }
+
+  if (type1 == null || type2 == null) {
+    return false;
+  }
+
+  if (typeof type1 === 'object' || typeof type2 === 'object') {
+    return !haveSameEmbeddedType(type1, type2);
+  }
+
+  return type1 !== type2;
 }
 
 function areAnalysesSameEmbeddedType(arrayOfAnalysis) {
@@ -154,82 +107,77 @@ function areAnalysesSameEmbeddedType(arrayOfAnalysis) {
   return true;
 }
 
-function serializeAnalysis(fieldAnalysis) {
-  if (!fieldAnalysis) {
-    return null;
+function addMongooseType(type, schema, currentKey) {
+  if (!schema[currentKey]) {
+    schema[currentKey] = type;
+  } else if (areSchemaTypesMixed(type, schema[currentKey])) {
+    schema[currentKey] = 'mongoose.Mixed';
   }
-
-  const analysis = { type: 'embedded' };
-  analysis.schema = fieldAnalysis;
-
-  return analysis;
 }
 
-function deserializeAnalysis(analysis) {
-  if (!analysis) {
-    return null;
-  }
+function addObjectSchema(type, parentSchema, currentKey) {
+  const isTypeAnArray = Array.isArray(type);
 
-  const deserialized = JSON.parse(analysis.schema);
-  if (Array.isArray(deserialized)) {
-    return deserialized;
-  }
-
-  return [deserialized];
-}
-
-function deserializeAnalyses(fieldAnalyses) {
-  if (!fieldAnalyses || fieldAnalyses.length === 0) {
-    return null;
-  }
-
-  const parsedFieldAnalyses = [...fieldAnalyses];
-
-  parsedFieldAnalyses.forEach((analysis, index) => {
-    if (analysis.type === 'embedded') {
-      parsedFieldAnalyses[index] = deserializeAnalysis(analysis);
+  if (parentSchema[currentKey] !== undefined) {
+    if (areSchemaTypesMixed(parentSchema[currentKey], type)) {
+      parentSchema[currentKey] = 'mongoose.Mixed';
+    } else {
+      Object.keys(type).forEach((key) => {
+        addNestedSchemaToParentSchema(type[key], parentSchema[currentKey], isTypeAnArray ? 0 : key);
+      });
     }
-  });
-
-  return parsedFieldAnalyses;
+  } else {
+    parentSchema[currentKey] = isTypeAnArray ? [] : {};
+    Object.keys(type).forEach((key) => {
+      addNestedSchemaToParentSchema(type[key], parentSchema[currentKey], isTypeAnArray ? 0 : key);
+    });
+  }
 }
 
-function mergeEmbeddedDetections(keyAnalyses) {
-  if (!areAnalysesSameEmbeddedType(keyAnalyses)) {
-    return 'Object';
+function addNestedSchemaToParentSchema(type, schema, currentKey) {
+  if (typeof type === 'object') {
+    addObjectSchema(type, schema, currentKey);
+  } else {
+    addMongooseType(type, schema, currentKey);
   }
+}
+
+function mergeAnalyzedSchemas(keyAnalyses) {
+  if (!areAnalysesSameEmbeddedType(keyAnalyses)) {
+    return 'mongoose.Mixed';
+  }
+
   const firstAnalysis = keyAnalyses[0];
-  var structure;
+  var schema;
+  var isNestedArray;
 
   if (Array.isArray(firstAnalysis)) {
-    structure = [];
-    keyAnalyses.forEach((keyAnalysis) => {
-      keyAnalysis.forEach((valueAnalysed) => {
-        applyType(valueAnalysed, structure, 0);
-      });
-    });
-  } else if (typeof firstAnalysis === 'object') {
-    structure = {};
-    keyAnalyses.forEach((keyAnalysis) => {
-      Object.keys(keyAnalysis).forEach((key) => {
-        applyType(keyAnalysis[key], structure, key);
-      });
-    });
+    schema = [];
+    isNestedArray = true;
+  } else {
+    schema = {};
+    isNestedArray = false;
   }
 
-  return structure;
+  keyAnalyses.forEach((keyAnalysis) => {
+    Object.keys(keyAnalysis).forEach((key) => {
+      addNestedSchemaToParentSchema(keyAnalysis[key], schema, isNestedArray ? 0 : key);
+    });
+  });
+
+  return schema;
 }
 
 module.exports = {
-  analyseEmbedded,
-  analyseArray,
-  analyse,
-  hasEmbeddedTypes,
-  mergeEmbeddedDetections,
+  addMongooseType,
+  addNestedSchemaToParentSchema,
+  addObjectSchema,
   areAnalysesSameEmbeddedType,
+  areSchemaTypesMixed,
+  getMongooseArraySchema,
+  getMongooseEmbeddedSchema,
+  getMongooseSchema,
   haveSameEmbeddedType,
-  deserializeAnalyses,
-  applyType,
-  serializeAnalysis,
-  deserializeAnalysis,
+  hasEmbeddedTypes,
+  mergeAnalyzedSchemas,
 };

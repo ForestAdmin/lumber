@@ -9,17 +9,12 @@ const {
   isOfMongooseType,
 } = require('../../utils/mongo-primitive-type');
 const {
-  analyse,
-  analyseArray,
-  analyseEmbedded,
-  applyType,
-  areAnalysesSameEmbeddedType,
-  deserializeAnalyses,
-  deserializeAnalysis,
-  hasEmbeddedTypes,
+  getMongooseArraySchema,
+  getMongooseEmbeddedSchema,
+  getMongooseSchema,
   haveSameEmbeddedType,
-  mergeEmbeddedDetections,
-  serializeAnalysis,
+  hasEmbeddedTypes,
+  mergeAnalyzedSchemas,
 } = require('./mongo-embedded-analyzer');
 
 function isUnderscored(fields) {
@@ -31,19 +26,13 @@ const mapReduceOptions = {
   out: { inline: 1 },
   limit: 100,
   scope: {
-    analyseEmbedded,
-    analyseArray,
-    analyse,
+    getMongooseArraySchema,
+    getMongooseEmbeddedSchema,
+    getMongooseSchema,
     getMongooseTypeFromValue,
-    isOfMongooseType,
-    hasEmbeddedTypes,
-    mergeEmbeddedDetections,
-    applyType,
-    areAnalysesSameEmbeddedType,
     haveSameEmbeddedType,
-    deserializeAnalysis,
-    deserializeAnalyses,
-    serializeAnalysis,
+    hasEmbeddedTypes,
+    isOfMongooseType,
   },
 };
 
@@ -80,7 +69,7 @@ function mapCollection() {
       if (Array.isArray(this[key]) && allItemsAreObjectIDs(this[key])) {
         emit(key, '[mongoose.Schema.Types.ObjectId]');
       } else if (key !== '_id') {
-        var analysis = analyse(this[key]);
+        var analysis = getMongooseSchema(this[key]);
         if (analysis) {
           // Notice: Wrap the analysis of embedded in a recognizable object for further treatment
           emit(key, { type: 'embedded', schema: analysis });
@@ -125,9 +114,9 @@ const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
   return resolve(results.map((r) => {
     if (r.value && r.value.type === 'embedded') {
       const schemas = r.value.schemas ? r.value.schemas : [r.value.schema];
-      const mergedAnalyses = mergeEmbeddedDetections(schemas);
+      const mergedSchema = mergeAnalyzedSchemas(schemas);
 
-      return { name: r._id, type: mergedAnalyses };
+      return { name: r._id, type: mergedSchema };
     }
     return { name: r._id, type: r.value };
   }));
