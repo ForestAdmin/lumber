@@ -6,10 +6,10 @@ const mongoose = require('mongoose');
 // Learn more here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
 const schema = mongoose.Schema({
   'name': String,
-  'propArrayOfObjects': [mongoose.Schema({
+  'propArrayOfObjects': [{
     one: String,
     two: String,
-  })],
+  }],
 }, {
   timestamps: false,
 });

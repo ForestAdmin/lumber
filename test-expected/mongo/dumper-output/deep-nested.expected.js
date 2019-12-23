@@ -6,38 +6,38 @@ const mongoose = require('mongoose');
 // Learn more here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
 const schema = mongoose.Schema({
   'name': String,
-  'very': mongoose.Schema({
-    deep: mongoose.Schema({
-      model: mongoose.Schema({
+  'very': {
+    deep: {
+      model: {
         arrayOfNumber: [Number],
         arrayMixed: [Object],
         arrayOfObjectIds: [mongoose.Schema.Types.ObjectId],
-        arrayWithComplexObject: [mongoose.Schema({
+        arrayWithComplexObject: [{
           name: String,
-          propGroup: mongoose.Schema({
+          propGroup: {
             answer: Boolean,
             date: Date,
             sentence: String,
             number: Number,
-          }),
-        })],
-        arrayOfComplexObjects: [mongoose.Schema({
-          propGroup: mongoose.Schema({
+          },
+        }],
+        arrayOfComplexObjects: [{
+          propGroup: {
             answer: Boolean,
             date: Date,
             sentence: String,
             number: Number,
-          }),
-          so: mongoose.Schema({
-            nested: mongoose.Schema({
+          },
+          so: {
+            nested: {
               arrayMixed: [Object],
               arrayOfNumber: [Number],
-            }),
-          }),
-        })],
-      }),
-    }),
-  }),
+            },
+          },
+        }],
+      },
+    },
+  },
 }, {
   timestamps: false,
 });

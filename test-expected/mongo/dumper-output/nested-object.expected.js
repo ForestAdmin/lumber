@@ -6,12 +6,12 @@ const mongoose = require('mongoose');
 // Learn more here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
 const schema = mongoose.Schema({
   'name': String,
-  'propGroup': mongoose.Schema({
+  'propGroup': {
     answer: Boolean,
     date: Date,
     number: Number,
     sentence: String,
-  }),
+  },
 }, {
   timestamps: false,
 });
