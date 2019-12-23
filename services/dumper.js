@@ -55,7 +55,7 @@ function Dumper(config) {
         dependencies.tedious = '^6.4.0';
       } else if (config.dbDialect === 'mongodb') {
         delete dependencies.sequelize;
-        dependencies.mongoose = '~5.3.6';
+        dependencies.mongoose = '~5.8.2';
       }
     }
 
@@ -209,7 +209,7 @@ function Dumper(config) {
   }
 
   function writeModelsIndex() {
-    const templatePath = `${__dirname}/../templates/app/models/index.js`;
+    const templatePath = `${__dirname}/../templates/app/models/index.txt`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     const text = template({ config });
 

@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Upgrade `mongoose` to the latest version in template.
 
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added
