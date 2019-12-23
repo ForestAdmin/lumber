@@ -14,7 +14,6 @@ describe('services > column type getter', () => {
 
       expect(computedType).toStrictEqual('BOOLEAN');
 
-      // databaseConnection = null;
       await sequelizeHelper.drop('customers', 'mysql');
       await sequelizeHelper.close();
     });
@@ -31,7 +30,6 @@ describe('services > column type getter', () => {
 
       expect(computedType).toBeNull();
 
-      // databaseConnection = null;
       await sequelizeHelper.drop('customers', 'postgres');
       await sequelizeHelper.close();
     });
