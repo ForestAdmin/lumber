@@ -1,9 +1,13 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Readme - Add the test coverage badge.
+
 ### Changed
 - Technical - Do not lint uncommitted files.
 - Command Generate - Ensure that generated project on MongoDB use the latest `mongoose` dependency version for security reasons.
+- Technical - Use Jest instead of Mocha for the test base.
 
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added

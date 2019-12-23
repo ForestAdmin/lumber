@@ -32,7 +32,7 @@ class MongoHelper {
 
   close() {
     this.db = null;
-    this.client.close();
+    return this.client.close();
   }
 
   async dropAllCollections() {

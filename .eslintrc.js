@@ -1,7 +1,8 @@
 module.exports = {
   root: true,
   extends: [
-    'airbnb-base'
+    'airbnb-base',
+    'plugin:jest/all'
   ],
   plugins: [],
   env: {

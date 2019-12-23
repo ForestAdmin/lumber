@@ -5,8 +5,10 @@
   "main": "lumber.js",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js .eslint-bin deserializers scripts serializers services test utils",
-    "test": "./node_modules/mocha/bin/mocha 'test/**/*.js'",
-    "release": "node ./scripts/release.js"
+    "readme:update-coverage": "yarn test:coverage && node ./scripts/update-coverage.js",
+    "release": "node ./scripts/release.js",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage --forceExit"
   },
   "bin": {
     "lumber": "lumber.js"
@@ -50,12 +52,12 @@
   },
   "devDependencies": {
     "@forestadmin/devops": "2.0.0",
-    "chai": "4.1.2",
     "eslint": "6.7.2",
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-jest": "23.1.1",
     "git-hooks": "1.1.10",
-    "mocha": "6.2.0",
+    "jest": "24.9.0",
     "rimraf": "3.0.0",
     "simple-git": "1.126.0",
     "sinon": "7.5.0"
