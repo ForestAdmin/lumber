@@ -151,9 +151,9 @@ describe('Services > Mongo Embedded Analyser', () => {
 
   describe('Merging schemas analysed into one schema', () => {
     describe('When merging a record top key schema', () => {
-      it('Should return `mongoose.Mixed` if type from analyses are different', () => {
+      it('Should return `Object` if type from analyses are different', () => {
         const multipleDifferentAnalyses = ['String', ['Number'], { key: 'Boolean' }];
-        expect(mergeAnalyzedSchemas(multipleDifferentAnalyses)).to.equal('mongoose.Mixed');
+        expect(mergeAnalyzedSchemas(multipleDifferentAnalyses)).to.equal('Object');
       });
 
       it('Should return an array as global key type', () => {
@@ -201,14 +201,14 @@ describe('Services > Mongo Embedded Analyser', () => {
 
     describe('If the type to add is of mongoose type', () => {
       describe('If there is already a key with a type set in schema', () => {
-        it('Should set the type to `mongoose.mixed` if types are different', () => {
+        it('Should set the type to `Object` if types are different', () => {
           const parentSchema = { myKey: 'Number' };
           const type = 'String';
           const currentKey = 'myKey';
 
           addMongooseType(type, parentSchema, currentKey);
 
-          expect(parentSchema[currentKey]).to.equals('mongoose.Mixed');
+          expect(parentSchema[currentKey]).to.equals('Object');
         });
 
         it('Should not change the type if types are the same one', () => {
@@ -237,14 +237,14 @@ describe('Services > Mongo Embedded Analyser', () => {
 
     describe('If the type to add is an embedded object', () => {
       describe('If there is already a key with a type set in schema', () => {
-        it('Should set the type to `mongoose.mixed` if types are different', () => {
+        it('Should set the type to `Object` if types are different', () => {
           const parentSchema = { myKey: 'Number' };
           const type = { nestedKey: 'String' };
           const currentKey = 'myKey';
 
           addObjectSchema(type, parentSchema, currentKey);
 
-          expect(parentSchema[currentKey]).to.equals('mongoose.Mixed');
+          expect(parentSchema[currentKey]).to.equals('Object');
         });
 
         it('Should not change the type if the set one is an object', () => {
@@ -283,14 +283,14 @@ describe('Services > Mongo Embedded Analyser', () => {
 
     describe('If the type to add is an array', () => {
       describe('If there is already a key with a type set in schema', () => {
-        it('Should set the type to `mongoose.mixed` if types are different', () => {
+        it('Should set the type to `Object` if types are different', () => {
           const parentSchema = { myKey: 'Number' };
           const type = ['String'];
           const currentKey = 'myKey';
 
           addObjectSchema(type, parentSchema, currentKey);
 
-          expect(parentSchema[currentKey]).to.equals('mongoose.Mixed');
+          expect(parentSchema[currentKey]).to.equals('Object');
         });
 
         it('Should not change the type if the set one is an array', () => {
@@ -310,7 +310,7 @@ describe('Services > Mongo Embedded Analyser', () => {
 
           addObjectSchema(type, parentSchema, currentKey);
 
-          expect(parentSchema).to.deep.equal({ myKey: ['mongoose.Mixed'] });
+          expect(parentSchema).to.deep.equal({ myKey: ['Object'] });
         });
       });
 
@@ -430,12 +430,12 @@ describe('Services > Mongo Embedded Analyser', () => {
     describe('Checking if two types are mixed', () => {
       describe('If one at least one type is mixed', () => {
         it('Should return true in any case', () => {
-          expect(areSchemaTypesMixed('mongoose.Mixed', 'mongoose.Mixed')).to.equal(true);
-          expect(areSchemaTypesMixed('mongoose.Mixed', null)).to.equal(true);
-          expect(areSchemaTypesMixed(null, 'mongoose.Mixed')).to.equal(true);
-          expect(areSchemaTypesMixed('mongoose.Mixed', {})).to.equal(true);
-          expect(areSchemaTypesMixed('mongoose.Mixed', [])).to.equal(true);
-          expect(areSchemaTypesMixed('mongoose.Mixed', 'String')).to.equal(true);
+          expect(areSchemaTypesMixed('Object', 'Object')).to.equal(true);
+          expect(areSchemaTypesMixed('Object', null)).to.equal(true);
+          expect(areSchemaTypesMixed(null, 'Object')).to.equal(true);
+          expect(areSchemaTypesMixed('Object', {})).to.equal(true);
+          expect(areSchemaTypesMixed('Object', [])).to.equal(true);
+          expect(areSchemaTypesMixed('Object', 'String')).to.equal(true);
         });
       });
 
@@ -451,7 +451,7 @@ describe('Services > Mongo Embedded Analyser', () => {
 
         it('Should return true if types are different and different', () => {
           expect(areSchemaTypesMixed('String', 'Number')).to.equal(true);
-          expect(areSchemaTypesMixed('Date', 'mongoose.Mixed')).to.equal(true);
+          expect(areSchemaTypesMixed('Date', 'Object')).to.equal(true);
           expect(areSchemaTypesMixed([], {})).to.equal(true);
           expect(areSchemaTypesMixed({}, 'String')).to.equal(true);
           expect(areSchemaTypesMixed('mongoose.Schema.Types.ObjectId', 'String')).to.equal(true);

@@ -14,7 +14,7 @@
                 "Number"
               ],
               "arrayMixed": [
-                "mongoose.Mixed"
+                "Object"
               ],
               "arrayOfObjectIds": [
                 "mongoose.Schema.Types.ObjectId"
@@ -41,7 +41,7 @@
                   "so": {
                     "nested": {
                       "arrayMixed": [
-                        "mongoose.Mixed"
+                        "Object"
                       ],
                       "arrayOfNumber": [
                         "Number"

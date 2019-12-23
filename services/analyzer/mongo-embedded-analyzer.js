@@ -76,7 +76,7 @@ function haveSameEmbeddedType(type1, type2) {
 }
 
 function areSchemaTypesMixed(type1, type2) {
-  if (type1 === 'mongoose.Mixed' || type2 === 'mongoose.Mixed') {
+  if (type1 === 'Object' || type2 === 'Object') {
     return true;
   }
 
@@ -111,7 +111,7 @@ function addMongooseType(type, schema, currentKey) {
   if (!schema[currentKey]) {
     schema[currentKey] = type;
   } else if (areSchemaTypesMixed(type, schema[currentKey])) {
-    schema[currentKey] = 'mongoose.Mixed';
+    schema[currentKey] = 'Object';
   }
 }
 
@@ -120,7 +120,7 @@ function addObjectSchema(type, parentSchema, currentKey) {
 
   if (parentSchema[currentKey] !== undefined) {
     if (areSchemaTypesMixed(parentSchema[currentKey], type)) {
-      parentSchema[currentKey] = 'mongoose.Mixed';
+      parentSchema[currentKey] = 'Object';
     } else {
       Object.keys(type).forEach((key) => {
         addNestedSchemaToParentSchema(type[key], parentSchema[currentKey], isTypeAnArray ? 0 : key);
@@ -144,7 +144,7 @@ function addNestedSchemaToParentSchema(type, schema, currentKey) {
 
 function mergeAnalyzedSchemas(keyAnalyses) {
   if (!areAnalysesSameEmbeddedType(keyAnalyses)) {
-    return 'mongoose.Mixed';
+    return 'Object';
   }
 
   const firstAnalysis = keyAnalyses[0];

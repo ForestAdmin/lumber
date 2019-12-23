@@ -10,7 +10,7 @@ const schema = mongoose.Schema({
     deep: mongoose.Schema({
       model: mongoose.Schema({
         arrayOfNumber: [Number],
-        arrayMixed: [mongoose.Mixed],
+        arrayMixed: [Object],
         arrayOfObjectIds: [mongoose.Schema.Types.ObjectId],
         arrayWithComplexObject: [mongoose.Schema({
           name: String,
@@ -30,7 +30,7 @@ const schema = mongoose.Schema({
           }),
           so: mongoose.Schema({
             nested: mongoose.Schema({
-              arrayMixed: [mongoose.Mixed],
+              arrayMixed: [Object],
               arrayOfNumber: [Number],
             }),
           }),
