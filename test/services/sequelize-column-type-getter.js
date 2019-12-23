@@ -1,28 +1,17 @@
 const { expect } = require('chai');
-const ColumnTypeGetter = require('../../services/column-type-getter');
+const ColumnTypeGetter = require('../../services/analyzer/sequelize-column-type-getter');
 const SequelizeHelper = require('../utils/sequelize-helper');
+const { DATABASE_URL_MYSQL, DATABASE_URL_POSTGRESQL } = require('../utils/database-urls');
 
 describe('Services > Column Type Getter', () => {
-  const databases = [
-    {
-      dialect: 'mysql',
-      connectionUrl: 'mysql://forest:secret@localhost:8999/lumber-sequelize-test',
-    },
-    {
-      dialect: 'postgres',
-      connectionUrl: 'postgres://forest:secret@localhost:54369/lumber-sequelize-test',
-    },
-  ];
-
   describe('Using mysql', () => {
-    const mysqlDatabase = databases.filter((db) => db.dialect === 'mysql')[0];
     let sequelizeHelper;
     let databaseConnection;
 
     before(async () => {
       sequelizeHelper = new SequelizeHelper();
-      databaseConnection = await sequelizeHelper.connect(mysqlDatabase.connectionUrl);
-      await sequelizeHelper.given('customers');
+      databaseConnection = await sequelizeHelper.connect(DATABASE_URL_MYSQL);
+      await sequelizeHelper.dropAndCreate('customers');
     });
 
     after(async () => {
@@ -39,15 +28,14 @@ describe('Services > Column Type Getter', () => {
     });
   });
 
-  describe('Using pgsql', () => {
-    const mysqlDatabase = databases.filter((db) => db.dialect === 'postgres')[0];
+  describe('Using postgresql', () => {
     let sequelizeHelper;
     let databaseConnection;
 
     before(async () => {
       sequelizeHelper = new SequelizeHelper();
-      databaseConnection = await sequelizeHelper.connect(mysqlDatabase.connectionUrl);
-      await sequelizeHelper.given('customers');
+      databaseConnection = await sequelizeHelper.connect(DATABASE_URL_POSTGRESQL);
+      await sequelizeHelper.dropAndCreate('customers');
     });
 
     after(async () => {

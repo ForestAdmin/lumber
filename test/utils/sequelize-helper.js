@@ -18,15 +18,41 @@ class SequelizeHelper {
     });
   }
 
-  async given(tableName) {
+  async forceSync(table) {
     const dialect = this.sequelize.getDialect();
-    const fixtureFilename = path.join(__dirname, `../fixtures/${dialect}/${tableName}.sql`);
-    const expectedFilename = path.join(__dirname, `../expected/${dialect}/${tableName}.json`);
-    const fixtureFileContent = await fs.readFileSync(fixtureFilename, 'utf8');
-    await this.drop(tableName, dialect);
-    await this.sequelize.query(fixtureFileContent);
+    if (dialect === 'mysql') {
+      await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
+      await table.sync({ force: true });
+      await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
+    } else if (dialect === 'mssql') {
+      await this.sequelize.query(`
+        DECLARE @SQL VARCHAR(4000)=''
+        SELECT @SQL =
+        @SQL + 'ALTER TABLE ' + s.name + '.' + t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) + '];' + CHAR(13)
+        FROM sys.Tables t
+        INNER JOIN sys.foreign_keys f ON f.parent_object_id = t.object_id
+        INNER JOIN sys.schemas s ON s.schema_id = f.schema_id
+        EXEC (@SQL)
+      `);
+      await table.sync({ force: true });
+    } else {
+      await table.sync({ force: true });
+    }
+  }
+
+  async given(tableName) {
+    const expectedFilename = path.join(__dirname, `../expected/sequelize/db-analysis-output/${tableName}.json`);
+    await this.dropAndCreate(tableName);
     // eslint-disable-next-line import/no-dynamic-require, global-require
     return require(expectedFilename);
+  }
+
+  async dropAndCreate(tableName) {
+    const dialect = this.sequelize.getDialect();
+    const fixtureFilename = path.join(__dirname, `../fixtures/${dialect}/${tableName}.sql`);
+    const fixtureFileContent = await fs.readFileSync(fixtureFilename, 'utf8');
+    await this.drop(tableName, dialect);
+    return this.sequelize.query(fixtureFileContent);
   }
 
   async drop(tableName, dialect) {
@@ -34,6 +60,18 @@ class SequelizeHelper {
       await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 0;');
       await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName}`);
       await this.sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
+    } else if (dialect === 'mssql') {
+      await this.sequelize.query(`
+        DECLARE @SQL VARCHAR(4000)=''
+        SELECT @SQL =
+        @SQL + 'ALTER TABLE ' + s.name + '.' + t.name + ' DROP CONSTRAINT [' + RTRIM(f.name) + '];' + CHAR(13)
+        FROM sys.Tables t
+        INNER JOIN sys.foreign_keys f ON f.parent_object_id = t.object_id
+        INNER JOIN sys.schemas s ON s.schema_id = f.schema_id
+        WHERE OBJECT_NAME(f.referenced_object_id) = '${tableName}'
+        EXEC (@SQL)
+      `);
+      await this.sequelize.query(`IF OBJECT_ID('dbo.${tableName}', 'U') IS NOT NULL DROP TABLE dbo.${tableName}`);
     } else {
       await this.sequelize.query(`DROP TABLE IF EXISTS ${tableName} CASCADE`);
     }

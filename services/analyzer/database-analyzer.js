@@ -1,7 +1,7 @@
-const analyzeMongoCollections = require('./analyze-mongo-collections');
-const analyzeSequelizeTables = require('./analyze-sequelize-tables');
-const { DatabaseAnalyzerError } = require('../utils/errors');
-const { terminate } = require('../utils/terminator');
+const analyzeMongoCollections = require('./mongo-collections-analyzer');
+const analyzeSequelizeTables = require('./sequelize-tables-analyzer');
+const { DatabaseAnalyzerError } = require('../../utils/errors');
+const { terminate } = require('../../utils/terminator');
 
 async function reportEmptyDatabase(orm, dialect) {
   const logs = [`Your database looks empty! Please create some ${orm === 'mongoose' ? 'collections' : 'tables'} before running the command.`];

@@ -139,10 +139,7 @@ function Dumper(config) {
     });
 
     const referencesDefinition = references.map((reference) => {
-      const expectedConventionalForeignKeyName = underscored
-        ? _.snakeCase(reference.foreignKey) : reference.foreignKey;
-      const foreignKeyColumnUnconventional = reference.foreignKeyName
-        !== expectedConventionalForeignKeyName;
+      const isBelongsToMany = reference.association === 'belongsToMany';
 
       if (reference.targetKey) {
         const expectedConventionalTargetKeyName = underscored
@@ -151,11 +148,14 @@ function Dumper(config) {
           !== expectedConventionalTargetKeyName;
         return {
           ...reference,
-          foreignKeyColumnUnconventional,
+          isBelongsToMany,
           targetKeyColumnUnconventional,
         };
       }
-      return { ...reference, foreignKeyColumnUnconventional };
+      return {
+        ...reference,
+        isBelongsToMany,
+      };
     });
 
     const text = template({

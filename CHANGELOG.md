@@ -1,10 +1,17 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Docker - Use `alpine` as base node image.
+
+## RELEASE 3.1.0 - 2019-12-20
 ### Added
 - Command Generate - Generate MongoDB HasMany.
+- Technical - Add tests on MSSQL databases.
+- Command Generate - Detect hasOne, hasMany and belongsToMany SQL relationships.
 
 ### Changed
+- Technical - Do not lint uncommitted files.
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 - Technical - Replace `package-lock.json` by `yarn.lock`.
 - Technical - Use Yarn instead of NPM in the CI.
@@ -14,7 +21,14 @@
 - Technical - Improve test code to make synchronous Sequelize connection close.
 - Authentication - Updated warning message when the email is not well formatted.
 - Command Generate - Remove the broken `no-db` option.
-- Docker - Use `alpine` as base node image.
+- Technical - Improve tests consistency.
+- Technical - Make the tests fast locally without CI test failures.
+- Technical - Add more tests consistency.
+- Technical - Reorganize analysis services.
+- Technical - Add more tests on the dumper service.
+- Technical - Add tests on the table constraints getter service.
+- Command Generate - Better detection of belongsTo relationship based on foreign keys that also are primary keys.
+- Technical - Use handlebars to generate models.
 
 ### Fixed
 - MySQL - Handle BIT(1) boolean columns and handle the buffer<01> value returned on join queries.
@@ -22,6 +36,10 @@
 - Technical - Fix database connection pool issue on tests.
 - Technical - Fix pre-commit hook when deleting a file.
 - Custom Domain - Fix the CORS middleware to take CORS env variables into account.
+- Technical - Fix bad database connection url for some PostgreSQL tests.
+- Fields Detection - Fix MySQL and MSSQL boolean columns default values generated in models files.
+- Command Generate - Fix indentation (from 4 to 2 spaces) in collection files.
+- Command Generate - Remove an unused dependency in "forestadmin" middleware.
 
 ## RELEASE 3.0.1 - 2019-11-20
 ### Fixed
@@ -47,7 +65,6 @@
 - Command Generate - Generate the forest routes to ease the use of `smart routes`.
 
 ### Changed
-- Command Generate - Use handlebars to generate models.
 - Technical - Remove unused ENCRYPT env variable.
 - Security - Prevent remote environments creation with HTTP protocol.
 - Commands - Remove command run and install.

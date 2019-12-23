@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const P = require('bluebird');
-const logger = require('./logger');
-const { DatabaseAnalyzerError } = require('../utils/errors');
-const { detectReferences, applyReferences } = require('./analyze-mongo-references');
-const { detectHasMany, applyHasMany } = require('./analyze-mongo-hasmany');
+const logger = require('../logger');
+const { DatabaseAnalyzerError } = require('../../utils/errors');
+const { detectReferences, applyReferences } = require('./mongo-references-analyzer');
+const { detectHasMany, applyHasMany } = require('./mongo-hasmany-analyzer');
 
 function isUnderscored(fields) {
   return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
