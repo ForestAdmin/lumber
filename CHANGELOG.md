@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Changed
+- Technical - Do not lint uncommitted files.
 - Command Generate - Ensure that generated project on MongoDB use the latest `mongoose` dependency version for security reasons.
 
 ## RELEASE 3.1.0 - 2019-12-20
@@ -11,7 +12,6 @@
 - Command Generate - Detect hasOne, hasMany and belongsToMany SQL relationships.
 
 ### Changed
-- Technical - Do not lint uncommitted files.
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 - Technical - Replace `package-lock.json` by `yarn.lock`.
 - Technical - Use Yarn instead of NPM in the CI.
