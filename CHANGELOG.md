@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Do not lint uncommitted files.
 
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added
@@ -9,7 +11,6 @@
 - Command Generate - Detect hasOne, hasMany and belongsToMany SQL relationships.
 
 ### Changed
-- Technical - Do not lint uncommitted files.
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 - Technical - Replace `package-lock.json` by `yarn.lock`.
 - Technical - Use Yarn instead of NPM in the CI.
