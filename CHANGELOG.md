@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Changed
-- Technical - Upgrade `mongoose` to the latest version in template.
+- Command Generate - Ensure that generated project on MongoDB use the latest `mongoose` dependency version for security reasons.
 
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added
