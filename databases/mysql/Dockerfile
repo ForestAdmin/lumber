@@ -2,7 +2,7 @@ FROM mysql/mysql-server:5.7
 
 COPY fixtures /docker-entrypoint-initdb.d/
 
-ENV MYSQL_ROOT_PASSWORD secret
-ENV MYSQL_DATABASE forest
-ENV MYSQL_USER forest
-ENV MYSQL_PASSWORD secret
+ENV MYSQL_ROOT_PASSWORD turnkey
+ENV MYSQL_DATABASE turnkey
+ENV MYSQL_USER turnkey
+ENV MYSQL_PASSWORD turnkey
