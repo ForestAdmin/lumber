@@ -6,7 +6,7 @@ module.exports = {
     "plugin:sonarjs/recommended"
   ],
   plugins: [
-    "sonarjs"
+    'sonarjs',
   ],
   env: {
     mocha: true,
