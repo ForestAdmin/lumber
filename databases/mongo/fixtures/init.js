@@ -1,7 +1,5 @@
-/* eslint-disable */
 db.createCollection("films");
 db.createCollection("persons");
-
 
 db.persons.insertMany([
   {
@@ -83,4 +81,3 @@ db.films.insertMany([
     ]
   }
 ]);
-/* eslint-enable */
