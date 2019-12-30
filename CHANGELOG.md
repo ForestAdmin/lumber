@@ -10,6 +10,9 @@
 - Technical - Use Jest instead of Mocha for the test base.
 - Command Generate - Use `alpine` as lighter base node Docker image for generated projects.
 
+### Fixed
+- Technical - Fix the missing dependencies in the `package.json` file of the generated project.
+
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added
 - Command Generate - Generate MongoDB HasMany.
