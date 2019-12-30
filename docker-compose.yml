@@ -36,7 +36,7 @@ mysql:
 mssql:
   image: mcr.microsoft.com/mssql/server:2017-CU8-ubuntu
   container_name: lumber_sequelize_mssql
-  environment: 
+  environment:
     ACCEPT_EULA: "Y"
     SA_PASSWORD: "forest2019:"
   ports:
