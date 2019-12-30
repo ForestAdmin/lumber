@@ -1,22 +1,19 @@
-const { expect } = require('chai');
 const rimraf = require('rimraf');
 const fs = require('fs');
 
 const renderingModel = require('../../expected/sequelize/db-analysis-output/renderings.json');
 const Dumper = require('../../../services/dumper');
 
-after(() => {
+function cleanOutput() {
   rimraf.sync('./test/output/mssql');
   rimraf.sync('./test/output/mysql');
   rimraf.sync('./test/output/postgres');
-});
+}
 
-describe('Dumper > SQL', () => {
-  describe('MySQL', () => {
-    describe('Handling /models/index.js file', () => {
-      let dumper;
-
-      before(async () => {
+describe('services > dumper > SQL', () => {
+  describe('database MySQL', () => {
+    describe('handling /models/index.js file', () => {
+      async function dump() {
         const config = {
           appName: 'test/output/mysql',
           dbDialect: 'mysql',
@@ -27,24 +24,24 @@ describe('Dumper > SQL', () => {
           appPort: 1654,
         };
 
-        dumper = await new Dumper(config);
-
+        const dumper = await new Dumper(config);
         await dumper.dump({});
-      });
+      }
 
-      it('Should force type casting for boolean', () => {
+      it('should force type casting for boolean', async () => {
+        expect.assertions(1);
+        await dump();
         const indexGeneratedFile = fs.readFileSync('./test/output/mysql/models/index.js', 'utf-8');
 
-        expect(indexGeneratedFile).to.include('databaseOptions.dialectOptions.typeCast');
+        expect(indexGeneratedFile).toStrictEqual(expect.stringMatching('databaseOptions.dialectOptions.typeCast'));
+        cleanOutput();
       });
     });
   });
 
-  describe('MSSQL', () => {
-    describe('Handling /models/index.js file', () => {
-      let dumper;
-
-      before(async () => {
+  describe('database MSSQL', () => {
+    describe('handling /models/index.js file', () => {
+      async function dump() {
         const config = {
           appName: 'test/output/mssql',
           dbDialect: 'mssql',
@@ -55,23 +52,23 @@ describe('Dumper > SQL', () => {
           appPort: 1654,
         };
 
-        dumper = await new Dumper(config);
-
+        const dumper = await new Dumper(config);
         await dumper.dump({});
-      });
+      }
 
-      it('Should not force type casting', () => {
+      it('should not force type casting', async () => {
+        expect.assertions(1);
+        await dump();
         const indexGeneratedFile = fs.readFileSync('./test/output/mssql/models/index.js', 'utf-8');
 
-        expect(indexGeneratedFile).to.not.include('databaseOptions.dialectOptions.typeCast');
+        expect(indexGeneratedFile).toStrictEqual(expect.not.stringMatching('databaseOptions.dialectOptions.typeCast'));
+        cleanOutput();
       });
     });
   });
 
-  describe('postgreSQL', () => {
-    let dumper;
-
-    before(async () => {
+  describe('database postgreSQL', () => {
+    async function dump() {
       const config = {
         appName: 'test/output/postgres',
         dbDialect: 'postgres',
@@ -82,23 +79,25 @@ describe('Dumper > SQL', () => {
         appPort: 1654,
       };
 
-      dumper = await new Dumper(config);
-
-      await dumper.dump({});
-    });
-
-    it('generate a model file', async () => {
+      const dumper = await new Dumper(config);
       await dumper.dump(renderingModel);
+    }
+
+    it('should generate a model file', async () => {
+      expect.assertions(1);
+      await dump();
       const renderingsGeneratedFile = fs.readFileSync('./test/output/postgres/models/renderings.js', 'utf8');
       const renderingsExpectedFile = fs.readFileSync('./test/expected/sequelize/dumper-output/renderings.js.expected', 'utf-8');
-      expect(renderingsGeneratedFile).to.equals(renderingsExpectedFile);
+      expect(renderingsGeneratedFile).toStrictEqual(renderingsExpectedFile);
     });
 
-    describe('Handling /models/index.js file', () => {
-      it('Should not force type casting', () => {
+    describe('handling /models/index.js file', () => {
+      it('should not force type casting', () => {
+        expect.assertions(1);
         const indexGeneratedFile = fs.readFileSync('./test/output/postgres/models/index.js', 'utf-8');
 
-        expect(indexGeneratedFile).to.not.include('databaseOptions.dialectOptions.typeCast');
+        expect(indexGeneratedFile).toStrictEqual(expect.not.stringMatching('databaseOptions.dialectOptions.typeCast'));
+        cleanOutput();
       });
     });
   });

@@ -1,4 +1,3 @@
-const { expect } = require('chai');
 const _ = require('lodash');
 const SequelizeHelper = require('../utils/sequelize-helper');
 const { describeSequelizeDatabases } = require('../utils/multiple-database-version-helper');
@@ -7,45 +6,50 @@ const expectedAddressesConstraints = require('../expected/sequelize/constraints-
 const expectedCustomersConstraints = require('../expected/sequelize/constraints-getter-output/customers.js.expected');
 const expectedReviewsConstraints = require('../expected/sequelize/constraints-getter-output/reviews.js.expected');
 
-describe('Services > Sequelize Table Constraints Getter', () => {
+async function createConnection(connectionUrl) {
+  const sequelizeHelper = new SequelizeHelper();
+  const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+  await sequelizeHelper.dropAndCreate('users');
+  await sequelizeHelper.dropAndCreate('books');
+  await sequelizeHelper.dropAndCreate('customers');
+  await sequelizeHelper.dropAndCreate('addresses');
+  await sequelizeHelper.dropAndCreate('reviews');
+  return { databaseConnection, sequelizeHelper };
+}
+
+async function cleanConnection(sequelizeHelper) {
+  return sequelizeHelper.close();
+}
+
+describe('services > sequelize table constraints getter', () => {
   describeSequelizeDatabases(({ connectionUrl, dialect, schema }) => () => {
-    let sequelizeHelper;
-    let databaseConnection;
-
-    before(async () => {
-      sequelizeHelper = new SequelizeHelper();
-      databaseConnection = await sequelizeHelper.connect(connectionUrl);
-      await sequelizeHelper.dropAndCreate('users');
-      await sequelizeHelper.dropAndCreate('books');
-      await sequelizeHelper.dropAndCreate('customers');
-      await sequelizeHelper.dropAndCreate('addresses');
-      await sequelizeHelper.dropAndCreate('reviews');
-    });
-
-    after(async () => {
-      databaseConnection = null;
-      await sequelizeHelper.close();
-    });
-
     it('should provide the constraints of a table with one unique constraint', async () => {
+      expect.assertions(1);
+      const { databaseConnection, sequelizeHelper } = await createConnection(connectionUrl);
       const tableConstraintsGetter = new TableConstraintsGetter(databaseConnection, schema);
       const constraints = await tableConstraintsGetter.perform('addresses');
 
-      expect(_.sortBy(constraints, ['constraintName'])).deep.equals(
+      expect(_.sortBy(constraints, ['constraintName'])).toStrictEqual(
         _.sortBy(expectedAddressesConstraints[dialect], ['constraintName']),
       );
+      await cleanConnection(sequelizeHelper);
     });
 
     it('should provide the constraints of a table without any unique constraint', async () => {
+      expect.assertions(1);
+      const { databaseConnection, sequelizeHelper } = await createConnection(connectionUrl);
       const tableConstraintsGetter = new TableConstraintsGetter(databaseConnection, schema);
       const constraints = await tableConstraintsGetter.perform('customers');
 
-      expect(_.sortBy(constraints, ['constraintName'])).deep.equals(
+      expect(_.sortBy(constraints, ['constraintName'])).toStrictEqual(
         _.sortBy(expectedCustomersConstraints[dialect], ['constraintName']),
       );
+      await cleanConnection(sequelizeHelper);
     });
 
     it('should provide the constraints of a table with a composite unique constraint', async () => {
+      expect.assertions(3);
+      const { databaseConnection, sequelizeHelper } = await createConnection(connectionUrl);
       const sortingFields = [
         'constraintName',
         'tableName',
@@ -74,16 +78,17 @@ describe('Services > Sequelize Table Constraints Getter', () => {
       const expectedUniqueIndexes = extractUniqueIndexes(expectedSortedConstraints);
 
       // NOTICE: Compare the lists of unique indexes
-      expect(uniqueIndexesList.length).equals(expectedUniqueIndexes.length);
+      expect(uniqueIndexesList).toHaveLength(expectedUniqueIndexes.length);
       uniqueIndexesList.forEach((uniqueIndex, index) =>
-        expect(uniqueIndex.sort()).deep.equals(expectedUniqueIndexes[index].sort()));
+        expect(uniqueIndex.sort()).toStrictEqual(expectedUniqueIndexes[index].sort()));
 
       // NOTICE: Compare the other objects
       expect(
         sortedConstraints.map(({ uniqueIndexes, ...otherFields }) => otherFields),
-      ).deep.equals(
+      ).toStrictEqual(
         expectedSortedConstraints.map(({ uniqueIndexes, ...otherFields }) => otherFields),
       );
+      await cleanConnection(sequelizeHelper);
     });
   });
 });

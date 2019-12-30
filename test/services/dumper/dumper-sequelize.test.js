@@ -1,4 +1,3 @@
-const { expect } = require('chai');
 const rimraf = require('rimraf');
 const fs = require('fs');
 
@@ -8,10 +7,8 @@ const otherAssociationsModel = require('../../expected/sequelize/db-analysis-out
 
 const Dumper = require('../../../services/dumper');
 
-let dumper;
-
-before(async () => {
-  dumper = await new Dumper({
+function getDumper() {
+  return new Dumper({
     appName: 'test/output/sequelize',
     dbDialect: 'postgres',
     dbConnectionUrl: 'postgres://localhost:27017',
@@ -21,34 +18,43 @@ before(async () => {
     appPort: 1654,
     db: true,
   });
-});
+}
 
-after(() => {
+function cleanOutput() {
   rimraf.sync('./test/output/sequelize');
-});
+}
 
-describe('Dumper > sequelize', () => {
-  it('generate a simple model file', async () => {
+describe('services > dumper > sequelize', () => {
+  it('should generate a simple model file', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
     await dumper.dump(simpleModel);
     const generatedFile = fs.readFileSync('./test/output/sequelize/models/customers.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/sequelize/dumper-output/customers.js.expected', 'utf-8');
 
-    expect(generatedFile).to.equals(expectedFile);
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
   });
 
-  it('generate a model file with belongsTo associations', async () => {
+  it('should generate a model file with belongsTo associations', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
     await dumper.dump(belongsToModel);
     const generatedFile = fs.readFileSync('./test/output/sequelize/models/addresses.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/sequelize/dumper-output/addresses.js.expected', 'utf-8');
 
-    expect(generatedFile).to.equals(expectedFile);
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
   });
 
-  it('generate a model file with hasMany, hasOne and belongsToMany', async () => {
+  it('should generate a model file with hasMany, hasOne and belongsToMany', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
     await dumper.dump(otherAssociationsModel);
     const generatedFile = fs.readFileSync('./test/output/sequelize/models/users.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/sequelize/dumper-output/users.js.expected', 'utf-8');
 
-    expect(generatedFile).to.equals(expectedFile);
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
   });
 });
