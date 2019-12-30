@@ -28,13 +28,6 @@ function getMongoHelper(mongoUrl) {
 
 describe('services > database analyser > MongoDB', () => {
   describeMongoDatabases((mongoUrl) => () => {
-    async function testAnalyser(fixture, expectedModel) {
-      await mongoHelper.given(fixture);
-      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
-      const model = await databaseAnalyzer.perform();
-      expect(model).is.deep.equal(expectedModel);
-    }
-
     it('should connect and insert a document.', async () => {
       expect.assertions(1);
       const mongoHelper = await getMongoHelper(mongoUrl);
@@ -107,10 +100,64 @@ describe('services > database analyser > MongoDB', () => {
       await mongoHelper.close();
     });
 
-    it('should generate the model with a nested object', () => testAnalyser(nestedObjectModel, expectedNestedObjectModel));
-    it('should generate the model with a nested array of numbers', () => testAnalyser(nestedArrayOfNumbersModel, expectedNestedArrayOfNumbersModel));
-    it('should generate the model with a nested array of objects', () => testAnalyser(nestedArrayOfObjectsModel, expectedNestedArrayOfObjectsModel));
-    it('should generate the model with a deep nested objects/arrays', () => testAnalyser(deepNestedModel, expectedDeepNestedModel));
-    it('should generate the model with multiple records containing deep nested objects/arrays', () => testAnalyser(multipleNestedArrayOfObjectsModel, expectedMultipleNestedArrayOfObjectsModel));
+    it('should generate the model with a nested object', async () => {
+      expect.assertions(1);
+      const mongoHelper = await getMongoHelper(mongoUrl);
+      const databaseConnection = await mongoHelper.connect();
+      await mongoHelper.dropAllCollections();
+      await mongoHelper.given(nestedObjectModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).toStrictEqual(expectedNestedObjectModel);
+      await mongoHelper.close();
+    });
+
+    it('should generate the model with a nested array of numbers', async () => {
+      expect.assertions(1);
+      const mongoHelper = await getMongoHelper(mongoUrl);
+      const databaseConnection = await mongoHelper.connect();
+      await mongoHelper.dropAllCollections();
+      await mongoHelper.given(nestedArrayOfNumbersModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).toStrictEqual(expectedNestedArrayOfNumbersModel);
+      await mongoHelper.close();
+    });
+
+    it('should generate the model with a nested array of objects', async () => {
+      expect.assertions(1);
+      const mongoHelper = await getMongoHelper(mongoUrl);
+      const databaseConnection = await mongoHelper.connect();
+      await mongoHelper.dropAllCollections();
+      await mongoHelper.given(nestedArrayOfObjectsModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).toStrictEqual(expectedNestedArrayOfObjectsModel);
+      await mongoHelper.close();
+    });
+
+    it('should generate the model with a deep nested objects/arrays', async () => {
+      expect.assertions(1);
+      const mongoHelper = await getMongoHelper(mongoUrl);
+      const databaseConnection = await mongoHelper.connect();
+      await mongoHelper.dropAllCollections();
+      await mongoHelper.given(deepNestedModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).toStrictEqual(expectedDeepNestedModel);
+      await mongoHelper.close();
+    });
+
+    it('should generate the model with multiple records containing deep nested objects/arrays', async () => {
+      expect.assertions(1);
+      const mongoHelper = await getMongoHelper(mongoUrl);
+      const databaseConnection = await mongoHelper.connect();
+      await mongoHelper.dropAllCollections();
+      await mongoHelper.given(multipleNestedArrayOfObjectsModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).toStrictEqual(expectedMultipleNestedArrayOfObjectsModel);
+      await mongoHelper.close();
+    });
   });
 });

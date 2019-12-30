@@ -58,34 +58,46 @@ describe('services > dumper > MongoDB', () => {
   });
 
   it('generate a model file with a nested object', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
     await dumper.dump(nestedObjectModel);
     const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/nested-object-js', 'utf-8');
 
-    expect(generatedFile).to.equals(expectedFile);
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
   });
 
   it('generate a model file with a nested array of numbers', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
     await dumper.dump(nestedArrayOfNumbersModel);
     const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/nested-array-of-numbers-js', 'utf-8');
 
-    expect(generatedFile).to.equals(expectedFile);
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
   });
 
   it('generate a model file with a nested array of objects', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
     await dumper.dump(nestedArrayOfObjectsModel);
     const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/nested-array-of-objects-js', 'utf-8');
 
-    expect(generatedFile).to.equals(expectedFile);
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
   });
 
   it('generate a model file with a deep nested objects/array', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
     await dumper.dump(deepNestedModel);
     const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
     const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/deep-nested-js', 'utf-8');
 
-    expect(generatedFile).to.equals(expectedFile);
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
   });
 });
