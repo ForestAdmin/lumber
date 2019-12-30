@@ -39,6 +39,9 @@
 - Technical - Fix the NPM package description.
 - Command Generate - Prevent project creation with impossible liana login (if the database contains a "sessions" table).
 
+### Fixed
+- Command Generate - Validate and fix the package name in `package.json` to prevent error on generated server startup.
+
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added
 - Command Generate - Generate MongoDB HasMany.
