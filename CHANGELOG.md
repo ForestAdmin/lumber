@@ -9,6 +9,9 @@
 - Command Generate - Ensure that generated project on MongoDB use the latest `mongoose` dependency version for security reasons.
 - Technical - Use Jest instead of Mocha for the test base.
 
+### Fixed
+- Technical - Fix the missing dependencies in the `package.json` file of the generated project.
+
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added
 - Command Generate - Generate MongoDB HasMany.
