@@ -8,6 +8,7 @@
 - Technical - Do not lint uncommitted files.
 - Command Generate - Ensure that generated project on MongoDB use the latest `mongoose` dependency version for security reasons.
 - Technical - Use Jest instead of Mocha for the test base.
+- Command Generate - Use `alpine` as lighter base node Docker image for generated projects.
 
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added
