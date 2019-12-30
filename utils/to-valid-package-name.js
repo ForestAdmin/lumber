@@ -5,7 +5,7 @@ module.exports = function toValidPackageName(packageName) {
   const isValid = validForNewPackages && validForOldPackages;
 
   if (!isValid) {
-    // NOTICE: hard slugify mode (disallow almost everything)
+    // NOTICE: Create an always valid package name (disallow almost everything)
     return packageName.toLowerCase()
       // Remove all non "a-z", "0-9", "-" characters with hyphen.
       .replace(/[^a-z0-9\\-]/g, '-')
