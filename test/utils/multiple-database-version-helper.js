@@ -31,12 +31,14 @@ const sqlDatabases = [{
 module.exports = {
   describeMongoDatabases(tests) {
     mongoDatabases.forEach((mongoDatabase) => {
-      describe(`Using Mongo Database v${mongoDatabase.version}`, tests(mongoDatabase.url));
+      // eslint-disable-next-line jest/valid-describe
+      describe(`using Mongo Database v${mongoDatabase.version}`, tests(mongoDatabase.url));
     });
   },
   describeSequelizeDatabases(tests) {
     sqlDatabases.forEach((sqlDatabase) => {
-      describe(`Using ${sqlDatabase.dialect} Database`, tests(sqlDatabase));
+      // eslint-disable-next-line jest/valid-describe
+      describe(`using ${sqlDatabase.dialect} Database`, tests(sqlDatabase));
     });
   },
 };

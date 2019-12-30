@@ -1,8 +1,14 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Readme - Add the test coverage badge.
+
 ### Changed
-- Docker - Use `alpine` as base node image.
+- Technical - Do not lint uncommitted files.
+- Command Generate - Ensure that generated project on MongoDB use the latest `mongoose` dependency version for security reasons.
+- Technical - Use Jest instead of Mocha for the test base.
+- Command Generate - Use `alpine` as lighter base node Docker image for generated projects.
 
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added
@@ -11,7 +17,6 @@
 - Command Generate - Detect hasOne, hasMany and belongsToMany SQL relationships.
 
 ### Changed
-- Technical - Do not lint uncommitted files.
 - Templates - Replace unconventional `bin/www` script with `server.txt`.
 - Technical - Replace `package-lock.json` by `yarn.lock`.
 - Technical - Use Yarn instead of NPM in the CI.
