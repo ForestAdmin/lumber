@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.2.0 - 2019-12-31
 ### Added
 - Readme - Add the test coverage badge.
 - Technical - Add SonarJS linter for complexity issues.
