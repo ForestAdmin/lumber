@@ -14,6 +14,7 @@
 ### Fixed
 - Technical - Fix the missing dependencies in the `package.json` file of the generated project.
 - Technical - Fix the NPM package description.
+- Command Generate - Do not generate route file for `sessions` model to avoid conflict with internal route.
 
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added

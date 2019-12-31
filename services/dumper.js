@@ -295,7 +295,9 @@ function Dumper(config) {
 
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
     modelNames.forEach((modelName) => {
-      writeRoute(modelName);
+      if (modelName !== 'sessions') {
+        writeRoute(modelName);
+      }
     });
     copyTemplate('views/index.html', `${path}/views/index.html`);
 
