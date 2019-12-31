@@ -85,6 +85,28 @@ function hasIdColumn(fields, primaryKeys) {
     || _.includes(primaryKeys, 'id');
 }
 
+function isJunctionTable(fields, constraints) {
+  const FIELDS_TO_IGNORE = [
+    'createdAt', 'updatedAt', 'deletedAt',
+    'creationDate', 'updatedDate', 'deletedDate',
+  ];
+
+  for (let index = 0; index < fields.length; index += 1) {
+    const field = fields[index];
+
+    // NOTICE: If it's not a timestamps then it should be a primaryKey
+    if (!FIELDS_TO_IGNORE.includes(field.name) && !field.primaryKey) {
+      return false;
+    }
+  }
+
+  const foreignKeys = constraints.filter((constraint) => constraint.foreignTableName
+    && constraint.columnName
+    && constraint.columnType === 'FOREIGN KEY');
+  // NOTICE: To be a junction table it means you have 2 foreignKeys, no more no less
+  return foreignKeys.length === 2;
+}
+
 // NOTICE: Check the foreign key's reference unicity
 function checkUnicity(primaryKeys, uniqueIndexes, columnName) {
   const isUnique = uniqueIndexes !== null
@@ -141,86 +163,83 @@ async function analyzeTable(table, config) {
 
 // NOTICE: Use the foreign key and reference properties to determine the associations
 //         and push them as references of the table.
-function defineAssociationType(databaseSchema) {
-  Object.values(databaseSchema).forEach((table) => {
+function createAllReferences(databaseSchema, schemaGenerated) {
+  const references = {};
+  Object.keys(databaseSchema).forEach((tableName) => { references[tableName] = []; });
+
+  Object.keys(databaseSchema).forEach((tableName) => {
+    const table = databaseSchema[tableName];
     const { constraints, primaryKeys } = table;
-    constraints.forEach((constraint) => {
+    const { isJunction } = schemaGenerated[tableName].options;
+
+    const foreignKeysWithExistingTable = constraints
+      .filter((constraint) => constraint.columnType === 'FOREIGN KEY'
+        && databaseSchema[constraint.foreignTableName]);
+
+    foreignKeysWithExistingTable.forEach((constraint) => {
       const { columnName } = constraint;
       const uniqueIndexes = constraint.uniqueIndexes || null;
 
-      if (constraint.columnType === 'FOREIGN KEY') {
-        const isInCompositeKey = primaryKeys
-          && primaryKeys.length > 1
-          && primaryKeys.includes(columnName);
+      const { isPrimary, isUnique } = checkUnicity(primaryKeys, uniqueIndexes, columnName);
 
-        const { isPrimary, isUnique } = checkUnicity(primaryKeys, uniqueIndexes, columnName);
+      const referenceTableName = constraint.foreignTableName;
+      const referenceColumnName = constraint.foreignColumnName;
 
-        const referenceTableName = constraint.foreignTableName;
-        const referenceColumnName = constraint.foreignColumnName;
-        let isManyToMany = false;
+      if (isJunction) {
+        const manyToManyKeys = _.filter(foreignKeysWithExistingTable,
+          (otherKey) => otherKey.columnName !== constraint.columnName);
 
-        if (isInCompositeKey) {
-          // Check if the foreignKey is in a composite primary key
-          primaryKeys.forEach((primaryKey) => {
-            if (primaryKey === constraint.columnName) {
-              const manyToManyKeys = _.filter(constraints, (otherKey) =>
-                otherKey.columnName !== constraint.columnName
-                  && otherKey.columnType === 'FOREIGN KEY' && primaryKeys.includes(otherKey.columnName)) || [];
-
-              manyToManyKeys.forEach((manyToManyKey) => {
-                databaseSchema[referenceTableName].references.push(
-                  createReference(
-                    referenceTableName,
-                    ASSOCIATION_TYPE_BELONGS_TO_MANY,
-                    constraint,
-                    manyToManyKey,
-                  ),
-                );
-              });
-              isManyToMany = manyToManyKeys !== [];
-            }
-          });
-        }
-        if (!isManyToMany) {
-          const referencePrimaryKeys = databaseSchema[referenceTableName].primaryKeys;
-          const referenceUniqueConstraint = databaseSchema[referenceTableName].constraints
-            .find(({ columnType }) => columnType === 'UNIQUE');
-          const referenceUniqueIndexes = referenceUniqueConstraint
-            ? referenceUniqueConstraint.uniqueIndexes
-            : null;
-          const referenceUnicity = checkUnicity(
-            referencePrimaryKeys,
-            referenceUniqueIndexes,
-            referenceColumnName,
-          );
-
-          if (referenceUnicity.isPrimary || referenceUnicity.isUnique) {
-            table.references.push(
-              createReference(
-                null,
-                ASSOCIATION_TYPE_BELONGS_TO,
-                constraint,
-              ),
-            );
-          }
-          databaseSchema[referenceTableName].references.push(
+        manyToManyKeys.forEach((manyToManyKey) => {
+          references[referenceTableName].push(
             createReference(
               referenceTableName,
-              (isPrimary || isUnique) ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
+              ASSOCIATION_TYPE_BELONGS_TO_MANY,
               constraint,
+              manyToManyKey,
             ),
           );
-        }
+        });
+      }
+      const referencePrimaryKeys = databaseSchema[referenceTableName].primaryKeys;
+      const referenceUniqueConstraint = databaseSchema[referenceTableName].constraints
+        .find(({ columnType }) => columnType === 'UNIQUE');
+      const referenceUniqueIndexes = referenceUniqueConstraint
+        ? referenceUniqueConstraint.uniqueIndexes
+        : null;
+      const referenceUnicity = checkUnicity(
+        referencePrimaryKeys,
+        referenceUniqueIndexes,
+        referenceColumnName,
+      );
+
+      if (referenceUnicity.isPrimary || referenceUnicity.isUnique) {
+        references[tableName].push(
+          createReference(
+            null,
+            ASSOCIATION_TYPE_BELONGS_TO,
+            constraint,
+          ),
+        );
+      }
+      if (!isJunction) {
+        references[referenceTableName].push(
+          createReference(
+            referenceTableName,
+            (isPrimary || isUnique) ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
+            constraint,
+          ),
+        );
       }
     });
   });
+
+  return references;
 }
 
 async function createTableSchema({
   schema,
   constraints,
   primaryKeys,
-  references,
 }, tableName) {
   const fields = [];
 
@@ -267,11 +286,11 @@ async function createTableSchema({
     timestamps: hasTimestamps(fields),
     hasIdColumn: hasIdColumn(fields, primaryKeys),
     hasPrimaryKeys: !_.isEmpty(primaryKeys),
+    isJunction: isJunctionTable(fields, constraints),
   };
 
   return {
     fields,
-    references: _.sortBy(references, 'association'),
     primaryKeys,
     options,
   };
@@ -316,11 +335,14 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
     };
   });
 
-  // Fill the references field for each table schema
-  defineAssociationType(databaseSchema);
-
   await P.each(tableNames, async (tableName) => {
     schemaAllTables[tableName] = await createTableSchema(databaseSchema[tableName], tableName);
+  });
+
+  // NOTICE: Fill the references field for each table schema
+  const referencesPerTable = createAllReferences(databaseSchema, schemaAllTables);
+  Object.keys(referencesPerTable).forEach((tableName) => {
+    schemaAllTables[tableName].references = _.sortBy(referencesPerTable[tableName], 'association');
   });
 
   if (_.isEmpty(schemaAllTables)) {
