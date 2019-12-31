@@ -14,6 +14,7 @@
 ### Fixed
 - Technical - Fix the missing dependencies in the `package.json` file of the generated project.
 - Technical - Fix the NPM package description.
+- Command Generate - Prevent project creation with impossible liana login (if the database contains a "sessions" table).
 
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added
