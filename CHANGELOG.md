@@ -7,6 +7,7 @@
 - Technical - Reorder in alphabetical order `options` inside `db-analysis-output`.
 
 ### Fixed
+- Retrocompat - Fix lumber generation on MySql 5.6.
 - Technical - Fix test expect files extensions.
 - Command Generate - Do not declare the "id" field on tables having a `BIGINT` "id" column as primary key. 🛡
 
@@ -24,7 +25,6 @@
 ### Fixed
 - Technical - Fix the missing dependencies in the `package.json` file of the generated project.
 - Technical - Fix the NPM package description.
-- Command Generate - Prevent project creation with impossible liana login (if the database contains a "sessions" table).
 
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added

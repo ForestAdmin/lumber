@@ -1,3 +1,5 @@
+const MysqlTableConstraintsGetter = require('./mysql-table-constraints-getter');
+
 function TableConstraintsGetter(databaseConnection, schema) {
   const queryInterface = databaseConnection.getQueryInterface();
 
@@ -57,65 +59,7 @@ function TableConstraintsGetter(databaseConnection, schema) {
             "foreignColumnName"`;
         break;
       case 'mysql':
-        query = `
-          SELECT
-            constraintName,
-            tableName,
-            columnName,
-            columnType,
-            foreignTableName,
-            foreignColumnName,
-            CASE
-              WHEN cast('[null]' AS json) = uniqueIndexes THEN NULL
-              ELSE uniqueIndexes
-            END AS uniqueIndexes
-          FROM (
-            SELECT
-              tableConstraints.constraint_name AS constraintName,
-              tableConstraints.table_name AS tableName,
-              keyColumnUsage.column_name AS columnName,
-              tableConstraints.constraint_type AS columnType,
-              keyColumnUsage.referenced_table_name AS foreignTableName,
-              keyColumnUsage.referenced_column_name AS foreignColumnName,
-              JSON_ARRAYAGG(uidx.uniqueIndexes) AS uniqueIndexes
-            FROM information_schema.table_constraints AS tableConstraints
-            JOIN information_schema.key_column_usage AS keyColumnUsage
-              ON tableConstraints.table_name = keyColumnUsage.table_name
-                AND tableConstraints.constraint_name = keyColumnUsage.constraint_name
-            LEFT OUTER JOIN (
-              SELECT DISTINCT
-                uidx.index_name AS indexName,
-                uidx.table_name AS tableName,
-                JSON_ARRAYAGG(uidx.column_name) AS uniqueIndexes
-              FROM information_schema.statistics AS uidx
-              WHERE index_schema = :schemaName
-                AND uidx.non_unique = 0
-                AND uidx.index_name != 'PRIMARY'
-              GROUP BY
-                tableName,
-                indexName
-            ) AS uidx
-              ON uidx.tableName = tableConstraints.table_name
-            WHERE tableConstraints.table_schema = :schemaName
-              AND tableConstraints.table_name = :table
-            GROUP BY
-              constraintName,
-              tableName,
-              columnType,
-              columnName,
-              foreignTableName,
-              foreignColumnName
-          ) AS alias
-          GROUP BY
-            constraintName,
-            tableName,
-            columnType,
-            columnName,
-            foreignTableName,
-            foreignColumnName,
-            uniqueIndexes`;
-        replacements.schemaName = queryInterface.sequelize.config.database;
-        break;
+        return new MysqlTableConstraintsGetter(databaseConnection).perform(table);
       case 'mssql':
         query = `
           SELECT
