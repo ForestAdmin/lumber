@@ -61,8 +61,8 @@ describe('services > dumper > MongoDB', () => {
     expect.assertions(1);
     const dumper = await getDumper();
     await dumper.dump(nestedObjectModel);
-    const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
-    const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/nested-object-js', 'utf-8');
+    const generatedFile = fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/nested-object.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();
@@ -72,8 +72,8 @@ describe('services > dumper > MongoDB', () => {
     expect.assertions(1);
     const dumper = await getDumper();
     await dumper.dump(nestedArrayOfNumbersModel);
-    const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
-    const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/nested-array-of-numbers-js', 'utf-8');
+    const generatedFile = fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/nested-array-of-numbers.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();
@@ -83,8 +83,8 @@ describe('services > dumper > MongoDB', () => {
     expect.assertions(1);
     const dumper = await getDumper();
     await dumper.dump(nestedArrayOfObjectsModel);
-    const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
-    const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/nested-array-of-objects-js', 'utf-8');
+    const generatedFile = fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/nested-array-of-objects.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();
@@ -94,8 +94,8 @@ describe('services > dumper > MongoDB', () => {
     expect.assertions(1);
     const dumper = await getDumper();
     await dumper.dump(deepNestedModel);
-    const generatedFile = fs.readFileSync('./test/output/mongo/models/persons.js', 'utf8');
-    const expectedFile = fs.readFileSync('./test/expected/mongo/dumper-output/deep-nested-js', 'utf-8');
+    const generatedFile = fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/deep-nested.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();
