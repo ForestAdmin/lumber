@@ -295,6 +295,9 @@ function Dumper(config) {
 
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
     modelNames.forEach((modelName) => {
+      // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
+      //       internal session creation route. As a workaround, we don't generate the route file.
+      // TODO: Remove the if condition, once the routes paths refactored to prevent such conflict.
       if (modelName !== 'sessions') {
         writeRoute(modelName);
       }
