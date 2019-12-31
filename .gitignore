@@ -2,3 +2,4 @@
 .env
 coverage/
 node_modules/
+test-output/

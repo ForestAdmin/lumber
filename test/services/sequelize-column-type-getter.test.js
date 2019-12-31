@@ -1,6 +1,6 @@
 const ColumnTypeGetter = require('../../services/analyzer/sequelize-column-type-getter');
-const SequelizeHelper = require('../utils/sequelize-helper');
-const { DATABASE_URL_MYSQL, DATABASE_URL_POSTGRESQL } = require('../utils/database-urls');
+const SequelizeHelper = require('../../test-utils/sequelize-helper');
+const { DATABASE_URL_MYSQL, DATABASE_URL_POSTGRESQL } = require('../../test-utils/database-urls');
 
 describe('services > column type getter', () => {
   describe('using mysql', () => {

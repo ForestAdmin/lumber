@@ -1,16 +1,16 @@
-const MongoHelper = require('../../utils/mongo-helper');
-const { describeMongoDatabases } = require('../../utils/multiple-database-version-helper');
+const MongoHelper = require('../../../test-utils/mongo-helper');
+const { describeMongoDatabases } = require('../../../test-utils/multiple-database-version-helper');
 const DatabaseAnalyzer = require('../../../services/analyzer/database-analyzer');
-const simpleModel = require('../../fixtures/mongo/simple-model');
-const hasManyModel = require('../../fixtures/mongo/hasmany-model');
-const multipleReferencesModel = require('../../fixtures/mongo/multiple-references-same-field-model');
-const manyNullsModel = require('../../fixtures/mongo/many-nulls-model');
-const complexModel = require('../../fixtures/mongo/many-objectid-fields-model');
-const expectedSimpleModel = require('../../expected/mongo/db-analysis-output/simple.json');
-const expectedHasManyModel = require('../../expected/mongo/db-analysis-output/hasmany.json');
-const expectedMultipleReferencesModel = require('../../expected/mongo/db-analysis-output/multiple-references-from-same-field.json');
-const expectedManyuNullsModel = require('../../expected/mongo/db-analysis-output/many-nulls.json');
-const expectedManyObjectIDFieldsModel = require('../../expected/mongo/db-analysis-output/many-objectid-fields.json');
+const simpleModel = require('../../../test-fixtures/mongo/simple-model');
+const hasManyModel = require('../../../test-fixtures/mongo/hasmany-model');
+const multipleReferencesModel = require('../../../test-fixtures/mongo/multiple-references-same-field-model');
+const manyNullsModel = require('../../../test-fixtures/mongo/many-nulls-model');
+const complexModel = require('../../../test-fixtures/mongo/many-objectid-fields-model');
+const expectedSimpleModel = require('../../../test-expected/mongo/db-analysis-output/simple.expected.json');
+const expectedHasManyModel = require('../../../test-expected/mongo/db-analysis-output/hasmany.expected.json');
+const expectedMultipleReferencesModel = require('../../../test-expected/mongo/db-analysis-output/multiple-references-from-same-field.expected.json');
+const expectedManyuNullsModel = require('../../../test-expected/mongo/db-analysis-output/many-nulls.expected.json');
+const expectedManyObjectIDFieldsModel = require('../../../test-expected/mongo/db-analysis-output/many-objectid-fields.expected.json');
 
 function getMongoHelper(mongoUrl) {
   return new MongoHelper(mongoUrl);

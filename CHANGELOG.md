@@ -1,6 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Reorganize test utils/fixtures/expect folders.
+
+### Fixed
+- Technical - Fix test expect files extensions.
 
 ## RELEASE 3.2.0 - 2019-12-31
 ### Added
