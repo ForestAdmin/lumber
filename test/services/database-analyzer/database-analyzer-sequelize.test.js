@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-const SequelizeHelper = require('../../utils/sequelize-helper');
-const { describeSequelizeDatabases } = require('../../utils/multiple-database-version-helper');
+const SequelizeHelper = require('../../../test-utils/sequelize-helper');
+const { describeSequelizeDatabases } = require('../../../test-utils/multiple-database-version-helper');
 const DatabaseAnalyzer = require('../../../services/analyzer/database-analyzer');
 
 describe('services > database analyser > Sequelize', () => {
