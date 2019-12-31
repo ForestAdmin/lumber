@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Readme - Add the test coverage badge.
+- Technical - Add SonarJS linter for complexity issues.
 
 ### Changed
 - Technical - Do not lint uncommitted files.
