@@ -17,6 +17,7 @@ const persons = [
           ],
           arrayWithComplexObject: [
             {
+              _id: ObjectID(),
               name: 'Françis',
               propGroup: {
                 answer: false,
@@ -28,6 +29,7 @@ const persons = [
           ],
           arrayOfComplexObjects: [
             {
+              _id: ObjectID(),
               propGroup: {
                 answer: false,
                 date: new Date(),
@@ -40,6 +42,7 @@ const persons = [
               },
             },
             {
+              _id: ObjectID(),
               propGroup: {
                 sentence: 'Life is beautiful',
                 number: 1664,

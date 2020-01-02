@@ -9,6 +9,7 @@
         "name": "propArrayOfObjects",
         "type": [
           {
+            "_id": "mongoose.Schema.Types.ObjectId",
             "one": "String",
             "two": "String"
           }

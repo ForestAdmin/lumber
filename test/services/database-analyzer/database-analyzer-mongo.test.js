@@ -10,17 +10,27 @@ const nestedObjectModel = require('../../../test-fixtures/mongo/nested-object-mo
 const nestedArrayOfObjectsModel = require('../../../test-fixtures/mongo/nested-array-of-objects-model');
 const nestedArrayOfNumbersModel = require('../../../test-fixtures/mongo/nested-array-of-numbers-model');
 const deepNestedModel = require('../../../test-fixtures/mongo/deep-nested-model');
-const multipleNestedArrayOfObjectsModel = require('../../../test-fixtures/mongo/nested-array-of-objects-model');
+const multipleNestedArrayOfObjectsModel = require('../../../test-fixtures/mongo/multiple-nested-array-of-objects-model');
+const subDocumentNotUsingIdsModel = require('../../../test-fixtures/mongo/sub-document-not-using-ids-model');
+const subDocumentsAmbiguousIdsModel = require('../../../test-fixtures/mongo/sub-documents-ambiguous-ids-model');
+const subDocumentsUsingIdsModel = require('../../../test-fixtures/mongo/sub-documents-using-ids-model');
+const subDocumentsNotUsingIdsModel = require('../../../test-fixtures/mongo/sub-documents-not-using-ids-model');
+const subDocumentUsingIdsModel = require('../../../test-fixtures/mongo/sub-document-using-ids-model');
 const expectedSimpleModel = require('../../../test-expected/mongo/db-analysis-output/simple.expected.json');
 const expectedHasManyModel = require('../../../test-expected/mongo/db-analysis-output/hasmany.expected.json');
 const expectedMultipleReferencesModel = require('../../../test-expected/mongo/db-analysis-output/multiple-references-from-same-field.expected.json');
-const expectedManyuNullsModel = require('../../../test-expected/mongo/db-analysis-output/many-nulls.expected.json');
+const expectedManyNullsModel = require('../../../test-expected/mongo/db-analysis-output/many-nulls.expected.json');
 const expectedManyObjectIDFieldsModel = require('../../../test-expected/mongo/db-analysis-output/many-objectid-fields.expected.json');
 const expectedNestedObjectModel = require('../../../test-expected/mongo/db-analysis-output/nested-object-fields.expected.json');
 const expectedNestedArrayOfObjectsModel = require('../../../test-expected/mongo/db-analysis-output/nested-array-of-objects-fields.expected.json');
 const expectedNestedArrayOfNumbersModel = require('../../../test-expected/mongo/db-analysis-output/nested-array-of-numbers-fields.expected.json');
 const expectedDeepNestedModel = require('../../../test-expected/mongo/db-analysis-output/deep-nested-fields.expected.json');
 const expectedMultipleNestedArrayOfObjectsModel = require('../../../test-expected/mongo/db-analysis-output/multiple-nested-array-of-objects-fields.expected.json');
+const expectedSubDocumentNotUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-document-not-using-ids.expected');
+const expectedSubDocumentsAmbiguousIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-ambiguous-ids.expected');
+const expectedSubDocumentsUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-using-ids.expected');
+const expectedSubDocumentsNotUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-not-using-ids.expected');
+const expectedSubDocumentUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-document-using-ids.expected');
 
 function getMongoHelper(mongoUrl) {
   return new MongoHelper(mongoUrl);
@@ -84,7 +94,7 @@ describe('services > database analyser > MongoDB', () => {
       await mongoHelper.given(manyNullsModel);
       const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
       const model = await databaseAnalyzer.perform();
-      expect(model).toStrictEqual(expectedManyuNullsModel);
+      expect(model).toStrictEqual(expectedManyNullsModel);
       await mongoHelper.close();
     });
 
@@ -157,6 +167,66 @@ describe('services > database analyser > MongoDB', () => {
       const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
       const model = await databaseAnalyzer.perform();
       expect(model).toStrictEqual(expectedMultipleNestedArrayOfObjectsModel);
+      await mongoHelper.close();
+    });
+
+    it('should generate the model with subDocuments using ids', async () => {
+      expect.assertions(1);
+      const mongoHelper = await getMongoHelper(mongoUrl);
+      const databaseConnection = await mongoHelper.connect();
+      await mongoHelper.dropAllCollections();
+      await mongoHelper.given(subDocumentsUsingIdsModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).toStrictEqual(expectedSubDocumentsUsingIds);
+      await mongoHelper.close();
+    });
+
+    it('should generate the model with subDocuments not using ids', async () => {
+      expect.assertions(1);
+      const mongoHelper = await getMongoHelper(mongoUrl);
+      const databaseConnection = await mongoHelper.connect();
+      await mongoHelper.dropAllCollections();
+      await mongoHelper.given(subDocumentsNotUsingIdsModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).toStrictEqual(expectedSubDocumentsNotUsingIds);
+      await mongoHelper.close();
+    });
+
+    it('should generate the model with subDocument not using ids', async () => {
+      expect.assertions(1);
+      const mongoHelper = await getMongoHelper(mongoUrl);
+      const databaseConnection = await mongoHelper.connect();
+      await mongoHelper.dropAllCollections();
+      await mongoHelper.given(subDocumentNotUsingIdsModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).toStrictEqual(expectedSubDocumentNotUsingIds);
+      await mongoHelper.close();
+    });
+
+    it('should generate the model with subDocument using ids', async () => {
+      expect.assertions(1);
+      const mongoHelper = await getMongoHelper(mongoUrl);
+      const databaseConnection = await mongoHelper.connect();
+      await mongoHelper.dropAllCollections();
+      await mongoHelper.given(subDocumentUsingIdsModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).toStrictEqual(expectedSubDocumentUsingIds);
+      await mongoHelper.close();
+    });
+
+    it('should generate the model with subDocuments with ambiguous ids', async () => {
+      expect.assertions(1);
+      const mongoHelper = await getMongoHelper(mongoUrl);
+      const databaseConnection = await mongoHelper.connect();
+      await mongoHelper.dropAllCollections();
+      await mongoHelper.given(subDocumentsAmbiguousIdsModel);
+      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+      const model = await databaseAnalyzer.perform();
+      expect(model).toStrictEqual(expectedSubDocumentsAmbiguousIds);
       await mongoHelper.close();
     });
   });

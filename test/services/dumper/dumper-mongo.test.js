@@ -7,6 +7,11 @@ const nestedObjectModel = require('../../../test-expected/mongo/db-analysis-outp
 const nestedArrayOfNumbersModel = require('../../../test-expected/mongo/db-analysis-output/nested-array-of-numbers-fields.expected.json');
 const nestedArrayOfObjectsModel = require('../../../test-expected/mongo/db-analysis-output/nested-array-of-objects-fields.expected.json');
 const deepNestedModel = require('../../../test-expected/mongo/db-analysis-output/deep-nested-fields.expected.json');
+const subDocumentNotUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-document-not-using-ids.expected');
+const subDocumentsAmbiguousIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-ambiguous-ids.expected');
+const subDocumentsNotUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-not-using-ids.expected');
+const subDocumentsUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-using-ids.expected');
+const subDocumentUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-document-using-ids.expected');
 const Dumper = require('../../../services/dumper');
 
 function getDumper() {
@@ -96,6 +101,61 @@ describe('services > dumper > MongoDB', () => {
     await dumper.dump(deepNestedModel);
     const generatedFile = fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/deep-nested.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('generate a model file with subDocuments using _ids', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(subDocumentsUsingIds);
+    const generatedFile = fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/sub-documents-using-ids.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('generate a model file with subDocuments not using _ids', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(subDocumentsNotUsingIds);
+    const generatedFile = fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/sub-documents-not-using-ids.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('generate a model file with subDocuments with ambiguous _ids', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(subDocumentsAmbiguousIds);
+    const generatedFile = fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/sub-documents-ambiguous-ids.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('generate a model file with subDocument using _ids', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(subDocumentUsingIds);
+    const generatedFile = fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/sub-document-using-ids.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('generate a model file with subDocument not using _ids', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(subDocumentNotUsingIds);
+    const generatedFile = fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/sub-document-not-using-ids.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();
