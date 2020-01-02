@@ -158,10 +158,8 @@ describe('services > Mongo Embedded Analyser', () => {
 
         const analysis = getMongooseEmbeddedSchema(embeddedWithIdKey);
 
-        // eslint-disable-next-line no-underscore-dangle
         expect(analysis._id).toBeUndefined();
         expect(analysis.embeddedValue).toBeInstanceOf(Object);
-        // eslint-disable-next-line no-underscore-dangle
         expect(analysis.embeddedValue._id).toBeUndefined();
         expect(analysis.embeddedValue.stringValue).toStrictEqual('String');
       });
@@ -178,10 +176,8 @@ describe('services > Mongo Embedded Analyser', () => {
 
         const analysis = getMongooseEmbeddedSchema(embeddedWithIdKey, true);
 
-        // eslint-disable-next-line no-underscore-dangle
         expect(analysis._id).toStrictEqual('mongoose.Schema.Types.ObjectId');
         expect(analysis.embeddedValue).toBeInstanceOf(Object);
-        // eslint-disable-next-line no-underscore-dangle
         expect(analysis.embeddedValue._id).toBeUndefined();
         expect(analysis.embeddedValue.stringValue).toStrictEqual('String');
       });

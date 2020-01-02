@@ -110,7 +110,7 @@ const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
     }
     return reject(err);
   }
-  /* eslint no-underscore-dangle: off */
+
   return resolve(results.map((r) => {
     if (r.value && r.value.type === 'embedded') {
       const schemas = r.value.schemas ? r.value.schemas : [r.value.schema];
