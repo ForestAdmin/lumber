@@ -147,6 +147,7 @@ function addObjectSchema(type, parentSchema, currentKey) {
 
         if (['ambiguous', false].includes(idUsage)) {
           parentSchema[currentKey]._id = idUsage;
+          delete type._id;
         }
       }
 
@@ -156,6 +157,12 @@ function addObjectSchema(type, parentSchema, currentKey) {
     }
   } else {
     parentSchema[currentKey] = isTypeAnArray ? [] : {};
+
+    // NOTICE: Init id usage for the first subDocument
+    if (!isTypeAnArray && Array.isArray(parentSchema)) {
+      type._id = type._id || false;
+    }
+
     Object.keys(type).forEach((key) => {
       addNestedSchemaToParentSchema(type[key], parentSchema[currentKey], isTypeAnArray ? 0 : key);
     });

@@ -11,7 +11,7 @@ Handlebars.registerPartial(
 {{#each type}}
 {{#if (eq @key '_id')}}
 {{#if (eq this 'ambiguous')}}
-{{indent (sum ../level 1) @key}}: {{this}}, //Ambiguous usage of _ids, we could not detect if subDocuments use _id or not.
+{{indent (sum ../level 1) '//'}} {{@key}}: false, Ambiguous usage of _ids, we could not detect if subDocuments use _id or not.
 {{else if (eq this false)}}
 {{indent (sum ../level 1) @key}}: {{this}},
 {{/if}}
