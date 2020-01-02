@@ -94,7 +94,7 @@ function isJunctionTable(fields, constraints) {
   for (let index = 0; index < fields.length; index += 1) {
     const field = fields[index];
 
-    // NOTICE: If it's not a timestamps then it should be a primaryKey
+    // NOTICE: The only fields accepted are primary keys, technical timestamps and foreignKeys
     if (!FIELDS_TO_IGNORE.includes(field.name) && !field.primaryKey) {
       return false;
     }
