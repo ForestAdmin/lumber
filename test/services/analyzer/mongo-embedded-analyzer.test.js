@@ -5,6 +5,7 @@ const {
   addObjectSchema,
   areAnalysesSameEmbeddedType,
   areSchemaTypesMixed,
+  detectSubDocumentsIdUsage,
   getMongooseSchema,
   getMongooseArraySchema,
   getMongooseEmbeddedSchema,
@@ -91,6 +92,13 @@ describe('services > Mongo Embedded Analyser', () => {
         expect(Array.isArray(arrayOfSchemaTypeDetection)).toStrictEqual(true);
         expect(typeof arrayOfSchemaTypeDetection[0] === 'object').toStrictEqual(true);
       });
+
+      it('should handle the _id fields for subDocuments in array', () => {
+        expect.assertions(1);
+        const arrayOfSchemaUsingIds = getMongooseArraySchema([{ _id: new ObjectId() }]);
+
+        expect(arrayOfSchemaUsingIds[0]._id).toBeDefined();
+      });
     });
 
     describe('handling embedded object', () => {
@@ -138,7 +146,7 @@ describe('services > Mongo Embedded Analyser', () => {
         expect(embeddedWithNestedDetection.level_1.level_2.number).toStrictEqual('Number');
       });
 
-      it('should not handle `_id` keys', () => {
+      it('should not handle `_id` keys if not explicitly requested to', () => {
         expect.assertions(4);
         const embeddedWithIdKey = {
           _id: ObjectId(),
@@ -152,6 +160,26 @@ describe('services > Mongo Embedded Analyser', () => {
 
         // eslint-disable-next-line no-underscore-dangle
         expect(analysis._id).toBeUndefined();
+        expect(analysis.embeddedValue).toBeInstanceOf(Object);
+        // eslint-disable-next-line no-underscore-dangle
+        expect(analysis.embeddedValue._id).toBeUndefined();
+        expect(analysis.embeddedValue.stringValue).toStrictEqual('String');
+      });
+
+      it('should handle `_id` keys if explicitly requested to', () => {
+        expect.assertions(4);
+        const embeddedWithIdKey = {
+          _id: ObjectId(),
+          embeddedValue: {
+            _id: ObjectId(),
+            stringValue: 'my value',
+          },
+        };
+
+        const analysis = getMongooseEmbeddedSchema(embeddedWithIdKey, true);
+
+        // eslint-disable-next-line no-underscore-dangle
+        expect(analysis._id).toStrictEqual('mongoose.Schema.Types.ObjectId');
         expect(analysis.embeddedValue).toBeInstanceOf(Object);
         // eslint-disable-next-line no-underscore-dangle
         expect(analysis.embeddedValue._id).toBeUndefined();
@@ -339,6 +367,44 @@ describe('services > Mongo Embedded Analyser', () => {
 
           expect(parentSchema).toStrictEqual({ myKey: ['Object'] });
         });
+
+        describe('when handling _ids on subDocuments', () => {
+          it('should detect that the _id usage is ambiguous', () => {
+            expect.assertions(1);
+
+            const parentSchema = { };
+            const currentKey = 'myKey';
+            const type = [{ _id: 'mongoose.Schema.Types.ObjectId' }, { noId: 'String' }];
+
+            addObjectSchema(type, parentSchema, currentKey);
+
+            expect(parentSchema[currentKey][0]._id).toStrictEqual('ambiguous');
+          });
+
+          it('should detect that no _ids are used', () => {
+            expect.assertions(1);
+
+            const parentSchema = { };
+            const currentKey = 'myKey';
+            const type = [{ noId: 'String' }, { noId: 'String' }];
+
+            addObjectSchema(type, parentSchema, currentKey);
+
+            expect(parentSchema[currentKey][0]._id).toStrictEqual(false);
+          });
+
+          it('should detect that _ids are used', () => {
+            expect.assertions(1);
+
+            const parentSchema = { };
+            const currentKey = 'myKey';
+            const type = [{ _id: 'mongoose.Schema.Types.ObjectId' }, { _id: 'mongoose.Schema.Types.ObjectId' }];
+
+            addObjectSchema(type, parentSchema, currentKey);
+
+            expect(parentSchema[currentKey][0]._id).toStrictEqual('mongoose.Schema.Types.ObjectId');
+          });
+        });
       });
 
       describe('if there is not any type in schema for a given key', () => {
@@ -497,6 +563,54 @@ describe('services > Mongo Embedded Analyser', () => {
           expect(areSchemaTypesMixed({}, 'String')).toStrictEqual(true);
           expect(areSchemaTypesMixed('mongoose.Schema.Types.ObjectId', 'String')).toStrictEqual(true);
         });
+      });
+    });
+
+    describe('checking the usage of _id between two subDocuments', () => {
+      it('should return `ambiguous` if at least one subDoc already has ambiguous _id', () => {
+        expect.assertions(3);
+
+        const alReadyAmbiguous = { _id: 'ambiguous' };
+        let result;
+
+        result = detectSubDocumentsIdUsage(alReadyAmbiguous, { });
+        expect(result).toStrictEqual('ambiguous');
+
+        result = detectSubDocumentsIdUsage({ }, alReadyAmbiguous);
+        expect(result).toStrictEqual('ambiguous');
+
+        result = detectSubDocumentsIdUsage(alReadyAmbiguous, alReadyAmbiguous);
+        expect(result).toStrictEqual('ambiguous');
+      });
+
+      it('should return `ambiguous` if we can not decide whether the _id should be used', () => {
+        expect.assertions(2);
+
+        const usingId = { _id: 'mongoose.Schema.Types.ObjectId' };
+        const notUsingId = { };
+        let result;
+
+        result = detectSubDocumentsIdUsage(usingId, notUsingId);
+        expect(result).toStrictEqual('ambiguous');
+
+        result = detectSubDocumentsIdUsage(notUsingId, usingId);
+        expect(result).toStrictEqual('ambiguous');
+      });
+
+      it('should return true if we can assert that _id is used', () => {
+        expect.assertions(1);
+
+        const usingId = { _id: 'mongoose.Schema.Types.ObjectId' };
+
+        expect(detectSubDocumentsIdUsage(usingId, usingId)).toStrictEqual(true);
+      });
+
+      it('should return false if we can assert that _id is not used', () => {
+        expect.assertions(1);
+
+        const notUsingId = { };
+
+        expect(detectSubDocumentsIdUsage(notUsingId, notUsingId)).toStrictEqual(false);
       });
     });
   });

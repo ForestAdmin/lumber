@@ -5,20 +5,23 @@ const {
 
 /* eslint-disable vars-on-top, no-var, no-use-before-define, no-param-reassign */
 
-function getMongooseEmbeddedSchema(embeddedObject) {
+function getMongooseEmbeddedSchema(embeddedObject, handleId = false) {
   if (!embeddedObject) {
     return null;
   }
 
   const schema = {};
+  var keysToAnalyse = Object.keys(embeddedObject);
 
-  Object.keys(embeddedObject).forEach((key) => {
-    if (key !== '_id') {
-      const analysis = getMongooseSchema(embeddedObject[key]);
+  if (!handleId) {
+    keysToAnalyse = keysToAnalyse.filter((value) => value !== '_id');
+  }
 
-      if (analysis) {
-        schema[key] = analysis;
-      }
+  keysToAnalyse.forEach((key) => {
+    const analysis = getMongooseSchema(embeddedObject[key]);
+
+    if (analysis) {
+      schema[key] = analysis;
     }
   });
 
@@ -37,7 +40,7 @@ function getMongooseArraySchema(arrayValue) {
   const analyses = [];
 
   arrayValue.forEach((value) => {
-    const analysis = getMongooseSchema(value);
+    const analysis = getMongooseSchema(value, true);
 
     if (analysis) {
       analyses.push(analysis);
@@ -47,7 +50,7 @@ function getMongooseArraySchema(arrayValue) {
   return analyses.length ? analyses : null;
 }
 
-function getMongooseSchema(value) {
+function getMongooseSchema(value, handleId = false) {
   if (isOfMongooseType(value)) {
     return getMongooseTypeFromValue(value);
   }
@@ -57,7 +60,7 @@ function getMongooseSchema(value) {
   }
 
   if (typeof value === 'object') {
-    return getMongooseEmbeddedSchema(value);
+    return getMongooseEmbeddedSchema(value, handleId);
   }
 
   return null;
@@ -115,6 +118,22 @@ function addMongooseType(type, schema, currentKey) {
   }
 }
 
+function detectSubDocumentsIdUsage(schema1, schema2) {
+  if (schema1._id === 'ambiguous' || schema2._id === 'ambiguous') {
+    return 'ambiguous';
+  }
+
+  if (schema1._id && schema2._id) {
+    return true;
+  }
+
+  if (!schema1._id && !schema2._id) {
+    return false;
+  }
+
+  return 'ambiguous';
+}
+
 function addObjectSchema(type, parentSchema, currentKey) {
   const isTypeAnArray = Array.isArray(type);
 
@@ -122,6 +141,15 @@ function addObjectSchema(type, parentSchema, currentKey) {
     if (areSchemaTypesMixed(parentSchema[currentKey], type)) {
       parentSchema[currentKey] = 'Object';
     } else {
+      // NOTICE: Checking subDocuments id usage for array of subDocuments
+      if (Array.isArray(parentSchema)) {
+        const idUsage = detectSubDocumentsIdUsage(parentSchema[currentKey], type);
+
+        if (['ambiguous', false].includes(idUsage)) {
+          parentSchema[currentKey]._id = idUsage;
+        }
+      }
+
       Object.keys(type).forEach((key) => {
         addNestedSchemaToParentSchema(type[key], parentSchema[currentKey], isTypeAnArray ? 0 : key);
       });
@@ -174,6 +202,7 @@ module.exports = {
   addObjectSchema,
   areAnalysesSameEmbeddedType,
   areSchemaTypesMixed,
+  detectSubDocumentsIdUsage,
   getMongooseArraySchema,
   getMongooseEmbeddedSchema,
   getMongooseSchema,

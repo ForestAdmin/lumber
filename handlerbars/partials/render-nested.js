@@ -9,7 +9,15 @@ Handlebars.registerPartial(
 {{~else if (isObject type)}}
 {
 {{#each type}}
+{{#if (eq @key '_id')}}
+{{#if (eq this 'ambiguous')}}
+{{indent (sum ../level 1) @key}}: {{this}}, //Ambiguous usage of _ids, we could not detect if subDocuments use _id or not.
+{{else if (eq this false)}}
+{{indent (sum ../level 1) @key}}: {{this}},
+{{/if}}
+{{else}}
 {{indent (sum ../level 1) @key}}: {{>renderNested type=this level=(sum ../level 1)}},
+{{/if}}
 {{/each}}
 {{indent level '}'}}
 {{else}}
