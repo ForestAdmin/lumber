@@ -51,6 +51,7 @@
     "options": {
       "hasIdColumn": true,
       "hasPrimaryKeys": true,
+      "isJunction": false,
       "timestamps": false,
       "underscored": true
     }
