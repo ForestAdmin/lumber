@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Technical - Reorganize test utils/fixtures/expect folders.
+- Technical - Set the latest `forest-express` dependencies version while generating a project.
 
 ### Fixed
 - Technical - Fix test expect files extensions.
