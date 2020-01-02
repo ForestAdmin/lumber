@@ -47,10 +47,10 @@
     "references": [],
     "primaryKeys": ["id"],
     "options": {
-      "underscored": true,
-      "timestamps": true,
       "hasIdColumn": true,
-      "hasPrimaryKeys": true
+      "hasPrimaryKeys": true,
+      "timestamps": true,
+      "underscored": true
     }
   }
 }

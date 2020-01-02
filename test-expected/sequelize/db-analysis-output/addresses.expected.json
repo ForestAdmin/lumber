@@ -41,10 +41,10 @@
     ],
     "primaryKeys": ["user_id"],
     "options": {
-      "underscored": true,
-      "timestamps": false,
       "hasIdColumn": false,
-      "hasPrimaryKeys": true
+      "hasPrimaryKeys": true,
+      "timestamps": false,
+      "underscored": true
     }
   }
 }

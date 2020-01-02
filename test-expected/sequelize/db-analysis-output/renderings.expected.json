@@ -83,10 +83,10 @@
     ],
     "primaryKeys": ["id"],
     "options": {
-      "underscored": false,
-      "timestamps": true,
       "hasIdColumn": true,
-      "hasPrimaryKeys": true
+      "hasPrimaryKeys": true,
+      "timestamps": true,
+      "underscored": false
     }
   }
 }
