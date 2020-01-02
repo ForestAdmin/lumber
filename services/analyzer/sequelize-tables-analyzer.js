@@ -11,6 +11,8 @@ const ASSOCIATION_TYPE_BELONGS_TO_MANY = 'belongsToMany';
 const ASSOCIATION_TYPE_HAS_MANY = 'hasMany';
 const ASSOCIATION_TYPE_HAS_ONE = 'hasOne';
 
+const FOREIGN_KEY = 'FOREIGN KEY';
+
 let queryInterface;
 let tableConstraintsGetter;
 let columnTypeGetter;
@@ -249,7 +251,7 @@ async function createTableSchema({
   await P.each(Object.keys(schema), async (columnName) => {
     const columnInfo = schema[columnName];
     const type = await columnTypeGetter.perform(columnInfo, columnName, tableName);
-    const foreignKey = _.find(constraints, { columnName, columnType: 'FOREIGN KEY' });
+    const foreignKey = _.find(constraints, { columnName, columnType: FOREIGN_KEY });
     const isValidField = type && (!foreignKey
       || !foreignKey.foreignTableName
       || !foreignKey.columnName || columnInfo.primaryKey);
@@ -281,6 +283,16 @@ async function createTableSchema({
 
         fields.push(field);
       }
+
+      const field = {
+        name: _.camelCase(columnName),
+        nameColumn: columnName,
+        type,
+        primaryKey: columnInfo.primaryKey,
+        defaultValue,
+      };
+
+      fields.push(field);
     }
   });
 
