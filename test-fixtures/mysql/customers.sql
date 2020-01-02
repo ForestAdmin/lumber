@@ -1,5 +1,5 @@
 create table customers (
-  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   description TEXT,
   is_active BIT(1) DEFAULT 1 NOT NULL,

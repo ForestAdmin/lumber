@@ -231,11 +231,14 @@ async function createTableSchema({
     const isValidField = type && (!foreignKey
       || !foreignKey.foreignTableName
       || !foreignKey.columnName || columnInfo.primaryKey);
+    // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will handle it
+    //         automatically without necessary declaration.
+    const isIdIntegerPrimaryColumn = columnName === 'id'
+      && ['INTEGER', 'BIGINT'].includes(type)
+      && columnInfo.primaryKey;
 
     if (isValidField) {
-      // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will
-      //         handle it automatically without necessary declaration.
-      if (!(columnName === 'id' && type === 'INTEGER' && columnInfo.primaryKey)) {
+      if (!isIdIntegerPrimaryColumn) {
         // NOTICE: Handle bit(1) to boolean conversion
         let { defaultValue } = columnInfo;
 

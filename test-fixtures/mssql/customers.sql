@@ -1,5 +1,5 @@
 CREATE TABLE [dbo].customers (
-  id INT IDENTITY(1,1) NOT NULL,
+  id BIGINT IDENTITY(1,1) NOT NULL,
   name VARCHAR(255) NOT NULL,
   description TEXT,
   is_active BIT DEFAULT 1 NOT NULL,
