@@ -1,9 +1,15 @@
+const _ = require('lodash');
+
 function MysqlTableConstraintsGetter(databaseConnection) {
   const queryInterface = databaseConnection.getQueryInterface();
 
   this.convertToUniqueIndexArray = (constraints) => {
-    // FIXME implement
-    return [];
+    const toto = _(constraints)
+      .filter(constraint => constraint.columnType === 'UNIQUE')
+      .groupBy('constraintName')
+      .value();
+
+    return toto;
   };
 
   this.perform = async (table) => {
