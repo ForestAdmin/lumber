@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- Command Generate - Generate MongoDB embedded documents and arrays.
+- Command Generate - Generate MongoDB nested objects and subDocuments.
 
 ### Changed
 - Technical - Reorganize test utils/fixtures/expect folders.
