@@ -88,7 +88,8 @@ function hasIdColumn(fields, primaryKeys) {
 function isJunctionTable(fields, constraints) {
   const FIELDS_TO_IGNORE = [
     'createdAt', 'updatedAt', 'deletedAt',
-    'creationDate', 'updateDate', 'deleteDate',
+    'createDate', 'updateDate', 'deleteDate',
+    'creationDate', 'deletionDate',
   ];
 
   for (let index = 0; index < fields.length; index += 1) {
