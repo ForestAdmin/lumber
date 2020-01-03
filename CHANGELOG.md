@@ -8,6 +8,7 @@
 
 ### Fixed
 - Technical - Fix test expect files extensions.
+- Command Generate - Do not declare the "id" field on tables having a `BIGINT` "id" column as primary key. 🛡
 
 ## RELEASE 3.2.0 - 2019-12-31
 ### Added

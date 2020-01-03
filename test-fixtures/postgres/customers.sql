@@ -1,5 +1,5 @@
 create table customers (
-  id SERIAL CONSTRAINT customers_pk PRIMARY KEY,
+  id BIGSERIAL CONSTRAINT customers_pk PRIMARY KEY,
   name VARCHAR NOT NULL,
   description TEXT,
   is_active BOOLEAN DEFAULT true NOT NULL,
