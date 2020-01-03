@@ -86,6 +86,7 @@ function hasIdColumn(fields, primaryKeys) {
 }
 
 function isJunctionTable(fields, constraints) {
+  // NOTICE: Ignore technical timestamp fields.
   const FIELDS_TO_IGNORE = [
     'createdAt', 'updatedAt', 'deletedAt',
     'createDate', 'updateDate', 'deleteDate',
