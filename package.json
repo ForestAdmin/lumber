@@ -7,7 +7,7 @@
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js .eslint-bin deserializers scripts serializers services test utils",
     "readme:update-coverage": "yarn test:coverage && node ./scripts/update-coverage.js",
     "release": "node ./scripts/release.js",
-    "test": "jest -t 'should generate a single model' --runInBand",
+    "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage --forceExit"
   },
   "bin": {

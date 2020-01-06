@@ -29,14 +29,18 @@ function MysqlTableConstraintsGetter(databaseConnection) {
           ON keyColumnUsage.column_name = uniqueIndexes.column_name
           AND tableConstraints.constraint_name = uniqueIndexes.INDEX_NAME
         WHERE tableConstraints.table_schema = :schemaName
-          AND tableConstraints.table_name = :table;
+          AND tableConstraints.table_name = :table
+        ORDER BY uniqueIndexes.SEQ_IN_INDEX;
     `;
 
     const constraints = await queryInterface.sequelize
       .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT, replacements });
 
     if (constraints && constraints.length) {
-      constraints[0].uniqueIndexes = this.convertToUniqueIndexArray(constraints);
+      const uniqueIndexArray = this.convertToUniqueIndexArray(constraints);
+      for (let i = 0; i < constraints.length; i += 1) {
+        constraints[i].uniqueIndexes = uniqueIndexArray;
+      }
     }
 
     return constraints;
