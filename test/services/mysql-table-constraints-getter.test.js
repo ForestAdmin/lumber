@@ -16,7 +16,7 @@ describe('services > mysql table constraints getter', () => {
       ];
       const tested = new MysqlTableConstraintsGetter(databaseConnectionMock);
       const actual = tested.convertToUniqueIndexArray(fixture);
-      const expected = [];
+      const expected = null;
 
       expect(actual).toStrictEqual(expected);
     });

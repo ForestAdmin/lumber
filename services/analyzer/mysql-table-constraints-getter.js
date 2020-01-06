@@ -8,7 +8,16 @@ function MysqlTableConstraintsGetter(databaseConnection) {
         uniqueIndexes[item.constraintName] = uniqueIndexes[item.constraintName] || [];
         uniqueIndexes[item.constraintName].push(item.columnName);
       });
-    return Object.values(uniqueIndexes);
+    const uniqueIndexArray = Object.values(uniqueIndexes);
+    return uniqueIndexArray.length ? uniqueIndexArray : null;
+  };
+
+  this.applyUniqueIndexArray = (constraints) => {
+    if (constraints && constraints.length) {
+      const uniqueIndexes = this.convertToUniqueIndexArray(constraints);
+      return constraints.map((constraint) => ({ ...constraint, uniqueIndexes }));
+    }
+    return constraints;
   };
 
   this.perform = async (table) => {
@@ -17,6 +26,7 @@ function MysqlTableConstraintsGetter(databaseConnection) {
         SELECT DISTINCT
             tableConstraints.constraint_type AS columnType,
             tableConstraints.constraint_name AS constraintName,
+            tableConstraints.table_name AS tableName,
             keyColumnUsage.column_name AS columnName,
             keyColumnUsage.referenced_table_name AS foreignTableName,
             keyColumnUsage.referenced_column_name AS foreignColumnName,
@@ -33,17 +43,11 @@ function MysqlTableConstraintsGetter(databaseConnection) {
         ORDER BY uniqueIndexes.SEQ_IN_INDEX;
     `;
 
-    const constraints = await queryInterface.sequelize
-      .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT, replacements });
+    const constraints = (await queryInterface.sequelize
+      .query(query, { type: queryInterface.sequelize.QueryTypes.SELECT, replacements }))
+      .map(({ sequenceInIndex, ...constraint }) => constraint);
 
-    if (constraints && constraints.length) {
-      const uniqueIndexArray = this.convertToUniqueIndexArray(constraints);
-      for (let i = 0; i < constraints.length; i += 1) {
-        constraints[i].uniqueIndexes = uniqueIndexArray;
-      }
-    }
-
-    return constraints;
+    return this.applyUniqueIndexArray(constraints);
   };
 }
 
