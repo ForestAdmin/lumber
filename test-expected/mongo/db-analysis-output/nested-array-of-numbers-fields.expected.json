@@ -1,0 +1,23 @@
+{
+  "persons": {
+    "fields": [
+      {
+        "name": "name",
+        "type": "String"
+      },
+      {
+        "name": "propArrayOfNumbers",
+        "type": [
+          "Number"
+        ]
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "persons": {
+    "fields": [
+      {
+        "name": "name",
+        "type": "String"
+      },
+      {
+        "name": "propGroup",
+        "type": {
+          "answer": "Boolean",
+          "date": "Date",
+          "number": "Number",
+          "sentence": "String"
+        }
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  }
+}

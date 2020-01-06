@@ -1,0 +1,26 @@
+{
+  "persons": {
+    "fields": [
+      {
+        "name": "name",
+        "type": "String"
+      },
+      {
+        "name": "propArrayOfObjects",
+        "type": [
+          {
+            "_id": false,
+            "sampleValue": "String"
+          }
+        ]
+      }
+    ],
+    "options": {
+      "timestamps": false
+    },
+    "primaryKeys": [
+      "_id"
+    ],
+    "references": []
+  }
+}

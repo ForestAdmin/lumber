@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Command Generate - Generate MongoDB nested objects and subDocuments.
+
 ### Changed
 - Technical - Reorganize test utils/fixtures/expect folders.
 - Technical - Set the latest `forest-express` dependencies version while generating a project.

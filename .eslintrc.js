@@ -13,6 +13,10 @@ module.exports = {
   },
   rules: {
     'implicit-arrow-linebreak': 0,
+    'no-underscore-dangle': [
+      'error',
+      {'allow': ["_id"]},
+    ],
     'import/no-extraneous-dependencies': [
       'error',
       {

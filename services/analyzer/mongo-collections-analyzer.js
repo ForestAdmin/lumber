@@ -4,6 +4,18 @@ const logger = require('../logger');
 const { DatabaseAnalyzerError } = require('../../utils/errors');
 const { detectReferences, applyReferences } = require('./mongo-references-analyzer');
 const { detectHasMany, applyHasMany } = require('./mongo-hasmany-analyzer');
+const {
+  getMongooseTypeFromValue,
+  isOfMongooseType,
+} = require('../../utils/mongo-primitive-type');
+const {
+  getMongooseArraySchema,
+  getMongooseEmbeddedSchema,
+  getMongooseSchema,
+  haveSameEmbeddedType,
+  hasEmbeddedTypes,
+  mergeAnalyzedSchemas,
+} = require('./mongo-embedded-analyzer');
 
 function isUnderscored(fields) {
   return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
@@ -13,6 +25,15 @@ function isUnderscored(fields) {
 const mapReduceOptions = {
   out: { inline: 1 },
   limit: 100,
+  scope: {
+    getMongooseArraySchema,
+    getMongooseEmbeddedSchema,
+    getMongooseSchema,
+    getMongooseTypeFromValue,
+    haveSameEmbeddedType,
+    hasEmbeddedTypes,
+    isOfMongooseType,
+  },
 };
 
 // NOTICE: This code runs on the MongoDB side (mapReduce feature).
@@ -47,14 +68,31 @@ function mapCollection() {
     } else if (typeof this[key] === 'object') {
       if (Array.isArray(this[key]) && allItemsAreObjectIDs(this[key])) {
         emit(key, '[mongoose.Schema.Types.ObjectId]');
+      } else if (key !== '_id') {
+        var analysis = getMongooseSchema(this[key]);
+        if (analysis) {
+          // Notice: Wrap the analysis of embedded in a recognizable object for further treatment
+          emit(key, { type: 'embedded', schema: analysis });
+        }
       }
     }
   }
 }
 /* eslint-enable */
+function reduceCollection(key, analyses) {
+  if (hasEmbeddedTypes(analyses)) {
+    const formatedAnalysis = { type: 'embedded', schemas: [] };
+    analyses.forEach((analysis) => {
+      if (analysis.type === 'embedded') {
+        formatedAnalysis.schemas.push(analysis.schema);
+      } else {
+        formatedAnalysis.schemas.push(analysis);
+      }
+    });
+    return formatedAnalysis;
+  }
 
-function reduceCollection(key, stuff) {
-  return stuff.length ? stuff[0] : null;
+  return analyses.length ? analyses[0] : null;
 }
 
 const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
@@ -72,8 +110,16 @@ const mapReduceErrors = (resolve, reject, collectionName) => (err, results) => {
     }
     return reject(err);
   }
-  /* eslint no-underscore-dangle: off */
-  return resolve(results.map((r) => ({ name: r._id, type: r.value })));
+
+  return resolve(results.map((r) => {
+    if (r.value && r.value.type === 'embedded') {
+      const schemas = r.value.schemas ? r.value.schemas : [r.value.schema];
+      const mergedSchema = mergeAnalyzedSchemas(schemas);
+
+      return { name: r._id, type: mergedSchema };
+    }
+    return { name: r._id, type: r.value };
+  }));
 };
 
 function analyzeMongoCollection(databaseConnection, collectionName) {
