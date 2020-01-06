@@ -4,4 +4,5 @@ module.exports = {
   DATABASE_URL_MSSQL: 'mssql://sa:forest2019:@localhost:1432/model',
   DATABASE_URL_MYSQL: 'mysql://forest:secret@localhost:8999/lumber-sequelize-test',
   DATABASE_URL_POSTGRESQL: 'postgres://forest:secret@localhost:54369/lumber-sequelize-test',
+  DATABASE_URL_POSTGRESQL_OLD: 'postgres://forest:secret@localhost:54368/lumber-sequelize-test',
 };

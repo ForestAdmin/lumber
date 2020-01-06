@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - Test on postgres from 9.4 to 12.1.
+
 ### Changed
 - Technical - Reorganize test utils/fixtures/expect folders.
 - Technical - Set the latest `forest-express` dependencies version while generating a project.
