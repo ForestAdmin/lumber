@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.3.0 - 2020-01-06
 ### Added
 - Command Generate - Generate MongoDB nested objects and subDocuments.
 
