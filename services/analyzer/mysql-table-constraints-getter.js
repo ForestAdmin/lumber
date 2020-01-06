@@ -1,15 +1,14 @@
-const _ = require('lodash');
-
 function MysqlTableConstraintsGetter(databaseConnection) {
   const queryInterface = databaseConnection.getQueryInterface();
 
   this.convertToUniqueIndexArray = (constraints) => {
-    const toto = _(constraints)
-      .filter(constraint => constraint.columnType === 'UNIQUE')
-      .groupBy('constraintName')
-      .value();
-
-    return toto;
+    const uniqueIndexes = {};
+    constraints.filter((constraint) => constraint.columnType === 'UNIQUE')
+      .forEach((item) => {
+        uniqueIndexes[item.constraintName] = uniqueIndexes[item.constraintName] || [];
+        uniqueIndexes[item.constraintName].push(item.columnName);
+      });
+    return Object.values(uniqueIndexes);
   };
 
   this.perform = async (table) => {
