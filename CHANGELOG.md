@@ -5,7 +5,7 @@
 - Technical - Reorganize test utils/fixtures/expect folders.
 - Technical - Set the latest `forest-express` dependencies version while generating a project.
 - Technical - Reorder in alphabetical order `options` inside `db-analysis-output`.
-- Command Generate - Now generate most of the many to many relationships.
+- Command Generate - Now generate many to many relationships when we detect a table with 2 foreign keys and optionally technical timestamps.
 
 ### Fixed
 - Technical - Fix test expect files extensions.

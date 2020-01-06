@@ -96,8 +96,9 @@ function isJunctionTable(fields, constraints) {
   for (let index = 0; index < fields.length; index += 1) {
     const field = fields[index];
 
+    const isTechnicalTimestamp = field.type === 'DATE' && FIELDS_TO_IGNORE.includes(field.name);
     // NOTICE: The only fields accepted are primary keys, technical timestamps and foreignKeys
-    if (!FIELDS_TO_IGNORE.includes(field.name) && !field.primaryKey) {
+    if (!isTechnicalTimestamp && !field.primaryKey) {
       return false;
     }
   }
@@ -201,7 +202,16 @@ function createAllReferences(databaseSchema, schemaGenerated) {
             ),
           );
         });
+      } else {
+        references[referenceTableName].push(
+          createReference(
+            referenceTableName,
+            (isPrimary || isUnique) ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
+            constraint,
+          ),
+        );
       }
+
       const referencePrimaryKeys = databaseSchema[referenceTableName].primaryKeys;
       const referenceUniqueConstraint = databaseSchema[referenceTableName].constraints
         .find(({ columnType }) => columnType === 'UNIQUE');
@@ -219,15 +229,6 @@ function createAllReferences(databaseSchema, schemaGenerated) {
           createReference(
             null,
             ASSOCIATION_TYPE_BELONGS_TO,
-            constraint,
-          ),
-        );
-      }
-      if (!isJunction) {
-        references[referenceTableName].push(
-          createReference(
-            referenceTableName,
-            (isPrimary || isUnique) ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
             constraint,
           ),
         );
