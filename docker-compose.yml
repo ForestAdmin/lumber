@@ -22,7 +22,7 @@ OldPostgres :
     - POSTGRES_USER=forest
     - POSTGRES_PASSWORD=secret
 
-postgres121 :
+postgres121:
   image : postgres:12.1
   container_name : lumber_sequelize_postgres_12_1
   ports :
