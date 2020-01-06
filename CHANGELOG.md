@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Technical - Test on postgres from 9.4 to 12.1.
+- Command Generate - Generate MongoDB nested objects and subDocuments.
 
 ### Changed
 - Technical - Reorganize test utils/fixtures/expect folders.

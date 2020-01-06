@@ -5,11 +5,10 @@ const mongoose = require('mongoose');
 // This section contains the properties of your model, mapped to your collection's properties.
 // Learn more here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
 const schema = mongoose.Schema({
-{{#each fields as |field|}}
-  '{{field.name}}': {{#if field.ref}}{ type: {{field.type}}, ref: '{{field.ref}}' }{{else if (isObject field.type)}}{{>renderNested type=field.type level=1}}{{else}}{{field.type}}{{/if}},
-{{/each}}
+  'name': String,
+  'propArrayOfNumbers': [Number],
 }, {
-  timestamps: {{timestamps}},
+  timestamps: false,
 });
 
-module.exports = mongoose.model('{{table}}', schema, '{{table}}');
+module.exports = mongoose.model('persons', schema, 'persons');

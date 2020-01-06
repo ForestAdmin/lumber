@@ -7,6 +7,7 @@ const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
 const stringUtils = require('../utils/strings');
 const logger = require('./logger');
+require('../handlerbars/loader');
 
 const mkdirp = P.promisify(mkdirpSync);
 

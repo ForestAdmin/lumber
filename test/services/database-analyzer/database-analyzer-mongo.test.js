@@ -6,14 +6,45 @@ const hasManyModel = require('../../../test-fixtures/mongo/hasmany-model');
 const multipleReferencesModel = require('../../../test-fixtures/mongo/multiple-references-same-field-model');
 const manyNullsModel = require('../../../test-fixtures/mongo/many-nulls-model');
 const complexModel = require('../../../test-fixtures/mongo/many-objectid-fields-model');
+const nestedObjectModel = require('../../../test-fixtures/mongo/nested-object-model');
+const nestedArrayOfObjectsModel = require('../../../test-fixtures/mongo/nested-array-of-objects-model');
+const nestedArrayOfNumbersModel = require('../../../test-fixtures/mongo/nested-array-of-numbers-model');
+const deepNestedModel = require('../../../test-fixtures/mongo/deep-nested-model');
+const multipleNestedArrayOfObjectsModel = require('../../../test-fixtures/mongo/multiple-nested-array-of-objects-model');
+const subDocumentNotUsingIdsModel = require('../../../test-fixtures/mongo/sub-document-not-using-ids-model');
+const subDocumentsAmbiguousIdsModel = require('../../../test-fixtures/mongo/sub-documents-ambiguous-ids-model');
+const subDocumentsUsingIdsModel = require('../../../test-fixtures/mongo/sub-documents-using-ids-model');
+const subDocumentsNotUsingIdsModel = require('../../../test-fixtures/mongo/sub-documents-not-using-ids-model');
+const subDocumentUsingIdsModel = require('../../../test-fixtures/mongo/sub-document-using-ids-model');
 const expectedSimpleModel = require('../../../test-expected/mongo/db-analysis-output/simple.expected.json');
 const expectedHasManyModel = require('../../../test-expected/mongo/db-analysis-output/hasmany.expected.json');
 const expectedMultipleReferencesModel = require('../../../test-expected/mongo/db-analysis-output/multiple-references-from-same-field.expected.json');
-const expectedManyuNullsModel = require('../../../test-expected/mongo/db-analysis-output/many-nulls.expected.json');
+const expectedManyNullsModel = require('../../../test-expected/mongo/db-analysis-output/many-nulls.expected.json');
 const expectedManyObjectIDFieldsModel = require('../../../test-expected/mongo/db-analysis-output/many-objectid-fields.expected.json');
+const expectedNestedObjectModel = require('../../../test-expected/mongo/db-analysis-output/nested-object-fields.expected.json');
+const expectedNestedArrayOfObjectsModel = require('../../../test-expected/mongo/db-analysis-output/nested-array-of-objects-fields.expected.json');
+const expectedNestedArrayOfNumbersModel = require('../../../test-expected/mongo/db-analysis-output/nested-array-of-numbers-fields.expected.json');
+const expectedDeepNestedModel = require('../../../test-expected/mongo/db-analysis-output/deep-nested-fields.expected.json');
+const expectedMultipleNestedArrayOfObjectsModel = require('../../../test-expected/mongo/db-analysis-output/multiple-nested-array-of-objects-fields.expected.json');
+const expectedSubDocumentNotUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-document-not-using-ids.expected');
+const expectedSubDocumentsAmbiguousIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-ambiguous-ids.expected');
+const expectedSubDocumentsUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-using-ids.expected');
+const expectedSubDocumentsNotUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-not-using-ids.expected');
+const expectedSubDocumentUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-document-using-ids.expected');
 
 function getMongoHelper(mongoUrl) {
   return new MongoHelper(mongoUrl);
+}
+
+async function getAnalyzerOutputWithModel(mongoUrl, model) {
+  const mongoHelper = await getMongoHelper(mongoUrl);
+  const databaseConnection = await mongoHelper.connect();
+  await mongoHelper.dropAllCollections();
+  await mongoHelper.given(model);
+  const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
+  const outputModel = await databaseAnalyzer.perform();
+  await mongoHelper.close();
+  return outputModel;
 }
 
 describe('services > database analyser > MongoDB', () => {
@@ -32,62 +63,95 @@ describe('services > database analyser > MongoDB', () => {
 
     it('should generate a simple model', async () => {
       expect.assertions(1);
-      const mongoHelper = await getMongoHelper(mongoUrl);
-      const databaseConnection = await mongoHelper.connect();
-      await mongoHelper.dropAllCollections();
-      await mongoHelper.given(simpleModel);
-      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
-      const model = await databaseAnalyzer.perform();
-      expect(model).toStrictEqual(expectedSimpleModel);
-      await mongoHelper.close();
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, simpleModel);
+      expect(outputModel).toStrictEqual(expectedSimpleModel);
     });
 
-    it('should generate a model with hasmany', async () => {
+    it('should generate a model with hasMany', async () => {
       expect.assertions(1);
-      const mongoHelper = await getMongoHelper(mongoUrl);
-      const databaseConnection = await mongoHelper.connect();
-      await mongoHelper.dropAllCollections();
-      await mongoHelper.given(hasManyModel);
-      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
-      const model = await databaseAnalyzer.perform();
-      expect(model).toStrictEqual(expectedHasManyModel);
-      await mongoHelper.close();
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, hasManyModel);
+      expect(outputModel).toStrictEqual(expectedHasManyModel);
     });
 
     it('should not create a reference if multiples referenced collections are found', async () => {
       expect.assertions(1);
-      const mongoHelper = await getMongoHelper(mongoUrl);
-      const databaseConnection = await mongoHelper.connect();
-      await mongoHelper.dropAllCollections();
-      await mongoHelper.given(multipleReferencesModel);
-      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
-      const model = await databaseAnalyzer.perform();
-      expect(model).toStrictEqual(expectedMultipleReferencesModel);
-      await mongoHelper.close();
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, multipleReferencesModel);
+      expect(outputModel).toStrictEqual(expectedMultipleReferencesModel);
     });
 
     it('should find the reference even in a db with many nulls', async () => {
       expect.assertions(1);
-      const mongoHelper = await getMongoHelper(mongoUrl);
-      const databaseConnection = await mongoHelper.connect();
-      await mongoHelper.dropAllCollections();
-      await mongoHelper.given(manyNullsModel);
-      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
-      const model = await databaseAnalyzer.perform();
-      expect(model).toStrictEqual(expectedManyuNullsModel);
-      await mongoHelper.close();
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, manyNullsModel);
+      expect(outputModel).toStrictEqual(expectedManyNullsModel);
     });
 
-    it('should generate the model with many objectid fields', async () => {
+    it('should generate the model with many objectId fields', async () => {
       expect.assertions(1);
-      const mongoHelper = await getMongoHelper(mongoUrl);
-      const databaseConnection = await mongoHelper.connect();
-      await mongoHelper.dropAllCollections();
-      await mongoHelper.given(complexModel);
-      const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
-      const model = await databaseAnalyzer.perform();
-      expect(model).toStrictEqual(expectedManyObjectIDFieldsModel);
-      await mongoHelper.close();
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, complexModel);
+      expect(outputModel).toStrictEqual(expectedManyObjectIDFieldsModel);
+    });
+
+    it('should generate the model with a nested object', async () => {
+      expect.assertions(1);
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, nestedObjectModel);
+      expect(outputModel).toStrictEqual(expectedNestedObjectModel);
+    });
+
+    it('should generate the model with a nested array of numbers', async () => {
+      expect.assertions(1);
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, nestedArrayOfNumbersModel);
+      expect(outputModel).toStrictEqual(expectedNestedArrayOfNumbersModel);
+    });
+
+    it('should generate the model with a nested array of objects', async () => {
+      expect.assertions(1);
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, nestedArrayOfObjectsModel);
+      expect(outputModel).toStrictEqual(expectedNestedArrayOfObjectsModel);
+    });
+
+    it('should generate the model with a deep nested objects/arrays', async () => {
+      expect.assertions(1);
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, deepNestedModel);
+      expect(outputModel).toStrictEqual(expectedDeepNestedModel);
+    });
+
+    it('should generate the model with multiple records containing deep nested objects/arrays', async () => {
+      expect.assertions(1);
+      const outputModel = await getAnalyzerOutputWithModel(
+        mongoUrl,
+        multipleNestedArrayOfObjectsModel,
+      );
+      expect(outputModel).toStrictEqual(expectedMultipleNestedArrayOfObjectsModel);
+    });
+
+    it('should generate the model with subDocuments using ids', async () => {
+      expect.assertions(1);
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, subDocumentsUsingIdsModel);
+      expect(outputModel).toStrictEqual(expectedSubDocumentsUsingIds);
+    });
+
+    it('should generate the model with subDocuments not using ids', async () => {
+      expect.assertions(1);
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, subDocumentsNotUsingIdsModel);
+      expect(outputModel).toStrictEqual(expectedSubDocumentsNotUsingIds);
+    });
+
+    it('should generate the model with subDocument not using ids', async () => {
+      expect.assertions(1);
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, subDocumentNotUsingIdsModel);
+      expect(outputModel).toStrictEqual(expectedSubDocumentNotUsingIds);
+    });
+
+    it('should generate the model with subDocument using ids', async () => {
+      expect.assertions(1);
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, subDocumentUsingIdsModel);
+      expect(outputModel).toStrictEqual(expectedSubDocumentUsingIds);
+    });
+
+    it('should generate the model with subDocuments with ambiguous ids', async () => {
+      expect.assertions(1);
+      const outputModel = await getAnalyzerOutputWithModel(mongoUrl, subDocumentsAmbiguousIdsModel);
+      expect(outputModel).toStrictEqual(expectedSubDocumentsAmbiguousIds);
     });
   });
 });
