@@ -12,7 +12,7 @@ MongoDB:
   volumes:
     - ./data/mongodb/4.2:/var/lib/mongodb
 
-OldPostgres :
+OldPostgres:
   image : postgres:9.4
   container_name : lumber_sequelize_postgres_9_4
   ports :
