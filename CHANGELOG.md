@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Added
+- Technical - Test on SQLServer 2017 and 2019.
 - Command Generate - Generate MongoDB nested objects and subDocuments.
 
 ### Changed
