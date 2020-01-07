@@ -22,7 +22,7 @@ const sqlDatabases = [{
   schema: 'public',
 }, {
   dialect: 'mysql',
-  version: '8.0',
+  version: '5.7',
   connectionUrl: DATABASE_URL_MYSQL,
   schema: 'public',
 }, {

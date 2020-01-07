@@ -34,8 +34,8 @@ OldMysql:
     - "127.0.0.1:8998:3306"
 
 mysql:
-  image: mysql:8.0
-  container_name: lumber_sequelize_mysql_8_0
+  image: mysql:5.7
+  container_name: lumber_sequelize_mysql_5_7
   environment:
     MYSQL_ROOT_PASSWORD: secret
     MYSQL_DATABASE: lumber-sequelize-test
