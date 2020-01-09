@@ -1,7 +1,8 @@
 function MysqlTableConstraintsGetter(databaseConnection) {
   const queryInterface = databaseConnection.getQueryInterface();
 
-  // NOTICE: provide an array of array. Each inner array representing a (possibly composite) unique index 
+  // NOTICE: provide an array of array. Each inner array representing a (possibly composite) unique
+  // index
   this.convertToUniqueIndexArray = (constraints) => {
     const uniqueIndexes = {};
     constraints.filter((constraint) => constraint.columnType === 'UNIQUE')
