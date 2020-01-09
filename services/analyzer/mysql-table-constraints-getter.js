@@ -12,9 +12,11 @@ function MysqlTableConstraintsGetter(databaseConnection) {
     return uniqueIndexArray.length ? uniqueIndexArray : null;
   };
 
+  // NOTICE: This function exists only to create a structure compatible with the needed response.
   this.applyUniqueIndexArray = (constraints) => {
     if (constraints && constraints.length) {
       const uniqueIndexes = this.convertToUniqueIndexArray(constraints);
+      // NOTICE: We apply the uniqueIndexes array to every element of the constraints array.
       return constraints.map((constraint) => ({ ...constraint, uniqueIndexes }));
     }
     return constraints;
