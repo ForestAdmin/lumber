@@ -16,9 +16,8 @@ describe('services > mysql table constraints getter', () => {
       ];
       const constraintGetter = new MysqlTableConstraintsGetter(databaseConnectionMock);
       const actual = constraintGetter.convertToUniqueIndexArray(fixture);
-      const expected = null;
 
-      expect(actual).toStrictEqual(expected);
+      expect(actual).toBeNull();
     });
   });
   describe('with two simple unique indexes', () => {
