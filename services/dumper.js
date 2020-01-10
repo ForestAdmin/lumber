@@ -204,9 +204,12 @@ function Dumper(config) {
   }
 
   function writeAppJs() {
-    const templatePath = `${__dirname}/../templates/app/app.txt`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    const text = template({ ...config, forestUrl: process.env.FOREST_URL });
+    const templatePath = `${__dirname}/../templates/app/app.hbs`;
+    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
+    const text = template({
+      isMongoDB: config.dialect === 'mongodb',
+      forestUrl: process.env.FOREST_URL,
+    });
 
     writeFile(`${path}/app.js`, text);
   }

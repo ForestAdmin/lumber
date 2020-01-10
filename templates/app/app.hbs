@@ -9,7 +9,7 @@ const morgan = require('morgan');
 const {
   ensureAuthenticated,
   PUBLIC_ROUTES,
-} = require('forest-express-<% if (dbDialect === "mongodb") { %>mongoose<% } else { %>sequelize<% } %>');
+} = require('forest-express-{{#if isMongoBD }}mongoose{{else}}sequelize{{/if}}');
 
 const app = express();
 
@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-let allowedOrigins = [/forestadmin\.com$/ <% if (forestUrl) { %>, /localhost:\d{4}$/<% } %>];
+let allowedOrigins = [/forestadmin\.com$/ {{#if forestUrl }}, /localhost:\d{4}$/{{/if}}];
 
 if (process.env.CORS_ORIGINS) {
   allowedOrigins = allowedOrigins.concat(process.env.CORS_ORIGINS.split(','));
