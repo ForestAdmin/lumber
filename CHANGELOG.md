@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Do not generate obsolete `bin` path.
 
 ## RELEASE 3.3.0 - 2020-01-06
 ### Added
