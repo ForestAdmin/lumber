@@ -195,9 +195,9 @@ function Dumper(config) {
   }
 
   function writeForestCollection(table) {
-    const templatePath = `${__dirname}/../templates/app/forest/collection.txt`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    const text = template({ ...config, table });
+    const templatePath = `${__dirname}/../templates/app/forest/collection.hbs`;
+    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
+    const text = template({ isMongoDB: config.dialect === 'mongodb', table });
 
     const filname = tableToFilename(table);
     writeFile(`${path}/forest/${filname}.js`, text);
