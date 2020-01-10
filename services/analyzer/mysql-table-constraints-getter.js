@@ -6,9 +6,9 @@ function MysqlTableConstraintsGetter(databaseConnection) {
   this.convertToUniqueIndexArray = (constraints) => {
     const uniqueIndexes = {};
     constraints.filter((constraint) => constraint.columnType === 'UNIQUE')
-      .forEach((item) => {
-        uniqueIndexes[item.constraintName] = uniqueIndexes[item.constraintName] || [];
-        uniqueIndexes[item.constraintName].push(item.columnName);
+      .forEach((constraint) => {
+        uniqueIndexes[constraint.constraintName] = uniqueIndexes[constraint.constraintName] || [];
+        uniqueIndexes[constraint.constraintName].push(constraint.columnName);
       });
     const uniqueIndexArray = Object.values(uniqueIndexes);
     return uniqueIndexArray.length ? uniqueIndexArray : null;
