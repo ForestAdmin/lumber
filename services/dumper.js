@@ -177,8 +177,8 @@ function Dumper(config) {
   }
 
   function writeRoute(modelName) {
-    const templatePath = `${__dirname}/../templates/app/routes/route.txt`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    const templatePath = `${__dirname}/../templates/app/routes/route.hbs`;
+    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
 
     const modelNameDasherized = _.kebabCase(modelName);
     const readableModelName = _.startCase(modelName);
@@ -187,7 +187,7 @@ function Dumper(config) {
       modelNameDasherized,
       modelNameReadablePlural: plural(readableModelName),
       modelNameReadableSingular: singular(readableModelName),
-      dbDialect: config.dbDialect,
+      isMongoBD: config.dbDialect === 'mongodb',
     });
 
     const filename = tableToFilename(modelName);
@@ -197,7 +197,8 @@ function Dumper(config) {
   function writeForestCollection(table) {
     const templatePath = `${__dirname}/../templates/app/forest/collection.hbs`;
     const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
-    const text = template({ isMongoDB: config.dialect === 'mongodb', table });
+
+    const text = template({ isMongoDB: config.dbDialect === 'mongodb', table });
 
     const filname = tableToFilename(table);
     writeFile(`${path}/forest/${filname}.js`, text);
@@ -207,7 +208,7 @@ function Dumper(config) {
     const templatePath = `${__dirname}/../templates/app/app.hbs`;
     const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
     const text = template({
-      isMongoDB: config.dialect === 'mongodb',
+      isMongoDB: config.dbDialect === 'mongodb',
       forestUrl: process.env.FOREST_URL,
     });
 
@@ -217,11 +218,11 @@ function Dumper(config) {
   function writeModelsIndex() {
     const templatePath = `${__dirname}/../templates/app/models/index.hbs`;
     const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
-    const { dialect } = config;
+    const { dbDialect } = config;
     const text = template({
-      isMongoDB: dialect === 'mongodb',
-      isMSSQL: dialect === 'mssql',
-      isMySQL: dialect === 'mysql',
+      isMongoDB: dbDialect === 'mongodb',
+      isMSSQL: dbDialect === 'mssql',
+      isMySQL: dbDialect === 'mysql',
     });
 
     writeFile(`${path}/models/index.js`, text);
@@ -267,7 +268,7 @@ function Dumper(config) {
 
   function writeForestAdminMiddleware() {
     mkdirp.sync(`${process.cwd()}/middlewares`);
-    const templatePath = `${__dirname}/../templates/app/middlewares/forestadmin.txt`;
+    const templatePath = `${__dirname}/../templates/app/middlewares/forestadmin.hbs`;
     const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
     writeFile(`${path}/middlewares/forestadmin.js`, template(config));
   }
@@ -286,7 +287,7 @@ function Dumper(config) {
 
     await P.all(directories);
 
-    copyTemplate('server.txt', `${path}/server.js`);
+    copyTemplate('server.hbs', `${path}/server.js`);
 
     const modelNames = Object.keys(schema)
       .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
