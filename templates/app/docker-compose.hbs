@@ -1,0 +1,24 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: {{ containerName }}
+    environment:
+      - APPLICATION_PORT={{ port }}
+      - DATABASE_URL={{ databaseUrl }}
+{{#if dbSchema }}
+      - DATABASE_SCHEMA={{ dbSchema }}
+{{/if}}
+      - DATABASE_SSL={{ ssl }}
+      - FOREST_AUTH_SECRET={{ forestAuthSecret }}
+      - FOREST_ENV_SECRET={{ forestEnvSecret }}
+{{#if forestUrl }}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - FOREST_URL={{ forestUrl }}
+{{/if}}
+    ports:
+      - "{{ port }}:{{ port }}"
+    volumes:
+      - ./:/usr/src/app

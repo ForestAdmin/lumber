@@ -33,6 +33,12 @@ function Dumper(config) {
     writeFile(to, fs.readFileSync(newFrom, 'utf-8'));
   }
 
+  function handlebarsTemplate(templatePath) {
+    return Handlebars.compile(
+      fs.readFileSync(`${__dirname}/../templates/${templatePath}`, 'utf-8'),
+    );
+  }
+
   function writePackageJson() {
     const orm = config.dbDialect === 'mongodb' ? 'mongoose' : 'sequelize';
     const dependencies = {
@@ -77,13 +83,6 @@ function Dumper(config) {
     return _.kebabCase(table);
   }
 
-  function writeDotGitIgnore() {
-    const templatePath = `${__dirname}/../templates/app/gitignore`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-
-    writeFile(`${path}/.gitignore`, template({}));
-  }
-
   function getDatabaseUrl() {
     let connectionString;
 
@@ -111,8 +110,7 @@ function Dumper(config) {
   }
 
   function writeDotEnv() {
-    const templatePath = `${__dirname}/../templates/app/env`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    const template = handlebarsTemplate('app/env.hbs');
 
     const settings = {
       databaseUrl: getDatabaseUrl(),
@@ -177,8 +175,7 @@ function Dumper(config) {
   }
 
   function writeRoute(modelName) {
-    const templatePath = `${__dirname}/../templates/app/routes/route.hbs`;
-    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
+    const template = handlebarsTemplate('app/routes/route.hbs');
 
     const modelNameDasherized = _.kebabCase(modelName);
     const readableModelName = _.startCase(modelName);
@@ -195,18 +192,17 @@ function Dumper(config) {
   }
 
   function writeForestCollection(table) {
-    const templatePath = `${__dirname}/../templates/app/forest/collection.hbs`;
-    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
+    const template = handlebarsTemplate('app/forest/collection.hbs');
 
     const text = template({ isMongoDB: config.dbDialect === 'mongodb', table });
 
-    const filname = tableToFilename(table);
-    writeFile(`${path}/forest/${filname}.js`, text);
+    const filename = tableToFilename(table);
+    writeFile(`${path}/forest/${filename}.js`, text);
   }
 
   function writeAppJs() {
-    const templatePath = `${__dirname}/../templates/app/app.hbs`;
-    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
+    const template = handlebarsTemplate('app/app.hbs');
+
     const text = template({
       isMongoDB: config.dbDialect === 'mongodb',
       forestUrl: process.env.FOREST_URL,
@@ -216,8 +212,8 @@ function Dumper(config) {
   }
 
   function writeModelsIndex() {
-    const templatePath = `${__dirname}/../templates/app/models/index.hbs`;
-    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
+    const template = handlebarsTemplate('app/models/index.hbs');
+
     const { dbDialect } = config;
     const text = template({
       isMongoDB: dbDialect === 'mongodb',
@@ -229,8 +225,7 @@ function Dumper(config) {
   }
 
   function writeDockerfile() {
-    const templatePath = `${__dirname}/../templates/app/Dockerfile`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    const template = handlebarsTemplate('app/Dockerfile.hbs');
 
     const settings = {
       port: config.appPort || DEFAULT_PORT,
@@ -240,8 +235,7 @@ function Dumper(config) {
   }
 
   function writeDockerCompose() {
-    const templatePath = `${__dirname}/../templates/app/docker-compose.yml`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
+    const template = handlebarsTemplate('app/docker-compose.hbs');
 
     const settings = {
       appName: config.appName,
@@ -249,7 +243,7 @@ function Dumper(config) {
       hostname: config.appHostname || 'http://localhost',
       port: config.appPort || DEFAULT_PORT,
       databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
-      ssl: config.ssl,
+      ssl: config.ssl || 'false',
       dbSchema: config.dbSchema,
       forestEnvSecret: config.forestEnvSecret,
       forestAuthSecret: config.forestAuthSecret,
@@ -257,20 +251,6 @@ function Dumper(config) {
     };
 
     writeFile(`${path}/docker-compose.yml`, template(settings));
-  }
-
-  function writeDotDockerIgnore() {
-    const templatePath = `${__dirname}/../templates/app/dockerignore`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-
-    writeFile(`${path}/.dockerignore`, template({}));
-  }
-
-  function writeForestAdminMiddleware() {
-    mkdirp.sync(`${process.cwd()}/middlewares`);
-    const templatePath = `${__dirname}/../templates/app/middlewares/forestadmin.hbs`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    writeFile(`${path}/middlewares/forestadmin.js`, template(config));
   }
 
   this.dump = async (schema) => {
@@ -287,15 +267,10 @@ function Dumper(config) {
 
     await P.all(directories);
 
-    copyTemplate('server.hbs', `${path}/server.js`);
-
     const modelNames = Object.keys(schema)
       .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
     modelNames.forEach(writeForestCollection);
-
-    writeForestAdminMiddleware();
-    copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
 
     writeModelsIndex(path);
     modelNames.forEach((modelName) => {
@@ -303,7 +278,6 @@ function Dumper(config) {
       writeModel(modelName, fields, references, options);
     });
 
-    copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
     modelNames.forEach((modelName) => {
       // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
       //       internal session creation route. As a workaround, we don't generate the route file.
@@ -312,16 +286,21 @@ function Dumper(config) {
         writeRoute(modelName);
       }
     });
-    copyTemplate('views/index.html', `${path}/views/index.html`);
 
-    writeDotDockerIgnore();
     writeDotEnv();
-    writeDotGitIgnore();
-
     writeAppJs();
     writeDockerCompose();
     writeDockerfile();
     writePackageJson();
+
+    // NOTICE: Copy simple templates files without replacements.
+    copyTemplate('server.hbs', `${path}/server.js`);
+    copyTemplate('views/index.hbs', `${path}/views/index.html`);
+    copyTemplate('middlewares/forestadmin.hbs', `${path}/middlewares/forestadmin.js`);
+    copyTemplate('middlewares/welcome.hbs', `${path}/middlewares/welcome.js`);
+    copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
+    copyTemplate('dockerignore.hbs', `${path}/.dockerignore`);
+    copyTemplate('gitignore.hbs', `${path}/.gitignore`);
   };
 }
 

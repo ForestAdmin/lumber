@@ -1,4 +1,0 @@
-    '<%= field.name %>': {
-      type: DataTypes.<%= field.type %>,<% if (field.primaryKey) { %>
-      primaryKey: true <% } %>
-    },
