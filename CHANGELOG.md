@@ -7,7 +7,7 @@
 - Technical - Reorder in alphabetical order `options` inside `db-analysis-output`.
 
 ### Fixed
-- Command Generate - Fix schema recuperation request with MySQL 5.6
+- Command Generate - Fix schema retrieval request with MySQL 5.6
 - Technical - Fix test expect files extensions.
 - Command Generate - Do not declare the "id" field on tables having a `BIGINT` "id" column as primary key. 🛡
 
