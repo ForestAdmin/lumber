@@ -212,9 +212,14 @@ function Dumper(config) {
   }
 
   function writeModelsIndex() {
-    const templatePath = `${__dirname}/../templates/app/models/index.txt`;
-    const template = _.template(fs.readFileSync(templatePath, 'utf-8'));
-    const text = template({ config });
+    const templatePath = `${__dirname}/../templates/app/models/index.hbs`;
+    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
+    const { dialect } = config;
+    const text = template({
+      isMongoDB: dialect === 'mongodb',
+      isMSSQL: dialect === 'mssql',
+      isMySQL: dialect === 'mysql',
+    });
 
     writeFile(`${path}/models/index.js`, text);
   }
