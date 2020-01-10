@@ -2,8 +2,8 @@ const validate = require('validate-npm-package-name');
 
 module.exports = function toValidPackageName(packageName) {
   function isValid(name) {
-    const { validForNewPackages, validForOldPackages } = validate(name);
-    return validForNewPackages && validForOldPackages;
+    const { validForNewPackages } = validate(name);
+    return validForNewPackages;
   }
 
   if (!isValid(packageName)) {
