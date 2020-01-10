@@ -17,6 +17,7 @@ let databaseOptions = {
   pool: { maxConnections: 10, minConnections: 1 },
   dialectOptions: {}
 };
+{{isMySQL}}
 
 {{#if isMySQL}}
 databaseOptions.dialectOptions.typeCast = (field, useDefaultTypeCasting) => {
