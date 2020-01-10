@@ -33,10 +33,19 @@ function Dumper(config) {
     writeFile(to, fs.readFileSync(newFrom, 'utf-8'));
   }
 
-  function handlebarsTemplate(templatePath) {
-    return Handlebars.compile(
-      fs.readFileSync(`${__dirname}/../templates/${templatePath}`, 'utf-8'),
-    );
+  function copyHandleBarsTemplate(args) {
+    function handlebarsTemplate(templatePath) {
+      return Handlebars.compile(
+        fs.readFileSync(`${__dirname}/../templates/${templatePath}`, 'utf-8'),
+      );
+    }
+
+    const { source, target, context } = args;
+    if (!(source && target && context)) {
+      throw new Error('Missing argument (source, target or context).');
+    }
+
+    writeFile(`${path}/${target}`, handlebarsTemplate(source)(context));
   }
 
   function writePackageJson() {
@@ -110,26 +119,22 @@ function Dumper(config) {
   }
 
   function writeDotEnv() {
-    const template = handlebarsTemplate('app/env.hbs');
-
-    const settings = {
-      databaseUrl: getDatabaseUrl(),
-      ssl: config.ssl,
-      dbSchema: config.dbSchema,
-      hostname: config.appHostname,
-      port: config.appPort,
-      forestEnvSecret: config.forestEnvSecret,
-      forestAuthSecret: config.forestAuthSecret,
-    };
-
-    writeFile(`${path}/.env`, template(settings));
+    copyHandleBarsTemplate({
+      source: 'app/env.hbs',
+      target: '.env',
+      context: {
+        databaseUrl: getDatabaseUrl(),
+        ssl: config.ssl,
+        dbSchema: config.dbSchema,
+        hostname: config.appHostname,
+        port: config.appPort,
+        forestEnvSecret: config.forestEnvSecret,
+        forestAuthSecret: config.forestAuthSecret,
+      },
+    });
   }
 
   function writeModel(table, fields, references, options = {}) {
-    const templatePath = config.dbDialect === 'mongodb'
-      ? `${__dirname}/../templates/app/models/mongo-model.hbs`
-      : `${__dirname}/../templates/app/models/sequelize-model.hbs`;
-    const template = Handlebars.compile(fs.readFileSync(templatePath, 'utf-8'));
     const { underscored } = options;
 
     const fieldsDefinition = fields.map((field) => {
@@ -159,98 +164,97 @@ function Dumper(config) {
       };
     });
 
-    const text = template({
-      modelName: stringUtils.pascalCase(table),
-      table,
-      fields: fieldsDefinition,
-      references: referencesDefinition,
-      ...options,
-      schema: config.dbSchema,
-      dialect: config.dbDialect,
-      noId: !options.hasIdColumn && !options.hasPrimaryKeys,
+    copyHandleBarsTemplate({
+      source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
+      target: `models/${tableToFilename(table)}.js`,
+      context: {
+        modelName: stringUtils.pascalCase(table),
+        table,
+        fields: fieldsDefinition,
+        references: referencesDefinition,
+        ...options,
+        schema: config.dbSchema,
+        dialect: config.dbDialect,
+        noId: !options.hasIdColumn && !options.hasPrimaryKeys,
+      },
     });
-
-    const filename = tableToFilename(table);
-    writeFile(`${path}/models/${filename}.js`, text);
   }
 
   function writeRoute(modelName) {
-    const template = handlebarsTemplate('app/routes/route.hbs');
-
     const modelNameDasherized = _.kebabCase(modelName);
     const readableModelName = _.startCase(modelName);
-    const text = template({
-      modelName,
-      modelNameDasherized,
-      modelNameReadablePlural: plural(readableModelName),
-      modelNameReadableSingular: singular(readableModelName),
-      isMongoBD: config.dbDialect === 'mongodb',
-    });
 
-    const filename = tableToFilename(modelName);
-    writeFile(`${path}/routes/${filename}.js`, text);
+    copyHandleBarsTemplate({
+      source: 'app/routes/route.hbs',
+      target: `routes/${tableToFilename(modelName)}.js`,
+      context: {
+        modelName,
+        modelNameDasherized,
+        modelNameReadablePlural: plural(readableModelName),
+        modelNameReadableSingular: singular(readableModelName),
+        isMongoBD: config.dbDialect === 'mongodb',
+      },
+    });
   }
 
   function writeForestCollection(table) {
-    const template = handlebarsTemplate('app/forest/collection.hbs');
-
-    const text = template({ isMongoDB: config.dbDialect === 'mongodb', table });
-
-    const filename = tableToFilename(table);
-    writeFile(`${path}/forest/${filename}.js`, text);
+    copyHandleBarsTemplate({
+      source: 'app/forest/collection.hbs',
+      target: `forest/${tableToFilename(table)}.js`,
+      context: { isMongoDB: config.dbDialect === 'mongodb', table },
+    });
   }
 
   function writeAppJs() {
-    const template = handlebarsTemplate('app/app.hbs');
-
-    const text = template({
-      isMongoDB: config.dbDialect === 'mongodb',
-      forestUrl: process.env.FOREST_URL,
+    copyHandleBarsTemplate({
+      source: 'app/app.hbs',
+      target: 'app.js',
+      context: {
+        isMongoDB: config.dbDialect === 'mongodb',
+        forestUrl: process.env.FOREST_URL,
+      },
     });
-
-    writeFile(`${path}/app.js`, text);
   }
 
   function writeModelsIndex() {
-    const template = handlebarsTemplate('app/models/index.hbs');
-
     const { dbDialect } = config;
-    const text = template({
-      isMongoDB: dbDialect === 'mongodb',
-      isMSSQL: dbDialect === 'mssql',
-      isMySQL: dbDialect === 'mysql',
-    });
 
-    writeFile(`${path}/models/index.js`, text);
+    copyHandleBarsTemplate({
+      source: 'app/models/index.hbs',
+      target: 'models/index.js',
+      context: {
+        isMongoDB: dbDialect === 'mongodb',
+        isMSSQL: dbDialect === 'mssql',
+        isMySQL: dbDialect === 'mysql',
+      },
+    });
   }
 
   function writeDockerfile() {
-    const template = handlebarsTemplate('app/Dockerfile.hbs');
-
-    const settings = {
-      port: config.appPort || DEFAULT_PORT,
-    };
-
-    writeFile(`${path}/Dockerfile`, template(settings));
+    copyHandleBarsTemplate({
+      source: 'app/Dockerfile.hbs',
+      target: 'Dockerfile',
+      context: { port: config.appPort || DEFAULT_PORT },
+    });
   }
 
   function writeDockerCompose() {
-    const template = handlebarsTemplate('app/docker-compose.hbs');
-
-    const settings = {
-      appName: config.appName,
-      containerName: _.snakeCase(config.appName),
-      hostname: config.appHostname || 'http://localhost',
-      port: config.appPort || DEFAULT_PORT,
-      databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
-      ssl: config.ssl || 'false',
-      dbSchema: config.dbSchema,
-      forestEnvSecret: config.forestEnvSecret,
-      forestAuthSecret: config.forestAuthSecret,
-      forestUrl: process.env.FOREST_URL,
-    };
-
-    writeFile(`${path}/docker-compose.yml`, template(settings));
+    copyHandleBarsTemplate({
+      source: 'app/docker-compose.hbs',
+      target: 'docker-compose.yml',
+      context: {
+        appName: config.appName,
+        containerName: _.snakeCase(config.appName),
+        hostname: config.appHostname || 'http://localhost',
+        port: config.appPort || DEFAULT_PORT,
+        databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
+        ssl: config.ssl || 'false',
+        dbSchema: config.dbSchema,
+        forestEnvSecret: config.forestEnvSecret,
+        forestAuthSecret: config.forestAuthSecret,
+        forestUrl: process.env.FOREST_URL,
+      },
+    });
   }
 
   this.dump = async (schema) => {
