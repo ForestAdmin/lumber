@@ -107,7 +107,7 @@ function isJunctionTable(fields, constraints) {
 
   const foreignKeys = constraints.filter((constraint) => constraint.foreignTableName
     && constraint.columnName
-    && constraint.columnType === 'FOREIGN KEY');
+    && constraint.columnType === FOREIGN_KEY);
   // NOTICE: To be a junction table it means you have 2 foreignKeys, no more no less
   return foreignKeys.length === 2;
 }
@@ -178,7 +178,7 @@ function createAllReferences(databaseSchema, schemaGenerated) {
     const { isJunction } = schemaGenerated[tableName].options;
 
     const foreignKeysWithExistingTable = constraints
-      .filter((constraint) => constraint.columnType === 'FOREIGN KEY'
+      .filter((constraint) => constraint.columnType === FOREIGN_KEY
         && databaseSchema[constraint.foreignTableName]);
 
     foreignKeysWithExistingTable.forEach((constraint) => {
@@ -261,27 +261,15 @@ async function createTableSchema({
       && ['INTEGER', 'BIGINT'].includes(type)
       && columnInfo.primaryKey;
 
-    if (isValidField) {
-      if (!isIdIntegerPrimaryColumn) {
-        // NOTICE: Handle bit(1) to boolean conversion
-        let { defaultValue } = columnInfo;
+    if (isValidField && !isIdIntegerPrimaryColumn) {
+      // NOTICE: Handle bit(1) to boolean conversion
+      let { defaultValue } = columnInfo;
 
-        if (["b'1'", '((1))'].includes(defaultValue)) {
-          defaultValue = true;
-        }
-        if (["b'0'", '((0))'].includes(defaultValue)) {
-          defaultValue = false;
-        }
-
-        const field = {
-          name: _.camelCase(columnName),
-          nameColumn: columnName,
-          type,
-          primaryKey: columnInfo.primaryKey,
-          defaultValue,
-        };
-
-        fields.push(field);
+      if (["b'1'", '((1))'].includes(defaultValue)) {
+        defaultValue = true;
+      }
+      if (["b'0'", '((0))'].includes(defaultValue)) {
+        defaultValue = false;
       }
 
       const field = {

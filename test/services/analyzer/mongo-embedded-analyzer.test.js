@@ -14,6 +14,8 @@ const {
   mergeAnalyzedSchemas,
 } = require('../../../services/analyzer/mongo-embedded-analyzer');
 
+const MONGOOSE_SCHEMA_TYPE_OBJECTID = 'mongoose.Schema.Types.ObjectId';
+
 describe('services > Mongo Embedded Analyser', () => {
   describe('analysing', () => {
     describe('performing global analysis', () => {
@@ -33,7 +35,7 @@ describe('services > Mongo Embedded Analyser', () => {
         expect(getMongooseSchema(1)).toStrictEqual('Number');
         expect(getMongooseSchema(true)).toStrictEqual('Boolean');
         expect(getMongooseSchema(new Date())).toStrictEqual('Date');
-        expect(getMongooseSchema(new ObjectId('objectIdFake'))).toStrictEqual('mongoose.Schema.Types.ObjectId');
+        expect(getMongooseSchema(new ObjectId('objectIdFake'))).toStrictEqual(MONGOOSE_SCHEMA_TYPE_OBJECTID);
       });
     });
 
@@ -56,7 +58,7 @@ describe('services > Mongo Embedded Analyser', () => {
         expect(getMongooseSchema(true)).toStrictEqual('Boolean');
         expect(getMongooseSchema(false)).toStrictEqual('Boolean');
         expect(getMongooseSchema(new Date())).toStrictEqual('Date');
-        expect(getMongooseSchema(new ObjectId('objectIdFake'))).toStrictEqual('mongoose.Schema.Types.ObjectId');
+        expect(getMongooseSchema(new ObjectId('objectIdFake'))).toStrictEqual(MONGOOSE_SCHEMA_TYPE_OBJECTID);
       });
     });
 
@@ -81,7 +83,8 @@ describe('services > Mongo Embedded Analyser', () => {
         expect(arrayOfNumberTypeDetection).toStrictEqual(['Number', 'Number', 'Number']);
         expect(arrayOfBooleanTypeDetection).toStrictEqual(['Boolean', 'Boolean', 'Boolean']);
         expect(arrayOfDateTypeDetection).toStrictEqual(['Date', 'Date']);
-        expect(arrayOfObjectIdsTypeDetection).toStrictEqual(['mongoose.Schema.Types.ObjectId', 'mongoose.Schema.Types.ObjectId']);
+        expect(arrayOfObjectIdsTypeDetection)
+          .toStrictEqual([MONGOOSE_SCHEMA_TYPE_OBJECTID, MONGOOSE_SCHEMA_TYPE_OBJECTID]);
       });
 
       it('should return an array of whole schema if array contains subDocuments', () => {
@@ -126,7 +129,8 @@ describe('services > Mongo Embedded Analyser', () => {
         expect(embeddedOfPrimitiveTypeDetection.number).toStrictEqual('Number');
         expect(embeddedOfPrimitiveTypeDetection.boolean).toStrictEqual('Boolean');
         expect(embeddedOfPrimitiveTypeDetection.date).toStrictEqual('Date');
-        expect(embeddedOfPrimitiveTypeDetection.objectId).toStrictEqual('mongoose.Schema.Types.ObjectId');
+        expect(embeddedOfPrimitiveTypeDetection.objectId)
+          .toStrictEqual(MONGOOSE_SCHEMA_TYPE_OBJECTID);
       });
 
       it('should return object with nested level as object', () => {
@@ -176,7 +180,7 @@ describe('services > Mongo Embedded Analyser', () => {
 
         const analysis = getMongooseEmbeddedSchema(embeddedWithIdKey, true);
 
-        expect(analysis._id).toStrictEqual('mongoose.Schema.Types.ObjectId');
+        expect(analysis._id).toStrictEqual(MONGOOSE_SCHEMA_TYPE_OBJECTID);
         expect(analysis.embeddedValue).toBeInstanceOf(Object);
         expect(analysis.embeddedValue._id).toBeUndefined();
         expect(analysis.embeddedValue.stringValue).toStrictEqual('String');
@@ -241,8 +245,8 @@ describe('services > Mongo Embedded Analyser', () => {
     });
 
     describe('if the type to add is of mongoose type', () => {
-      describe('if there is already a key with a type set in schema', () => {
-        it('should set the type to `Object` if types are different', () => {
+      describe('if there is already a key with a type set in the schema', () => {
+        it('should set the type to `Object` if those types are different', () => {
           expect.assertions(1);
           const parentSchema = { myKey: 'Number' };
           const type = 'String';
@@ -265,7 +269,7 @@ describe('services > Mongo Embedded Analyser', () => {
         });
       });
 
-      describe('ff there is not any key in the schema', () => {
+      describe('if there is not any key in the schema', () => {
         it('should add the type of the specific key in schema', () => {
           expect.assertions(1);
           const parentSchema = {};
@@ -370,7 +374,7 @@ describe('services > Mongo Embedded Analyser', () => {
 
             const parentSchema = { };
             const currentKey = 'myKey';
-            const type = [{ _id: 'mongoose.Schema.Types.ObjectId' }, { noId: 'String' }];
+            const type = [{ _id: MONGOOSE_SCHEMA_TYPE_OBJECTID }, { noId: 'String' }];
 
             addObjectSchema(type, parentSchema, currentKey);
 
@@ -394,11 +398,15 @@ describe('services > Mongo Embedded Analyser', () => {
 
             const parentSchema = { };
             const currentKey = 'myKey';
-            const type = [{ _id: 'mongoose.Schema.Types.ObjectId' }, { _id: 'mongoose.Schema.Types.ObjectId' }];
+            const type = [{
+              _id: MONGOOSE_SCHEMA_TYPE_OBJECTID,
+            }, {
+              _id: MONGOOSE_SCHEMA_TYPE_OBJECTID,
+            }];
 
             addObjectSchema(type, parentSchema, currentKey);
 
-            expect(parentSchema[currentKey][0]._id).toStrictEqual('mongoose.Schema.Types.ObjectId');
+            expect(parentSchema[currentKey][0]._id).toStrictEqual(MONGOOSE_SCHEMA_TYPE_OBJECTID);
           });
         });
       });
@@ -557,7 +565,7 @@ describe('services > Mongo Embedded Analyser', () => {
           expect(areSchemaTypesMixed('Date', 'Object')).toStrictEqual(true);
           expect(areSchemaTypesMixed([], {})).toStrictEqual(true);
           expect(areSchemaTypesMixed({}, 'String')).toStrictEqual(true);
-          expect(areSchemaTypesMixed('mongoose.Schema.Types.ObjectId', 'String')).toStrictEqual(true);
+          expect(areSchemaTypesMixed(MONGOOSE_SCHEMA_TYPE_OBJECTID, 'String')).toStrictEqual(true);
         });
       });
     });
@@ -582,7 +590,7 @@ describe('services > Mongo Embedded Analyser', () => {
       it('should return `ambiguous` if we can not decide whether the _id should be used', () => {
         expect.assertions(2);
 
-        const usingId = { _id: 'mongoose.Schema.Types.ObjectId' };
+        const usingId = { _id: MONGOOSE_SCHEMA_TYPE_OBJECTID };
         const notUsingId = { };
         let result;
 
@@ -596,7 +604,7 @@ describe('services > Mongo Embedded Analyser', () => {
       it('should return true if we can assert that _id is used', () => {
         expect.assertions(1);
 
-        const usingId = { _id: 'mongoose.Schema.Types.ObjectId' };
+        const usingId = { _id: MONGOOSE_SCHEMA_TYPE_OBJECTID };
 
         expect(detectSubDocumentsIdUsage(usingId, usingId)).toStrictEqual(true);
       });

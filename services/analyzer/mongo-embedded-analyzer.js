@@ -134,6 +134,21 @@ function detectSubDocumentsIdUsage(schema1, schema2) {
   return 'ambiguous';
 }
 
+function iterateOnTypeKeysToAddNestedSchemas(type, schema, isArray) {
+  Object.keys(type).forEach((key) => {
+    addNestedSchemaToParentSchema(type[key], schema, isArray ? 0 : key);
+  });
+}
+
+function setIdToSchema(type, schema) {
+  const idUsage = detectSubDocumentsIdUsage(schema, type);
+
+  if (['ambiguous', false].includes(idUsage)) {
+    schema._id = idUsage;
+    delete type._id;
+  }
+}
+
 function addObjectSchema(type, parentSchema, currentKey) {
   const isTypeAnArray = Array.isArray(type);
 
@@ -141,31 +156,22 @@ function addObjectSchema(type, parentSchema, currentKey) {
     if (areSchemaTypesMixed(parentSchema[currentKey], type)) {
       parentSchema[currentKey] = 'Object';
     } else {
-      // NOTICE: Checking subDocuments id usage for array of subDocuments
+      // NOTICE: Checking subDocuments id usage for array of subDocuments.
       if (Array.isArray(parentSchema)) {
-        const idUsage = detectSubDocumentsIdUsage(parentSchema[currentKey], type);
-
-        if (['ambiguous', false].includes(idUsage)) {
-          parentSchema[currentKey]._id = idUsage;
-          delete type._id;
-        }
+        setIdToSchema(type, parentSchema[currentKey]);
       }
 
-      Object.keys(type).forEach((key) => {
-        addNestedSchemaToParentSchema(type[key], parentSchema[currentKey], isTypeAnArray ? 0 : key);
-      });
+      iterateOnTypeKeysToAddNestedSchemas(type, parentSchema[currentKey], isTypeAnArray);
     }
   } else {
     parentSchema[currentKey] = isTypeAnArray ? [] : {};
 
-    // NOTICE: Init id usage for the first subDocument
+    // NOTICE: Init id usage for the first subDocument.
     if (!isTypeAnArray && Array.isArray(parentSchema)) {
       type._id = type._id || false;
     }
 
-    Object.keys(type).forEach((key) => {
-      addNestedSchemaToParentSchema(type[key], parentSchema[currentKey], isTypeAnArray ? 0 : key);
-    });
+    iterateOnTypeKeysToAddNestedSchemas(type, parentSchema[currentKey], isTypeAnArray);
   }
 }
 
@@ -195,9 +201,7 @@ function mergeAnalyzedSchemas(keyAnalyses) {
   }
 
   keyAnalyses.forEach((keyAnalysis) => {
-    Object.keys(keyAnalysis).forEach((key) => {
-      addNestedSchemaToParentSchema(keyAnalysis[key], schema, isNestedArray ? 0 : key);
-    });
+    iterateOnTypeKeysToAddNestedSchemas(keyAnalysis, schema, isNestedArray);
   });
 
   return schema;
