@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Reduce code complexity removing all SonarJS errors.
 
 ## RELEASE 3.3.0 - 2020-01-06
 ### Added
