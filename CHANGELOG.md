@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Use handlebars for all templates.
 
 ## RELEASE 3.3.0 - 2020-01-06
 ### Added
