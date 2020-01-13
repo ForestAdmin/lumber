@@ -15,7 +15,6 @@ const DEFAULT_PORT = 3310;
 
 function Dumper(config) {
   const path = `${process.cwd()}/${config.appName}`;
-  const binPath = `${path}/bin`;
   const routesPath = `${path}/routes`;
   const forestPath = `${path}/forest`;
   const publicPath = `${path}/public`;
@@ -267,7 +266,6 @@ function Dumper(config) {
   this.dump = async (schema) => {
     const directories = [
       mkdirp(path),
-      mkdirp(binPath),
       mkdirp(routesPath),
       mkdirp(forestPath),
       mkdirp(viewPath),
