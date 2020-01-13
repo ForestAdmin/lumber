@@ -2,6 +2,13 @@ const AbstractPrompter = require('./abstract-prompter');
 const PrompterError = require('./prompter-error');
 const messages = require('../../utils/messages');
 
+const MAPPING_DIALECT_TO_PORT = {
+  postgres: '5432',
+  mysql: '3306',
+  mssql: '1433',
+  mongodb: '27017',
+};
+
 class DatabasePrompts extends AbstractPrompter {
   constructor(requests, envConfig, prompts, program) {
     super(requests);
@@ -114,22 +121,7 @@ class DatabasePrompts extends AbstractPrompter {
         type: 'input',
         name: 'dbPort',
         message: 'What\'s the database port?',
-        default: (args) => {
-          if (args.dbDialect === 'postgres') {
-            return '5432';
-          }
-          if (args.dbDialect === 'mysql') {
-            return '3306';
-          }
-          if (args.dbDialect === 'mssql') {
-            return '1433';
-          }
-          if (args.dbDialect === 'mongodb') {
-            return '27017';
-          }
-
-          return undefined;
-        },
+        default: (args) => MAPPING_DIALECT_TO_PORT[args.dbDialect],
         validate: (port) => {
           if (!/^\d+$/.test(port)) {
             return 'The port must be a number.';

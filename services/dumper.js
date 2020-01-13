@@ -276,7 +276,7 @@ function Dumper(config) {
 
     modelNames.forEach(writeForestCollection);
 
-    writeModelsIndex(path);
+    writeModelsIndex();
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
       writeModel(modelName, fields, references, options);
