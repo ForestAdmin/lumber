@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Reduce code complexity removing all SonarJS errors.
+
 ### Fixed
 - Command Generate - Do not generate obsolete `bin` path.
 

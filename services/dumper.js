@@ -286,7 +286,7 @@ function Dumper(config) {
     writeForestAdminMiddleware();
     copyTemplate('middlewares/welcome.js', `${path}/middlewares/welcome.js`);
 
-    writeModelsIndex(path);
+    writeModelsIndex();
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
       writeModel(modelName, fields, references, options);

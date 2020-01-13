@@ -10,6 +10,19 @@ const { terminate } = require('../utils/terminator');
 const { ERROR_UNEXPECTED } = require('../utils/messages');
 const logger = require('./logger');
 
+function validatePassword(password) {
+  if (password) {
+    if (PASSWORD_REGEX.test(password)) { return true; }
+    return `🔓  Your password security is too weak 🔓\n
+Please make sure it contains at least:\n
+  > 8 characters\n
+  > Upper and lower case letters\n
+  > Numbers`;
+  }
+
+  return 'Please, choose a password.';
+}
+
 function Authenticator() {
   this.pathToLumberrc = `${os.homedir()}/.lumberrc`;
 
@@ -150,18 +163,7 @@ function Authenticator() {
       type: 'password',
       name: 'password',
       message: 'Choose a password:',
-      validate: (password) => {
-        if (password) {
-          if (PASSWORD_REGEX.test(password)) { return true; }
-          return `🔓  Your password security is too weak 🔓\n
-          \tPlease make sure it contains at least:\n
-          \t> 8 characters\n
-          \t> Upper and lower case letters\n
-          \t> Numbers`;
-        }
-
-        return 'Please, choose a password.';
-      },
+      validate: validatePassword,
     }]);
 
     try {
