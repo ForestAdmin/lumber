@@ -10,6 +10,7 @@
 
 ## RELEASE 3.3.0 - 2020-01-06
 ### Added
+- Technical - Test on SQLServer 2017 and 2019.
 - Command Generate - Generate MongoDB nested objects and subDocuments.
 - Technical - Test on postgres from 9.4 to 12.1.
 
