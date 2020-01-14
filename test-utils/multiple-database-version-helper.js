@@ -4,6 +4,7 @@ const {
   DATABASE_URL_MSSQL,
   DATABASE_URL_MSSQL_OLD,
   DATABASE_URL_MYSQL,
+  DATABASE_URL_MYSQL_OLD,
   DATABASE_URL_POSTGRESQL,
 } = require('./database-urls');
 
@@ -17,12 +18,17 @@ const mongoDatabases = [{
 
 const sqlDatabases = [{
   dialect: 'mysql',
+  version: '5.6',
+  connectionUrl: DATABASE_URL_MYSQL_OLD,
+  schema: 'public',
+}, {
+  dialect: 'mysql',
   version: '5.7',
   connectionUrl: DATABASE_URL_MYSQL,
   schema: 'public',
 }, {
   dialect: 'postgres',
-  version: '9.4',
+  version: '9.4.5',
   connectionUrl: DATABASE_URL_POSTGRESQL,
   schema: 'public',
 }, {
@@ -47,7 +53,7 @@ module.exports = {
   describeSequelizeDatabases(tests) {
     sqlDatabases.forEach((sqlDatabase) => {
       // eslint-disable-next-line jest/valid-describe
-      describe(`using ${sqlDatabase.dialect} Database v${sqlDatabase.version}\``, tests(sqlDatabase));
+      describe(`using ${sqlDatabase.dialect} Database v${sqlDatabase.version}`, tests(sqlDatabase));
     });
   },
 };

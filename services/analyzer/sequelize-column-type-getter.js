@@ -1,8 +1,15 @@
 const chalk = require('chalk');
 const logger = require('../logger');
 
+const DIALECT_MYSQL = 'mysql';
+const DIALECT_POSTGRES = 'postgres';
+
 function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
   const queryInterface = databaseConnection.getQueryInterface();
+
+  function isDialect(dialect) {
+    return queryInterface.sequelize.options.dialect === dialect;
+  }
 
   function isColumnTypeEnum(columnName) {
     const type = queryInterface.sequelize.QueryTypes.SELECT;
@@ -51,12 +58,26 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       }));
   }
 
+  async function getTypeForUserDefined(columnName, columnInfo) {
+    const { special } = columnInfo;
+    if (isDialect(DIALECT_POSTGRES) && await isColumnTypeEnum(columnName)) {
+      return `ENUM(\n        '${special.join('\',\n        \'')}',\n      )`;
+    }
+    return 'STRING';
+  }
+
+  async function getTypeForArray(tableName, columnName) {
+    if (!isDialect(DIALECT_POSTGRES)) { return null; }
+    const innerColumnInfo = await getTypeOfArrayForPostgres(tableName, columnName);
+    return `ARRAY(DataTypes.${await this.perform(innerColumnInfo, innerColumnInfo.udtName, tableName)})`;
+  }
+
   this.perform = async (columnInfo, columnName, tableName) => {
-    const { type, special } = columnInfo;
+    const { type } = columnInfo;
     const mysqlEnumRegex = /ENUM\((.*)\)/i;
 
     switch (type) {
-      case (type === 'BIT(1)' && queryInterface.sequelize.options.dialect === 'mysql' && 'BIT(1)'): // NOTICE: MySQL boolean type.
+      case (type === 'BIT(1)' && isDialect(DIALECT_MYSQL) && 'BIT(1)'): // NOTICE: MySQL boolean type.
       case 'BIT': // NOTICE: MSSQL type.
       case 'BOOLEAN':
         return 'BOOLEAN';
@@ -69,12 +90,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       case 'NVARCHAR': // NOTICE: MSSQL type.
         return 'STRING';
       case 'USER-DEFINED': {
-        if (queryInterface.sequelize.options.dialect === 'postgres'
-          && await isColumnTypeEnum(columnName)) {
-          return `ENUM(\n        '${special.join('\',\n        \'')}',\n      )`;
-        }
-
-        return 'STRING';
+        return getTypeForUserDefined(columnName, columnInfo);
       }
       case (type.match(mysqlEnumRegex) || {}).input:
         return type;
@@ -110,12 +126,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       case 'TIME WITHOUT TIME ZONE':
         return 'TIME';
       case 'ARRAY': {
-        if (queryInterface.sequelize.options.dialect !== 'postgres') {
-          return null;
-        }
-
-        const innerColumnInfo = await getTypeOfArrayForPostgres(tableName, columnName);
-        return `ARRAY(DataTypes.${await this.perform(innerColumnInfo, innerColumnInfo.udtName, tableName)})`;
+        return getTypeForArray(tableName, columnName);
       }
       case 'INET':
         return 'INET';

@@ -20,48 +20,48 @@ function Database() {
       .catch((error) => handleAuthenticationError(error));
   }
 
+  function getDialect(dbConnectionUrl, dbDialect) {
+    if (dbConnectionUrl) {
+      if (dbConnectionUrl.startsWith('postgres://')) { return 'postgres'; }
+      if (dbConnectionUrl.startsWith('mysql://')) { return 'mysql'; }
+      if (dbConnectionUrl.startsWith('mssql://')) { return 'mssql'; }
+      // NOTICE: For MongoDB can be "mongodb://" or "mongodb+srv://"
+      if (dbConnectionUrl.startsWith('mongodb')) { return 'mongodb'; }
+    }
+    return dbDialect;
+  }
+
+  function connectToMongodb(options, isSSL) {
+    const connectionOptionsMongoClient = {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    };
+    let connectionUrl = options.dbConnectionUrl;
+
+    if (!connectionUrl) {
+      connectionUrl = 'mongodb';
+      if (options.mongodbSrv) { connectionUrl += '+srv'; }
+      connectionUrl += '://';
+      if (options.dbUser) { connectionUrl += options.dbUser; }
+      if (options.dbPassword) { connectionUrl += `:${options.dbPassword}`; }
+      connectionUrl += `@${options.dbHostname}`;
+      if (!options.mongodbSrv) { connectionUrl += `:${options.dbPort}`; }
+      connectionUrl += `/${options.dbName}`;
+      if (isSSL) { connectionOptionsMongoClient.ssl = true; }
+    }
+
+    return MongoClient.connect(connectionUrl, connectionOptionsMongoClient)
+      .then((client) => client.db(options.dbName))
+      .catch((error) => handleAuthenticationError(error));
+  }
+
   this.connect = (options) => {
     const isSSL = options.dbSSL || options.ssl;
     let connection;
-    let databaseDialect;
-
-    if (options.dbConnectionUrl) {
-      if (options.dbConnectionUrl.startsWith('postgres://')) {
-        databaseDialect = 'postgres';
-      } else if (options.dbConnectionUrl.startsWith('mysql://')) {
-        databaseDialect = 'mysql';
-      } else if (options.dbConnectionUrl.startsWith('mssql://')) {
-        databaseDialect = 'mssql';
-      // NOTICE: For MongoDB can be "mongodb://" or "mongodb+srv://"
-      } else if (options.dbConnectionUrl.startsWith('mongodb')) {
-        databaseDialect = 'mongodb';
-      }
-    } else {
-      databaseDialect = options.dbDialect;
-    }
+    const databaseDialect = getDialect(options.dbConnectionUrl, options.dbDialect);
 
     if (databaseDialect === 'mongodb') {
-      const connectionOptionsMongoClient = {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      };
-      let connectionUrl = options.dbConnectionUrl;
-
-      if (!connectionUrl) {
-        connectionUrl = 'mongodb';
-        if (options.mongodbSrv) { connectionUrl += '+srv'; }
-        connectionUrl += '://';
-        if (options.dbUser) { connectionUrl += options.dbUser; }
-        if (options.dbPassword) { connectionUrl += `:${options.dbPassword}`; }
-        connectionUrl += `@${options.dbHostname}`;
-        if (!options.mongodbSrv) { connectionUrl += `:${options.dbPort}`; }
-        connectionUrl += `/${options.dbName}`;
-        if (isSSL) { connectionOptionsMongoClient.ssl = true; }
-      }
-
-      return MongoClient.connect(connectionUrl, connectionOptionsMongoClient)
-        .then((client) => client.db(options.dbName))
-        .catch((error) => handleAuthenticationError(error));
+      return connectToMongodb(options, isSSL);
     }
 
     const connectionOptionsSequelize = { logging: false };
