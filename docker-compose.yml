@@ -16,7 +16,7 @@ MongoDB-MAX:
 
 PostgreSQL-MIN:
   image : postgres:9.4
-  container_name : test_lumber_postgres_max
+  container_name : test_lumber_postgres_min
   ports :
     - "54368:5432"
   environment:
