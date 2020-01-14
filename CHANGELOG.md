@@ -10,6 +10,7 @@
 ## RELEASE 3.3.0 - 2020-01-06
 ### Added
 - Command Generate - Generate MongoDB nested objects and subDocuments.
+- Technical - Test on postgres from 9.4 to 12.1.
 
 ### Changed
 - Technical - Reorganize test utils/fixtures/expect folders.

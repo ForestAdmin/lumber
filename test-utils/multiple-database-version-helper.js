@@ -5,6 +5,7 @@ const {
   DATABASE_URL_MYSQL,
   DATABASE_URL_MYSQL_OLD,
   DATABASE_URL_POSTGRESQL,
+  DATABASE_URL_POSTGRESQL_OLD,
 } = require('./database-urls');
 
 const mongoDatabases = [{
@@ -27,7 +28,12 @@ const sqlDatabases = [{
   schema: 'public',
 }, {
   dialect: 'postgres',
-  version: '9.4.5',
+  version: '9.4',
+  connectionUrl: DATABASE_URL_POSTGRESQL_OLD,
+  schema: 'public',
+}, {
+  dialect: 'postgres',
+  version: '12.1',
   connectionUrl: DATABASE_URL_POSTGRESQL,
   schema: 'public',
 }, {
