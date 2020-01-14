@@ -6,6 +6,7 @@
 
 ### Fixed
 - Command Generate - Do not generate obsolete `bin` path.
+- Command Generate - Validate and fix the package name in `package.json` to prevent error on generated server startup.
 
 ## RELEASE 3.3.0 - 2020-01-06
 ### Added
@@ -38,9 +39,6 @@
 - Technical - Fix the missing dependencies in the `package.json` file of the generated project.
 - Technical - Fix the NPM package description.
 - Command Generate - Prevent project creation with impossible liana login (if the database contains a "sessions" table).
-
-### Fixed
-- Command Generate - Validate and fix the package name in `package.json` to prevent error on generated server startup.
 
 ## RELEASE 3.1.0 - 2019-12-20
 ### Added
