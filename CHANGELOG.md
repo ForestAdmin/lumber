@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.3.1 - 2020-01-14
 ### Added
 - Technical - Test on SQLServer 2017 and 2019.
 - Technical - Test on postgres from 9.4 to 12.1.
