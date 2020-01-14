@@ -3,6 +3,8 @@ const PrompterError = require('../../../services/prompter/prompter-error');
 const DatabasePrompts = require('../../../services/prompter/database-prompts');
 const messages = require('../../../utils/messages');
 
+const CONNECTION_URL_POSTGRES = 'postgres://username:password@host:port/database';
+
 describe('services > prompter > database prompts', () => {
   let envConfig = {};
   let requests = [];
@@ -113,13 +115,13 @@ describe('services > prompter > database prompts', () => {
           it('should add the dbConnectionUrl to the configuration', async () => {
             expect.assertions(1);
             requests.push('dbConnectionUrl');
-            program.connectionUrl = 'postgres://username:password@host:port/database';
+            program.connectionUrl = CONNECTION_URL_POSTGRES;
 
             const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
 
             await databasePrompts.handleConnectionUrl();
 
-            expect(envConfig.dbConnectionUrl).toStrictEqual('postgres://username:password@host:port/database');
+            expect(envConfig.dbConnectionUrl).toStrictEqual(CONNECTION_URL_POSTGRES);
             resetParams();
           });
 
@@ -128,7 +130,7 @@ describe('services > prompter > database prompts', () => {
             requests.push('dbConnectionUrl');
             const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
 
-            program.connectionUrl = 'postgres://username:password@host:port/database';
+            program.connectionUrl = CONNECTION_URL_POSTGRES;
 
             await databasePrompts.handleConnectionUrl();
 
@@ -166,9 +168,9 @@ describe('services > prompter > database prompts', () => {
     });
 
     describe('when the dbConnectionUrl option is not requested', () => {
-      it('should not do anything', async () => {
+      it('should not prompt for database connection url', async () => {
         expect.assertions(5);
-        program.connectionUrl = 'postgres://username:password@host:port/database';
+        program.connectionUrl = CONNECTION_URL_POSTGRES;
         const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
         expect(envConfig.dbConnectionUrl).toBeUndefined();
         expect(prompts).toHaveLength(0);
@@ -176,7 +178,7 @@ describe('services > prompter > database prompts', () => {
         await databasePrompts.handleConnectionUrl();
 
         expect(envConfig.dbConnectionUrl).toBeUndefined();
-        expect(envConfig.dbConnectionUrl).not.toStrictEqual('postgres://username:password@host:port/database');
+        expect(envConfig.dbConnectionUrl).not.toStrictEqual(CONNECTION_URL_POSTGRES);
         expect(prompts).toHaveLength(0);
         resetParams();
       });
@@ -186,22 +188,22 @@ describe('services > prompter > database prompts', () => {
   describe('handling dialect', () => {
     describe('when the dbDialect option is requested', () => {
       describe('not using windows', () => {
-        function initTest() {
+        function initTestWithDatabaseDialect() {
           requests.push('dbDialect');
           const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
           databasePrompts.handleDialect();
         }
 
-        it('should add a prompt to ask for it', () => {
+        it('should add a prompt to ask for the database dialect', () => {
           expect.assertions(1);
-          initTest();
+          initTestWithDatabaseDialect();
           expect(prompts).toHaveLength(1);
           resetParams();
         });
 
-        it('should add a prompt with the correct configuration', () => {
+        it('should add a database dialect prompt with the correct configuration', () => {
           expect.assertions(4);
-          initTest();
+          initTestWithDatabaseDialect();
           expect(prompts[0].type).toStrictEqual('list');
           expect(prompts[0].name).toStrictEqual('dbDialect');
           expect(prompts[0].message).toStrictEqual('What\'s the database type? ');
@@ -211,7 +213,7 @@ describe('services > prompter > database prompts', () => {
 
         it('should not change the configuration', () => {
           expect.assertions(1);
-          initTest();
+          initTestWithDatabaseDialect();
           expect(envConfig.dbDialect).toBeUndefined();
           resetParams();
         });
@@ -232,7 +234,7 @@ describe('services > prompter > database prompts', () => {
     });
 
     describe('when the dbDialect option is not requested', () => {
-      it('should not do anything', async () => {
+      it('should not prompt for database dialect', async () => {
         expect.assertions(4);
         resetParams();
         const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
@@ -250,22 +252,22 @@ describe('services > prompter > database prompts', () => {
 
   describe('handling name', () => {
     describe('when the dbName option is requested', () => {
-      function initTest() {
+      function initTestWithDatabaseName() {
         requests.push('dbName');
         const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
         databasePrompts.handleName();
       }
 
-      it('should add a prompt to ask for it', () => {
+      it('should add a prompt to ask for the database name', () => {
         expect.assertions(1);
-        initTest();
+        initTestWithDatabaseName();
         expect(prompts).toHaveLength(1);
         resetParams();
       });
 
-      it('should add a prompt with the correct configuration', () => {
+      it('should add a database name prompt with the correct configuration', () => {
         expect.assertions(4);
-        initTest();
+        initTestWithDatabaseName();
         expect(prompts[0].type).toStrictEqual('input');
         expect(prompts[0].name).toStrictEqual('dbName');
         expect(prompts[0].message).toStrictEqual('What\'s the database name?');
@@ -275,7 +277,7 @@ describe('services > prompter > database prompts', () => {
 
       it('should validate that the name has been filed', () => {
         expect.assertions(2);
-        initTest();
+        initTestWithDatabaseName();
         expect(prompts[0].validate('')).toStrictEqual('Please specify the database name.');
         expect(prompts[0].validate('name')).toStrictEqual(true);
         resetParams();
@@ -285,7 +287,7 @@ describe('services > prompter > database prompts', () => {
     describe('when the dbName option is not requested', () => {
       const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
 
-      it('should not do anything', async () => {
+      it('should not do prompt for database name', async () => {
         expect.assertions(4);
         expect(envConfig.dbDialect).toBeUndefined();
         expect(prompts).toHaveLength(0);
@@ -314,7 +316,7 @@ describe('services > prompter > database prompts', () => {
       });
 
       describe('and the dbSchema has not been passed in', () => {
-        function initTest() {
+        function initTestWithDatabaseSchema() {
           requests.push('dbSchema');
           const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
           databasePrompts.handleSchema();
@@ -322,21 +324,21 @@ describe('services > prompter > database prompts', () => {
 
         it('should not add the dbSchema to the configuration', () => {
           expect.assertions(1);
-          initTest();
+          initTestWithDatabaseSchema();
           expect(envConfig.dbSchema).toBeUndefined();
           resetParams();
         });
 
-        it('should add a prompt to ask for it', () => {
+        it('should add a prompt to ask for the database schema name', () => {
           expect.assertions(1);
-          initTest();
+          initTestWithDatabaseSchema();
           expect(prompts).toHaveLength(1);
           resetParams();
         });
 
-        it('should add a prompt with the correct configuration', () => {
+        it('should add a database schema name prompt with the correct configuration', () => {
           expect.assertions(6);
-          initTest();
+          initTestWithDatabaseSchema();
           expect(prompts[0].type).toStrictEqual('input');
           expect(prompts[0].name).toStrictEqual('dbSchema');
           expect(prompts[0].message).toStrictEqual('What\'s the database schema? [optional]');
@@ -348,7 +350,7 @@ describe('services > prompter > database prompts', () => {
 
         it('should be prompted only if using postgres or mssql', () => {
           expect.assertions(4);
-          initTest();
+          initTestWithDatabaseSchema();
           expect(prompts[0].when({ dbDialect: 'mongodb' })).toStrictEqual(false);
           expect(prompts[0].when({ dbDialect: 'mysql' })).toStrictEqual(false);
           expect(prompts[0].when({ dbDialect: 'postgres' })).toStrictEqual(true);
@@ -356,9 +358,9 @@ describe('services > prompter > database prompts', () => {
           resetParams();
         });
 
-        it('should set the correct default value', () => {
+        it('should set the correct default schema values', () => {
           expect.assertions(2);
-          initTest();
+          initTestWithDatabaseSchema();
           expect(prompts[0].default({ dbDialect: 'postgres' })).toStrictEqual('public');
           expect(prompts[0].default({ dbDialect: 'mssql' })).toStrictEqual('');
           resetParams();
@@ -369,7 +371,7 @@ describe('services > prompter > database prompts', () => {
     describe('when the dbSchema option is not requested', () => {
       const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
 
-      it('should not do anything', async () => {
+      it('should not prompt for database schema name', async () => {
         expect.assertions(4);
         expect(envConfig.dbSchema).toBeUndefined();
         expect(prompts).toHaveLength(0);
@@ -384,22 +386,22 @@ describe('services > prompter > database prompts', () => {
 
   describe('handling Hostname', () => {
     describe('when the dbHostname option is requested', () => {
-      function initTest() {
+      function initTestWithDatabaseHostname() {
         requests.push('dbHostname');
         const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
         databasePrompts.handleHostname();
       }
 
-      it('should add a prompt to ask for it', () => {
+      it('should add a prompt to ask for the database hostname', () => {
         expect.assertions(1);
-        initTest();
+        initTestWithDatabaseHostname();
         expect(prompts).toHaveLength(1);
         resetParams();
       });
 
-      it('should add a prompt with the correct configuration', () => {
+      it('should add a database hostname prompt with the correct configuration', () => {
         expect.assertions(4);
-        initTest();
+        initTestWithDatabaseHostname();
         expect(prompts[0].type).toStrictEqual('input');
         expect(prompts[0].name).toStrictEqual('dbHostname');
         expect(prompts[0].message).toStrictEqual('What\'s the database hostname?');
@@ -411,7 +413,7 @@ describe('services > prompter > database prompts', () => {
     describe('when the dbHostname option is not requested', () => {
       const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
 
-      it('should not do anything', () => {
+      it('should not prompt for database hostname', () => {
         expect.assertions(4);
         expect(envConfig.dbHostname).toBeUndefined();
         expect(prompts).toHaveLength(0);
@@ -426,22 +428,22 @@ describe('services > prompter > database prompts', () => {
 
   describe('handling port', () => {
     describe('when the dbPort option is requested', () => {
-      function initTest() {
+      function initTestWithDatabasePort() {
         requests.push('dbPort');
         const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
         databasePrompts.handlePort();
       }
 
-      it('should add a prompt to ask for it', () => {
+      it('should add a prompt to ask for the database port', () => {
         expect.assertions(1);
-        initTest();
+        initTestWithDatabasePort();
         expect(prompts).toHaveLength(1);
         resetParams();
       });
 
-      it('should add a prompt with the correct configuration', () => {
+      it('should add a database port prompt with the correct configuration', () => {
         expect.assertions(5);
-        initTest();
+        initTestWithDatabasePort();
         expect(prompts[0].type).toStrictEqual('input');
         expect(prompts[0].name).toStrictEqual('dbPort');
         expect(prompts[0].message).toStrictEqual('What\'s the database port?');
@@ -450,9 +452,9 @@ describe('services > prompter > database prompts', () => {
         resetParams();
       });
 
-      it('should set the correct default value', () => {
+      it('should set the correct default port values', () => {
         expect.assertions(4);
-        initTest();
+        initTestWithDatabasePort();
         expect(prompts[0].default({ dbDialect: 'postgres' })).toStrictEqual('5432');
         expect(prompts[0].default({ dbDialect: 'mysql' })).toStrictEqual('3306');
         expect(prompts[0].default({ dbDialect: 'mssql' })).toStrictEqual('1433');
@@ -462,7 +464,7 @@ describe('services > prompter > database prompts', () => {
 
       it('should validate the value filed', () => {
         expect.assertions(3);
-        initTest();
+        initTestWithDatabasePort();
         expect(prompts[0].validate('not a number')).toStrictEqual('The port must be a number.');
         expect(prompts[0].validate(70000)).toStrictEqual('This is not a valid port.');
         expect(prompts[0].validate(60000)).toStrictEqual(true);
@@ -473,7 +475,7 @@ describe('services > prompter > database prompts', () => {
     describe('when the dbPort option is not requested', () => {
       const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
 
-      it('should not do anything', () => {
+      it('should not prompt for database port', () => {
         expect.assertions(4);
         expect(envConfig.dbPort).toBeUndefined();
         expect(prompts).toHaveLength(0);
@@ -488,22 +490,22 @@ describe('services > prompter > database prompts', () => {
 
   describe('handling User', () => {
     describe('when the dbUser option is requested', () => {
-      function initTest() {
+      function initTestWithDatabaseUser() {
         requests.push('dbUser');
         const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
         databasePrompts.handleUser();
       }
 
-      it('should add a prompt to ask for it', () => {
+      it('should add a prompt to ask for the database user', () => {
         expect.assertions(1);
-        initTest();
+        initTestWithDatabaseUser();
         expect(prompts).toHaveLength(1);
         resetParams();
       });
 
-      it('should add a prompt with the correct configuration', () => {
+      it('should add a database user prompt with the correct configuration', () => {
         expect.assertions(4);
-        initTest();
+        initTestWithDatabaseUser();
         expect(prompts[0].type).toStrictEqual('input');
         expect(prompts[0].name).toStrictEqual('dbUser');
         expect(prompts[0].message).toStrictEqual('What\'s the database user?');
@@ -511,9 +513,9 @@ describe('services > prompter > database prompts', () => {
         resetParams();
       });
 
-      it('should set the correct default value', () => {
+      it('should set the correct default database user values', () => {
         expect.assertions(4);
-        initTest();
+        initTestWithDatabaseUser();
         expect(prompts[0].default({ dbDialect: 'mongodb' })).toBeUndefined();
         expect(prompts[0].default({ dbDialect: 'mysql' })).toStrictEqual('root');
         expect(prompts[0].default({ dbDialect: 'mssql' })).toStrictEqual('root');
@@ -525,7 +527,7 @@ describe('services > prompter > database prompts', () => {
     describe('when the dbUser option is not requested', () => {
       const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
 
-      it('should not do anything', () => {
+      it('should not prompt for database user', () => {
         expect.assertions(4);
         expect(envConfig.dbUser).toBeUndefined();
         expect(prompts).toHaveLength(0);
@@ -540,22 +542,22 @@ describe('services > prompter > database prompts', () => {
 
   describe('handling Password', () => {
     describe('when the dbPassword option is requested', () => {
-      function initTest() {
+      function initTestWithDatabasePassword() {
         requests.push('dbPassword');
         const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
         databasePrompts.handlePassword();
       }
 
-      it('should add a prompt to ask for it', () => {
+      it('should add a prompt to ask for the database password', () => {
         expect.assertions(1);
-        initTest();
+        initTestWithDatabasePassword();
         expect(prompts).toHaveLength(1);
         resetParams();
       });
 
-      it('should add a prompt with the correct configuration', () => {
+      it('should add a database password prompt with the correct configuration', () => {
         expect.assertions(3);
-        initTest();
+        initTestWithDatabasePassword();
         expect(prompts[0].type).toStrictEqual('password');
         expect(prompts[0].name).toStrictEqual('dbPassword');
         expect(prompts[0].message).toStrictEqual('What\'s the database password? [optional]');
@@ -566,7 +568,7 @@ describe('services > prompter > database prompts', () => {
     describe('when the dbPassword option is not requested', () => {
       const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
 
-      it('should not do anything', () => {
+      it('should not prompt for database password', () => {
         expect.assertions(4);
         expect(envConfig.dbPassword).toBeUndefined();
         expect(prompts).toHaveLength(0);
@@ -611,22 +613,22 @@ describe('services > prompter > database prompts', () => {
       });
 
       describe('and the ssl option has not been passed in', () => {
-        function initTest() {
+        function initTestWithSSL() {
           requests.push('ssl');
           const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
           databasePrompts.handleSsl();
         }
 
-        it('should add a prompt to ask for it', () => {
+        it('should add a prompt to ask for the SSL configuration', () => {
           expect.assertions(1);
-          initTest();
+          initTestWithSSL();
           expect(prompts).toHaveLength(1);
           resetParams();
         });
 
-        it('should add a prompt with the correct configuration', () => {
+        it('should add a SSL prompt with the correct configuration', () => {
           expect.assertions(4);
-          initTest();
+          initTestWithSSL();
           expect(prompts[0].type).toStrictEqual('confirm');
           expect(prompts[0].name).toStrictEqual('ssl');
           expect(prompts[0].message).toStrictEqual('Does your database require a SSL connection? ');
@@ -639,7 +641,7 @@ describe('services > prompter > database prompts', () => {
     describe('when the ssl option is not requested', () => {
       const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
 
-      it('should not do anything', () => {
+      it('should not prompt for ssl configuration', () => {
         expect.assertions(4);
         expect(envConfig.ssl).toBeUndefined();
         expect(prompts).toHaveLength(0);
@@ -654,22 +656,22 @@ describe('services > prompter > database prompts', () => {
 
   describe('handling Mongodb Srv', () => {
     describe('when the mongodbSrv option is requested', () => {
-      function initTest() {
+      function initTestWithMongoSrv() {
         requests.push('mongodbSrv');
         const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
         databasePrompts.handleMongodbSrv();
       }
 
-      it('should add a prompt to ask for it', () => {
+      it('should add a prompt to ask for the MongodbSrv configuration', () => {
         expect.assertions(1);
-        initTest();
+        initTestWithMongoSrv();
         expect(prompts).toHaveLength(1);
         resetParams();
       });
 
-      it('should add a prompt with the correct configuration', () => {
+      it('should add a MongodbSrv prompt with the correct configuration', () => {
         expect.assertions(5);
-        initTest();
+        initTestWithMongoSrv();
         expect(prompts[0].type).toStrictEqual('confirm');
         expect(prompts[0].name).toStrictEqual('mongodbSrv');
         expect(prompts[0].message).toStrictEqual('Use a SRV connection string? ');
@@ -680,7 +682,7 @@ describe('services > prompter > database prompts', () => {
 
       it('should only be prompted if using mongodb', () => {
         expect.assertions(4);
-        initTest();
+        initTestWithMongoSrv();
         expect(prompts[0].when({ dbDialect: 'mongodb' })).toStrictEqual(true);
         expect(prompts[0].when({ dbDialect: 'mssql' })).toStrictEqual(false);
         expect(prompts[0].when({ dbDialect: 'mysql' })).toStrictEqual(false);
@@ -692,7 +694,7 @@ describe('services > prompter > database prompts', () => {
     describe('when the mongodbSrv option is not requested', () => {
       const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
 
-      it('should not do anything', () => {
+      it('should not prompt for MongodbSrv configuration', () => {
         expect.assertions(2);
         expect(prompts).toHaveLength(0);
 

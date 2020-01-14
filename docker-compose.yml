@@ -32,9 +32,20 @@ postgres121:
     - POSTGRES_USER=forest
     - POSTGRES_PASSWORD=secret
 
+OldMysql:
+  image: mysql:5.6
+  container_name: lumber_sequelize_mysql_5_6
+  environment:
+    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_DATABASE: lumber-sequelize-test
+    MYSQL_USER: forest
+    MYSQL_PASSWORD: secret
+  ports:
+    - "127.0.0.1:8998:3306"
+
 mysql:
   image: mysql:5.7
-  container_name: lumber_sequelize_mysql
+  container_name: lumber_sequelize_mysql_5_7
   environment:
     MYSQL_ROOT_PASSWORD: secret
     MYSQL_DATABASE: lumber-sequelize-test
