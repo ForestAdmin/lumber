@@ -7,6 +7,7 @@ const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
 const stringUtils = require('../utils/strings');
 const logger = require('./logger');
+const toValidPackageName = require('../utils/to-valid-package-name');
 require('../handlerbars/loader');
 
 const mkdirp = P.promisify(mkdirpSync);
@@ -62,7 +63,7 @@ function Dumper(config) {
     }
 
     const pkg = {
-      name: config.appName.replace(/ /g, '_').toLowerCase(),
+      name: toValidPackageName(config.appName),
       version: '0.0.1',
       private: true,
       scripts: { start: 'node ./server.js' },

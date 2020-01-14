@@ -6,6 +6,7 @@
 
 ### Fixed
 - Command Generate - Do not generate obsolete `bin` path.
+- Command Generate - Validate and fix the package name in `package.json` to prevent error on generated server startup.
 
 ## RELEASE 3.3.0 - 2020-01-06
 ### Added
