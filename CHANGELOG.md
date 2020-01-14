@@ -18,6 +18,7 @@
 - Command Generate - Now generate many to many relationships when we detect a table with 2 foreign keys and optionally technical timestamps.
 
 ### Fixed
+- Command Generate - Fix schema retrieval request with MySQL 5.6
 - Technical - Fix test expect files extensions.
 - Command Generate - Do not declare the "id" field on tables having a `BIGINT` "id" column as primary key. 🛡
 
