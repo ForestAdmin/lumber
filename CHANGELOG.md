@@ -1,18 +1,21 @@
 # Change Log
 
 ## [Unreleased]
-### Changed
+### Added
+- Technical - Test on SQLServer 2017 and 2019.
+- Technical - Test on postgres from 9.4 to 12.1.
+
+### Changed
 - Technical - Reduce code complexity removing all SonarJS errors.
 
 ### Fixed
 - Command Generate - Do not generate obsolete `bin` path.
 - Command Generate - Validate and fix the package name in `package.json` to prevent error on generated server startup.
+- Command Generate - Fix schema retrieval request with MySQL 5.6
 
 ## RELEASE 3.3.0 - 2020-01-06
 ### Added
-- Technical - Test on SQLServer 2017 and 2019.
 - Command Generate - Generate MongoDB nested objects and subDocuments.
-- Technical - Test on postgres from 9.4 to 12.1.
 
 ### Changed
 - Technical - Reorganize test utils/fixtures/expect folders.
@@ -21,7 +24,6 @@
 - Command Generate - Now generate many to many relationships when we detect a table with 2 foreign keys and optionally technical timestamps.
 
 ### Fixed
-- Command Generate - Fix schema retrieval request with MySQL 5.6
 - Technical - Fix test expect files extensions.
 - Command Generate - Do not declare the "id" field on tables having a `BIGINT` "id" column as primary key. 🛡
 
