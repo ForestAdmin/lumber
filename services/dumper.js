@@ -7,6 +7,7 @@ const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
 const stringUtils = require('../utils/strings');
 const logger = require('./logger');
+const toValidPackageName = require('../utils/to-valid-package-name');
 require('../handlerbars/loader');
 
 const mkdirp = P.promisify(mkdirpSync);
@@ -15,7 +16,6 @@ const DEFAULT_PORT = 3310;
 
 function Dumper(config) {
   const path = `${process.cwd()}/${config.appName}`;
-  const binPath = `${path}/bin`;
   const routesPath = `${path}/routes`;
   const forestPath = `${path}/forest`;
   const publicPath = `${path}/public`;
@@ -78,7 +78,7 @@ function Dumper(config) {
     }
 
     const pkg = {
-      name: config.appName.replace(/ /g, '_').toLowerCase(),
+      name: toValidPackageName(config.appName),
       version: '0.0.1',
       private: true,
       scripts: { start: 'node ./server.js' },
@@ -260,7 +260,6 @@ function Dumper(config) {
   this.dump = async (schema) => {
     const directories = [
       mkdirp(path),
-      mkdirp(binPath),
       mkdirp(routesPath),
       mkdirp(forestPath),
       mkdirp(viewPath),

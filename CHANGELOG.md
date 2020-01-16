@@ -1,9 +1,27 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
 - Technical - Reduce code complexity removing all SonarJS errors.
 - Technical - Use handlebars for all templates.
 
+## RELEASE 3.3.2 - 2020-01-16
+### Fixed
+- Command Generate - Fix error on array type generation for PostgreSQL. 🛡
+
+## RELEASE 3.3.1 - 2020-01-14
+### Added
+- Technical - Test on SQLServer 2017 and 2019.
+- Technical - Test on postgres from 9.4 to 12.1.
+
+### Changed
+- Technical - Reduce code complexity removing all SonarJS errors.
+- Technical - Refactor docker services and containers names.
+
+### Fixed
+- Command Generate - Do not generate obsolete `bin` path.
+- Command Generate - Validate and fix the package name in `package.json` to prevent error on generated server startup.
+- Command Generate - Fix schema retrieval request with MySQL 5.6
 
 ## RELEASE 3.3.0 - 2020-01-06
 ### Added

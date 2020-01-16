@@ -1,7 +1,7 @@
 # Lumber
 [![npm package](https://badge.fury.io/js/lumber-cli.svg)](https://badge.fury.io/js/lumber-cli)
 [![Build Status](https://travis-ci.org/ForestAdmin/lumber.svg?branch=devel)](https://travis-ci.org/ForestAdmin/lumber)
-![Coverage](https://img.shields.io/badge/coverage-79%25%0A-critical)
+![Coverage](https://img.shields.io/badge/coverage-81%25%0A-critical)
 
 <p align="center">
   <img src="https://github.com/ForestAdmin/lumber/blob/master/assets/lumber-logo.png?raw=true" alt="Lumber logo">

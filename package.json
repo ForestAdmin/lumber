@@ -1,7 +1,7 @@
 {
   "name": "lumber-cli",
   "description": "Create your Forest Admin API in minutes. Admin API backend based on a database schema",
-  "version": "3.3.0",
+  "version": "3.3.2",
   "main": "lumber.js",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js .eslint-bin deserializers scripts serializers services test utils",
@@ -48,6 +48,7 @@
     "spinnies": "0.5.0",
     "superagent": "5.1.0",
     "tedious": "6.4.0",
+    "validate-npm-package-name": "3.0.0",
     "winston": "^2.2.0"
   },
   "devDependencies": {

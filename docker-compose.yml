@@ -1,20 +1,32 @@
-OldMongoDB:
+MongoDB-MIN:
   image: mongo:3.2
+  container_name : test_lumber_mongo_min
   ports:
     - "27015:27017"
   volumes:
     - ./data/mongodb/3.2:/var/lib/mongodb
 
-MongoDB:
+MongoDB-MAX:
   image: mongo:4.2
+  container_name : test_lumber_mongo_max
   ports:
     - "27016:27017"
   volumes:
     - ./data/mongodb/4.2:/var/lib/mongodb
 
-postgres :
-  image : postgres:9.4.5
-  container_name : lumber_sequelize_postgres
+PostgreSQL-MIN:
+  image : postgres:9.4
+  container_name : test_lumber_postgres_min
+  ports :
+    - "54368:5432"
+  environment:
+    - POSTGRES_DB=lumber-sequelize-test
+    - POSTGRES_USER=forest
+    - POSTGRES_PASSWORD=secret
+
+PostgreSQL-MAX:
+  image : postgres:12.1
+  container_name : test_lumber_postgres_max
   ports :
     - "54369:5432"
   environment:
@@ -22,9 +34,20 @@ postgres :
     - POSTGRES_USER=forest
     - POSTGRES_PASSWORD=secret
 
-mysql:
+MySQL-MIN:
+  image: mysql:5.6
+  container_name: test_lumber_mysql_min
+  environment:
+    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_DATABASE: lumber-sequelize-test
+    MYSQL_USER: forest
+    MYSQL_PASSWORD: secret
+  ports:
+    - "127.0.0.1:8998:3306"
+
+MySQL-MAX:
   image: mysql:5.7
-  container_name: lumber_sequelize_mysql
+  container_name: test_lumber_mysql_max
   environment:
     MYSQL_ROOT_PASSWORD: secret
     MYSQL_DATABASE: lumber-sequelize-test
@@ -33,9 +56,18 @@ mysql:
   ports:
     - "127.0.0.1:8999:3306"
 
-mssql:
-  image: mcr.microsoft.com/mssql/server:2017-CU8-ubuntu
-  container_name: lumber_sequelize_mssql
+MS-SQL-MIN:
+  image: mcr.microsoft.com/mssql/server:2017-latest
+  container_name: test_lumber_mssql_min
+  environment:
+    ACCEPT_EULA: "Y"
+    SA_PASSWORD: "forest2019:"
+  ports:
+    - "1431:1433"
+
+MS-SQL-MAX:
+  image: mcr.microsoft.com/mssql/server:2019-latest
+  container_name: test_lumber_mssql_max
   environment:
     ACCEPT_EULA: "Y"
     SA_PASSWORD: "forest2019:"
