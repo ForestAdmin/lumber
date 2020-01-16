@@ -9,6 +9,7 @@
 
 ### Changed
 - Technical - Reduce code complexity removing all SonarJS errors.
+- Technical - Refactor docker services and containers names.
 
 ### Fixed
 - Command Generate - Do not generate obsolete `bin` path.
