@@ -256,6 +256,16 @@ function Dumper(config) {
     });
   }
 
+  function writeForestAdminMiddleware() {
+    copyTemplate('middlewares/forestadmin.hbs', `${path}/middlewares/forestadmin.js`);
+
+    copyHandleBarsTemplate({
+      source: 'middlewares/forestadmin.hbs',
+      target: 'middlewares/forestadmin.js',
+      context: { isMongoDB: config.dbDialect === 'mongodb' },
+    });
+  }
+
   this.dump = async (schema) => {
     const directories = [
       mkdirp(path),
@@ -294,11 +304,11 @@ function Dumper(config) {
     writeDockerCompose();
     writeDockerfile();
     writePackageJson();
+    writeForestAdminMiddleware();
 
     // NOTICE: Copy simple templates files without replacements.
     copyTemplate('server.hbs', `${path}/server.js`);
     copyTemplate('views/index.hbs', `${path}/views/index.html`);
-    copyTemplate('middlewares/forestadmin.hbs', `${path}/middlewares/forestadmin.js`);
     copyTemplate('middlewares/welcome.hbs', `${path}/middlewares/welcome.js`);
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
     copyTemplate('dockerignore.hbs', `${path}/.dockerignore`);
