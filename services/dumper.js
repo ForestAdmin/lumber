@@ -123,10 +123,10 @@ function Dumper(config) {
       target: '.env',
       context: {
         databaseUrl: getDatabaseUrl(),
-        ssl: config.ssl,
+        ssl: config.ssl || 'false',
         dbSchema: config.dbSchema,
         hostname: config.appHostname,
-        port: config.appPort,
+        port: config.appPort || DEFAULT_PORT,
         forestEnvSecret: config.forestEnvSecret,
         forestAuthSecret: config.forestAuthSecret,
       },
@@ -257,10 +257,8 @@ function Dumper(config) {
   }
 
   function writeForestAdminMiddleware() {
-    copyTemplate('middlewares/forestadmin.hbs', `${path}/middlewares/forestadmin.js`);
-
     copyHandleBarsTemplate({
-      source: 'middlewares/forestadmin.hbs',
+      source: 'app/middlewares/forestadmin.hbs',
       target: 'middlewares/forestadmin.js',
       context: { isMongoDB: config.dbDialect === 'mongodb' },
     });
