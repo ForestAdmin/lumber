@@ -66,11 +66,11 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
     return 'STRING';
   }
 
-  async function getTypeForArray(tableName, columnName) {
+  this.getTypeForArray = async (tableName, columnName) => {
     if (!isDialect(DIALECT_POSTGRES)) { return null; }
     const innerColumnInfo = await getTypeOfArrayForPostgres(tableName, columnName);
     return `ARRAY(DataTypes.${await this.perform(innerColumnInfo, innerColumnInfo.udtName, tableName)})`;
-  }
+  };
 
   this.perform = async (columnInfo, columnName, tableName) => {
     const { type } = columnInfo;
@@ -126,7 +126,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       case 'TIME WITHOUT TIME ZONE':
         return 'TIME';
       case 'ARRAY': {
-        return getTypeForArray(tableName, columnName);
+        return this.getTypeForArray(tableName, columnName);
       }
       case 'INET':
         return 'INET';
