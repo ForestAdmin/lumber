@@ -34,7 +34,7 @@ describe('services > column type getter', () => {
       await sequelizeHelper.close();
     });
 
-    it('should handle `integer ARRAY` as ARRAY(DataTypes.INTEGER)', async () => {
+    it('should handle `integer ARRAY` as `ARRAY(DataTypes.INTEGER)`', async () => {
       expect.assertions(1);
       const sequelizeHelper = new SequelizeHelper();
       const databaseConnection = await sequelizeHelper.connect(DATABASE_URL_POSTGRESQL_MAX);
@@ -44,7 +44,7 @@ describe('services > column type getter', () => {
 
       expect(computedType).toStrictEqual('ARRAY(DataTypes.INTEGER)');
 
-      await sequelizeHelper.drop('customers', 'postgres');
+      await sequelizeHelper.drop('employees', 'postgres');
       await sequelizeHelper.close();
     });
   });
