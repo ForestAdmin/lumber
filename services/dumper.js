@@ -33,14 +33,13 @@ function Dumper(config) {
     writeFile(to, fs.readFileSync(newFrom, 'utf-8'));
   }
 
-  function copyHandleBarsTemplate(args) {
+  function copyHandleBarsTemplate({ source, target, context }) {
     function handlebarsTemplate(templatePath) {
       return Handlebars.compile(
         fs.readFileSync(`${__dirname}/../templates/${templatePath}`, 'utf-8'),
       );
     }
 
-    const { source, target, context } = args;
     if (!(source && target && context)) {
       throw new Error('Missing argument (source, target or context).');
     }
