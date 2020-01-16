@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.3.2 - 2020-01-16
 ### Fixed
 - Command Generate - Fix error on array type generation for PostgreSQL. 🛡
 
