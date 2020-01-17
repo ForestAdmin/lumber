@@ -2,7 +2,6 @@
 
 ## [Unreleased]
 ### Changed
-- Technical - Reduce code complexity removing all SonarJS errors.
 - Technical - Use handlebars for all templates.
 
 ## RELEASE 3.3.2 - 2020-01-16
