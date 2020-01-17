@@ -1,9 +1,9 @@
-<% if (config.dbDialect === 'mongodb') {
-%>const mongoose = require('mongoose');
+{{#if isMongoDB}}
+const mongoose = require('mongoose');
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 module.exports = mongoose.models;
-<% } else {
-%>const fs = require('fs');
+{{else}}
+const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 
@@ -18,8 +18,8 @@ let databaseOptions = {
   dialectOptions: {}
 };
 
-<%if(config.dbDialect === 'mysql') {
-%>databaseOptions.dialectOptions.typeCast = (field, useDefaultTypeCasting) => {
+{{#if isMySQL}}
+databaseOptions.dialectOptions.typeCast = (field, useDefaultTypeCasting) => {
   if ((field.type === "BIT") && (field.length === 1)) {
     const bytes = field.buffer();
     return bytes ? bytes[0] === 1 : bytes;
@@ -27,18 +27,17 @@ let databaseOptions = {
 
   return useDefaultTypeCasting();
 };
-<%}
-%>
 
+{{/if}}
 if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
-<% if (config.dbDialect === 'mysql') {
-%>  databaseOptions.dialectOptions.ssl = { rejectUnauthorized: true };
-<% } else if (config.dbDialect === 'mssql') {
-%>  databaseOptions.dialectOptions.options = { encrypt: true };
-<% } else {
-%>  databaseOptions.dialectOptions.ssl = true;
-<% }
-%>}
+{{#if isMySQL}}
+  databaseOptions.dialectOptions.ssl = { rejectUnauthorized: true };
+{{else if isMSSQL}}
+  databaseOptions.dialectOptions.options = { encrypt: true };
+{{else}}
+  databaseOptions.dialectOptions.ssl = true;
+{{/if}}
+}
 
 let sequelize = new Sequelize(process.env.DATABASE_URL, databaseOptions);
 let db = {};
@@ -67,4 +66,4 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
-<% } %>
+{{/if}}

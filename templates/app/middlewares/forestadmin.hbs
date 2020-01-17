@@ -1,9 +1,12 @@
 const chalk = require('chalk');
-const path = require('path');<% if (dbDialect === 'mongodb') {%>
+const path = require('path');
+{{#if isMongoDB}}
 const Liana = require('forest-express-mongoose');
-const mongoose = require('mongoose');<% } else { %>
+const mongoose = require('mongoose');
+{{else}}
 const Liana = require('forest-express-sequelize');
-const { sequelize } = require('../models');<% } %>
+const { sequelize } = require('../models');
+{{/if}}
 
 module.exports = function (app) {
   app.use(Liana.init({
@@ -11,7 +14,11 @@ module.exports = function (app) {
     configDir: path.join(__dirname, '../forest'),
     envSecret: process.env.FOREST_ENV_SECRET,
     authSecret: process.env.FOREST_AUTH_SECRET,
-<% if (dbDialect === 'mongodb') { %>    mongoose,<% } else { %>    sequelize,<% } %>
+{{#if isMongoDB}}
+    mongoose,
+{{else}}
+    sequelize,
+{{/if}}
   }));
 
   console.log(chalk.cyan('Your admin panel is available here: https://app.forestadmin.com/projects'));

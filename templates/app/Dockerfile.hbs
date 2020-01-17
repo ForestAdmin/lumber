@@ -4,5 +4,5 @@ COPY package*.json ./
 RUN npm install lumber-cli -g -s
 RUN npm install -s
 COPY . .
-EXPOSE <%= port %>
+EXPOSE {{ port }}
 CMD ["npm", "start"]
