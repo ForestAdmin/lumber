@@ -9,7 +9,7 @@ const morgan = require('morgan');
 const {
   ensureAuthenticated,
   PUBLIC_ROUTES,
-} = require('forest-express-{{#if isMongoBD }}mongoose{{else}}sequelize{{/if}}');
+} = require('forest-express-{{#if isMongoDB }}mongoose{{else}}sequelize{{/if}}');
 
 const app = express();
 

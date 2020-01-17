@@ -191,7 +191,7 @@ function Dumper(config) {
         modelNameDasherized,
         modelNameReadablePlural: plural(readableModelName),
         modelNameReadableSingular: singular(readableModelName),
-        isMongoBD: config.dbDialect === 'mongodb',
+        isMongoDB: config.dbDialect === 'mongodb',
       },
     });
   }

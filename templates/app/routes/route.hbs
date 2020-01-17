@@ -1,5 +1,5 @@
 const express = require('express');
-const { PermissionMiddlewareCreator } = require('forest-express-{{#if isMongoBD }}mongoose{{else}}sequelize{{/if}}');
+const { PermissionMiddlewareCreator } = require('forest-express-{{#if isMongoDB }}mongoose{{else}}sequelize{{/if}}');
 const { {{ modelName }} } = require('../models');
 
 const router = express.Router();
