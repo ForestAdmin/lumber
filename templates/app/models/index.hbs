@@ -1,7 +1,18 @@
 {{#if isMongoDB}}
 const mongoose = require('mongoose');
+{{#each models as |model|}}
+const {{model.modelName}} = require('./{{model.modelFile}}');
+{{/each}}
+
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-module.exports = mongoose.models;
+
+const models = {
+{{#each models as |model|}}
+  {{model.modelName}},
+{{/each}}
+};
+
+module.exports = models;
 {{else}}
 const fs = require('fs');
 const path = require('path');
