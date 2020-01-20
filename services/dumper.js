@@ -187,7 +187,8 @@ function Dumper(config) {
       source: 'app/routes/route.hbs',
       target: `routes/${tableToFilename(modelName)}.js`,
       context: {
-        modelName,
+        table: modelName,
+        modelName: stringUtils.pascalCase(modelName),
         modelNameDasherized,
         modelNameReadablePlural: plural(readableModelName),
         modelNameReadableSingular: singular(readableModelName),
