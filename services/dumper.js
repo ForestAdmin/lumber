@@ -167,7 +167,7 @@ function Dumper(config) {
       source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
       target: `models/${tableToFilename(table)}.js`,
       context: {
-        modelName: stringUtils.pascalCase(table),
+        modelName: stringUtils.transformToSafeString(stringUtils.pascalCase(table)),
         table,
         fields: fieldsDefinition,
         references: referencesDefinition,
@@ -180,16 +180,14 @@ function Dumper(config) {
   }
 
   function writeRoute(modelName) {
-    const modelNameDasherized = _.kebabCase(modelName);
     const readableModelName = _.startCase(modelName);
 
     copyHandleBarsTemplate({
       source: 'app/routes/route.hbs',
       target: `routes/${tableToFilename(modelName)}.js`,
       context: {
-        table: modelName,
-        modelName: stringUtils.pascalCase(modelName),
-        modelNameDasherized,
+        tableName: modelName,
+        modelName: stringUtils.transformToSafeString(stringUtils.pascalCase(modelName)),
         modelNameReadablePlural: plural(readableModelName),
         modelNameReadableSingular: singular(readableModelName),
         isMongoDB: config.dbDialect === 'mongodb',

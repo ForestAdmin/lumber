@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const { Sequelize } = sequelize;
   // This section contains the fields of your model, mapped to your table's columns.
   // Learn more here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
-  const {{modelName}} = sequelize.define('{{table}}', {
+  const {{modelName}} = sequelize.define('{{modelName}}', {
 {{#each fields as |field|}}
     {{field.name}}: {
       type: DataTypes.{{{field.type}}},{{#if field.nameColumnUnconventional}}
