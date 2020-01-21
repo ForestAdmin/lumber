@@ -163,11 +163,14 @@ function Dumper(config) {
       };
     });
 
+    const modelSafeName = stringUtils.transformToSafeString(table);
+
     copyHandleBarsTemplate({
       source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
       target: `models/${tableToFilename(table)}.js`,
       context: {
-        modelName: stringUtils.transformToSafeString(stringUtils.pascalCase(table)),
+        modelVariableName: stringUtils.pascalCase(modelSafeName),
+        modelName: stringUtils.pascalCase(modelSafeName, false),
         table,
         fields: fieldsDefinition,
         references: referencesDefinition,
@@ -186,8 +189,7 @@ function Dumper(config) {
       source: 'app/routes/route.hbs',
       target: `routes/${tableToFilename(modelName)}.js`,
       context: {
-        tableName: modelName,
-        modelName: stringUtils.transformToSafeString(stringUtils.pascalCase(modelName)),
+        modelName: stringUtils.pascalCase(stringUtils.transformToSafeString(modelName), false),
         modelNameReadablePlural: plural(readableModelName),
         modelNameReadableSingular: singular(readableModelName),
         isMongoDB: config.dbDialect === 'mongodb',
@@ -199,7 +201,10 @@ function Dumper(config) {
     copyHandleBarsTemplate({
       source: 'app/forest/collection.hbs',
       target: `forest/${tableToFilename(table)}.js`,
-      context: { isMongoDB: config.dbDialect === 'mongodb', table },
+      context: {
+        isMongoDB: config.dbDialect === 'mongodb',
+        table: stringUtils.pascalCase(stringUtils.transformToSafeString(table), false),
+      },
     });
   }
 

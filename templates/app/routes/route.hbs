@@ -3,9 +3,9 @@ const { PermissionMiddlewareCreator } = require('forest-express-{{#if isMongoDB 
 const { {{ modelName }} } = require('../models');
 
 const router = express.Router();
-const permissionMiddlewareCreator = new PermissionMiddlewareCreator('{{ table }}');
+const permissionMiddlewareCreator = new PermissionMiddlewareCreator('{{ modelName }}');
 
-// This file contains the logic of every route in Forest Admin for the collection {{ table }}:
+// This file contains the logic of every route in Forest Admin for the collection {{ modelName }}:
 // - Native routes are already generated but can be extended/overriden - Learn how to extend a route here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/routes/extend-a-route
 // - Smart action routes will need to be added as you create new Smart Actions - Learn how to create a Smart Action here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/actions/create-and-manage-smart-actions
 
