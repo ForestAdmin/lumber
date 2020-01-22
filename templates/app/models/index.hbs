@@ -1,16 +1,21 @@
 {{#if isMongoDB}}
 const mongoose = require('mongoose');
-{{#each models as |model|}}
-const {{model.modelName}} = require('./{{model.modelFile}}');
-{{/each}}
+const requireAll = require('require-all');
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+const models = {};
 
-const models = {
-{{#each models as |model|}}
-  {{model.modelName}},
-{{/each}}
-};
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
+
+const modelsList = requireAll({
+  dirname:  __dirname,
+  filter: `^(?!index\.js$).+`,
+  resolve: (Model) => Model,
+});
+
+Object.keys(modelsList).forEach((filename) => {
+  const model = modelsList[filename];
+  models[model.modelName] = model;
+});
 
 module.exports = models;
 {{else}}
