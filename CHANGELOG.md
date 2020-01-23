@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix error on project generation with database contain table with number as name.
 
 ## RELEASE 3.3.3 - 2020-01-23
 ### Changed
@@ -10,7 +12,6 @@
 
 ### Fixed
 - Models - Fix error in mongoose projects preventing models from being exported.
-- Command Generate - Fix error on project generation with database contain table with number as name.
 
 ## RELEASE 3.3.2 - 2020-01-16
 ### Fixed
