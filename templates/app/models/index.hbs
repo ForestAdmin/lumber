@@ -7,7 +7,7 @@ const models = {};
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const modelsList = requireAll({
-  dirname:  __dirname,
+  dirname: __dirname,
   filter: `^(?!index\.js$).+`,
   resolve: (Model) => Model,
 });
