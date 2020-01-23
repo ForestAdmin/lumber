@@ -269,6 +269,8 @@ function Dumper(config) {
     });
   }
 
+  // NOTICE: Generate files in alphabetical order (directories first).
+  //         Thus, we must preserve the function call order.
   this.dump = async (schema) => {
     const directories = [
       mkdirp(path),
@@ -287,11 +289,16 @@ function Dumper(config) {
 
     modelNames.forEach(writeForestCollection);
 
+    writeForestAdminMiddleware();
+    copyTemplate('middlewares/welcome.hbs', `${path}/middlewares/welcome.js`);
+
     writeModelsIndex(modelNames);
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
       writeModel(modelName, fields, references, options);
     });
+
+    copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
 
     modelNames.forEach((modelName) => {
       // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
@@ -302,20 +309,15 @@ function Dumper(config) {
       }
     });
 
+    copyTemplate('views/index.hbs', `${path}/views/index.html`);
+    copyTemplate('dockerignore.hbs', `${path}/.dockerignore`);
     writeDotEnv();
+    copyTemplate('gitignore.hbs', `${path}/.gitignore`);
     writeAppJs();
     writeDockerCompose();
     writeDockerfile();
     writePackageJson();
-    writeForestAdminMiddleware();
-
-    // NOTICE: Copy simple templates files without replacements.
     copyTemplate('server.hbs', `${path}/server.js`);
-    copyTemplate('views/index.hbs', `${path}/views/index.html`);
-    copyTemplate('middlewares/welcome.hbs', `${path}/middlewares/welcome.js`);
-    copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
-    copyTemplate('dockerignore.hbs', `${path}/.dockerignore`);
-    copyTemplate('gitignore.hbs', `${path}/.gitignore`);
   };
 }
 
