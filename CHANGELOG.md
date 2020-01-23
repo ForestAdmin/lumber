@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.3.3 - 2020-01-23
 ### Changed
 - Technical - Use handlebars for all templates.
 - Technical - Remove a useless template about the removed `update` command.
