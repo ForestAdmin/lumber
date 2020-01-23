@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Technical - Use handlebars for all templates.
+- Command Generate - Generate files in alphabetical order.
 
 ### Fixed
 - Models - Fix error in mongoose projects preventing models from being exported.
