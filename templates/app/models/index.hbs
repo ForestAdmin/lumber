@@ -4,7 +4,7 @@ const requireAll = require('require-all');
 
 const models = {};
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 function filterFile(filename) {
   if (filename.endsWith('.js') && filename !== 'index.js') {
