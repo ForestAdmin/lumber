@@ -4,6 +4,7 @@
 ### Changed
 - Technical - Use handlebars for all templates.
 - Technical - Remove a useless template about the removed `update` command.
+- Technical - Remove a useless `gitkeep` file template.
 
 ### Fixed
 - Models - Fix error in mongoose projects preventing models from being exported.
