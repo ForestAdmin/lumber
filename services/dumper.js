@@ -269,8 +269,7 @@ function Dumper(config) {
     });
   }
 
-  // NOTICE: Generate files in alphabetical order (directories first).
-  //         Thus, we must preserve the function call order.
+  // NOTICE: Generate files in alphabetical order to ensure a nice generation console logs display.
   this.dump = async (schema) => {
     const directories = [
       mkdirp(path),
