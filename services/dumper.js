@@ -215,12 +215,8 @@ function Dumper(config) {
     });
   }
 
-  function writeModelsIndex(modelNames) {
+  function writeModelsIndex() {
     const { dbDialect } = config;
-
-    const models = modelNames.map(
-      (modelName) => ({ modelName, modelFile: tableToFilename(modelName) }),
-    );
 
     copyHandleBarsTemplate({
       source: 'app/models/index.hbs',
@@ -229,7 +225,6 @@ function Dumper(config) {
         isMongoDB: dbDialect === 'mongodb',
         isMSSQL: dbDialect === 'mssql',
         isMySQL: dbDialect === 'mysql',
-        models,
       },
     });
   }
@@ -291,7 +286,7 @@ function Dumper(config) {
     writeForestAdminMiddleware();
     copyTemplate('middlewares/welcome.hbs', `${path}/middlewares/welcome.js`);
 
-    writeModelsIndex(modelNames);
+    writeModelsIndex();
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
       writeModel(modelName, fields, references, options);
