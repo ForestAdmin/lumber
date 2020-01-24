@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Fix error on project generation with database contain table with number as name.
 
 ## RELEASE 3.3.3 - 2020-01-23
 ### Changed

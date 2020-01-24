@@ -133,6 +133,10 @@ function Dumper(config) {
     });
   }
 
+  function getModelNameFromTableName(table) {
+    return stringUtils.camelCase(stringUtils.transformToSafeString(table));
+  }
+
   function writeModel(table, fields, references, options = {}) {
     const { underscored } = options;
 
@@ -167,7 +171,8 @@ function Dumper(config) {
       source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
       target: `models/${tableToFilename(table)}.js`,
       context: {
-        modelName: stringUtils.pascalCase(table),
+        modelName: getModelNameFromTableName(table),
+        modelVariableName: stringUtils.pascalCase(stringUtils.transformToSafeString(table)),
         table,
         fields: fieldsDefinition,
         references: referencesDefinition,
@@ -187,7 +192,7 @@ function Dumper(config) {
       source: 'app/routes/route.hbs',
       target: `routes/${tableToFilename(modelName)}.js`,
       context: {
-        modelName,
+        modelName: getModelNameFromTableName(modelName),
         modelNameDasherized,
         modelNameReadablePlural: plural(readableModelName),
         modelNameReadableSingular: singular(readableModelName),
@@ -200,7 +205,10 @@ function Dumper(config) {
     copyHandleBarsTemplate({
       source: 'app/forest/collection.hbs',
       target: `forest/${tableToFilename(table)}.js`,
-      context: { isMongoDB: config.dbDialect === 'mongodb', table },
+      context: {
+        isMongoDB: config.dbDialect === 'mongodb',
+        table: getModelNameFromTableName(table),
+      },
     });
   }
 

@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   const { Sequelize } = sequelize;
   // This section contains the fields of your model, mapped to your table's columns.
   // Learn more here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
-  const {{modelName}} = sequelize.define('{{table}}', {
+  const {{modelVariableName}} = sequelize.define('{{modelName}}', {
 {{#each fields as |field|}}
     {{field.name}}: {
       type: DataTypes.{{{field.type}}},{{#if field.nameColumnUnconventional}}
@@ -19,11 +19,11 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,{{/unless}}{{#if schema}}
     schema: process.env.DATABASE_SCHEMA,{{/if}}
   });
-{{#if noId}}  {{modelName}}.removeAttribute('id');{{/if}}
+{{#if noId}}  {{modelVariableName}}.removeAttribute('id');{{/if}}
   // This section contains the relationships for this model. See: https://docs.forestadmin.com/documentation/v/v5/reference-guide/relationships#adding-relationships.
-  {{modelName}}.associate = (models) => {
+  {{modelVariableName}}.associate = (models) => {
     {{#each references as |reference|}}
-    {{../modelName}}.{{reference.association}}(models.{{reference.ref}}, {
+    {{../modelVariableName}}.{{reference.association}}(models.{{reference.ref}}, {
     {{#if reference.isBelongsToMany}}
       through: '{{reference.junctionTable}}',
       foreignKey: '{{reference.foreignKey}}',
@@ -43,5 +43,5 @@ module.exports = (sequelize, DataTypes) => {
     {{/each}}
   };
 
-  return {{modelName}};
+  return {{modelVariableName}};
 };
