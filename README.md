@@ -10,38 +10,30 @@
 Lumber is the CLI tool used to install [Forest Admin](https://www.forestadmin.com), the Admin Panel framework.
 Forest Admin has been designed with scalability in mind to fit requirements from small projects to mature companies.
 
+- [Getting started](#getting-started)
+- [How it works](#how-it-works)
+- [Documentation](#documentation)
+- [Features](#features)
+- [Commands](#commands)
+- [See it in action](https://app.forestadmin.com/23065?livedemo)
+- [Who Uses Forest Admin](#who-uses-forest-admin)
+- [Contribute](#contribute)
+- [Community](#community)
+
 ## Getting started
 
 Get your admin panel running in minutes by installing Forest Admin:
 [https://app.forestadmin.com/signup](https://app.forestadmin.com/signup)
 
-## See it in action
+## How it works
 
-Check out our Live demo to see what Forest Admin looks like in practice:
-[https://app.forestadmin.com/23065?livedemo](https://app.forestadmin.com/23065?livedemo)
+<p align="center" style="margin: 60px 0">
+  <img width="100%" src="https://www.forestadmin.com/public/img/illustrations-dev/schema-1.svg" alt="Howitworks">
+</p>
 
-## Commands
-
-`$ lumber [command]`
-
-- `generate <appName>`      generate a backend application with an ORM/ODM configured.
-- `login`                   log into Forest Admin API.
-- `logout`                  log out from Forest Admin API.
-- `help [cmd]`              display help for [cmd]
-
-## Who Uses Forest Admin
-- [Apartmentlist](https://www.apartmentlist.com)
-- [Carbon Health](https://carbonhealth.com)
-- [Ebanx](https://www.ebanx.com)
-- [First circle](https://www.firstcircle.ph)
-- [Forest Admin](https://www.forestadmin.com) of course :-)
-- [Heetch](https://www.heetch.com)
-- [Lunchr](https://www.lunchr.co)
-- [Pillow](https://www.pillow.com)
-- [Qonto](https://www.qonto.eu)
-- [Raspberry PI](https://www.raspberrypi.org/)
-- [Shadow](https://shadow.tech)
-- And hundreds more…
+Forest Admin consists of two components:
+- The Admin Frontend is the user interface where you'll manage your data and configuration.
+- The Admin Backend API hosted on your servers where you can find and extend your data models and all the business logic (routes, actions, …) related to your admin panel.
 
 ## Documentation
 [https://docs.forestadmin.com/documentation/](https://docs.forestadmin.com/documentation/)
@@ -133,15 +125,28 @@ with an extensive activity log system.
 
 <img src="https://www.forestadmin.com/public/img/illustrations-dev/screens/activity.jpg" alt="Activity logs">
 
-## How it works
+## Commands
 
-<p align="center" style="margin: 60px 0">
-  <img width="100%" src="https://www.forestadmin.com/public/img/illustrations-dev/schema-1.svg" alt="Howitworks">
-</p>
+`$ lumber [command]`
 
-Forest Admin consists of two components:
-- The Admin Frontend is the user interface where you'll manage your data and configuration.
-- The Admin Backend API hosted on your servers where you can find and extend your data models and all the business logic (routes, actions, …) related to your admin panel.
+- `generate <appName>`      generate a backend application with an ORM/ODM configured.
+- `login`                   log into Forest Admin API.
+- `logout`                  log out from Forest Admin API.
+- `help [cmd]`              display help for [cmd]
+
+## Who Uses Forest Admin
+- [Apartmentlist](https://www.apartmentlist.com)
+- [Carbon Health](https://carbonhealth.com)
+- [Ebanx](https://www.ebanx.com)
+- [First circle](https://www.firstcircle.ph)
+- [Forest Admin](https://www.forestadmin.com) of course :-)
+- [Heetch](https://www.heetch.com)
+- [Lunchr](https://www.lunchr.co)
+- [Pillow](https://www.pillow.com)
+- [Qonto](https://www.qonto.eu)
+- [Raspberry PI](https://www.raspberrypi.org/)
+- [Shadow](https://shadow.tech)
+- And hundreds more…
 
 ## Contribute
 
