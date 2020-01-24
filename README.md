@@ -133,6 +133,16 @@ with an extensive activity log system.
 
 <img src="https://www.forestadmin.com/public/img/illustrations-dev/screens/activity.jpg" alt="Activity logs">
 
+## How it works
+
+<p align="center" style="margin: 60px 0">
+  <img width="100%" src="https://www.forestadmin.com/public/img/illustrations-dev/schema-1.svg" alt="Howitworks">
+</p>
+
+Forest Admin consists of two components:
+- The Admin Frontend is the user interface where you'll manage your data and configuration.
+- The Admin Backend API hosted on your servers where you can find and extend your data models and all the business logic (routes, actions, …) related to your admin panel.
+
 ## Contribute
 
 To publish the docker image:
