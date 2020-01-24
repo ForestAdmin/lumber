@@ -133,6 +133,10 @@ function Dumper(config) {
     });
   }
 
+  function getModelNameFromTableName(table) {
+    return stringUtils.camelCase(stringUtils.transformToSafeString(table));
+  }
+
   function writeModel(table, fields, references, options = {}) {
     const { underscored } = options;
 
@@ -163,14 +167,12 @@ function Dumper(config) {
       };
     });
 
-    const modelSafeName = stringUtils.transformToSafeString(table);
-
     copyHandleBarsTemplate({
       source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
       target: `models/${tableToFilename(table)}.js`,
       context: {
-        modelVariableName: stringUtils.pascalCase(modelSafeName),
-        modelName: stringUtils.pascalCase(modelSafeName, false),
+        modelName: getModelNameFromTableName(table),
+        modelVariableName: stringUtils.pascalCase(stringUtils.transformToSafeString(table)),
         table,
         fields: fieldsDefinition,
         references: referencesDefinition,
@@ -183,13 +185,15 @@ function Dumper(config) {
   }
 
   function writeRoute(modelName) {
+    const modelNameDasherized = _.kebabCase(modelName);
     const readableModelName = _.startCase(modelName);
 
     copyHandleBarsTemplate({
       source: 'app/routes/route.hbs',
       target: `routes/${tableToFilename(modelName)}.js`,
       context: {
-        modelName: stringUtils.pascalCase(stringUtils.transformToSafeString(modelName), false),
+        modelName: getModelNameFromTableName(modelName),
+        modelNameDasherized,
         modelNameReadablePlural: plural(readableModelName),
         modelNameReadableSingular: singular(readableModelName),
         isMongoDB: config.dbDialect === 'mongodb',
@@ -203,7 +207,7 @@ function Dumper(config) {
       target: `forest/${tableToFilename(table)}.js`,
       context: {
         isMongoDB: config.dbDialect === 'mongodb',
-        table: stringUtils.pascalCase(stringUtils.transformToSafeString(table), false),
+        table: getModelNameFromTableName(table),
       },
     });
   }
