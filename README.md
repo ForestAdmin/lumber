@@ -28,7 +28,7 @@ Get your admin panel running in minutes by installing Forest Admin:
 ## How it works
 
 <p align="center" style="margin: 60px 0">
-  <img width="100%" src="https://www.forestadmin.com/public/img/illustrations-dev/schema-1.svg" alt="Howitworks">
+  <img width="100%" src="https://www.forestadmin.com/public/img/illustrations-dev/schema-1.png" alt="Howitworks">
 </p>
 
 Forest Admin consists of two components:
