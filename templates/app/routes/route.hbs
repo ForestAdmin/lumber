@@ -51,4 +51,10 @@ router.get('/{{ modelName }}.csv', permissionMiddlewareCreator.export(), (reques
   next();
 });
 
+// Delete a list of {{ modelNameReadablePlural }}
+router.delete('/{{ modelName }}', permissionMiddlewareCreator.delete(), (request, response, next) => {
+  // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v5/reference-guide/routes/default-routes
+  next();
+});
+
 module.exports = router;

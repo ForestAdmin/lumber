@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Command Generate - Add "delete a list of …" in generated route file.
+
 ### Fixed
 - Command Generate - Fix error on project generation with database contain table with number as name.
 
