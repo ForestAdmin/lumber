@@ -40,7 +40,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "mongodb": "3.3.0",
-    "mysql2": "1.7.0",
+    "mysql2": "2.1.0",
     "pg": "^6.1.0",
     "pluralize": "^8.0.0",
     "saslprep": "1.0.3",
