@@ -4,12 +4,12 @@
 ### Added
 - Command Generate - Add support for MySQL 8.
 
-### Fixed
-- Command Generate - Fix error on project generation with database contain table with number as name.
-
 ### Changed
 - Tests - Use MySQL 8.0 as the max supported MySQL version.
 - Technical - Update `mysql2` dependency to 2 (latest MAJOR version).
+
+### Fixed
+- Command Generate - Fix error on project generation with database contain table with number as name.
 
 ## RELEASE 3.3.3 - 2020-01-23
 ### Changed
