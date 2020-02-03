@@ -4,6 +4,9 @@
 ### Fixed
 - Command Generate - Fix error on project generation with database contain table with number as name.
 
+### Changed
+- Tests - Use MySQL 8.0 as the max supported MySQL version.
+
 ## RELEASE 3.3.3 - 2020-01-23
 ### Changed
 - Technical - Use handlebars for all templates.
