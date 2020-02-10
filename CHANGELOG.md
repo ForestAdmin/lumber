@@ -1,8 +1,11 @@
 # Change Log
 
 ## [Unreleased]
-### Added
+- Command Generate - Add support for MySQL 8.
 - Command Generate - Add "delete a list of …" in generated route file.
+
+### Changed
+- Tests - Use MySQL 8.0 as the max supported MySQL version.
 
 ### Fixed
 - Command Generate - Fix error on project generation with database contain table with number as name.
