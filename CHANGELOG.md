@@ -1,6 +1,7 @@
 # Change Log
 
 ## [Unreleased]
+### Added
 - Command Generate - Add support for MySQL 8.
 - Command Generate - Add "delete a list of …" in generated route file.
 
