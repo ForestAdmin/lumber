@@ -9,6 +9,7 @@
 
 ### Fixed
 - Command Generate - Fix error on project generation with database contain table with number as name.
+- Command Generate - Fix allowed origin to only allow forestadmin domain and not domain finishing by forestadmin.
 
 ## RELEASE 3.3.3 - 2020-01-23
 ### Changed
