@@ -297,7 +297,11 @@ function Dumper(config) {
     writeModelsIndex();
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
-      writeModel(modelName, fields, references, options);
+      const safeReferences = references.map((reference) => ({
+        ...reference,
+        ref: getModelNameFromTableName(reference.ref),
+      }));
+      writeModel(modelName, fields, safeReferences, options);
     });
 
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
