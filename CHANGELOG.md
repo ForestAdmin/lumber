@@ -4,6 +4,9 @@
 ### Added
 - Command Generate - Add support for MySQL 8.
 
+### Fixed
+- Command Generate - Fix issue when database password contains `$` character.
+
 ### Changed
 - Tests - Use MySQL 8.0 as the max supported MySQL version.
 
