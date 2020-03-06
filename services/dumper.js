@@ -10,6 +10,7 @@ const Sequelize = require('sequelize');
 const stringUtils = require('../utils/strings');
 const logger = require('./logger');
 const toValidPackageName = require('../utils/to-valid-package-name');
+const { tableToFilename } = require('../utils/dumper-utils');
 require('../handlerbars/loader');
 
 const mkdirp = P.promisify(mkdirpSync);
@@ -40,9 +41,9 @@ function Dumper(config) {
     return os.platform() === 'linux';
   }
 
-  function writeFile(filePath, content) {
+  function writeFile(filePath, content, type = 'create') {
     fs.writeFileSync(filePath, content);
-    logger.log(`  ${chalk.green('create')} ${filePath.substring(path.length + 1)}`);
+    logger.log(`  ${chalk.green(type)} ${filePath.substring(path.length + 1)}`);
   }
 
   function copyTemplate(from, to) {
@@ -50,19 +51,23 @@ function Dumper(config) {
     writeFile(to, fs.readFileSync(newFrom, 'utf-8'));
   }
 
-  function copyHandleBarsTemplate({ source, target, context }) {
-    function handlebarsTemplate(templatePath) {
-      return Handlebars.compile(
-        fs.readFileSync(`${__dirname}/../templates/${templatePath}`, 'utf-8'),
-        { noEscape: true },
-      );
-    }
+  function handlebarsTemplate(templatePath) {
+    return Handlebars.compile(
+      fs.readFileSync(`${__dirname}/../templates/${templatePath}`, 'utf-8'),
+      { noEscape: true },
+    );
+  }
 
+  function copyHandleBarsTemplate({ source, target, context }) {
     if (!(source && target && context)) {
       throw new Error('Missing argument (source, target or context).');
     }
 
     writeFile(`${path}/${target}`, handlebarsTemplate(source)(context));
+  }
+
+  function getTableFileName(table) {
+    return `${path}/models/${tableToFilename(table)}.js`;
   }
 
   function writePackageJson() {
@@ -105,10 +110,6 @@ function Dumper(config) {
     };
 
     writeFile(`${path}/package.json`, `${JSON.stringify(pkg, null, 2)}\n`);
-  }
-
-  function tableToFilename(table) {
-    return _.kebabCase(table);
   }
 
   function getDatabaseUrl() {
@@ -184,6 +185,14 @@ function Dumper(config) {
     return safeDefaultValue;
   }
 
+  function getReferenceWithMetaDatas(reference) {
+    return {
+      ...reference,
+      isBelongsToMany: reference.association === 'belongsToMany',
+      targetKey: _.camelCase(reference.targetKey),
+    };
+  }
+
   function writeModel(table, fields, references, options = {}) {
     const { underscored } = options;
 
@@ -203,11 +212,7 @@ function Dumper(config) {
       };
     });
 
-    const referencesDefinition = references.map((reference) => ({
-      ...reference,
-      isBelongsToMany: reference.association === 'belongsToMany',
-      targetKey: _.camelCase(reference.targetKey),
-    }));
+    const referencesDefinition = references.map(getReferenceWithMetaDatas);
 
     copyHandleBarsTemplate({
       source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
@@ -314,6 +319,69 @@ function Dumper(config) {
       context: { isMongoDB: config.dbDialect === 'mongodb' },
     });
   }
+
+  this.dumpFieldIntoModel = (tableName, field) => {
+    const newFieldText = handlebarsTemplate(`app/models/update/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-field.hbs`)({ field })
+      .trimRight();
+    const tableFileName = getTableFileName(tableName);
+
+    const currentContent = fs.readFileSync(tableFileName, 'utf-8');
+    const regexp = config.dbDialect === 'mongodb'
+      ? /(mongoose.Schema\({)/
+      : /(sequelize.define\(\s*'.*',\s*{)/;
+
+    if (regexp.test(currentContent)) {
+      const newContent = currentContent.replace(regexp, `$1\n${newFieldText}`);
+      writeFile(tableFileName, newContent, 'update');
+    } else {
+      logger.warn(chalk.bold(`WARNING: Cannot add the field definition ${field.name} \
+automatically. Please, add it manually to the file '${tableFileName}':\n${newFieldText}`));
+    }
+  };
+
+  this.dumpReferenceIntoModel = (tableName, reference) => {
+    const tableFileName = getTableFileName(tableName);
+    const referenceWithMetaDatas = getReferenceWithMetaDatas(reference);
+
+    const currentContent = fs.readFileSync(tableFileName, 'utf-8');
+    const regexpModelVariableName = /\s(\w+)\s*=\s*sequelize\s*\.\s*define/;
+    let modelVariableName;
+    if (regexpModelVariableName.test(currentContent)) {
+      const matches = currentContent.match(regexpModelVariableName);
+      [, modelVariableName] = matches;
+    } else {
+      modelVariableName = stringUtils.pascalCase(stringUtils.transformToSafeString(tableName));
+    }
+
+    const newFieldText = handlebarsTemplate('app/models/update/sequelize-relationship.hbs')({
+      reference: referenceWithMetaDatas,
+      modelVariableName,
+    })
+      .trimRight();
+
+    const regexpAssociate = /(\.associate\s*=\s*(function)?\s*\(models\)\s*(=>)?\s*{)/;
+
+    if (regexpAssociate.test(currentContent)) {
+      const newContent = currentContent.replace(regexpAssociate, `$1\n${newFieldText}`);
+      writeFile(tableFileName, newContent, 'update');
+    } else {
+      logger.warn(chalk.bold(`WARNING: Cannot add the field definition ${reference.name} \
+automatically. Please, add it manually to the file '${tableFileName}':\n${newFieldText}`));
+    }
+  };
+
+  this.dumpModel = (tableName, tableSchema) => {
+    writeForestCollection(tableName);
+    const { fields, references, options } = tableSchema;
+    writeModel(tableName, fields, references, options);
+
+    // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
+    //       internal session creation route. As a workaround, we don't generate the route file.
+    // TODO: Remove the if condition, once the routes paths refactored to prevent such conflict.
+    if (tableName !== 'sessions') {
+      writeRoute(tableName);
+    }
+  };
 
   // NOTICE: Generate files in alphabetical order to ensure a nice generation console logs display.
   this.dump = async (schema) => {
