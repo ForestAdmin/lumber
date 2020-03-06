@@ -11,6 +11,7 @@ const packagejson = require('./package.json');
 program
   .version(packagejson.version)
   .command('generate <appName>', 'generate a backend application with an ORM/ODM configured')
+  .command('update', 'update your models')
   .command('login', 'log into Forest Admin API')
   .command('logout', 'log out from Forest Admin API')
   .parse(process.argv);

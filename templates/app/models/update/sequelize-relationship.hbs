@@ -1,0 +1,17 @@
+    {{modelVariableName}}.{{reference.association}}(models.{{reference.ref}}, {
+    {{#if reference.isBelongsToMany}}
+      through: '{{reference.junctionTable}}',
+      foreignKey: '{{reference.foreignKey}}',
+      otherKey: '{{reference.otherKey}}',
+    {{else}}
+      foreignKey: {
+        name: '{{reference.foreignKeyName}}',
+        field: '{{reference.foreignKey}}',
+      },{{#if reference.targetKey }}
+      target: {
+        name: '{{reference.targetKey}}',{{#if reference.targetKeyColumnUnconventional}}
+        field: '{{reference.targetKey}}',{{/if}}
+      },{{/if}}{{#if reference.as}}
+      as: '{{reference.as}}',{{/if}}
+    {{/if}}
+    });
