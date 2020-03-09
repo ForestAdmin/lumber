@@ -1,6 +1,8 @@
 const program = require('commander');
 const chalk = require('chalk');
 const dotenv = require('dotenv');
+const inquirer = require('inquirer');
+const P = require('bluebird');
 const spinners = require('./services/spinners');
 const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/analyzer/database-analyzer');
@@ -13,6 +15,18 @@ const { ERROR_UNEXPECTED } = require('./utils/messages');
 program
   .description('Check the difference between you actual configuration and your database and generate what is missing')
   .parse(process.argv);
+
+async function askForConfirmation(spinner, message) {
+  spinner.pause();
+  const result = await inquirer.prompt([{
+    type: 'confirm',
+    name: 'confirm',
+    message,
+    default: true,
+  }]);
+  spinner.continue();
+  return result.confirm;
+}
 
 (async () => {
   dotenv.config();
@@ -44,23 +58,29 @@ program
   logger.spinner = spinner;
   const dumper = new Dumper(config);
 
-  newTables.forEach((table) => {
-    dumper.dumpModel(table, schema[table]);
+  await P.each(newTables, async (table) => {
+    if (await askForConfirmation(spinner, `Create model ${table}?`)) {
+      dumper.dumpModel(table, schema[table]);
+    }
   });
 
-  Object.keys(newFields).forEach((tableName) => {
+  await P.each(Object.keys(newFields), async (tableName) => {
     const newFieldsInTable = newFields[tableName];
 
-    newFieldsInTable.forEach((field) => {
-      dumper.dumpFieldIntoModel(tableName, field);
+    await P.each(newFieldsInTable, async (field) => {
+      if (await askForConfirmation(spinner, `Create field ${field.name} into ${tableName}?`)) {
+        dumper.dumpFieldIntoModel(tableName, field);
+      }
     });
   });
 
-  Object.keys(newReferences).forEach((tableName) => {
+  await P.each(Object.keys(newReferences), async (tableName) => {
     const newReferencesInTable = newReferences[tableName];
 
-    newReferencesInTable.forEach((reference) => {
-      dumper.dumpReferenceIntoModel(tableName, reference);
+    await P.each(newReferencesInTable, async (reference) => {
+      if (await askForConfirmation(spinner, `Create reference with foreignKey ${reference.foreignKey} into ${tableName}?`)) {
+        dumper.dumpReferenceIntoModel(tableName, reference);
+      }
     });
   });
 
