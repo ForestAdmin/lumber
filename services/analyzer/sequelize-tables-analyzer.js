@@ -258,10 +258,14 @@ async function createTableSchema({
     // NOTICE: If the column is of integer type, named "id" and primary, Sequelize will handle it
     //         automatically without necessary declaration.
     const isIdIntegerPrimaryColumn = columnName === 'id'
-      && ['INTEGER', 'BIGINT'].includes(type)
+      && ['BIGINT', 'INTEGER', 'UUID'].includes(type)
       && columnInfo.primaryKey;
+    // NOTICE: Columns named `id` with a default value and set as a Primary Key are Read Only
+    //         by default. Other columns are Writable by default.
+    // TODO: Only columns with a sequence or expression default value should be Read Only
+    const isReadOnlyColumn = isIdIntegerPrimaryColumn && columnInfo.defaultValue !== null;
 
-    if (isValidField && !isIdIntegerPrimaryColumn) {
+    if (isValidField && !(isIdIntegerPrimaryColumn && isReadOnlyColumn)) {
       // NOTICE: Handle bit(1) to boolean conversion
       let { defaultValue } = columnInfo;
 
@@ -278,6 +282,7 @@ async function createTableSchema({
         type,
         primaryKey: columnInfo.primaryKey,
         defaultValue,
+        isReadOnly: isReadOnlyColumn,
       };
 
       fields.push(field);
