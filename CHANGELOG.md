@@ -3,7 +3,7 @@
 ## [Unreleased]
 ### Added
 - Command Generate - Add support for MySQL 8.
-- Command Update - New command update insert new tables/fields/relationships.
+- Command Update - New update command to insert new tables/fields/relationships.
 
 ### Changed
 - Tests - Use MySQL 8.0 as the max supported MySQL version.
