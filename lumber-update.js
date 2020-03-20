@@ -13,7 +13,7 @@ const { terminate } = require('./utils/terminator');
 const { ERROR_UNEXPECTED } = require('./utils/messages');
 
 program
-  .description('Check the difference between you actual configuration and your database and generate what is missing')
+  .description('Check the differences between your current admin api configuration and your database to generate what is missing')
   .parse(process.argv);
 
 async function askForConfirmation(spinner, message) {
