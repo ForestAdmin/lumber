@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Command Generate - Add support for MySQL 8.
+- Initialisation - Allow asynchronous middlewares (ie. Liana.init).
 - Command Generate - Add "delete a list of …" in generated route file.
 
 ### Changed
@@ -10,6 +11,8 @@
 
 ### Fixed
 - Command Generate - Fix error on project generation with database contain table with number as name.
+- Command Generate - Fix allowed origin to only allow forestadmin domain and not domain finishing by forestadmin.
+- Command Generate - Fix error on project generation when tables have references on table with non safe name.
 
 ## RELEASE 3.3.3 - 2020-01-23
 ### Changed

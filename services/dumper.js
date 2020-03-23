@@ -144,7 +144,12 @@ function Dumper(config) {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
       const nameColumnUnconventional = field.nameColumn !== expectedConventionalColumnName
         || (underscored && /[1-9]/g.test(field.name));
-      return { ...field, nameColumnUnconventional };
+
+      return {
+        ...field,
+        ref: field.ref && getModelNameFromTableName(field.ref),
+        nameColumnUnconventional,
+      };
     });
 
     const referencesDefinition = references.map((reference) => {
@@ -297,7 +302,11 @@ function Dumper(config) {
     writeModelsIndex();
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
-      writeModel(modelName, fields, references, options);
+      const safeReferences = references.map((reference) => ({
+        ...reference,
+        ref: getModelNameFromTableName(reference.ref),
+      }));
+      writeModel(modelName, fields, safeReferences, options);
     });
 
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
