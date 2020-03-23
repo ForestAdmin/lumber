@@ -185,7 +185,7 @@ function Dumper(config) {
     return safeDefaultValue;
   }
 
-  function getReferenceWithMetaDatas(reference) {
+  function getReferenceWithMetaData(reference) {
     return {
       ...reference,
       isBelongsToMany: reference.association === 'belongsToMany',
@@ -212,7 +212,7 @@ function Dumper(config) {
       };
     });
 
-    const referencesDefinition = references.map(getReferenceWithMetaDatas);
+    const referencesDefinition = references.map(getReferenceWithMetaData);
 
     copyHandleBarsTemplate({
       source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
@@ -326,11 +326,13 @@ function Dumper(config) {
     const tableFileName = getTableFileName(tableName);
 
     const currentContent = fs.readFileSync(tableFileName, 'utf-8');
+    // NOTICE: Detect the model declaration.
     const regexp = config.dbDialect === 'mongodb'
       ? /(mongoose.Schema\({)/
       : /(sequelize.define\(\s*'.*',\s*{)/;
 
     if (regexp.test(currentContent)) {
+      // NOTICE: Insert the field at the beginning of the fields declaration.
       const newContent = currentContent.replace(regexp, `$1\n${newFieldText}`);
       writeFile(tableFileName, newContent, 'update');
     } else {
@@ -341,9 +343,13 @@ automatically. Please, add it manually to the file '${tableFileName}':\n${newFie
 
   this.dumpReferenceIntoModel = (tableName, reference) => {
     const tableFileName = getTableFileName(tableName);
-    const referenceWithMetaDatas = getReferenceWithMetaDatas(reference);
+    const referenceWithMetaDatas = getReferenceWithMetaData(reference);
 
     const currentContent = fs.readFileSync(tableFileName, 'utf-8');
+
+    // NOTICE: Find the name of the variable which store the current model.
+    //         For example: const MyModel = sequelize.define(...
+    //         would give you MyModel
     const regexpModelVariableName = /\s(\w+)\s*=\s*sequelize\s*\.\s*define/;
     let modelVariableName;
     if (regexpModelVariableName.test(currentContent)) {
@@ -362,6 +368,7 @@ automatically. Please, add it manually to the file '${tableFileName}':\n${newFie
     const regexpAssociate = /(\.associate\s*=\s*(function)?\s*\(models\)\s*(=>)?\s*{)/;
 
     if (regexpAssociate.test(currentContent)) {
+      // NOTICE: Insert the new relationship at the first position in the associate block.
       const newContent = currentContent.replace(regexpAssociate, `$1\n${newFieldText}`);
       writeFile(tableFileName, newContent, 'update');
     } else {
@@ -370,17 +377,20 @@ automatically. Please, add it manually to the file '${tableFileName}':\n${newFie
     }
   };
 
+  function writeRouteIfPossible(modelName) {
+    // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
+    //       internal session creation route. As a workaround, we don't generate the route file.
+    // TODO: Remove the if condition, once the routes paths refactored to prevent such conflict.
+    if (modelName !== 'sessions') {
+      writeRoute(modelName);
+    }
+  }
+
   this.dumpModel = (tableName, tableSchema) => {
     writeForestCollection(tableName);
     const { fields, references, options } = tableSchema;
     writeModel(tableName, fields, references, options);
-
-    // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
-    //       internal session creation route. As a workaround, we don't generate the route file.
-    // TODO: Remove the if condition, once the routes paths refactored to prevent such conflict.
-    if (tableName !== 'sessions') {
-      writeRoute(tableName);
-    }
+    writeRouteIfPossible(tableName);
   };
 
   // NOTICE: Generate files in alphabetical order to ensure a nice generation console logs display.
@@ -418,12 +428,7 @@ automatically. Please, add it manually to the file '${tableFileName}':\n${newFie
     copyTemplate('public/favicon.png', `${path}/public/favicon.png`);
 
     modelNames.forEach((modelName) => {
-      // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
-      //       internal session creation route. As a workaround, we don't generate the route file.
-      // TODO: Remove the if condition, once the routes paths refactored to prevent such conflict.
-      if (modelName !== 'sessions') {
-        writeRoute(modelName);
-      }
+      writeRouteIfPossible(modelName);
     });
 
     copyTemplate('views/index.hbs', `${path}/views/index.html`);
