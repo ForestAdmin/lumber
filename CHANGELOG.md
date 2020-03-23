@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Documentation - Update documentation links to v6.
 
 ## RELEASE 3.4.0 - 2020-03-23
 ### Added
