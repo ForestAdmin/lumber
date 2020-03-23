@@ -4,6 +4,7 @@
 ### Added
 - Command Generate - Add support for MySQL 8.
 - Initialisation - Allow asynchronous middlewares (ie. Liana.init).
+- Command Generate - Add "delete a list of …" in generated route file.
 
 ### Changed
 - Tests - Use MySQL 8.0 as the max supported MySQL version.
