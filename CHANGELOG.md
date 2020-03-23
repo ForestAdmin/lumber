@@ -6,7 +6,7 @@
 
 ### Changed
 - Tests - Use MySQL 8.0 as the max supported MySQL version.
-- Technical - Set the latest `forest-express` (6.0) dependencies version while generating a project.
+- Technical - Set the latest `forest-express` dependencies version (6.0) while generating a project.
 
 ### Fixed
 - Command Generate - Fix error on project generation with database contain table with number as name.
