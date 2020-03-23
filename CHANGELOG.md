@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.4.0 - 2020-03-23
 ### Added
 - Command Generate - Add support for MySQL 8.
 - Initialisation - Allow asynchronous middlewares (ie. Liana.init).
