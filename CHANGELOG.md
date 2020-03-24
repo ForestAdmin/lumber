@@ -4,6 +4,9 @@
 ### Changed
 - Technical - Remove 5 unused dependencies (`expand-home-dir`, `import-from`, `jsonwebtoken`, `minimist`, `winston`).
 
+### Fixed
+- Documentation - Update documentation links to v6.
+
 ## RELEASE 3.4.0 - 2020-03-23
 ### Added
 - Command Generate - Add support for MySQL 8.
