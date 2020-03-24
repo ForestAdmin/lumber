@@ -1,0 +1,23 @@
+{
+  "export": {
+    "fields": [
+      {
+        "name": "value",
+        "nameColumn": "value",
+        "type": "STRING",
+        "primaryKey": false,
+        "defaultValue": null
+      }
+    ],
+    "references": [
+    ],
+    "primaryKeys": ["id"],
+    "options": {
+      "hasIdColumn": true,
+      "hasPrimaryKeys": true,
+      "isJunction": false,
+      "timestamps": false,
+      "underscored": true
+    }
+  }
+}
