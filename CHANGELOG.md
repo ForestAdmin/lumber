@@ -1,7 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Remove 5 unused dependencies (`expand-home-dir`, `import-from`, `jsonwebtoken`, `minimist`, `winston`).
+
 ### Fixed
+- Documentation - Update documentation links to v6.
 - Technical - Do not lint `test-expected` files.
 
 ## RELEASE 3.4.0 - 2020-03-23
