@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
-- Techincal - Do not lint test-expected files.
+- Technical - Do not lint `test-expected` files.
 
 ## RELEASE 3.4.0 - 2020-03-23
 ### Added
