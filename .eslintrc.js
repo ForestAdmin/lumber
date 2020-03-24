@@ -11,6 +11,7 @@ module.exports = {
   env: {
     mocha: true,
   },
+  ignorePatterns: ["test-expected"],
   rules: {
     'implicit-arrow-linebreak': 0,
     'no-underscore-dangle': [
