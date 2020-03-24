@@ -1,13 +1,18 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Remove 5 unused dependencies (`expand-home-dir`, `import-from`, `jsonwebtoken`, `minimist`, `winston`).
+
+## RELEASE 3.4.0 - 2020-03-23
 ### Added
 - Command Generate - Add support for MySQL 8.
 - Initialisation - Allow asynchronous middlewares (ie. Liana.init).
+- Command Generate - Add "delete a list of …" in generated route file.
 
 ### Changed
 - Tests - Use MySQL 8.0 as the max supported MySQL version.
-- Technical - Remove 5 unused dependencies (`expand-home-dir`, `import-from`, `jsonwebtoken`, `minimist`, `winston`).
+- Technical - Set the latest `forest-express` dependencies version (6.0) while generating a project.
 
 ### Fixed
 - Command Generate - Fix error on project generation with database contain table with number as name.
