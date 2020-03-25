@@ -38,7 +38,7 @@ module.exports = {
     }
     // Notice: add dash to get proper snake/pascal case
     if (this.isReservedWord(input)) {
-      return `model-${input}`;
+      return `model${_.upperFirst(input)}`;
     }
     return input;
   },
