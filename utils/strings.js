@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const reservedWords = [
+const RESERVED_WORDS = [
   'abstract', 'await', 'boolean', 'break',
   'byte', 'case', 'catch', 'char',
   'class', 'const', 'continue', 'debugger',
@@ -29,14 +29,14 @@ module.exports = {
   },
 
   isReservedWord(input) {
-    return reservedWords.includes(_.toLower(input));
+    return RESERVED_WORDS.includes(_.toLower(input));
   },
 
   transformToSafeString(input) {
     if (/^[\d]/g.exec(input)) {
       return `model${input}`;
     }
-    // Notice: add dash to get proper snake/pascal case
+    // NOTICE: add dash to get proper snake/pascal case
     if (this.isReservedWord(input)) {
       return `model${_.upperFirst(input)}`;
     }
