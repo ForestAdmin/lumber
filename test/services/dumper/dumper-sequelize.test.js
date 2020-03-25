@@ -4,6 +4,7 @@ const fs = require('fs');
 const simpleModel = require('../../../test-expected/sequelize/db-analysis-output/customers.expected.json');
 const belongsToModel = require('../../../test-expected/sequelize/db-analysis-output/addresses.expected.json');
 const otherAssociationsModel = require('../../../test-expected/sequelize/db-analysis-output/users.expected.json');
+const exportModel = require('../../../test-expected/sequelize/db-analysis-output/export.expected.json');
 
 const Dumper = require('../../../services/dumper');
 
@@ -55,6 +56,20 @@ describe('services > dumper > sequelize', () => {
     const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/users.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('should still generate a model file when reserved word is used', async () => {
+    expect.assertions(2);
+    const dumper = await getDumper();
+    await dumper.dump(exportModel);
+    const generatedModelFile = fs.readFileSync('./test-output/sequelize/models/export.js', 'utf8');
+    const generatedRouteFile = fs.readFileSync('./test-output/sequelize/routes/export.js', 'utf8');
+    const expectedModelFile = fs.readFileSync('./test-expected/sequelize/dumper-output/export.expected.js', 'utf-8');
+    const expectedRouteFile = fs.readFileSync('./test-expected/sequelize/dumper-output/export.expected.route.js', 'utf-8');
+
+    expect(generatedModelFile).toStrictEqual(expectedModelFile);
+    expect(generatedRouteFile).toStrictEqual(expectedRouteFile);
     cleanOutput();
   });
 });

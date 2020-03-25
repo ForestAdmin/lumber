@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Command Generate - Prevent error when table name is a JS reserved word.
+
 ### Changed
 - Technical - Remove 5 unused dependencies (`expand-home-dir`, `import-from`, `jsonwebtoken`, `minimist`, `winston`).
 
