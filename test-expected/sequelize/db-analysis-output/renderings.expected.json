@@ -39,14 +39,16 @@
         "nameColumn": "sections",
         "type": "JSONB",
         "primaryKey": false,
-        "defaultValue": "[{\"name\": \"Dashboard\", \"isVisible\": true}, {\"name\": \"Data\", \"isVisible\": true}]"
+        "defaultValueBak": "Sequelize.literal('[{\"name\": \"Dashboard\", \"isVisible\": true}, {\"name\": \"Data\", \"isVisible\": true}]')",
+        "defaultValue": [{"name": "Dashboard", "isVisible": true}, {"name": "Data", "isVisible": true}]
       },
       {
         "name": "collectionsPositions",
         "nameColumn": "collectionsPositions",
         "type": "ARRAY(DataTypes.INTEGER)",
         "primaryKey": false,
-        "defaultValue": "ARRAY[]"
+        "defaultValueBak": "Sequelize.literal('ARRAY[]')",
+        "defaultValue": []
       }
     ],
     "references": [
