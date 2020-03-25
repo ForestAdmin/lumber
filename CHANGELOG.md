@@ -3,15 +3,13 @@
 ## [Unreleased]
 
 ## RELEASE 3.5.0 - 2020-03-25
-### Added
-- Command Generate - Prevent error when table name is a JS reserved word.
-
 ### Changed
 - Technical - Remove 5 unused dependencies (`expand-home-dir`, `import-from`, `jsonwebtoken`, `minimist`, `winston`).
 
 ### Fixed
 - Documentation - Update documentation links to v6.
 - Technical - Do not lint `test-expected` files.
+- Command Generate - Prevent error when table name is a JS reserved word.
 
 ## RELEASE 3.4.0 - 2020-03-23
 ### Added
