@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Command Generate - Remove extraneous calls to Sequelize.literal in generated models.
 
 ## RELEASE 3.5.0 - 2020-03-25
 ### Changed

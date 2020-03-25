@@ -5,6 +5,7 @@ const mkdirpSync = require('mkdirp');
 const Handlebars = require('handlebars');
 const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
+const Sequelize = require('sequelize');
 const stringUtils = require('../utils/strings');
 const logger = require('./logger');
 const toValidPackageName = require('../utils/to-valid-package-name');
@@ -137,6 +138,20 @@ function Dumper(config) {
     return stringUtils.camelCase(stringUtils.transformToSafeString(table));
   }
 
+  function getSafeDefaultValue(fieldDefaultValue) {
+    // NOTICE: in case of SQL dialect, ensure default value is directly usable in template
+    //         as a JS value.
+    let safeDefaultValue = fieldDefaultValue;
+    if (config.dbDialect !== 'mongodb') {
+      if (typeof safeDefaultValue === 'object' && safeDefaultValue instanceof Sequelize.Utils.Literal) {
+        safeDefaultValue = `Sequelize.literal('${safeDefaultValue.val}')`;
+      } else if (!_.isNil(safeDefaultValue)) {
+        safeDefaultValue = JSON.stringify(safeDefaultValue);
+      }
+    }
+    return safeDefaultValue;
+  }
+
   function writeModel(table, fields, references, options = {}) {
     const { underscored } = options;
 
@@ -149,6 +164,7 @@ function Dumper(config) {
         ...field,
         ref: field.ref && getModelNameFromTableName(field.ref),
         nameColumnUnconventional,
+        safeDefaultValue: getSafeDefaultValue(field.defaultValue),
       };
     });
 

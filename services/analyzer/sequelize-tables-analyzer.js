@@ -1,6 +1,7 @@
 const P = require('bluebird');
 const _ = require('lodash');
 const { plural, singular } = require('pluralize');
+const Sequelize = require('sequelize');
 const ColumnTypeGetter = require('./sequelize-column-type-getter');
 const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
 const { DatabaseAnalyzerError } = require('../../utils/errors');
@@ -267,9 +268,10 @@ async function createTableSchema({
 
       if (["b'1'", '((1))'].includes(defaultValue)) {
         defaultValue = true;
-      }
-      if (["b'0'", '((0))'].includes(defaultValue)) {
+      } else if (["b'0'", '((0))'].includes(defaultValue)) {
         defaultValue = false;
+      } else if (typeof defaultValue === 'string' && defaultValue.endsWith(')')) {
+        defaultValue = Sequelize.literal(defaultValue);
       }
 
       const field = {
