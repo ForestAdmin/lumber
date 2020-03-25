@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.5.0 - 2020-03-25
 ### Added
 - Command Generate - Prevent error when table name is a JS reserved word.
 
