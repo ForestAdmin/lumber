@@ -1,4 +1,6 @@
 # Change Log
+### Fixed
+- Security - Upgrade `acorn` dependencies to patch vulnerabilities.
 
 ## [Unreleased]
 ### Added
