@@ -15,6 +15,13 @@ const mkdirp = P.promisify(mkdirpSync);
 
 const DEFAULT_PORT = 3310;
 
+const DEFAULT_VALUE_TYPES_TO_STRINGIFY = [
+  `${Sequelize.DataTypes.ARRAY}`,
+  `${Sequelize.DataTypes.ENUM}`,
+  `${Sequelize.DataTypes.JSONB}`,
+  `${Sequelize.DataTypes.STRING}`,
+];
+
 function Dumper(config) {
   const path = `${process.cwd()}/${config.appName}`;
   const routesPath = `${path}/routes`;
@@ -138,14 +145,20 @@ function Dumper(config) {
     return stringUtils.camelCase(stringUtils.transformToSafeString(table));
   }
 
-  function getSafeDefaultValue(fieldDefaultValue) {
+  function getSafeDefaultValue(field) {
     // NOTICE: in case of SQL dialect, ensure default value is directly usable in template
     //         as a JS value.
-    let safeDefaultValue = fieldDefaultValue;
+    let safeDefaultValue = field.defaultValue;
     if (config.dbDialect !== 'mongodb') {
       if (typeof safeDefaultValue === 'object' && safeDefaultValue instanceof Sequelize.Utils.Literal) {
         safeDefaultValue = `Sequelize.literal('${safeDefaultValue.val}')`;
-      } else if (!_.isNil(safeDefaultValue)) {
+      } else if (
+        !_.isNil(safeDefaultValue)
+        && _.some(
+          DEFAULT_VALUE_TYPES_TO_STRINGIFY,
+          // NOTICE: Uses `startsWith` as composite types may vary (eg: `ARRAY(DataTypes.INTEGER)`)
+          (dataType) => _.startsWith(field.type, dataType),
+        )) {
         safeDefaultValue = JSON.stringify(safeDefaultValue);
       }
     }
@@ -164,7 +177,7 @@ function Dumper(config) {
         ...field,
         ref: field.ref && getModelNameFromTableName(field.ref),
         nameColumnUnconventional,
-        safeDefaultValue: getSafeDefaultValue(field.defaultValue),
+        safeDefaultValue: getSafeDefaultValue(field),
       };
     });
 
