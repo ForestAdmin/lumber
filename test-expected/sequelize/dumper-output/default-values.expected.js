@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       defaultValue: [],
     },
+    booleanDefault: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
     dateDefault: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.literal('now()'),

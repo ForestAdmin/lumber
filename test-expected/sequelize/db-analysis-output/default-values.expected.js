@@ -17,6 +17,13 @@ module.exports = {
         "defaultValue": []
       },
       {
+        "name": "booleanDefault",
+        "nameColumn": "booleanDefault",
+        "type": "BOOLEAN",
+        "primaryKey": false,
+        "defaultValue": true,
+      },
+      {
         "name": "dateDefault",
         "nameColumn": "dateDefault",
         "type": "DATE",
