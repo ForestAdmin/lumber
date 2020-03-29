@@ -172,12 +172,15 @@ function Dumper(config) {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
       const nameColumnUnconventional = field.nameColumn !== expectedConventionalColumnName
         || (underscored && /[1-9]/g.test(field.name));
+      const safeDefaultValue = getSafeDefaultValue(field);
 
       return {
         ...field,
         ref: field.ref && getModelNameFromTableName(field.ref),
         nameColumnUnconventional,
-        safeDefaultValue: getSafeDefaultValue(field),
+        safeDefaultValue,
+        // NOTICE: needed to keep falsy default values in template
+        hasSafeDefaultValue: !_.isNil(safeDefaultValue),
       };
     });
 
