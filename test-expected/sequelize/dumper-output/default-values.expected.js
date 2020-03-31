@@ -16,7 +16,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
-    dateDefault: {
+    dateConstDefault: {
+      type: DataTypes.DATE,
+      defaultValue: "1983-05-27",
+    },
+    dateExprDefault: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.literal('now()'),
     },

@@ -24,8 +24,15 @@ module.exports = {
         "defaultValue": true,
       },
       {
-        "name": "dateDefault",
-        "nameColumn": "dateDefault",
+        "name": "dateConstDefault",
+        "nameColumn": "dateConstDefault",
+        "type": "DATE",
+        "primaryKey": false,
+        "defaultValue": "1983-05-27"
+      },
+      {
+        "name": "dateExprDefault",
+        "nameColumn": "dateExprDefault",
         "type": "DATE",
         "primaryKey": false,
         "defaultValue": Sequelize.literal('now()')
