@@ -17,9 +17,13 @@ const DEFAULT_PORT = 3310;
 
 const DEFAULT_VALUE_TYPES_TO_STRINGIFY = [
   `${Sequelize.DataTypes.ARRAY}`,
+  `${Sequelize.DataTypes.CITEXT}`,
+  `${Sequelize.DataTypes.DATE}`,
   `${Sequelize.DataTypes.ENUM}`,
   `${Sequelize.DataTypes.JSONB}`,
   `${Sequelize.DataTypes.STRING}`,
+  `${Sequelize.DataTypes.TEXT}`,
+  `${Sequelize.DataTypes.UUID}`,
 ];
 
 function Dumper(config) {
