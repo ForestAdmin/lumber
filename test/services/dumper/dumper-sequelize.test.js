@@ -74,7 +74,7 @@ describe('services > dumper > sequelize', () => {
     cleanOutput();
   });
 
-  it('should generate a model with defaul values', async () => {
+  it('should generate a model with default values', async () => {
     expect.assertions(1);
     const dumper = await getDumper();
     await dumper.dump(defaultValuesModel);
