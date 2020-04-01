@@ -69,6 +69,7 @@
 ### Fixed
 - Technical - Fix test expect files extensions.
 - Command Generate - Do not declare the "id" field on tables having a `BIGINT` "id" column as primary key. 🛡
+- Command Generate - Fix issue where a conflict between regular fields and references alias could happen, and prevent the server from starting. 
 
 ## RELEASE 3.2.0 - 2019-12-31
 ### Added

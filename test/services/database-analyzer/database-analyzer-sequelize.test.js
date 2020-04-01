@@ -53,5 +53,16 @@ describe('services > database analyser > Sequelize', () => {
       expect(result.users).toStrictEqual(expected.users);
       await sequelizeHelper.close();
     }, 10000);
+
+    it('should handle conflicts between regular field names and references alias', async () => {
+      expect.assertions(1);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      await sequelizeHelper.dropAndCreate('cars');
+      const expected = await sequelizeHelper.given('rentals');
+      const result = await performDatabaseAnalysis(databaseConnection);
+      expect(result.rentals).toStrictEqual(expected.rentals);
+      await sequelizeHelper.close();
+    }, 10000);
   });
 });

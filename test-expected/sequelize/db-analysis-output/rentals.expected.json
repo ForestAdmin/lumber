@@ -1,0 +1,44 @@
+{
+  "rentals": {
+    "fields": [
+      {
+        "name": "carNo",
+        "nameColumn": "car_no",
+        "type": "INTEGER",
+        "primaryKey": true,
+        "defaultValue": null
+      },
+      {
+        "name": "fromDate",
+        "nameColumn": "from_date",
+        "type": "DATE",
+        "primaryKey": false,
+        "defaultValue": null
+      },
+      {
+        "name": "toDate",
+        "nameColumn": "to_date",
+        "defaultValue": null,
+        "primaryKey": false,
+        "type": "DATE"
+      }
+    ],
+    "references": [
+      {
+        "as": "carNoRelationship",
+        "association": "belongsTo",
+        "foreignKey": "car_no",
+        "foreignKeyName": "carNoKey",
+        "ref": "cars"
+      }
+    ],
+    "primaryKeys": ["car_no"],
+    "options": {
+      "hasIdColumn": false,
+      "hasPrimaryKeys": true,
+      "isJunction": false,
+      "timestamps": false,
+      "underscored": true
+    }
+  }
+}

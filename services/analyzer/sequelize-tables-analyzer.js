@@ -301,6 +301,26 @@ async function createTableSchema({
   };
 }
 
+function detectAndFixAliasConflicts(wholeSchema) {
+  const tablesName = Object.keys(wholeSchema);
+
+  if (!tablesName.length) { return; }
+
+  tablesName.forEach((tableName) => {
+    const table = wholeSchema[tableName];
+
+    if (table.references.length && table.fields.length) {
+      const fieldNames = table.fields.map((field) => field.name);
+
+      table.references.forEach((reference, index) => {
+        if (fieldNames.includes(reference.as)) {
+          table.references[index].as = `${reference.as}Relationship`;
+        }
+      });
+    }
+  });
+}
+
 async function analyzeSequelizeTables(databaseConnection, config, allowWarning) {
   const schemaAllTables = {};
 
@@ -356,6 +376,8 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
       dialect: databaseConnection.getDialect(),
     });
   }
+
+  detectAndFixAliasConflicts(schemaAllTables);
 
   return schemaAllTables;
 }
