@@ -124,6 +124,36 @@ function Migrator() {
 
     return newRelationships;
   };
+
+  this.detectDeletedRelationships = (schema) => {
+    const deletedRelationships = {};
+
+    Object.keys(schema).forEach((table) => {
+      deletedRelationships[table] = [];
+      const tableFileName = tableToFilename(table);
+      const modelPath = `${process.cwd()}/models/${tableFileName}.js`;
+      if (!fs.existsSync(modelPath)) { return; }
+
+      const content = fs.readFileSync(modelPath, 'utf-8');
+      const actualReferenceNames = [];
+      const regex = /\w+\s*\.\s*(belongsToMany|belongsTo|hasMany|hasOne)\s*\(\s*models\.\w+,\s*{\s*[\s\w',:]*foreignKey:\s*({[\s\w',:]*field:\s*['"](\w+)['"],?\s*}|\s*['"](\w+)['"]),?[^}]*}\);?/gm;
+
+      let match = regex.exec(content);
+      while (match !== null) {
+        // NOTICE: Extract the capturing group corresponding to the field name
+        actualReferenceNames.push(match[3] || match[4]);
+
+        // NOTICE: Find the next field
+        match = regex.exec(content);
+      }
+
+      const newReferenceNames = schema[table].references.map((reference) => reference.foreignKey);
+      deletedRelationships[table] = actualReferenceNames
+        .filter((foreignKeyName) => !newReferenceNames.includes(foreignKeyName));
+    });
+
+    return deletedRelationships;
+  };
 }
 
 module.exports = Migrator;

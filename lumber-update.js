@@ -54,6 +54,7 @@ async function askForConfirmation(spinner, message) {
   const newReferences = diffDetector.detectNewRelationships(schema);
   const deletedTables = diffDetector.detectDeletedTables(schema);
   const deletedFields = diffDetector.detectDeletedFields(schema);
+  const deletedReferences = diffDetector.detectDeletedRelationships(schema);
   diffSpinner.succeed();
 
   const spinner = spinners.add('dumper', { text: 'Creating your project files' });
@@ -98,6 +99,16 @@ async function askForConfirmation(spinner, message) {
     await P.each(deletedFieldsInTable, async (fieldName) => {
       if (await askForConfirmation(spinner, `Remove field ${fieldName} from ${tableName}?`)) {
         dumper.removeFieldFromModel(tableName, fieldName);
+      }
+    });
+  });
+
+  await P.each(Object.keys(deletedReferences), async (tableName) => {
+    const deletedReferencesInTable = deletedReferences[tableName];
+
+    await P.each(deletedReferencesInTable, async (fieldName) => {
+      if (await askForConfirmation(spinner, `Remove reference with foreignKey ${fieldName} from ${tableName}?`)) {
+        dumper.removeReferenceFromModel(tableName, fieldName);
       }
     });
   });

@@ -386,6 +386,23 @@ automatically. Please, add it manually to the file '${tableFileName}':\n${newFie
     }
   }
 
+  this.removeReferenceFromModel = (tableName, foreignKeyName) => {
+    const tableFileName = getTableFileName(tableName);
+
+    const currentContent = fs.readFileSync(tableFileName, 'utf-8');
+    // NOTICE: Detect the model declaration.
+    const regexp = new RegExp(`\\s*\\w+\\s*\\.\\s*(belongsToMany|belongsTo|hasMany|hasOne)\\s*\\(\\s*models\\.\\w+,\\s*{\\s*[\\s\\w',:]*foreignKey:\\s*({[\\s\\w',:]*field:\\s*['"]${foreignKeyName}['"],?\\s*}|\\s*['"]${foreignKeyName}['"]),?[^}]*}\\);?`);
+
+    if (regexp.test(currentContent)) {
+      // NOTICE: Insert the field at the beginning of the fields declaration.
+      const newContent = currentContent.replace(regexp, '');
+      writeFile(tableFileName, newContent, 'update');
+    } else {
+      logger.warn(chalk.bold(`WARNING: Cannot remove the reference on ${foreignKeyName} \
+automatically. Please, remove it manually from the file '${tableFileName}'`));
+    }
+  };
+
   this.removeFieldFromModel = (tableName, fieldName) => {
     const tableFileName = getTableFileName(tableName);
 
