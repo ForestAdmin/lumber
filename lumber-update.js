@@ -52,6 +52,7 @@ async function askForConfirmation(spinner, message) {
   const newTables = diffDetector.detectNewTables(schema);
   const newFields = diffDetector.detectNewFields(schema);
   const newReferences = diffDetector.detectNewRelationships(schema);
+  const deletedTables = diffDetector.detectDeletedTables(schema);
   diffSpinner.succeed();
 
   const spinner = spinners.add('dumper', { text: 'Creating your project files' });
@@ -82,6 +83,12 @@ async function askForConfirmation(spinner, message) {
         dumper.dumpReferenceIntoModel(tableName, reference);
       }
     });
+  });
+
+  await P.each(deletedTables, async (table) => {
+    if (await askForConfirmation(spinner, `Delete model ${table}?`)) {
+      dumper.removeModel(table);
+    }
   });
 
   spinner.succeed();

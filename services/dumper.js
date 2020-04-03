@@ -386,6 +386,20 @@ automatically. Please, add it manually to the file '${tableFileName}':\n${newFie
     }
   }
 
+  this.removeModel = (tableName) => {
+    const collectionFilePath = `${path}/forest/${tableName}`;
+    const modelFilePath = `${path}/models/${tableName}`;
+    const routeFilePath = `${path}/routes/${tableName}`;
+
+    if (fs.existsSync(collectionFilePath)) {
+      fs.unlinkSync(collectionFilePath);
+    }
+    if (fs.existsSync(routeFilePath)) {
+      fs.unlinkSync(routeFilePath);
+    }
+    fs.unlinkSync(modelFilePath);
+  };
+
   this.dumpModel = (tableName, tableSchema) => {
     writeForestCollection(tableName);
     const { fields, references, options } = tableSchema;
