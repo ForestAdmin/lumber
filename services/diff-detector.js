@@ -72,6 +72,36 @@ function Migrator() {
     return newFields;
   };
 
+  this.detectDeletedFields = (schema) => {
+    const deletedFields = {};
+
+    Object.keys(schema).forEach((table) => {
+      deletedFields[table] = [];
+      const tableFileName = tableToFilename(table);
+      const modelPath = `${process.cwd()}/models/${tableFileName}.js`;
+      if (!fs.existsSync(modelPath)) { return; }
+
+      const content = fs.readFileSync(modelPath, 'utf-8');
+      const actualFieldNames = [];
+      const regex = /['"]?(\w+)['"]?:\s*{\s*[^}]*type:\s*DataTypes..*[^}]*},?/gm;
+
+      let match = regex.exec(content);
+      while (match !== null) {
+        // NOTICE: Extract the capturing group corresponding to the field name
+        actualFieldNames.push(match[1]);
+
+        // NOTICE: Find the next field
+        match = regex.exec(content);
+      }
+
+      const newfieldNames = schema[table].fields.map((field) => field.name);
+      deletedFields[table] = actualFieldNames
+        .filter((fieldName) => !newfieldNames.includes(fieldName));
+    });
+
+    return deletedFields;
+  };
+
   this.detectNewRelationships = (schema) => {
     const newRelationships = {};
 
