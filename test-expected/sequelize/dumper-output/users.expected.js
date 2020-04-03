@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     enabled: {
       type: DataTypes.BOOLEAN,
-      defaultValue: Sequelize.literal('true'),
+      defaultValue: true,
     },
     lastLogin: {
       type: DataTypes.DATE,

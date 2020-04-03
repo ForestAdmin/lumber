@@ -5,6 +5,7 @@ const simpleModel = require('../../../test-expected/sequelize/db-analysis-output
 const belongsToModel = require('../../../test-expected/sequelize/db-analysis-output/addresses.expected.json');
 const otherAssociationsModel = require('../../../test-expected/sequelize/db-analysis-output/users.expected.json');
 const exportModel = require('../../../test-expected/sequelize/db-analysis-output/export.expected.json');
+const defaultValuesModel = require('../../../test-expected/sequelize/db-analysis-output/default-values.expected.js');
 
 const Dumper = require('../../../services/dumper');
 
@@ -70,6 +71,17 @@ describe('services > dumper > sequelize', () => {
 
     expect(generatedModelFile).toStrictEqual(expectedModelFile);
     expect(generatedRouteFile).toStrictEqual(expectedRouteFile);
+    cleanOutput();
+  });
+
+  it('should generate a model with default values', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(defaultValuesModel);
+    const generatedFile = fs.readFileSync('./test-output/sequelize/models/default-values.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/default-values.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();
   });
 });

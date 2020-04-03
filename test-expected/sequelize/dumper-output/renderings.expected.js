@@ -22,11 +22,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     sections: {
       type: DataTypes.JSONB,
-      defaultValue: Sequelize.literal('[{"name": "Dashboard", "isVisible": true}, {"name": "Data", "isVisible": true}]'),
+      defaultValue: [{"name":"Dashboard","isVisible":true},{"name":"Data","isVisible":true}],
     },
     collectionsPositions: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
-      defaultValue: Sequelize.literal('ARRAY[]'),
+      defaultValue: [],
     },
   }, {
     tableName: 'renderings',

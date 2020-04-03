@@ -5,6 +5,7 @@ const mkdirpSync = require('mkdirp');
 const Handlebars = require('handlebars');
 const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
+const Sequelize = require('sequelize');
 const stringUtils = require('../utils/strings');
 const logger = require('./logger');
 const toValidPackageName = require('../utils/to-valid-package-name');
@@ -13,6 +14,17 @@ require('../handlerbars/loader');
 const mkdirp = P.promisify(mkdirpSync);
 
 const DEFAULT_PORT = 3310;
+
+const DEFAULT_VALUE_TYPES_TO_STRINGIFY = [
+  `${Sequelize.DataTypes.ARRAY}`,
+  `${Sequelize.DataTypes.CITEXT}`,
+  `${Sequelize.DataTypes.DATE}`,
+  `${Sequelize.DataTypes.ENUM}`,
+  `${Sequelize.DataTypes.JSONB}`,
+  `${Sequelize.DataTypes.STRING}`,
+  `${Sequelize.DataTypes.TEXT}`,
+  `${Sequelize.DataTypes.UUID}`,
+];
 
 function Dumper(config) {
   const path = `${process.cwd()}/${config.appName}`;
@@ -137,6 +149,26 @@ function Dumper(config) {
     return stringUtils.camelCase(stringUtils.transformToSafeString(table));
   }
 
+  function getSafeDefaultValue(field) {
+    // NOTICE: in case of SQL dialect, ensure default value is directly usable in template
+    //         as a JS value.
+    let safeDefaultValue = field.defaultValue;
+    if (config.dbDialect !== 'mongodb') {
+      if (typeof safeDefaultValue === 'object' && safeDefaultValue instanceof Sequelize.Utils.Literal) {
+        safeDefaultValue = `Sequelize.literal('${safeDefaultValue.val}')`;
+      } else if (
+        !_.isNil(safeDefaultValue)
+        && _.some(
+          DEFAULT_VALUE_TYPES_TO_STRINGIFY,
+          // NOTICE: Uses `startsWith` as composite types may vary (eg: `ARRAY(DataTypes.INTEGER)`)
+          (dataType) => _.startsWith(field.type, dataType),
+        )) {
+        safeDefaultValue = JSON.stringify(safeDefaultValue);
+      }
+    }
+    return safeDefaultValue;
+  }
+
   function writeModel(table, fields, references, options = {}) {
     const { underscored } = options;
 
@@ -144,11 +176,15 @@ function Dumper(config) {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
       const nameColumnUnconventional = field.nameColumn !== expectedConventionalColumnName
         || (underscored && /[1-9]/g.test(field.name));
+      const safeDefaultValue = getSafeDefaultValue(field);
 
       return {
         ...field,
         ref: field.ref && getModelNameFromTableName(field.ref),
         nameColumnUnconventional,
+        safeDefaultValue,
+        // NOTICE: needed to keep falsy default values in template
+        hasSafeDefaultValue: !_.isNil(safeDefaultValue),
       };
     });
 
