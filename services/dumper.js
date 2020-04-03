@@ -386,6 +386,23 @@ automatically. Please, add it manually to the file '${tableFileName}':\n${newFie
     }
   }
 
+  this.removeFieldFromModel = (tableName, fieldName) => {
+    const tableFileName = getTableFileName(tableName);
+
+    const currentContent = fs.readFileSync(tableFileName, 'utf-8');
+    // NOTICE: Detect the model declaration.
+    const regexp = new RegExp(`\\s*['"]?${fieldName}['"]?:\\s*{\\s*[^}]*type:\\s*DataTypes..*[^}]*},?`);
+
+    if (regexp.test(currentContent)) {
+      // NOTICE: Insert the field at the beginning of the fields declaration.
+      const newContent = currentContent.replace(regexp, '');
+      writeFile(tableFileName, newContent, 'update');
+    } else {
+      logger.warn(chalk.bold(`WARNING: Cannot remove the field ${fieldName} \
+automatically. Please, remove it manually from the file '${tableFileName}'`));
+    }
+  };
+
   this.removeModel = (tableName) => {
     const collectionFilePath = `${path}/forest/${tableName}`;
     const modelFilePath = `${path}/models/${tableName}`;
