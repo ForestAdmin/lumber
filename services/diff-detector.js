@@ -27,6 +27,29 @@ function Migrator() {
     return newTables;
   };
 
+  this.detectDeletedTables = (schema) => {
+    const deletedTablesFilePaths = [];
+
+    const modelDir = `${process.cwd()}/models`;
+    if (!fs.existsSync(modelDir)) {
+      logger.error(
+        `Cannot find the ${chalk.red('models/')} directory.`,
+        'Please, ensure you are running this command inside a Lumber generated project.',
+      );
+      process.exit(1);
+    }
+
+    const tableFileNames = Object.keys(schema).map((table) => `${tableToFilename(table)}.js`);
+    const files = fs.readdirSync(`${process.cwd()}/models`);
+    files.forEach((file) => {
+      if (file !== 'index.js' && !tableFileNames.includes(file)) {
+        deletedTablesFilePaths.push(file);
+      }
+    });
+
+    return deletedTablesFilePaths;
+  };
+
   this.detectNewFields = (schema) => {
     const newFields = {};
 
