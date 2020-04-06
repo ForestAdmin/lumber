@@ -301,6 +301,29 @@ async function createTableSchema({
   };
 }
 
+// NOTICE: This detects two generated fields (regular or reference's alias) with the same name
+//         and rename reference's alias as `Linked${collectionReferenced}` to prevent Sequelize
+//         from crashing at startup.
+function fixAliasConflicts(wholeSchema) {
+  const tablesName = Object.keys(wholeSchema);
+
+  if (!tablesName.length) { return; }
+
+  tablesName.forEach((tableName) => {
+    const table = wholeSchema[tableName];
+
+    if (table.references.length && table.fields.length) {
+      const fieldNames = table.fields.map((field) => field.name);
+
+      table.references.forEach((reference, index) => {
+        if (fieldNames.includes(reference.as)) {
+          table.references[index].as = `linked${_.upperFirst(reference.as)}`;
+        }
+      });
+    }
+  });
+}
+
 async function analyzeSequelizeTables(databaseConnection, config, allowWarning) {
   const schemaAllTables = {};
 
@@ -356,6 +379,8 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
       dialect: databaseConnection.getDialect(),
     });
   }
+
+  fixAliasConflicts(schemaAllTables);
 
   return schemaAllTables;
 }

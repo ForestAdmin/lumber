@@ -1,0 +1,5 @@
+CREATE TABLE cars (
+  id INT NOT NULL,
+  model VARCHAR(25) NOT NULL,
+  CONSTRAINT pk_cars PRIMARY KEY (id)
+);
