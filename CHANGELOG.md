@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.5.1 - 2020-04-06
 ### Fixed
 - Command Generate - Remove extraneous calls to Sequelize.literal in generated models.
 - Command Generate - Fix issue where a conflict between regular fields and references alias could prevent the server from starting. 🛡
