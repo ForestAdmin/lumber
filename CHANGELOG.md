@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Technical - Introduce conventional commits.
+- Technical - Add a Pull Requests template.
 
 ## RELEASE 3.5.1 - 2020-04-06
 ### Fixed
