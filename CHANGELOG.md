@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Introduce conventional commits.
 
 ## RELEASE 3.5.1 - 2020-04-06
 ### Fixed

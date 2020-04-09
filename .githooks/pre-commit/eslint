@@ -1,7 +1,0 @@
-#!/bin/bash
-node .eslint-bin/pre-commit-hook.js
-
-if [[ $? != 0 ]] ; then
-  echo "🚫 🚫 🚫  ESLint failed, git commit denied!"
-  exit 1
-fi
