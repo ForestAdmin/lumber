@@ -24,5 +24,6 @@ install:
   - yarn install
 
 script:
+  - commitlint-travis
   - yarn lint
   - sleep 15; yarn test
