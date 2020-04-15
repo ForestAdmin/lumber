@@ -312,10 +312,10 @@
     babel-runtime "6.26.0"
     execa "0.11.0"
 
-"@forestadmin/devops@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@forestadmin/devops/-/devops-2.0.0.tgz#77c1edc40ba31c46502e4991ae534064d8fc7db8"
-  integrity sha512-0dN4lotOzDxH0y+x7tFstyuyvao+zU/492zqJ3ZLMXYRxsx9CrjaJjFJAK8BlXWw3ULpyMhN2AJzurRSSWKPqA==
+"@forestadmin/devops@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@forestadmin/devops/-/devops-2.0.1.tgz#4f5158e341d92ebc960bd4017b62595432237fd1"
+  integrity sha512-knvYMp2QV/5hIJz3wztKyvJMi3gxF+FxJHjMPlMTk4ZqPUYdAMsuZb8a9EU7KgWpsR89biSQW9ciqLHDvUCE1g==
   dependencies:
     "@slack/client" "5.0.2"
     chalk "2.4.2"
