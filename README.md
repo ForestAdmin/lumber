@@ -79,7 +79,7 @@ know this can come in handy sometimes :-)
 Get in app access to a subset of your application data by doing a basic search
 or typing an SQL query or implementing an API route.
 
-<img src="hhttps://www.forestadmin.com/public/img/illustrations-dev/screens/ForestWebsite20-Segments.jpg" alt="Segments">
+<img src="https://www.forestadmin.com/public/img/illustrations-dev/screens/ForestWebsite20-Segments.jpg" alt="Segments">
 
 ### Dashboards
 Forest Admin is able to tap into your actual data to chart out your metrics
