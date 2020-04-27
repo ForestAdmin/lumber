@@ -5,6 +5,7 @@
 - Technical - Introduce conventional commits.
 - Technical - Make the CI lint the commit messages.
 - Technical - Adapt release manager to conventional commits.
+- Documentation - Update links in readme.
 
 ## RELEASE 3.5.1 - 2020-04-06
 ### Fixed
