@@ -7,6 +7,9 @@
 - Technical - Adapt release manager to conventional commits.
 - Documentation - Update links in readme.
 
+### Fixed
+- Command Generate - Fix DATABASE_URL badly encoded in .env generation.
+
 ## RELEASE 3.5.1 - 2020-04-06
 ### Fixed
 - Command Generate - Remove extraneous calls to Sequelize.literal in generated models.

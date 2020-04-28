@@ -49,6 +49,7 @@ function Dumper(config) {
     function handlebarsTemplate(templatePath) {
       return Handlebars.compile(
         fs.readFileSync(`${__dirname}/../templates/${templatePath}`, 'utf-8'),
+        { noEscape: true },
       );
     }
 
