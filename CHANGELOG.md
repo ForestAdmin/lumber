@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Add a Pull Requests template.
 
 ## RELEASE 3.5.2 - 2020-04-29
 ### Changed
@@ -8,7 +10,6 @@
 - Technical - Make the CI lint the commit messages.
 - Technical - Adapt release manager to conventional commits.
 - Documentation - Update links in readme.
-- Technical - Add a Pull Requests template.
 
 ### Fixed
 - Command Generate - Prevent files' content from being HTML escaped.
