@@ -8,6 +8,7 @@
 - Technical - Make the CI lint the commit messages.
 - Technical - Adapt release manager to conventional commits.
 - Documentation - Update links in readme.
+- Technical - Add a Pull Requests template.
 
 ### Fixed
 - Command Generate - Prevent files' content from being HTML escaped.
