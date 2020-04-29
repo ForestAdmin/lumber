@@ -8,7 +8,7 @@
 - Documentation - Update links in readme.
 
 ### Fixed
-- Command Generate - Fix DATABASE_URL badly encoded in .env generation.
+- Command Generate - Prevent files' content from being HTML escaped.
 
 ## RELEASE 3.5.1 - 2020-04-06
 ### Fixed
