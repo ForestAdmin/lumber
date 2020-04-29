@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Add a Pull Requests template.
 
 ## RELEASE 3.5.2 - 2020-04-29
 ### Changed
