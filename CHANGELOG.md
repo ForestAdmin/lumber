@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.5.2 - 2020-04-29
 ### Changed
 - Technical - Introduce conventional commits.
 - Technical - Make the CI lint the commit messages.
