@@ -7,6 +7,9 @@
 - Technical - Adapt release manager to conventional commits.
 - Documentation - Update links in readme.
 
+### Fixed
+- Command Generate - Prevent files' content from being HTML escaped.
+
 ## RELEASE 3.5.1 - 2020-04-06
 ### Fixed
 - Command Generate - Remove extraneous calls to Sequelize.literal in generated models.
