@@ -1,16 +1,10 @@
-sudo: required
-
 language: node_js
-
 node_js:
   - lts/*
   - 10
 
 env:
   - NODE_ENV=travis
-
-notifications:
-  webhooks: https://files-aopiaslhxw.now.sh
 
 services:
   - docker --privileged
