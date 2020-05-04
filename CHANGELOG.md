@@ -6,6 +6,9 @@
 - Technical - Remove CI configuration warnings.
 - Technical - Remove useless CI webhook.
 
+### Fixed
+- Command Generate - Default configuration now works for users onboarding with Docker on Linux based OS with a local database. 🛡
+
 ## RELEASE 3.5.2 - 2020-04-29
 ### Changed
 - Technical - Introduce conventional commits.

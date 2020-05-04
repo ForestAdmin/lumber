@@ -1,5 +1,6 @@
 const P = require('bluebird');
 const fs = require('fs');
+const os = require('os');
 const _ = require('lodash');
 const mkdirpSync = require('mkdirp');
 const Handlebars = require('handlebars');
@@ -34,6 +35,10 @@ function Dumper(config) {
   const viewPath = `${path}/views`;
   const modelsPath = `${path}/models`;
   const middlewaresPath = `${path}/middlewares`;
+
+  function isLinuxBasedOs() {
+    return os.platform() === 'linux';
+  }
 
   function writeFile(filePath, content) {
     fs.writeFileSync(filePath, content);
@@ -296,12 +301,13 @@ function Dumper(config) {
         containerName: _.snakeCase(config.appName),
         hostname: config.appHostname || 'http://localhost',
         port: config.appPort || DEFAULT_PORT,
-        databaseUrl: getDatabaseUrl().replace('localhost', 'host.docker.internal'),
+        databaseUrl: isLinuxBasedOs() ? getDatabaseUrl() : getDatabaseUrl().replace('localhost', 'host.docker.internal'),
         ssl: config.ssl || 'false',
         dbSchema: config.dbSchema,
         forestEnvSecret: config.forestEnvSecret,
         forestAuthSecret: config.forestAuthSecret,
         forestUrl: process.env.FOREST_URL,
+        network: isLinuxBasedOs() ? 'host' : null,
       },
     });
   }
