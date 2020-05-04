@@ -13,6 +13,9 @@
 - Technical - Move `to-valid-package-name` test to correct folder.
 - Readme - Update the community badge for Discourse.
 
+### Fixed
+- Command Generate - Default configuration now works for users onboarding with Docker on Linux based OS with a local database. 🛡
+
 ## RELEASE 3.5.2 - 2020-04-29
 ### Changed
 - Technical - Introduce conventional commits.
