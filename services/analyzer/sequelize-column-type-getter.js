@@ -3,6 +3,7 @@ const logger = require('../logger');
 
 const DIALECT_MYSQL = 'mysql';
 const DIALECT_POSTGRES = 'postgres';
+const DIALECT_MSSQL = 'mssql';
 
 function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
   const queryInterface = databaseConnection.getQueryInterface();
@@ -77,6 +78,8 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
     const mysqlEnumRegex = /ENUM\((.*)\)/i;
 
     switch (type) {
+      case (type === 'JSON' && !isDialect(DIALECT_MSSQL) && 'JSON'):
+        return 'JSON';
       case (type === 'BIT(1)' && isDialect(DIALECT_MYSQL) && 'BIT(1)'): // NOTICE: MySQL boolean type.
       case 'BIT': // NOTICE: MSSQL type.
       case 'BOOLEAN':

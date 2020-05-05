@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Command Generate - Support `JSON` field type on installation.
+
 ### Changed
 - Technical - Add a Pull Requests template.
 - Technical - Remove CI configuration warnings.

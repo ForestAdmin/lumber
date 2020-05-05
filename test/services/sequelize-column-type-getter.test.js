@@ -4,6 +4,20 @@ const { DATABASE_URL_MYSQL_MAX, DATABASE_URL_POSTGRESQL_MAX } = require('../../t
 
 describe('services > column type getter', () => {
   describe('using mysql', () => {
+    it('should handle `JSON` type', async () => {
+      expect.assertions(1);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(DATABASE_URL_MYSQL_MAX);
+      await sequelizeHelper.dropAndCreate('json');
+      const columnTypeGetter = new ColumnTypeGetter(databaseConnection, 'public');
+      const computedType = await columnTypeGetter.perform({ type: 'JSON' }, 'object', 'json');
+
+      expect(computedType).toStrictEqual('JSON');
+
+      await sequelizeHelper.drop('json', 'mysql');
+      await sequelizeHelper.close();
+    });
+
     it('should handle BIT(1) as boolean type', async () => {
       expect.assertions(1);
       const sequelizeHelper = new SequelizeHelper();
@@ -20,6 +34,20 @@ describe('services > column type getter', () => {
   });
 
   describe('using postgresql', () => {
+    it('should handle `JSON` type', async () => {
+      expect.assertions(1);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(DATABASE_URL_POSTGRESQL_MAX);
+      await sequelizeHelper.dropAndCreate('json');
+      const columnTypeGetter = new ColumnTypeGetter(databaseConnection, 'public');
+      const computedType = await columnTypeGetter.perform({ type: 'JSON' }, 'object', 'json');
+
+      expect(computedType).toStrictEqual('JSON');
+
+      await sequelizeHelper.drop('json', 'postgres');
+      await sequelizeHelper.close();
+    });
+
     it('should not handle BIT(1)', async () => {
       expect.assertions(1);
       const sequelizeHelper = new SequelizeHelper();
