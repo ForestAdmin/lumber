@@ -35,11 +35,11 @@ function MysqlTableConstraintsGetter(databaseConnection) {
             keyColumnUsage.referenced_table_name AS foreignTableName,
             keyColumnUsage.referenced_column_name AS foreignColumnName,
             uniqueIndexes.SEQ_IN_INDEX AS sequenceInIndex
-        FROM information_schema.table_constraints AS tableConstraints
-        JOIN information_schema.key_column_usage AS keyColumnUsage
+        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tableConstraints
+        JOIN INFORMATION_SCHEMA.key_column_usage AS keyColumnUsage
           ON tableConstraints.table_name = keyColumnUsage.table_name
           AND tableConstraints.constraint_name = keyColumnUsage.constraint_name
-        LEFT JOIN information_schema.STATISTICS AS uniqueIndexes
+        LEFT JOIN INFORMATION_SCHEMA.STATISTICS AS uniqueIndexes
           ON keyColumnUsage.column_name = uniqueIndexes.column_name
           AND tableConstraints.constraint_name = uniqueIndexes.INDEX_NAME
         WHERE tableConstraints.table_schema = :schemaName

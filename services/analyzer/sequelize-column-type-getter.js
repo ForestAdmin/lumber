@@ -18,7 +18,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       FROM pg_catalog.pg_type t
       JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
       JOIN pg_catalog.pg_enum e ON t.oid = e.enumtypid
-      LEFT JOIN information_schema.columns i ON t.typname = i.udt_name
+      LEFT JOIN INFORMATION_SCHEMA.columns i ON t.typname = i.udt_name
       WHERE i.column_name = :columnName OR t.typname = :columnName
       GROUP BY i.udt_name;
     `;
@@ -41,8 +41,8 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
           JOIN pg_catalog.pg_enum en
           ON t.oid = en.enumtypid
           WHERE t.typname = e.udt_name) AS "special"
-      FROM information_schema.columns c
-      LEFT JOIN information_schema.element_types e
+      FROM INFORMATION_SCHEMA.columns c
+      LEFT JOIN INFORMATION_SCHEMA.element_types e
       ON ((c.table_catalog, c.table_schema, c.table_name, 'TABLE', c.dtd_identifier) = (e.object_catalog, e.object_schema, e.object_name, e.object_type, e.collection_type_identifier))
       WHERE table_schema = :schema
         AND table_name = :table AND c.column_name = :columnName
