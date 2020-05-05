@@ -27,32 +27,9 @@ describe('services > dumper', () => {
       it('should not make use of `host.docker.internal`', async () => {
         expect.assertions(2);
 
-        const config = {
-          appName: 'test-output/Linux',
-          dbDialect: 'mysql',
-          dbConnectionUrl: 'mysql://localhost:8999',
-          ssl: false,
-          dbSchema: 'public',
-          appHostname: 'localhost',
-          appPort: 1654,
-        };
-
-        await new Dumper(config);
-        const dockerComposeFile = fs.readFileSync('./test-output/mysql/docker-compose.yml', 'utf-8');
-        const dotEnvFile = fs.readFileSync('./test-output/mysql/.env', 'utf-8');
-
-        expect(dockerComposeFile).not.toContain('host.docker.internal');
-        expect(dotEnvFile).not.toContain('host.docker.internal');
-
-        cleanOutput();
-      });
-
-      it('should use `network` option set to `host` in the docker-compose file', async () => {
-        expect.assertions(1);
-
         async function dump() {
           const config = {
-            appName: 'test-output/mysql',
+            appName: 'test-output/Linux',
             dbDialect: 'mysql',
             dbConnectionUrl: 'mysql://localhost:8999',
             ssl: false,
@@ -67,7 +44,36 @@ describe('services > dumper', () => {
 
         await dump();
 
-        const dockerComposeFile = fs.readFileSync('./test-output/mysql/docker-compose.yml', 'utf-8');
+        const dockerComposeFile = fs.readFileSync('./test-output/Linux/docker-compose.yml', 'utf-8');
+        const dotEnvFile = fs.readFileSync('./test-output/Linux/.env', 'utf-8');
+
+        expect(dockerComposeFile).not.toContain('host.docker.internal');
+        expect(dotEnvFile).not.toContain('host.docker.internal');
+
+        cleanOutput();
+      });
+
+      it('should use `network` option set to `host` in the docker-compose file', async () => {
+        expect.assertions(1);
+
+        async function dump() {
+          const config = {
+            appName: 'test-output/Linux',
+            dbDialect: 'mysql',
+            dbConnectionUrl: 'mysql://localhost:8999',
+            ssl: false,
+            dbSchema: 'public',
+            appHostname: 'localhost',
+            appPort: 1654,
+          };
+
+          const dumper = await new Dumper(config);
+          await dumper.dump({});
+        }
+
+        await dump();
+
+        const dockerComposeFile = fs.readFileSync('./test-output/Linux/docker-compose.yml', 'utf-8');
         expect(dockerComposeFile).toContain('network: host');
 
         cleanOutput();
