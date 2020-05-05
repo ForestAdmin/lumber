@@ -8,6 +8,21 @@ function cleanOutput() {
   rimraf.sync('./test-output/mysql');
 }
 
+async function createLinuxDump() {
+  const config = {
+    appName: 'test-output/Linux',
+    dbDialect: 'mysql',
+    dbConnectionUrl: 'mysql://localhost:8999',
+    ssl: false,
+    dbSchema: 'public',
+    appHostname: 'localhost',
+    appPort: 1654,
+  };
+
+  const dumper = await new Dumper(config);
+  await dumper.dump({});
+}
+
 describe('services > dumper', () => {
   describe('on a linux based OS', () => {
     describe('when the database is on the local machine', () => {
@@ -27,22 +42,7 @@ describe('services > dumper', () => {
       it('should not make use of `host.docker.internal`', async () => {
         expect.assertions(2);
 
-        async function dump() {
-          const config = {
-            appName: 'test-output/Linux',
-            dbDialect: 'mysql',
-            dbConnectionUrl: 'mysql://localhost:8999',
-            ssl: false,
-            dbSchema: 'public',
-            appHostname: 'localhost',
-            appPort: 1654,
-          };
-
-          const dumper = await new Dumper(config);
-          await dumper.dump({});
-        }
-
-        await dump();
+        await createLinuxDump();
 
         const dockerComposeFile = fs.readFileSync('./test-output/Linux/docker-compose.yml', 'utf-8');
         const dotEnvFile = fs.readFileSync('./test-output/Linux/.env', 'utf-8');
@@ -56,22 +56,7 @@ describe('services > dumper', () => {
       it('should use `network` option set to `host` in the docker-compose file', async () => {
         expect.assertions(1);
 
-        async function dump() {
-          const config = {
-            appName: 'test-output/Linux',
-            dbDialect: 'mysql',
-            dbConnectionUrl: 'mysql://localhost:8999',
-            ssl: false,
-            dbSchema: 'public',
-            appHostname: 'localhost',
-            appPort: 1654,
-          };
-
-          const dumper = await new Dumper(config);
-          await dumper.dump({});
-        }
-
-        await dump();
+        await createLinuxDump();
 
         const dockerComposeFile = fs.readFileSync('./test-output/Linux/docker-compose.yml', 'utf-8');
         expect(dockerComposeFile).toContain('network: host');
