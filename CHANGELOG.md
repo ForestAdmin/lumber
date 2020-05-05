@@ -6,6 +6,9 @@
 - Technical - Remove CI configuration warnings.
 - Technical - Remove useless CI webhook.
 
+### Fixed
+- Command Generte - Fix an error when analyzing database on mssql with case sensitive collation.
+
 ## RELEASE 3.5.2 - 2020-04-29
 ### Changed
 - Technical - Introduce conventional commits.

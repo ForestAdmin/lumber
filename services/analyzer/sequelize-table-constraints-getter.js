@@ -18,10 +18,10 @@ function TableConstraintsGetter(databaseConnection, schema) {
             "constraintColumnUsage".table_name AS "foreignTableName",
             "constraintColumnUsage".column_name AS "foreignColumnName",
             json_agg("uidx"."uniqueIndexes") filter (where "uidx"."uniqueIndexes" is not null) AS "uniqueIndexes"
-          FROM information_schema.table_constraints AS "tableConstraints"
-          JOIN information_schema.key_column_usage AS "keyColumnUsage"
+          FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS "tableConstraints"
+          JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS "keyColumnUsage"
             ON "tableConstraints".constraint_name = "keyColumnUsage".constraint_name
-          JOIN information_schema.constraint_column_usage AS "constraintColumnUsage"
+          JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE AS "constraintColumnUsage"
             ON "constraintColumnUsage".constraint_name = "tableConstraints".constraint_name
           FULL OUTER JOIN (
             -- Get the index name, table name and list of columns of the unique indexes of a table
@@ -95,12 +95,12 @@ function TableConstraintsGetter(databaseConnection, schema) {
                       "keyColumnUsage".table_name AS "foreignTableName",
                       "keyColumnUsage".column_name AS "foreignColumnName",
                       "uidx"."uniqueIndexes"
-                    FROM information_schema.table_constraints "tableConstraints"
-                    JOIN information_schema.constraint_column_usage "constraintColumnUsage"
+                    FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS "tableConstraints"
+                    JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE "constraintColumnUsage"
                       ON "constraintColumnUsage".constraint_name = "tableConstraints".constraint_name
-                    LEFT OUTER JOIN information_schema.referential_constraints "referentialConstraints"
+                    LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS "referentialConstraints"
                       ON "constraintColumnUsage".constraint_name = "referentialConstraints".constraint_name
-                    LEFT OUTER JOIN information_schema.key_column_usage "keyColumnUsage"
+                    LEFT OUTER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE "keyColumnUsage"
                       ON "keyColumnUsage".constraint_name = "referentialConstraints".unique_constraint_name
                     LEFT OUTER JOIN (
                       SELECT
@@ -185,12 +185,12 @@ function TableConstraintsGetter(databaseConnection, schema) {
                 "constraintColumnUsage".column_name AS "columnName",
                 "keyColumnUsage".table_name AS "foreignTableName",
                 "keyColumnUsage".column_name AS "foreignColumnName"
-              FROM information_schema.table_constraints "tableConstraints"
-              JOIN information_schema.constraint_column_usage "constraintColumnUsage"
+              FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS "tableConstraints"
+              JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE "constraintColumnUsage"
                 ON "constraintColumnUsage".constraint_name = "tableConstraints".constraint_name
-              LEFT OUTER JOIN information_schema.referential_constraints "referentialConstraints"
+              LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS "referentialConstraints"
                 ON "constraintColumnUsage".constraint_name = "referentialConstraints".constraint_name
-              LEFT OUTER JOIN information_schema.key_column_usage "keyColumnUsage"
+              LEFT OUTER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE "keyColumnUsage"
                 ON "keyColumnUsage".constraint_name = "referentialConstraints".unique_constraint_name
               LEFT OUTER JOIN (
                 SELECT
