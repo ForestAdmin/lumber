@@ -3,6 +3,7 @@ const logger = require('../logger');
 
 const DIALECT_MYSQL = 'mysql';
 const DIALECT_POSTGRES = 'postgres';
+const DIALECT_MSSQL = 'mssql';
 
 const typeMatch = (type, value) => (type.match(value) || {}).input;
 const typeStartsWith = (type, value) => typeMatch(type, new RegExp(`^${value}.*`, 'i'));
@@ -80,6 +81,8 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
     const { type } = columnInfo;
 
     switch (type) {
+      case (type === 'JSON' && !isDialect(DIALECT_MSSQL) && 'JSON'):
+        return 'JSON';
       case (type === 'BIT(1)' && isDialect(DIALECT_MYSQL) && 'BIT(1)'): // NOTICE: MySQL boolean type.
       case 'BIT': // NOTICE: MSSQL type.
       case 'BOOLEAN':
