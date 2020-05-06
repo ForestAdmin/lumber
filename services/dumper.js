@@ -40,6 +40,11 @@ function Dumper(config) {
     return os.platform() === 'linux';
   }
 
+  function isDatabaseLocal() {
+    const databaseUrl = getDatabaseUrl();
+    return databaseUrl.includes('127.0.0.1') || databaseUrl.includes('localhost');
+  }
+
   function writeFile(filePath, content) {
     fs.writeFileSync(filePath, content);
     logger.log(`  ${chalk.green('create')} ${filePath.substring(path.length + 1)}`);
@@ -307,7 +312,7 @@ function Dumper(config) {
         forestEnvSecret: config.forestEnvSecret,
         forestAuthSecret: config.forestAuthSecret,
         forestUrl: process.env.FOREST_URL,
-        network: isLinuxBasedOs() ? 'host' : null,
+        network: (isLinuxBasedOs() && isDatabaseLocal()) ? 'host' : null,
       },
     });
   }

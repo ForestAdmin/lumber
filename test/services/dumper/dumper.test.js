@@ -8,11 +8,11 @@ function cleanOutput() {
   rimraf.sync('./test-output/mysql');
 }
 
-async function createLinuxDump() {
+async function createLinuxDump(isDatabaseLocal = true) {
   const config = {
     appName: 'test-output/Linux',
     dbDialect: 'mysql',
-    dbConnectionUrl: 'mysql://localhost:8999',
+    dbConnectionUrl: isDatabaseLocal ? 'mysql://localhost:8999' : 'mysql://example.com:8999',
     ssl: false,
     dbSchema: 'public',
     appHostname: 'localhost',
@@ -53,15 +53,30 @@ describe('services > dumper', () => {
         cleanOutput();
       });
 
-      it('should use `network` option set to `host` in the docker-compose file', async () => {
-        expect.assertions(1);
+      describe('when the database is local on the system', () => {
+        it('should use `network` option set to `host` in the docker-compose file', async () => {
+          expect.assertions(1);
 
-        await createLinuxDump();
+          await createLinuxDump();
 
-        const dockerComposeFile = fs.readFileSync('./test-output/Linux/docker-compose.yml', 'utf-8');
-        expect(dockerComposeFile).toContain('network: host');
+          const dockerComposeFile = fs.readFileSync('./test-output/Linux/docker-compose.yml', 'utf-8');
+          expect(dockerComposeFile).toContain('network: host');
 
-        cleanOutput();
+          cleanOutput();
+        });
+      });
+
+      describe('when the database is not local on the system', () => {
+        it('should not use `network` option in the docker-compose file', async () => {
+          expect.assertions(1);
+
+          await createLinuxDump(false);
+
+          const dockerComposeFile = fs.readFileSync('./test-output/Linux/docker-compose.yml', 'utf-8');
+          expect(dockerComposeFile).not.toContain('network');
+
+          cleanOutput();
+        });
       });
     });
   });
