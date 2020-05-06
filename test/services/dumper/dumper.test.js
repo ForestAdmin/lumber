@@ -4,6 +4,9 @@ const os = require('os');
 const rimraf = require('rimraf');
 const Dumper = require('../../../services/dumper');
 
+const DOCKER_COMPOSE_FILE_LOCATION = './test-output/Linux/docker-compose.yml';
+const DOT_ENV_FILE_LOCATION = './test-output/Linux/.env';
+
 function cleanOutput() {
   rimraf.sync('./test-output/mysql');
 }
@@ -44,8 +47,8 @@ describe('services > dumper', () => {
 
         await createLinuxDump();
 
-        const dockerComposeFile = fs.readFileSync('./test-output/Linux/docker-compose.yml', 'utf-8');
-        const dotEnvFile = fs.readFileSync('./test-output/Linux/.env', 'utf-8');
+        const dockerComposeFile = fs.readFileSync(DOCKER_COMPOSE_FILE_LOCATION, 'utf-8');
+        const dotEnvFile = fs.readFileSync(DOT_ENV_FILE_LOCATION, 'utf-8');
 
         expect(dockerComposeFile).not.toContain('host.docker.internal');
         expect(dotEnvFile).not.toContain('host.docker.internal');
@@ -59,7 +62,7 @@ describe('services > dumper', () => {
 
           await createLinuxDump();
 
-          const dockerComposeFile = fs.readFileSync('./test-output/Linux/docker-compose.yml', 'utf-8');
+          const dockerComposeFile = fs.readFileSync(DOCKER_COMPOSE_FILE_LOCATION, 'utf-8');
           expect(dockerComposeFile).toContain('network: host');
 
           cleanOutput();
@@ -72,7 +75,7 @@ describe('services > dumper', () => {
 
           await createLinuxDump(false);
 
-          const dockerComposeFile = fs.readFileSync('./test-output/Linux/docker-compose.yml', 'utf-8');
+          const dockerComposeFile = fs.readFileSync(DOCKER_COMPOSE_FILE_LOCATION, 'utf-8');
           expect(dockerComposeFile).not.toContain('network');
 
           cleanOutput();

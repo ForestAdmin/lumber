@@ -40,11 +40,6 @@ function Dumper(config) {
     return os.platform() === 'linux';
   }
 
-  function isDatabaseLocal() {
-    const databaseUrl = getDatabaseUrl();
-    return databaseUrl.includes('127.0.0.1') || databaseUrl.includes('localhost');
-  }
-
   function writeFile(filePath, content) {
     fs.writeFileSync(filePath, content);
     logger.log(`  ${chalk.green('create')} ${filePath.substring(path.length + 1)}`);
@@ -138,6 +133,11 @@ function Dumper(config) {
     }
 
     return connectionString;
+  }
+
+  function isDatabaseLocal() {
+    const databaseUrl = getDatabaseUrl();
+    return databaseUrl.includes('127.0.0.1') || databaseUrl.includes('localhost');
   }
 
   function writeDotEnv() {
