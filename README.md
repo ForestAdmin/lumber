@@ -2,6 +2,7 @@
 [![npm package](https://badge.fury.io/js/lumber-cli.svg)](https://badge.fury.io/js/lumber-cli)
 [![Build Status](https://travis-ci.org/ForestAdmin/lumber.svg?branch=devel)](https://travis-ci.org/ForestAdmin/lumber)
 ![Coverage](https://img.shields.io/badge/coverage-81%25%0A-critical)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 <p align="center">
   <img src="https://github.com/ForestAdmin/lumber/blob/master/assets/lumber-logo.png?raw=true" alt="Lumber logo">

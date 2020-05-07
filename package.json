@@ -6,7 +6,6 @@
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js .eslint-bin deserializers scripts serializers services test utils",
     "readme:update-coverage": "yarn test:coverage && node ./scripts/update-coverage.js",
-    "release": "node ./scripts/release.js",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage --forceExit"
   },
@@ -51,6 +50,8 @@
     "@commitlint/config-conventional": "8.3.4",
     "@commitlint/travis-cli": "8.3.5",
     "@forestadmin/devops": "2.0.1",
+    "@semantic-release/changelog": "5.0.1",
+    "@semantic-release/git": "9.0.0",
     "eslint": "6.7.2",
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-plugin-import": "2.18.2",
@@ -60,6 +61,8 @@
     "husky": "4.2.3",
     "jest": "24.9.0",
     "rimraf": "3.0.0",
+    "semantic-release": "17.0.7",
+    "semantic-release-slack-bot": "1.6.2",
     "simple-git": "1.126.0",
     "sinon": "7.5.0"
   }
