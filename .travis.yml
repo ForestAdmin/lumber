@@ -7,9 +7,7 @@ services:
   - docker
 
 before_install:
-  - docker-compose --version
   - docker-compose up -d
-  - docker ps
 
 install:
   - yarn install
