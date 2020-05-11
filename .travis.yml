@@ -1,23 +1,33 @@
 language: node_js
-node_js:
-  - lts/*
-  - 10
-
-env:
-  - NODE_ENV=travis
+node_js: lts/*
 
 services:
-  - docker --privileged
+  - docker
 
 before_install:
-  - docker-compose --version
   - docker-compose up -d
-  - docker ps
 
-install:
-  - yarn install
+stages:
+  - Lint & Tests
+  - Build & Publish
 
-script:
-  - commitlint-travis
-  - yarn lint
-  - sleep 15; yarn test
+jobs:
+  include:
+    - stage: Lint & Tests
+      name: Lint commit messages
+      script: commitlint-travis
+    - script: yarn lint
+      name: Lint JavaScript
+    - script: sleep 15; yarn test
+      name: Tests (Node 10)
+      node_js: 10
+    - script: sleep 15; yarn test
+      name: Tests (Node LTS)
+    - stage: Build & Publish
+      if: branch = master
+      script: skip
+      deploy:
+        provider: script
+        on:
+          branch: master
+        script: yarn && npx semantic-release
