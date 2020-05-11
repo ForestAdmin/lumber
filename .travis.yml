@@ -1,7 +1,5 @@
 language: node_js
-node_js:
-  - lts/*
-  - 10
+node_js: lts/*
 
 services:
   - docker
