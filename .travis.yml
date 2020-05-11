@@ -9,8 +9,7 @@ before_install:
 
 stages:
   - Lint & Tests
-  - name: Build & Publish
-    if: branch = master
+  - Build & Publish
 
 jobs:
   include:
