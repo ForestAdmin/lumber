@@ -7,8 +7,9 @@ services:
 before_install:
   - docker-compose up -d
 
-install:
-  - yarn install
+stages:
+  - Lint & Tests
+  - Build & Publish
 
 jobs:
   include:
@@ -18,10 +19,10 @@ jobs:
     - script: yarn lint
       name: Lint JavaScript
     - script: sleep 15; yarn test
-      name: Tests with Node version 10
+      name: Tests (Node 10)
       node_js: 10
     - script: sleep 15; yarn test
-      name: Tests with Node LTS version
+      name: Tests (Node LTS)
     - stage: Build & Publish
       if: branch = master
       script: skip
