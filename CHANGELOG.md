@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.5.3 - 2020-05-11
 ### Changed
 - Technical - Add a Pull Requests template.
 - Technical - Remove CI configuration warnings.
