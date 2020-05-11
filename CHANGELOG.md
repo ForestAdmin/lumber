@@ -5,6 +5,7 @@
 - Technical - Add a Pull Requests template.
 - Technical - Remove CI configuration warnings.
 - Technical - Remove useless CI webhook.
+- Technical - Move `to-valid-package-name` test to correct folder.
 
 ## RELEASE 3.5.2 - 2020-04-29
 ### Changed

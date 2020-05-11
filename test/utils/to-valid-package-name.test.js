@@ -1,6 +1,4 @@
-// FIXME: This file has to be moved inside `utils` folder as soon
-//        as test helpers are moved outside the `utils` folder.
-const toValidPackageName = require('../utils/to-valid-package-name');
+const toValidPackageName = require('../../utils/to-valid-package-name');
 
 describe('utils > toValidPackageName', () => {
   it('should not convert valid package names', () => {
