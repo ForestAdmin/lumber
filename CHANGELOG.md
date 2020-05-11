@@ -1,3 +1,10 @@
+## [3.5.4](https://github.com/ForestAdmin/lumber/compare/v3.5.3...v3.5.4) (2020-05-11)
+
+
+### Bug Fixes
+
+* **security:** patch newly detected vulnerabilities ([#431](https://github.com/ForestAdmin/lumber/issues/431)) ([724a6a9](https://github.com/ForestAdmin/lumber/commit/724a6a9709059b65023c0453d59218595c17ee5d))
+
 # Change Log
 
 ## [Unreleased]
