@@ -1,3 +1,10 @@
+## [3.5.5](https://github.com/ForestAdmin/lumber/compare/v3.5.4...v3.5.5) (2020-05-12)
+
+
+### Bug Fixes
+
+* **generate:** default configuration now works for users using Linux and a local database ([#429](https://github.com/ForestAdmin/lumber/issues/429)) ([176ebcf](https://github.com/ForestAdmin/lumber/commit/176ebcfceaa54e5c7a6a4def168b16bcea39cb9c))
+
 ## [3.5.4](https://github.com/ForestAdmin/lumber/compare/v3.5.3...v3.5.4) (2020-05-11)
 
 
