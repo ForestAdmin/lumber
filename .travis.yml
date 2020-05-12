@@ -24,7 +24,7 @@ jobs:
     - script: sleep 15; yarn test
       name: Tests (Node LTS)
     - stage: Build & Publish
-      if: branch = master
+      if: branch = master AND type != pull_request
       script: skip
       deploy:
         provider: script
