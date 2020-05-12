@@ -1,9 +1,12 @@
-version: '3'
+version: '3.4'
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
+{{#if network}}
+      network: {{network}}
+{{/if}}
     container_name: {{ containerName }}
     environment:
       - APPLICATION_PORT={{ port }}
