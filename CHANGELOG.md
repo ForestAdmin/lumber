@@ -5,10 +5,6 @@
 
 * **security:** patch newly detected vulnerabilities ([#431](https://github.com/ForestAdmin/lumber/issues/431)) ([724a6a9](https://github.com/ForestAdmin/lumber/commit/724a6a9709059b65023c0453d59218595c17ee5d))
 
-# Change Log
-
-## [Unreleased]
-
 ## RELEASE 3.5.3 - 2020-05-11
 ### Changed
 - Technical - Add a Pull Requests template.
