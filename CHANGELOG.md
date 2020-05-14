@@ -13,9 +13,6 @@
 - Technical - Move `to-valid-package-name` test to correct folder.
 - Readme - Update the community badge for Discourse.
 
-### Fixed
-- Command Generte - Fix an error when analyzing database on mssql with case sensitive collation.
-
 ## RELEASE 3.5.2 - 2020-04-29
 ### Changed
 - Technical - Introduce conventional commits.
