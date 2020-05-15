@@ -48,7 +48,7 @@ async function showAllTables(databaseConnection, schema) {
   }
 
   return queryInterface.sequelize.query(
-    'SELECT table_name as table_name FROM information_schema.tables WHERE table_schema = ? AND table_type LIKE \'%TABLE\' AND table_name != \'spatial_ref_sys\'',
+    'SELECT table_name as table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = ? AND table_type LIKE \'%TABLE\' AND table_name != \'spatial_ref_sys\'',
     { type: queryInterface.sequelize.QueryTypes.SELECT, replacements: [realSchema] },
   )
     .then((results) => results.map((table) => table.table_name));
