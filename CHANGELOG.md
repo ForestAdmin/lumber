@@ -1,3 +1,10 @@
+## [3.5.6](https://github.com/ForestAdmin/lumber/compare/v3.5.5...v3.5.6) (2020-05-15)
+
+
+### Bug Fixes
+
+* **command generate:** fix an error on mssql database analysis with case sensitive collation ([#432](https://github.com/ForestAdmin/lumber/issues/432)) ([6520ab1](https://github.com/ForestAdmin/lumber/commit/6520ab1687883f8bd9bd9f2e55917c9d8f6d952c))
+
 ## [3.5.5](https://github.com/ForestAdmin/lumber/compare/v3.5.4...v3.5.5) (2020-05-12)
 
 
