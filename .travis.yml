@@ -4,9 +4,6 @@ node_js: lts/*
 services:
   - docker
 
-before_install:
-  - docker-compose up -d
-
 stages:
   - Lint & Tests
   - Build & Publish
@@ -19,9 +16,11 @@ jobs:
     - script: yarn lint
       name: Lint JavaScript
     - script: sleep 15; yarn test
+      before_install: docker-compose up -d
       name: Tests (Node 10)
       node_js: 10
     - script: sleep 15; yarn test
+      before_install: docker-compose up -d
       name: Tests (Node LTS)
     - stage: Build & Publish
       if: branch = master AND type != pull_request
