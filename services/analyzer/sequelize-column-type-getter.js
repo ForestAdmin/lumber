@@ -4,7 +4,7 @@ const logger = require('../logger');
 const DIALECT_MYSQL = 'mysql';
 const DIALECT_POSTGRES = 'postgres';
 
-const typeMatch = (type, value) => type.match(value || {}).input;
+const typeMatch = (type, value) => (type.match(value) || {}).input;
 const typeStartsWith = (type, value) => typeMatch(type, new RegExp(`^${value}.*`, 'i'));
 const typeContains = (type, value) => typeMatch(type, new RegExp(`${value}.*`, 'i'));
 
