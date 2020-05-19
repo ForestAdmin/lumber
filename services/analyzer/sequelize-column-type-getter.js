@@ -76,7 +76,6 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
     return `ARRAY(DataTypes.${await this.perform(innerColumnInfo, innerColumnInfo.udtName, tableName)})`;
   };
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   this.perform = async (columnInfo, columnName, tableName) => {
     const { type } = columnInfo;
 
