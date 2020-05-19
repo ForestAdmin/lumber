@@ -3,13 +3,12 @@ const SequelizeHelper = require('../../test-utils/sequelize-helper');
 const {
   DATABASE_URL_MYSQL_MAX,
   DATABASE_URL_POSTGRESQL_MAX,
-  DATABASE_URL_MSSQL_MAX,
 } = require('../../test-utils/database-urls');
 
 describe('services > column type getter', () => {
   describe('handling `JSON` type', () => {
-    it('should work for MSSQL, MySQL and pgSQL', async () => {
-      expect.assertions(3);
+    it('should work for MySQL and pgSQL', async () => {
+      expect.assertions(2);
 
       async function getComputedType(databaseUrl, dialect) {
         const sequelizeHelper = new SequelizeHelper();
@@ -25,10 +24,11 @@ describe('services > column type getter', () => {
       }
 
       expect(await getComputedType(DATABASE_URL_MYSQL_MAX, 'mysql')).toStrictEqual('JSON');
-      expect(await getComputedType(DATABASE_URL_MSSQL_MAX, 'mssql')).toStrictEqual('JSON');
       expect(await getComputedType(DATABASE_URL_POSTGRESQL_MAX, 'postgresql')).toStrictEqual('JSON');
     });
+  });
 
+  describe('using mysql', () => {
     it('should handle BIT(1) as boolean type', async () => {
       expect.assertions(1);
       const sequelizeHelper = new SequelizeHelper();
