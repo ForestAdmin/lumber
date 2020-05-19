@@ -82,7 +82,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
     const { type } = columnInfo;
 
     switch (type) {
-      case (type === 'JSON' && !isDialect(DIALECT_MSSQL) && 'JSON'):
+      case 'JSON':
         return 'JSON';
       case (type === 'BIT(1)' && isDialect(DIALECT_MYSQL) && 'BIT(1)'): // NOTICE: MySQL boolean type.
       case 'BIT': // NOTICE: MSSQL type.
