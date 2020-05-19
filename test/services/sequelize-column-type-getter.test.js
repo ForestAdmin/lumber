@@ -1,6 +1,10 @@
 const ColumnTypeGetter = require('../../services/analyzer/sequelize-column-type-getter');
 const SequelizeHelper = require('../../test-utils/sequelize-helper');
-const { DATABASE_URL_MYSQL_MAX, DATABASE_URL_POSTGRESQL_MAX } = require('../../test-utils/database-urls');
+const {
+  DATABASE_URL_MYSQL_MAX,
+  DATABASE_URL_POSTGRESQL_MAX,
+  DATABASE_URL_MSSQL_MAX,
+} = require('../../test-utils/database-urls');
 
 describe('services > column type getter', () => {
   describe('using mysql', () => {
@@ -73,6 +77,22 @@ describe('services > column type getter', () => {
       expect(computedType).toStrictEqual('ARRAY(DataTypes.INTEGER)');
 
       await sequelizeHelper.drop('employees', 'postgres');
+      await sequelizeHelper.close();
+    });
+  });
+
+  describe('using mssql', () => {
+    it('should handle `JSON` type', async () => {
+      expect.assertions(1);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(DATABASE_URL_MSSQL_MAX);
+      await sequelizeHelper.dropAndCreate('json');
+      const columnTypeGetter = new ColumnTypeGetter(databaseConnection, 'public');
+      const computedType = await columnTypeGetter.perform({ type: 'JSON' }, 'object', 'json');
+
+      expect(computedType).toStrictEqual('JSON');
+
+      await sequelizeHelper.drop('json', 'postgres');
       await sequelizeHelper.close();
     });
   });
