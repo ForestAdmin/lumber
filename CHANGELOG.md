@@ -1,3 +1,10 @@
+# [3.6.0](https://github.com/ForestAdmin/lumber/compare/v3.5.6...v3.6.0) (2020-05-25)
+
+
+### Features
+
+* **command-generate:** support 'JSON' field type on installation ([8cf952c](https://github.com/ForestAdmin/lumber/commit/8cf952cb4316a0d48667410bd318351c98419343))
+
 ## [3.5.6](https://github.com/ForestAdmin/lumber/compare/v3.5.5...v3.5.6) (2020-05-15)
 
 
