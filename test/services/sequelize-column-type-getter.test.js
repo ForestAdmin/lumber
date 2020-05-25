@@ -7,7 +7,7 @@ const {
 
 describe('services > column type getter', () => {
   describe('handling `JSON` type', () => {
-    it('should work for MySQL and pgSQL', async () => {
+    it('should work for MySQL and PostgreSQL', async () => {
       expect.assertions(2);
 
       async function getComputedType(databaseUrl, dialect) {
