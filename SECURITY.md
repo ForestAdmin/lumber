@@ -7,4 +7,4 @@ Our technical team will consider your request carefully.
 
 If the vulnerability report is accepted, Forest Admin will:
 - work on a fix of the current version with the highest priority,
-- let you know as soon as a new patch version is published.
+- let you know as soon as a new patched version is published.
