@@ -39,7 +39,7 @@
     "pg": "^6.1.0",
     "pluralize": "^8.0.0",
     "saslprep": "1.0.3",
-    "sequelize": "5.21.9",
+    "sequelize": "5.22.0",
     "spinnies": "0.5.0",
     "superagent": "5.1.0",
     "tedious": "6.4.0",
