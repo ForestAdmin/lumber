@@ -64,5 +64,16 @@ describe('services > database analyser > Sequelize', () => {
       expect(result.rentals).toStrictEqual(expected.rentals);
       await sequelizeHelper.close();
     }, 10000);
+
+    it('should detect snake_case even with no fields in the table', async () => {
+      expect.assertions(1);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      await sequelizeHelper.dropAndCreate('sample_table');
+      await sequelizeHelper.dropAndCreate('underscored_no_fields');
+      const result = await performDatabaseAnalysis(databaseConnection);
+      expect(result.underscored_no_fields.options.underscored).toStrictEqual(true);
+      await sequelizeHelper.close();
+    }, 10000);
   });
 });

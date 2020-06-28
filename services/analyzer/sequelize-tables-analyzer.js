@@ -371,6 +371,12 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   const referencesPerTable = createAllReferences(databaseSchema, schemaAllTables);
   Object.keys(referencesPerTable).forEach((tableName) => {
     schemaAllTables[tableName].references = _.sortBy(referencesPerTable[tableName], 'association');
+
+    if (!schemaAllTables[tableName].fields.length) {
+      schemaAllTables[tableName].options.underscored = isUnderscored(
+        schemaAllTables[tableName].references.map(({ foreignKey }) => ({ nameColumn: foreignKey })),
+      );
+    }
   });
 
   if (_.isEmpty(schemaAllTables)) {
