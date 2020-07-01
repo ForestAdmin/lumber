@@ -210,8 +210,12 @@ function Dumper(config) {
       }
 
       if (reference.targetKey) {
+        const expectedConventionalTargetKeyName = underscored
+          ? _.snakeCase(reference.targetKey)
+          : _.camelCase(reference.targetKey);
+
         computedReference.targetKeyColumnUnconventional = reference.targetKey
-          !== (underscored ? _.snakeCase(reference.targetKey) : _.camelCase(reference.targetKey));
+          !== expectedConventionalTargetKeyName;
       }
 
       return computedReference;
