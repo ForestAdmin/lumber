@@ -1,3 +1,10 @@
+## [3.6.1](https://github.com/ForestAdmin/lumber/compare/v3.6.0...v3.6.1) (2020-07-07)
+
+
+### Bug Fixes
+
+* **command generate:** fix generation of project with postgres on node 14.4 ([#446](https://github.com/ForestAdmin/lumber/issues/446)) ([9a307b3](https://github.com/ForestAdmin/lumber/commit/9a307b3bf1b532f19a2f06d5cdf2abd6921b01e6))
+
 # [3.6.0](https://github.com/ForestAdmin/lumber/compare/v3.5.6...v3.6.0) (2020-05-25)
 
 
