@@ -36,7 +36,7 @@
     "mkdirp": "^0.5.1",
     "mongodb": "3.3.0",
     "mysql2": "2.1.0",
-    "pg": "^6.1.0",
+    "pg": "8.2.1",
     "pluralize": "^8.0.0",
     "saslprep": "1.0.3",
     "sequelize": "5.22.0",
