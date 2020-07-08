@@ -1,3 +1,10 @@
+## [3.6.2](https://github.com/ForestAdmin/lumber/compare/v3.6.1...v3.6.2) (2020-07-08)
+
+
+### Bug Fixes
+
+* model generation inconsistencies ([#445](https://github.com/ForestAdmin/lumber/issues/445)) ([7df5fbe](https://github.com/ForestAdmin/lumber/commit/7df5fbe6e6fb008b5521ceba6762ba9600400c39))
+
 ## [3.6.1](https://github.com/ForestAdmin/lumber/compare/v3.6.0...v3.6.1) (2020-07-07)
 
 
