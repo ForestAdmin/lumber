@@ -6,6 +6,7 @@ const ColumnTypeGetter = require('./sequelize-column-type-getter');
 const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
 const { DatabaseAnalyzerError } = require('../../utils/errors');
 const { terminate } = require('../../utils/terminator');
+const stringUtils = require('../../utils/strings');
 
 const ASSOCIATION_TYPE_BELONGS_TO = 'belongsTo';
 const ASSOCIATION_TYPE_BELONGS_TO_MANY = 'belongsToMany';
@@ -138,7 +139,9 @@ function createReference(tableName, association, foreignKey, manyToManyForeignKe
   } else if (association === ASSOCIATION_TYPE_BELONGS_TO_MANY) {
     reference.ref = manyToManyForeignKey.foreignTableName;
     reference.otherKey = manyToManyForeignKey.columnName;
-    reference.junctionTable = foreignKey.tableName;
+    reference.through = stringUtils.camelCase(
+      stringUtils.transformToSafeString(foreignKey.tableName),
+    );
   } else {
     reference.ref = foreignKey.tableName;
 

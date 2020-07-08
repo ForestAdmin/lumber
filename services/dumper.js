@@ -205,10 +205,6 @@ function Dumper(config) {
         isBelongsToMany: reference.association === 'belongsToMany',
       };
 
-      if (reference.junctionTable) {
-        computedReference.junctionTable = _.camelCase(reference.junctionTable);
-      }
-
       if (reference.targetKey) {
         const expectedConventionalTargetKeyName = underscored
           ? _.snakeCase(reference.targetKey)
