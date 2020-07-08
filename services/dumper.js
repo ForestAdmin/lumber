@@ -200,23 +200,25 @@ function Dumper(config) {
     });
 
     const referencesDefinition = references.map((reference) => {
-      const isBelongsToMany = reference.association === 'belongsToMany';
+      const computedReference = {
+        ...reference,
+        isBelongsToMany: reference.association === 'belongsToMany',
+      };
+
+      if (reference.junctionTable) {
+        computedReference.junctionTable = _.camelCase(reference.junctionTable);
+      }
 
       if (reference.targetKey) {
         const expectedConventionalTargetKeyName = underscored
-          ? _.snakeCase(reference.targetKey) : _.camelCase(reference.targetKey);
-        const targetKeyColumnUnconventional = reference.targetKey
+          ? _.snakeCase(reference.targetKey)
+          : _.camelCase(reference.targetKey);
+
+        computedReference.targetKeyColumnUnconventional = reference.targetKey
           !== expectedConventionalTargetKeyName;
-        return {
-          ...reference,
-          isBelongsToMany,
-          targetKeyColumnUnconventional,
-        };
       }
-      return {
-        ...reference,
-        isBelongsToMany,
-      };
+
+      return computedReference;
     });
 
     copyHandleBarsTemplate({

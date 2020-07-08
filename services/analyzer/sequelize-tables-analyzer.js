@@ -371,6 +371,15 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   const referencesPerTable = createAllReferences(databaseSchema, schemaAllTables);
   Object.keys(referencesPerTable).forEach((tableName) => {
     schemaAllTables[tableName].references = _.sortBy(referencesPerTable[tableName], 'association');
+
+    // NOTE: When a table contains no field, it will be considered camelCased
+    //       by default, so we need to check its references to ensure whether
+    //       it is camelCased or not.
+    if (!schemaAllTables[tableName].fields.length) {
+      schemaAllTables[tableName].options.underscored = isUnderscored(
+        schemaAllTables[tableName].references.map(({ foreignKey }) => ({ nameColumn: foreignKey })),
+      );
+    }
   });
 
   if (_.isEmpty(schemaAllTables)) {
