@@ -83,7 +83,7 @@ function Dumper(config) {
 
     if (config.dbDialect) {
       if (config.dbDialect.includes('postgres')) {
-        dependencies.pg = '~6.1.0';
+        dependencies.pg = '~8.2.2';
       } else if (config.dbDialect === 'mysql') {
         dependencies.mysql2 = '~1.7.0';
       } else if (config.dbDialect === 'mssql') {
