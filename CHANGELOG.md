@@ -1,3 +1,10 @@
+## [3.6.4](https://github.com/ForestAdmin/lumber/compare/v3.6.3...v3.6.4) (2020-07-13)
+
+
+### Bug Fixes
+
+* **vulnerabilities:** bump 2 dependencies of dependencies ([#451](https://github.com/ForestAdmin/lumber/issues/451)) ([a81298a](https://github.com/ForestAdmin/lumber/commit/a81298ae0dce3be7dabac7e36cb33fb8147b3152))
+
 ## [3.6.3](https://github.com/ForestAdmin/lumber/compare/v3.6.2...v3.6.3) (2020-07-13)
 
 
