@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     {{#each references as |reference|}}
     {{../modelVariableName}}.{{reference.association}}(models.{{reference.ref}}, {
     {{#if reference.isBelongsToMany}}
-      through: '{{reference.junctionTable}}',
+      through: '{{reference.through}}',
       foreignKey: '{{reference.foreignKey}}',
       otherKey: '{{reference.otherKey}}',
     {{else}}

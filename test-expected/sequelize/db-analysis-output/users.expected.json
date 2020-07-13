@@ -29,8 +29,8 @@
         "ref": "books",
         "foreignKey": "user_id",
         "foreignKeyName": "userIdKey",
-        "junctionTable": "user_books",
-        "otherKey": "book_id"
+        "otherKey": "book_id",
+        "through": "userBooks"
       },
       {
         "as": "reviews",
