@@ -1,3 +1,10 @@
+## [3.6.3](https://github.com/ForestAdmin/lumber/compare/v3.6.2...v3.6.3) (2020-07-13)
+
+
+### Bug Fixes
+
+* **dumper:** fix issue where project using nodejs v14 could never connect to postgres database ([#450](https://github.com/ForestAdmin/lumber/issues/450)) ([954ad30](https://github.com/ForestAdmin/lumber/commit/954ad30fe04ecd0b3f55cbcccadc9f16b83026ac))
+
 ## [3.6.2](https://github.com/ForestAdmin/lumber/compare/v3.6.1...v3.6.2) (2020-07-08)
 
 
