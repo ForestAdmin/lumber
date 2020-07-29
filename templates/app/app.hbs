@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const jwt = require('express-jwt');
 const morgan = require('morgan');
+const { errorHandler, logger } = require('forest-express');
 const {
   ensureAuthenticated,
   PUBLIC_ROUTES,
@@ -55,5 +56,7 @@ requireAll({
   recursive: true,
   resolve: Module => Module(app),
 });
+
+app.use(errorHandler({ logger }));
 
 module.exports = app;
