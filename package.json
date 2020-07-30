@@ -19,7 +19,8 @@
   "contributors": [
     "Vincent Molinié <vincentm@forestadmin.com>",
     "Valentin Lamatte <valentinl@forestadmin.com>",
-    "Arnaud Besnier <arnaudibesnier@gmail.com>"
+    "Arnaud Besnier <arnaudibesnier@gmail.com>",
+    "Guillaume Gautreau <guillaume@ghusse.com>"
   ],
   "repository": "github:ForestAdmin/lumber",
   "license": "MIT",
