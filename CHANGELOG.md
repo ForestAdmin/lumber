@@ -1,3 +1,10 @@
+## [3.6.5](https://github.com/ForestAdmin/lumber/compare/v3.6.4...v3.6.5) (2020-07-30)
+
+
+### Bug Fixes
+
+* :bug: generate agents that return JSON errors ([#455](https://github.com/ForestAdmin/lumber/issues/455)) ([79ae6e6](https://github.com/ForestAdmin/lumber/commit/79ae6e676dfbd6e146d71c10f3ddc0e143dafbe0))
+
 ## [3.6.4](https://github.com/ForestAdmin/lumber/compare/v3.6.3...v3.6.4) (2020-07-13)
 
 
