@@ -1,3 +1,10 @@
+## [3.6.6](https://github.com/ForestAdmin/lumber/compare/v3.6.5...v3.6.6) (2020-08-03)
+
+
+### Bug Fixes
+
+* suggest to reach help in the discourse community instead of Slack ([#456](https://github.com/ForestAdmin/lumber/issues/456)) ([1bbba8c](https://github.com/ForestAdmin/lumber/commit/1bbba8c5aa4bfccde5a2be76f9824cc1b1816dc3))
+
 ## [3.6.5](https://github.com/ForestAdmin/lumber/compare/v3.6.4...v3.6.5) (2020-07-30)
 
 
