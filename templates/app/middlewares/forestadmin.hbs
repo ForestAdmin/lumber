@@ -8,7 +8,7 @@ const Liana = require('forest-express-sequelize');
 const { sequelize } = require('../models');
 {{/if}}
 
-module.exports = async function (app) {
+module.exports = async function forestadmin(app) {
   app.use(await Liana.init({
     modelsDir: path.join(__dirname, '../models'),
     configDir: path.join(__dirname, '../forest'),
