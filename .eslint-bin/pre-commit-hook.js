@@ -19,7 +19,12 @@ function getFilesModified(callback) {
 
     listFilesModified = status.files
       .filter(excludeNonCommitedFiles)
-      .map((file) => file.path)
+      .map((file) => {
+        if (file.index === 'R') {
+          return file.path.substring(file.path.indexOf(' -> ') + 4);
+        }
+        return file.path;
+      })
       .filter((file) => file.endsWith('.js'));
 
     callback();
