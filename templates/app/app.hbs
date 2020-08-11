@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-let allowedOrigins = [/\.forestadmin\.com$/ {{#if forestUrl }}, /localhost:\d{4}$/{{/if}}];
+let allowedOrigins = [/\.forestadmin\.com$/{{#if forestUrl }}, /localhost:\d{4}$/{{/if}}];
 
 if (process.env.CORS_ORIGINS) {
   allowedOrigins = allowedOrigins.concat(process.env.CORS_ORIGINS.split(','));
@@ -48,13 +48,13 @@ app.use('/forest', (request, response, next) => {
 requireAll({
   dirname: path.join(__dirname, 'routes'),
   recursive: true,
-  resolve: Module => app.use('/forest', Module),
+  resolve: (Module) => app.use('/forest', Module),
 });
 
 requireAll({
   dirname: path.join(__dirname, 'middlewares'),
   recursive: true,
-  resolve: Module => Module(app),
+  resolve: (Module) => Module(app),
 });
 
 app.use(errorHandler({ logger }));
