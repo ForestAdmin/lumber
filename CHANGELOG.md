@@ -1,3 +1,10 @@
+## [3.6.7](https://github.com/ForestAdmin/lumber/compare/v3.6.6...v3.6.7) (2020-08-11)
+
+
+### Bug Fixes
+
+* **vulnerability:** remove potential vulnerability upgrading lodash dependency version ([#453](https://github.com/ForestAdmin/lumber/issues/453)) ([92d165c](https://github.com/ForestAdmin/lumber/commit/92d165c85619c04228b84174cb5b18b23f6bba95))
+
 ## [3.6.6](https://github.com/ForestAdmin/lumber/compare/v3.6.5...v3.6.6) (2020-08-03)
 
 
