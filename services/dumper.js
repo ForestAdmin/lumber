@@ -68,6 +68,7 @@ function Dumper(config) {
   function writePackageJson() {
     const orm = config.dbDialect === 'mongodb' ? 'mongoose' : 'sequelize';
     const dependencies = {
+      'body-parser': '1.19.0',
       chalk: '~1.1.3',
       'cookie-parser': '1.4.4',
       cors: '2.8.5',
