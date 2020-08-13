@@ -25,7 +25,7 @@ PostgreSQL-MIN:
     - POSTGRES_PASSWORD=secret
 
 PostgreSQL-MAX:
-  image : postgres:12.1
+  image : postgres:12.2
   container_name : test_lumber_postgres_max
   ports :
     - "54369:5432"
