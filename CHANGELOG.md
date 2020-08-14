@@ -1,3 +1,10 @@
+## [3.6.8](https://github.com/ForestAdmin/lumber/compare/v3.6.7...v3.6.8) (2020-08-14)
+
+
+### Bug Fixes
+
+* postgres 12.2 support ([#461](https://github.com/ForestAdmin/lumber/issues/461)) ([8c905b2](https://github.com/ForestAdmin/lumber/commit/8c905b22a84cc3f648c3e9d49936810ae5a3f4ec))
+
 ## [3.6.7](https://github.com/ForestAdmin/lumber/compare/v3.6.6...v3.6.7) (2020-08-11)
 
 
