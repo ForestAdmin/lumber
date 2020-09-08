@@ -12,11 +12,11 @@ services:
       - APPLICATION_PORT={{ port }}
       - DATABASE_URL={{ databaseUrl }}
 {{#if dbSchema }}
-      - DATABASE_SCHEMA={{ dbSchema }}
+      - DATABASE_SCHEMA=${DATABASE_SCHEMA}
 {{/if}}
       - DATABASE_SSL={{ ssl }}
-      - FOREST_AUTH_SECRET={{ forestAuthSecret }}
-      - FOREST_ENV_SECRET={{ forestEnvSecret }}
+      - FOREST_AUTH_SECRET=${FOREST_AUTH_SECRET}
+      - FOREST_ENV_SECRET=${FOREST_ENV_SECRET}
 {{#if forestUrl }}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
       - FOREST_URL={{ forestUrl }}

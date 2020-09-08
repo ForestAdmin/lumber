@@ -143,18 +143,24 @@ function Dumper(config) {
   }
 
   function writeDotEnv() {
+    const context = {
+      databaseUrl: getDatabaseUrl(),
+      ssl: config.ssl || 'false',
+      dbSchema: config.dbSchema,
+      hostname: config.appHostname,
+      port: config.appPort || DEFAULT_PORT,
+      forestEnvSecret: config.forestEnvSecret,
+      forestAuthSecret: config.forestAuthSecret,
+      hasDockerDatabaseUrl: false,
+    };
+    if (!isLinuxBasedOs()) {
+      context.dockerDatabaseUrl = getDatabaseUrl().replace('localhost', 'host.docker.internal');
+      context.hasDockerDatabaseUrl = true;
+    }
     copyHandleBarsTemplate({
       source: 'app/env.hbs',
       target: '.env',
-      context: {
-        databaseUrl: getDatabaseUrl(),
-        ssl: config.ssl || 'false',
-        dbSchema: config.dbSchema,
-        hostname: config.appHostname,
-        port: config.appPort || DEFAULT_PORT,
-        forestEnvSecret: config.forestEnvSecret,
-        forestAuthSecret: config.forestAuthSecret,
-      },
+      context,
     });
   }
 
@@ -298,6 +304,7 @@ function Dumper(config) {
   }
 
   function writeDockerCompose() {
+    const databaseUrl = `\${${isLinuxBasedOs() ? 'DATABASE_URL' : 'DOCKER_DATABASE_URL'}}`;
     copyHandleBarsTemplate({
       source: 'app/docker-compose.hbs',
       target: 'docker-compose.yml',
@@ -306,11 +313,9 @@ function Dumper(config) {
         containerName: _.snakeCase(config.appName),
         hostname: config.appHostname || 'http://localhost',
         port: config.appPort || DEFAULT_PORT,
-        databaseUrl: isLinuxBasedOs() ? getDatabaseUrl() : getDatabaseUrl().replace('localhost', 'host.docker.internal'),
+        databaseUrl,
         ssl: config.ssl || 'false',
         dbSchema: config.dbSchema,
-        forestEnvSecret: config.forestEnvSecret,
-        forestAuthSecret: config.forestAuthSecret,
         forestUrl: process.env.FOREST_URL,
         network: (isLinuxBasedOs() && isDatabaseLocal()) ? 'host' : null,
       },
