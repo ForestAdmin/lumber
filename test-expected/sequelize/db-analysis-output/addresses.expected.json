@@ -6,28 +6,32 @@
         "nameColumn": "user_id",
         "type": "INTEGER",
         "primaryKey": true,
-        "defaultValue": null
+        "defaultValue": null,
+        "isRequired": true
       },
       {
         "name": "street",
         "nameColumn": "street",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "isRequired": true
       },
       {
         "name": "city",
         "nameColumn": "city",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "isRequired": true
       },
       {
         "name": "state",
         "nameColumn": "state",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "isRequired": true
       }
     ],
     "references": [

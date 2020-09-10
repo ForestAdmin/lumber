@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   const Users = sequelize.define('users', {
     username: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     enabled: {
       type: DataTypes.BOOLEAN,
@@ -14,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     lastLogin: {
       type: DataTypes.DATE,
+      allowNull: false,
     },
   }, {
     tableName: 'users',

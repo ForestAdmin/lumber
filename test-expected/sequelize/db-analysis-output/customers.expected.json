@@ -6,42 +6,48 @@
         "nameColumn": "name",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "isRequired": true
       },
       {
         "name": "description",
         "nameColumn": "description",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "isRequired": false
       },
       {
         "name": "isActive",
         "nameColumn": "is_active",
         "type": "BOOLEAN",
         "primaryKey": false,
-        "defaultValue": true
+        "defaultValue": true,
+        "isRequired": true
       },
       {
         "nameColumn": "paying",
         "defaultValue": false,
         "name": "paying",
         "primaryKey": false,
-        "type": "BOOLEAN"
+        "type": "BOOLEAN",
+        "isRequired": true
       },
       {
         "name": "createdAt",
         "nameColumn": "created_at",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "isRequired": false
       },
       {
         "name": "updatedAt",
         "nameColumn": "updated_at",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "isRequired": false
       }
     ],
     "references": [],

@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   const Customers = sequelize.define('customers', {
     name: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     description: {
       type: DataTypes.STRING,
@@ -14,10 +15,12 @@ module.exports = (sequelize, DataTypes) => {
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
+      allowNull: false,
     },
     paying: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,

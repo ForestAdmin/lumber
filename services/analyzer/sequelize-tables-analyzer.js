@@ -89,7 +89,7 @@ function hasIdColumn(fields, primaryKeys) {
     || _.includes(primaryKeys, 'id');
 }
 
-function isJunctionTable(fields, constraints) {
+function isTechnicalTimestamp({ type, name }) {
   // NOTICE: Ignore technical timestamp fields.
   const FIELDS_TO_IGNORE = [
     'createdAt', 'updatedAt', 'deletedAt',
@@ -97,12 +97,15 @@ function isJunctionTable(fields, constraints) {
     'creationDate', 'deletionDate',
   ];
 
+  return type === 'DATE' && FIELDS_TO_IGNORE.includes(name);
+}
+
+function isJunctionTable(fields, constraints) {
   for (let index = 0; index < fields.length; index += 1) {
     const field = fields[index];
 
-    const isTechnicalTimestamp = field.type === 'DATE' && FIELDS_TO_IGNORE.includes(field.name);
     // NOTICE: The only fields accepted are primary keys, technical timestamps and foreignKeys
-    if (!isTechnicalTimestamp && !field.primaryKey) {
+    if (!isTechnicalTimestamp(field) && !field.primaryKey) {
       return false;
     }
   }
@@ -277,12 +280,19 @@ async function createTableSchema({
         defaultValue = Sequelize.literal(defaultValue);
       }
 
+      const name = _.camelCase(columnName);
+      let isRequired = !columnInfo.allowNull;
+      if (isTechnicalTimestamp({ name, type })) {
+        isRequired = false;
+      }
+
       const field = {
-        name: _.camelCase(columnName),
+        name,
         nameColumn: columnName,
         type,
         primaryKey: columnInfo.primaryKey,
         defaultValue,
+        isRequired,
       };
 
       fields.push(field);
