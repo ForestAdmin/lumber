@@ -6,21 +6,24 @@
         "nameColumn": "car_no",
         "type": "INTEGER",
         "primaryKey": true,
-        "defaultValue": null
+        "defaultValue": null,
+        "isRequired": true
       },
       {
         "name": "fromDate",
         "nameColumn": "from_date",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "isRequired": true
       },
       {
         "name": "toDate",
         "nameColumn": "to_date",
         "defaultValue": null,
         "primaryKey": false,
-        "type": "DATE"
+        "type": "DATE",
+        "isRequired": true
       }
     ],
     "references": [

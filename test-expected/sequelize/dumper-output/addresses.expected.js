@@ -8,15 +8,19 @@ module.exports = (sequelize, DataTypes) => {
     userId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
+      allowNull: false,
     },
     street: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     city: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     state: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
   }, {
     tableName: 'addresses',
