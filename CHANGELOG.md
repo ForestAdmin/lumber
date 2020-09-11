@@ -1,3 +1,10 @@
+## [3.6.9](https://github.com/ForestAdmin/lumber/compare/v3.6.8...v3.6.9) (2020-09-11)
+
+
+### Bug Fixes
+
+* **generate:** handle NOT NULL constraint ([#466](https://github.com/ForestAdmin/lumber/issues/466)) ([faace37](https://github.com/ForestAdmin/lumber/commit/faace37b023a2d0450389303f2a086cd5c544ef6))
+
 ## [3.6.8](https://github.com/ForestAdmin/lumber/compare/v3.6.7...v3.6.8) (2020-08-14)
 
 
