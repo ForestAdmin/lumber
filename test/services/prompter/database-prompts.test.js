@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 const sinon = require('sinon');
 const PrompterError = require('../../../services/prompter/prompter-error');
 const DatabasePrompts = require('../../../services/prompter/database-prompts');
