@@ -57,6 +57,8 @@ function Database() {
 
   this.connect = (options) => {
     const isSSL = options.dbSSL || options.ssl;
+    const hasDialectOptions = Boolean(options.dialectOptions);
+
     let connection;
     const databaseDialect = getDialect(options.dbConnectionUrl, options.dbDialect);
 
@@ -66,6 +68,8 @@ function Database() {
 
     const connectionOptionsSequelize = { logging: false };
 
+    connectionOptionsSequelize.dialectOptions = hasDialectOptions ? options.dialectOptions : {};
+
     // NOTICE: mysql2 does not accepts unwanted options anymore.
     //         See: https://github.com/sidorares/node-mysql2/pull/895
     if (databaseDialect === 'mysql') {
@@ -74,20 +78,12 @@ function Database() {
         // TODO: Lumber should accept certificate file (CRT) to work with SSL.
         //       Since it requires to review onboarding, it is not implemented yet.
         //       See: https://www.npmjs.com/package/mysql#ssl-options
-        connectionOptionsSequelize.dialectOptions = {
-          ssl: { rejectUnauthorized: isSSL },
-        };
+        connectionOptionsSequelize.dialectOptions.ssl = { rejectUnauthorized: isSSL };
       }
     } else if (databaseDialect === 'mssql') {
-      connectionOptionsSequelize.dialectOptions = {
-        options: {
-          encrypt: isSSL,
-        },
-      };
+      connectionOptionsSequelize.dialectOptions.options = { encrypt: isSSL };
     } else {
-      connectionOptionsSequelize.dialectOptions = {
-        ssl: isSSL,
-      };
+      connectionOptionsSequelize.dialectOptions.ssl = isSSL;
     }
 
     if (options.dbConnectionUrl) {
