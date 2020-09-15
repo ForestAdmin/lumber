@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       through: 'userBooks',
       foreignKey: 'user_id',
       otherKey: 'book_id',
+      as: 'booksThroughUserBooks',
     });
     Users.hasMany(models.reviews, {
       foreignKey: {
