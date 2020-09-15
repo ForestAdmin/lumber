@@ -27,6 +27,7 @@ class DatabasePrompts extends AbstractPrompter {
     this.handleUser();
     this.handlePassword();
     this.handleSsl();
+    this.handleDialectOptions();
     this.handleMongodbSrv();
   }
 
@@ -189,6 +190,23 @@ class DatabasePrompts extends AbstractPrompter {
           default: false,
         });
       }
+    }
+  }
+
+  handleDialectOptions() {
+    const { dialectOptions: dialectOptionsString } = this.program;
+    try {
+      // NOTICE: Silently ignore when no dialectOptions is given (do not prompt).
+      if (!dialectOptionsString) return;
+      // NOTICE: Parse from string to object.
+      const dialectOptions = JSON.parse(dialectOptionsString);
+      // NOTICE: dialectOptions has to be a valid object (null is an object).
+      if (dialectOptions === null || typeof dialectOptions !== 'object') throw new Error();
+
+      this.envConfig.dialectOptions = dialectOptions;
+    } catch (e) {
+      const message = '"dialect-options" is not a valid JSON object.';
+      throw new PrompterError(message, [message]);
     }
   }
 

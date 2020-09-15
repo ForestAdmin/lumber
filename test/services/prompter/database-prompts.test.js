@@ -704,4 +704,47 @@ describe('services > prompter > database prompts', () => {
       });
     });
   });
+
+  describe('handling dialectOptions', () => {
+    describe('when the dialectOptions option has not been passed in', () => {
+      it('should not set the dialectOptions config option', () => {
+        expect.assertions(1);
+        const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
+
+        databasePrompts.handleDialectOptions();
+
+        expect(envConfig.dialectOptions).toBeUndefined();
+        resetParams();
+      });
+    });
+
+    describe('when the dialectOptions option has been passed in', () => {
+      describe('if dialectOptions is set to object value', () => {
+        it('should set the dialectOptions config option', () => {
+          expect.assertions(1);
+          requests.push('dialectOptions');
+          program.dialectOptions = '{"foo": "bar"}';
+          const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
+
+          databasePrompts.handleDialectOptions();
+
+          expect(envConfig.dialectOptions).toStrictEqual({ foo: 'bar' });
+          resetParams();
+        });
+      });
+
+      describe('if dialectOptions is not set to object value', () => {
+        it('should throw a prompter error', async () => {
+          expect.assertions(2);
+          requests.push('dialectOptions');
+          program.dialectOptions = 'lol';
+          const databasePrompts = new DatabasePrompts(requests, envConfig, prompts, program);
+          expect(() => databasePrompts.handleDialectOptions()).toThrow(PrompterError);
+          const message = '"dialect-options" is not a valid JSON object.';
+          expect(() => databasePrompts.handleDialectOptions()).toThrow(message);
+          resetParams();
+        });
+      });
+    });
+  });
 });

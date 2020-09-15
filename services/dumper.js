@@ -276,7 +276,7 @@ function Dumper(config) {
   }
 
   function writeModelsIndex() {
-    const { dbDialect } = config;
+    const { dbDialect, dialectOptions } = config;
 
     copyHandleBarsTemplate({
       source: 'app/models/index.hbs',
@@ -285,6 +285,8 @@ function Dumper(config) {
         isMongoDB: dbDialect === 'mongodb',
         isMSSQL: dbDialect === 'mssql',
         isMySQL: dbDialect === 'mysql',
+        hasDialectOptions: Boolean(dialectOptions),
+        dialectOptions,
       },
     });
   }

@@ -11,6 +11,7 @@ const OPTIONS_DATABASE_MANDATORY = [
 const OPTIONS_DATABASE_OPTIONAL = [
   'dbSchema',
   'ssl',
+  'dialectOptions',
   'mongodbSrv',
 ];
 const OPTIONS_APPLICATION = [

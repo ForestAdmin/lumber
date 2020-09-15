@@ -38,7 +38,11 @@ if (!process.env.DATABASE_URL) {
 const databaseOptions = {
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   pool: { maxConnections: 10, minConnections: 1 },
+{{#if hasDialectOptions}}
+  dialectOptions: {{dialectOptions}},
+{{else}}
   dialectOptions: {},
+{{/if}}
 };
 
 {{#if isMySQL}}
