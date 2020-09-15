@@ -286,7 +286,7 @@ function Dumper(config) {
         isMSSQL: dbDialect === 'mssql',
         isMySQL: dbDialect === 'mysql',
         hasDialectOptions: Boolean(dialectOptions),
-        dialectOptions,
+        dialectOptions: JSON.stringify(dialectOptions),
       },
     });
   }
