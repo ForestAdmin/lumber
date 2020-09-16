@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INT,
       defaultValue: 42,
     },
+    numericWithStringNULLDefault: {
+      type: DataTypes.DOUBLE,
+      defaultValue: "NULL",
+    },
     jsonDefault: {
       type: DataTypes.JSONB,
       defaultValue: [{"key":"one","isValid":true},{"key":"another","count":21},{"key":"last","value":"string value"}],

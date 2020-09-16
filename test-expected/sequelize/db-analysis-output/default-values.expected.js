@@ -51,6 +51,13 @@ module.exports = {
         "defaultValue": 42
       },
       {
+        "name": 'numericWithStringNULLDefault',
+        "nameColumn": 'numericWithStringNULLDefault',
+        "type": 'DOUBLE',
+        "primaryKey": false,
+        "defaultValue": 'NULL',
+      },
+      {
         "name": "jsonDefault",
         "nameColumn": "jsonDefault",
         "type": "JSONB",
