@@ -145,6 +145,7 @@ function createReference(tableName, association, foreignKey, manyToManyForeignKe
     reference.through = stringUtils.camelCase(
       stringUtils.transformToSafeString(foreignKey.tableName),
     );
+    reference.as = _.camelCase(plural(`${manyToManyForeignKey.foreignTableName}_through_${foreignKey.tableName}`));
   } else {
     reference.ref = foreignKey.tableName;
 
