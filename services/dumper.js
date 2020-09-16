@@ -169,14 +169,16 @@ function Dumper(config) {
     if (config.dbDialect !== 'mongodb') {
       if (typeof safeDefaultValue === 'object' && safeDefaultValue instanceof Sequelize.Utils.Literal) {
         safeDefaultValue = `Sequelize.literal('${safeDefaultValue.val}')`;
-      } else if (
-        !_.isNil(safeDefaultValue)
-        && _.some(
+      } else if (!_.isNil(safeDefaultValue)) {
+        if (_.some(
           DEFAULT_VALUE_TYPES_TO_STRINGIFY,
           // NOTICE: Uses `startsWith` as composite types may vary (eg: `ARRAY(DataTypes.INTEGER)`)
           (dataType) => _.startsWith(field.type, dataType),
         )) {
-        safeDefaultValue = JSON.stringify(safeDefaultValue);
+          safeDefaultValue = JSON.stringify(safeDefaultValue);
+        } else if (`${safeDefaultValue}`.toUpperCase() === 'NULL') {
+          safeDefaultValue = '"NULL"';
+        }
       }
     }
     return safeDefaultValue;
