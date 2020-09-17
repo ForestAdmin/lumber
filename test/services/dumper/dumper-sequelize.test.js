@@ -86,27 +86,14 @@ describe('services > dumper > sequelize', () => {
     cleanOutput();
   });
 
-  describe('when it generates the model index file', () => {
-    it('should work without dialectOptions', async () => {
-      expect.assertions(1);
-      const dumper = await getDumper();
-      await dumper.dump(simpleModel);
-      const generatedFile = fs.readFileSync('./test-output/sequelize/models/index.js', 'utf8');
-      const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/index-without-dialect-options.expected.js', 'utf-8');
+  it('should generate the model index file', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(simpleModel);
+    const generatedFile = fs.readFileSync('./test-output/sequelize/models/index.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/index.expected.js', 'utf-8');
 
-      expect(generatedFile).toStrictEqual(expectedFile);
-      cleanOutput();
-    });
-
-    it('should work with dialectOptions', async () => {
-      expect.assertions(1);
-      const dumper = await getDumper({ dialectOptions: { foo: 'bar' } });
-      await dumper.dump(simpleModel);
-      const generatedFile = fs.readFileSync('./test-output/sequelize/models/index.js', 'utf8');
-      const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/index-with-dialect-options.expected.js', 'utf-8');
-
-      expect(generatedFile).toStrictEqual(expectedFile);
-      cleanOutput();
-    });
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
   });
 });

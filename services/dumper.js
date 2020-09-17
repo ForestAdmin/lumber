@@ -154,6 +154,8 @@ function Dumper(config) {
         port: config.appPort || DEFAULT_PORT,
         forestEnvSecret: config.forestEnvSecret,
         forestAuthSecret: config.forestAuthSecret,
+        hasDialectOptions: Boolean(config.dialectOptions),
+        dialectOptions: JSON.stringify(config.dialectOptions),
       },
     });
   }
@@ -276,7 +278,7 @@ function Dumper(config) {
   }
 
   function writeModelsIndex() {
-    const { dbDialect, dialectOptions } = config;
+    const { dbDialect } = config;
 
     copyHandleBarsTemplate({
       source: 'app/models/index.hbs',
@@ -285,8 +287,6 @@ function Dumper(config) {
         isMongoDB: dbDialect === 'mongodb',
         isMSSQL: dbDialect === 'mssql',
         isMySQL: dbDialect === 'mysql',
-        hasDialectOptions: Boolean(dialectOptions),
-        dialectOptions: JSON.stringify(dialectOptions),
       },
     });
   }
@@ -310,6 +310,8 @@ function Dumper(config) {
         port: config.appPort || DEFAULT_PORT,
         databaseUrl: isLinuxBasedOs() ? getDatabaseUrl() : getDatabaseUrl().replace('localhost', 'host.docker.internal'),
         ssl: config.ssl || 'false',
+        hasDialectOptions: Boolean(config.dialectOptions),
+        dialectOptions: JSON.stringify(config.dialectOptions),
         dbSchema: config.dbSchema,
         forestEnvSecret: config.forestEnvSecret,
         forestAuthSecret: config.forestAuthSecret,

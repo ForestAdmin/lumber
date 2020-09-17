@@ -10,7 +10,7 @@ if (!process.env.DATABASE_URL) {
 const databaseOptions = {
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   pool: { maxConnections: 10, minConnections: 1 },
-  dialectOptions: {},
+  dialectOptions: JSON.parse(process.env.DATABASE_DIALECT_OPTIONS || {}),
 };
 
 if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
