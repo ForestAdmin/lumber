@@ -2,6 +2,17 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 
+function getDialectOptions() {
+  try {
+    if (!process.env.DATABASE_DIALECT_OPTIONS) return {};
+    const dialectOptions = JSON.parse(process.env.DATABASE_DIALECT_OPTIONS);
+    if (dialectOptions === null || typeof dialectOptions !== 'object') throw new Error();
+  } catch (e) {
+    console.error('DATABASE_DIALECT_OPTIONS is not a valid JSON object, please check your `.env` file.');
+    process.exit();
+  }
+}
+
 if (!process.env.DATABASE_URL) {
   console.error('Cannot connect to the database. Please declare the DATABASE_URL environment variable with the correct database connection string.');
   process.exit();
@@ -10,7 +21,7 @@ if (!process.env.DATABASE_URL) {
 const databaseOptions = {
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   pool: { maxConnections: 10, minConnections: 1 },
-  dialectOptions: JSON.parse(process.env.DATABASE_DIALECT_OPTIONS || '{}'),
+  dialectOptions: getDialectOptions(),
 };
 
 if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
