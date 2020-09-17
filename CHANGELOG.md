@@ -1,3 +1,10 @@
+## [3.6.11](https://github.com/ForestAdmin/lumber/compare/v3.6.10...v3.6.11) (2020-09-17)
+
+
+### Bug Fixes
+
+* **models:** enforce string type for default value when 'NULL' ([#470](https://github.com/ForestAdmin/lumber/issues/470)) ([ae11674](https://github.com/ForestAdmin/lumber/commit/ae116742cc0d8c9c248240d4023acae585a0e2c3))
+
 ## [3.6.10](https://github.com/ForestAdmin/lumber/compare/v3.6.9...v3.6.10) (2020-09-16)
 
 
