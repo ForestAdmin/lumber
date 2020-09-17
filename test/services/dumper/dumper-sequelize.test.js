@@ -96,4 +96,28 @@ describe('services > dumper > sequelize', () => {
     expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();
   });
+
+  describe('when it generates the env file', () => {
+    it('should work without dialectOptions', async () => {
+      expect.assertions(1);
+      const dumper = await getDumper();
+      await dumper.dump(simpleModel);
+      const generatedFile = fs.readFileSync('./test-output/sequelize/.env', 'utf8');
+      const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/env-without-dialect-options.expected', 'utf-8');
+
+      expect(generatedFile).toStrictEqual(expectedFile);
+      cleanOutput();
+    });
+
+    it('should work with dialectOptions', async () => {
+      expect.assertions(1);
+      const dumper = await getDumper({ dialectOptions: { foo: 'bar' } });
+      await dumper.dump(simpleModel);
+      const generatedFile = fs.readFileSync('./test-output/sequelize/.env', 'utf8');
+      const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/env-with-dialect-options.expected', 'utf-8');
+
+      expect(generatedFile).toStrictEqual(expectedFile);
+      cleanOutput();
+    });
+  });
 });
