@@ -28,6 +28,7 @@
     ],
     "references": [
       {
+        "as": "booksThroughUserBooks",
         "association": "belongsToMany",
         "ref": "books",
         "foreignKey": "user_id",
