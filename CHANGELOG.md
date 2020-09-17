@@ -1,3 +1,10 @@
+## [3.6.10](https://github.com/ForestAdmin/lumber/compare/v3.6.9...v3.6.10) (2020-09-16)
+
+
+### Bug Fixes
+
+* **models:** add missing association aliases ([#469](https://github.com/ForestAdmin/lumber/issues/469)) ([3114f84](https://github.com/ForestAdmin/lumber/commit/3114f845e70f987adf44574b3eb32fa97023f3f8))
+
 ## [3.6.9](https://github.com/ForestAdmin/lumber/compare/v3.6.8...v3.6.9) (2020-09-11)
 
 
