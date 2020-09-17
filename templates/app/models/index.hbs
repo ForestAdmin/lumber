@@ -35,6 +35,7 @@ function getDialectOptions() {
     if (!process.env.DATABASE_DIALECT_OPTIONS) return {};
     const dialectOptions = JSON.parse(process.env.DATABASE_DIALECT_OPTIONS);
     if (dialectOptions === null || typeof dialectOptions !== 'object') throw new Error();
+    return dialectOptions;
   } catch (e) {
     console.error('DATABASE_DIALECT_OPTIONS is not a valid JSON object, please check your `.env` file.');
     process.exit();
