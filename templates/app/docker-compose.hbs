@@ -15,6 +15,9 @@ services:
       - DATABASE_SCHEMA={{ dbSchema }}
 {{/if}}
       - DATABASE_SSL={{ ssl }}
+{{#if hasDialectOptions}}
+      - DATABASE_DIALECT_OPTIONS={{dialectOptions}},
+{{/if}}
       - FOREST_AUTH_SECRET={{ forestAuthSecret }}
       - FOREST_ENV_SECRET={{ forestEnvSecret }}
 {{#if forestUrl }}
