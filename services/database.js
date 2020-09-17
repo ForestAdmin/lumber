@@ -68,7 +68,9 @@ function Database() {
 
     const connectionOptionsSequelize = { logging: false };
 
-    connectionOptionsSequelize.dialectOptions = hasDialectOptions ? options.dialectOptions : {};
+    connectionOptionsSequelize.dialectOptions = hasDialectOptions
+      ? { ...options.dialectOptions }
+      : {};
 
     // NOTICE: mysql2 does not accepts unwanted options anymore.
     //         See: https://github.com/sidorares/node-mysql2/pull/895
