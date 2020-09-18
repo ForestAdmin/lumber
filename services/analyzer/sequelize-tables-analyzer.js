@@ -127,8 +127,26 @@ function checkUnicity(primaryKeys, uniqueIndexes, columnName) {
   return { isPrimary, isUnique };
 }
 
+function isAssociationNameExist(existingReferences, newReference) {
+  return existingReferences.some((reference) => reference.as === newReference.as);
+}
+
+function isReferenceAlreadyExist(existingReferences, newReference) {
+  return existingReferences.some((reference) => (
+    reference.ref === newReference.ref
+    && reference.association === newReference.association
+    && reference.foreignKey === newReference.foreignKey
+  ));
+}
+
 // NOTICE: Format the references depending on the type of the association
-function createReference(tableName, association, foreignKey, manyToManyForeignKey) {
+function createReference(
+  tableName,
+  existingsReferences,
+  association,
+  foreignKey,
+  manyToManyForeignKey,
+) {
   const foreignKeyName = _.camelCase(foreignKey.columnName);
   const reference = {
     foreignKey: foreignKey.columnName,
@@ -139,6 +157,9 @@ function createReference(tableName, association, foreignKey, manyToManyForeignKe
   if (association === ASSOCIATION_TYPE_BELONGS_TO) {
     reference.ref = foreignKey.foreignTableName;
     reference.as = formatAliasName(foreignKey.columnName);
+    if (foreignKey.foreignColumnName !== 'id') {
+      reference.targetKey = foreignKey.foreignColumnName;
+    }
   } else if (association === ASSOCIATION_TYPE_BELONGS_TO_MANY) {
     reference.ref = manyToManyForeignKey.foreignTableName;
     reference.otherKey = manyToManyForeignKey.columnName;
@@ -157,8 +178,10 @@ function createReference(tableName, association, foreignKey, manyToManyForeignKe
     reference.as = _.camelCase(formater(`${prefix}${foreignKey.tableName}`));
   }
 
-  if (foreignKey.foreignColumnName !== 'id') {
-    reference.targetKey = foreignKey.foreignColumnName;
+  if (isReferenceAlreadyExist(existingsReferences, reference)) return null;
+
+  if (isAssociationNameExist(existingsReferences, reference)) {
+    reference.as = _.camelCase(`${reference.association} ${reference.as}`);
   }
 
   return reference;
@@ -203,23 +226,23 @@ function createAllReferences(databaseSchema, schemaGenerated) {
           (otherKey) => otherKey.columnName !== constraint.columnName);
 
         manyToManyKeys.forEach((manyToManyKey) => {
-          references[referenceTableName].push(
-            createReference(
-              referenceTableName,
-              ASSOCIATION_TYPE_BELONGS_TO_MANY,
-              constraint,
-              manyToManyKey,
-            ),
+          const reference = createReference(
+            referenceTableName,
+            references[referenceTableName],
+            ASSOCIATION_TYPE_BELONGS_TO_MANY,
+            constraint,
+            manyToManyKey,
           );
+          if (reference) references[referenceTableName].push(reference);
         });
       } else {
-        references[referenceTableName].push(
-          createReference(
-            referenceTableName,
-            (isPrimary || isUnique) ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
-            constraint,
-          ),
+        const reference = createReference(
+          referenceTableName,
+          references[referenceTableName],
+          (isPrimary || isUnique) ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
+          constraint,
         );
+        if (reference) references[referenceTableName].push(reference);
       }
 
       const referencePrimaryKeys = databaseSchema[referenceTableName].primaryKeys;
@@ -235,13 +258,13 @@ function createAllReferences(databaseSchema, schemaGenerated) {
       );
 
       if (referenceUnicity.isPrimary || referenceUnicity.isUnique) {
-        references[tableName].push(
-          createReference(
-            null,
-            ASSOCIATION_TYPE_BELONGS_TO,
-            constraint,
-          ),
+        const reference = createReference(
+          null,
+          references[tableName],
+          ASSOCIATION_TYPE_BELONGS_TO,
+          constraint,
         );
+        if (reference) references[tableName].push(reference);
       }
     });
   });

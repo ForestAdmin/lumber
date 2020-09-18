@@ -203,23 +203,11 @@ function Dumper(config) {
       };
     });
 
-    const referencesDefinition = references.map((reference) => {
-      const computedReference = {
-        ...reference,
-        isBelongsToMany: reference.association === 'belongsToMany',
-      };
-
-      if (reference.targetKey) {
-        const expectedConventionalTargetKeyName = underscored
-          ? _.snakeCase(reference.targetKey)
-          : _.camelCase(reference.targetKey);
-
-        computedReference.targetKeyColumnUnconventional = reference.targetKey
-          !== expectedConventionalTargetKeyName;
-      }
-
-      return computedReference;
-    });
+    const referencesDefinition = references.map((reference) => ({
+      ...reference,
+      isBelongsToMany: reference.association === 'belongsToMany',
+      isBelongsTo: reference.association === 'belongsTo',
+    }));
 
     copyHandleBarsTemplate({
       source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
