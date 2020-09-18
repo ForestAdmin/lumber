@@ -57,7 +57,6 @@ function Database() {
 
   this.connect = (options) => {
     const isSSL = options.dbSSL || options.ssl;
-    let connection;
     const databaseDialect = getDialect(options.dbConnectionUrl, options.dbDialect);
 
     if (databaseDialect === 'mongodb') {
@@ -66,30 +65,15 @@ function Database() {
 
     const connectionOptionsSequelize = { logging: false };
 
-    // NOTICE: mysql2 does not accepts unwanted options anymore.
-    //         See: https://github.com/sidorares/node-mysql2/pull/895
-    if (databaseDialect === 'mysql') {
-      // NOTICE: Add SSL options only if the user selected SSL mode.
-      if (isSSL) {
-        // TODO: Lumber should accept certificate file (CRT) to work with SSL.
-        //       Since it requires to review onboarding, it is not implemented yet.
-        //       See: https://www.npmjs.com/package/mysql#ssl-options
-        connectionOptionsSequelize.dialectOptions = {
-          ssl: { rejectUnauthorized: isSSL },
-        };
-      }
-    } else if (databaseDialect === 'mssql') {
-      connectionOptionsSequelize.dialectOptions = {
-        options: {
-          encrypt: isSSL,
-        },
-      };
-    } else {
-      connectionOptionsSequelize.dialectOptions = {
-        ssl: isSSL,
-      };
+    if (databaseDialect === 'mssql') {
+      connectionOptionsSequelize.dialectOptions = { options: { encrypt: isSSL } };
+    } else if (isSSL) {
+      // Add SSL options only if the user selected SSL mode.
+      // SSL Cerificate is always trusted during `lumber generate` command to ease their onboarding.
+      connectionOptionsSequelize.dialectOptions = { ssl: { rejectUnauthorized: false } };
     }
 
+    let connection;
     if (options.dbConnectionUrl) {
       connection = new Sequelize(options.dbConnectionUrl, connectionOptionsSequelize);
     } else {
