@@ -65,6 +65,17 @@ describe('services > database analyser > Sequelize', () => {
       await sequelizeHelper.close();
     }, 10000);
 
+    it('should remove identic references', async () => {
+      expect.assertions(1);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      await sequelizeHelper.dropAndCreate('cars');
+      const expected = await sequelizeHelper.given('doubleref');
+      const result = await performDatabaseAnalysis(databaseConnection);
+      expect(result.doubleref).toStrictEqual(expected.doubleref);
+      await sequelizeHelper.close();
+    }, 10000);
+
     it('should detect snake_case even with no fields in the table', async () => {
       expect.assertions(1);
       const sequelizeHelper = new SequelizeHelper();

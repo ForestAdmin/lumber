@@ -1,0 +1,31 @@
+{
+  "doubleref": {
+    "fields": [
+      {
+        "name": "carNo",
+        "nameColumn": "car_no",
+        "type": "INTEGER",
+        "primaryKey": true,
+        "defaultValue": null,
+        "isRequired": true
+      }
+    ],
+    "references": [
+      {
+        "as": "linkedCarNo",
+        "association": "belongsTo",
+        "foreignKey": "car_no",
+        "foreignKeyName": "carNoKey",
+        "ref": "cars"
+      }
+    ],
+    "primaryKeys": ["car_no"],
+    "options": {
+      "hasIdColumn": false,
+      "hasPrimaryKeys": true,
+      "isJunction": true,
+      "timestamps": false,
+      "underscored": true
+    }
+  }
+}
