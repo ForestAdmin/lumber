@@ -26,7 +26,9 @@ const databaseOptions = {
 };
 
 if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
-  databaseOptions.dialectOptions.ssl = true;
+  if (!databaseOptions.dialectOptions.ssl) {
+    databaseOptions.dialectOptions.ssl = true;
+  }
 }
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, databaseOptions);

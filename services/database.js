@@ -66,9 +66,9 @@ function Database() {
       return connectToMongodb(options, isSSL);
     }
 
-    const connectionOptionsSequelize = { logging: false };
+    const connectionOptions = { logging: false };
 
-    connectionOptionsSequelize.dialectOptions = hasDialectOptions
+    connectionOptions.dialectOptions = hasDialectOptions
       ? { ...options.dialectOptions }
       : {};
 
@@ -76,28 +76,28 @@ function Database() {
     //         See: https://github.com/sidorares/node-mysql2/pull/895
     if (databaseDialect === 'mysql') {
       // NOTICE: Add SSL options only if the user selected SSL mode.
-      if (isSSL) {
+      if (isSSL && !connectionOptions.dialectOptions.ssl) {
         // TODO: Lumber should accept certificate file (CRT) to work with SSL.
         //       Since it requires to review onboarding, it is not implemented yet.
         //       See: https://www.npmjs.com/package/mysql#ssl-options
-        connectionOptionsSequelize.dialectOptions.ssl = { rejectUnauthorized: isSSL };
+        connectionOptions.dialectOptions.ssl = { rejectUnauthorized: isSSL };
       }
-    } else if (databaseDialect === 'mssql') {
-      connectionOptionsSequelize.dialectOptions.options = { encrypt: isSSL };
-    } else {
-      connectionOptionsSequelize.dialectOptions.ssl = isSSL;
+    } else if (databaseDialect === 'mssql' && !connectionOptions.dialectOptions.options) {
+      connectionOptions.dialectOptions.options = { encrypt: isSSL };
+    } else if (!connectionOptions.dialectOptions.ssl) {
+      connectionOptions.dialectOptions.ssl = isSSL;
     }
 
     if (options.dbConnectionUrl) {
-      connection = new Sequelize(options.dbConnectionUrl, connectionOptionsSequelize);
+      connection = new Sequelize(options.dbConnectionUrl, connectionOptions);
     } else {
-      connectionOptionsSequelize.host = options.dbHostname;
-      connectionOptionsSequelize.port = options.dbPort;
-      connectionOptionsSequelize.dialect = databaseDialect;
+      connectionOptions.host = options.dbHostname;
+      connectionOptions.port = options.dbPort;
+      connectionOptions.dialect = databaseDialect;
 
       connection = new Sequelize(
         options.dbName, options.dbUser,
-        options.dbPassword, connectionOptionsSequelize,
+        options.dbPassword, connectionOptions,
       );
     }
 
