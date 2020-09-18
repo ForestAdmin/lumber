@@ -84,4 +84,26 @@ describe('services > dumper > sequelize', () => {
     expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();
   });
+
+  it('should generate the model index file', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(simpleModel);
+    const generatedFile = fs.readFileSync('./test-output/sequelize/models/index.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/index.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('should generate the env file', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(simpleModel);
+    const generatedFile = fs.readFileSync('./test-output/sequelize/.env', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/env.expected', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
 });
