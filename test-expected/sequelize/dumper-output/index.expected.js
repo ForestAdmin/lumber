@@ -1,31 +1,3 @@
-{{#if isMongoDB}}
-const mongoose = require('mongoose');
-const requireAll = require('require-all');
-
-const models = {};
-
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-
-function filterFile(filename) {
-  if (filename.endsWith('.js') && filename !== 'index.js') {
-    return filename;
-  }
-
-  return false;
-}
-
-const modelsList = requireAll({
-  dirname: __dirname,
-  filter: (filename) => filterFile(filename),
-});
-
-Object.keys(modelsList).forEach((filename) => {
-  const model = modelsList[filename];
-  models[model.modelName] = model;
-});
-
-module.exports = models;
-{{else}}
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
@@ -41,29 +13,12 @@ const databaseOptions = {
   dialectOptions: {},
 };
 
-{{#if isMySQL}}
-databaseOptions.dialectOptions.typeCast = (field, useDefaultTypeCasting) => {
-  if ((field.type === "BIT") && (field.length === 1)) {
-    const bytes = field.buffer();
-    return bytes ? bytes[0] === 1 : bytes;
-  }
-
-  return useDefaultTypeCasting();
-};
-
-{{/if}}
 if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
-{{#if isMySQL}}
-  databaseOptions.dialectOptions.ssl = { rejectUnauthorized: true };
-{{else if isMSSQL}}
-  databaseOptions.dialectOptions.options = { encrypt: true };
-{{else}}
   if (process.env.DATABASE_REJECT_UNAUTHORIZED === false) {
     databaseOptions.dialectOptions.ssl = { rejectUnauthorized: false };
   } else {
     databaseOptions.dialectOptions.ssl = true;
   }
-{{/if}}
 }
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, databaseOptions);
@@ -93,4 +48,3 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
-{{/if}}
