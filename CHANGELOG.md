@@ -1,3 +1,10 @@
+# [3.7.0](https://github.com/ForestAdmin/lumber/compare/v3.6.11...v3.7.0) (2020-09-21)
+
+
+### Features
+
+* trust SSL certificate by default to ease users onboarding ([#472](https://github.com/ForestAdmin/lumber/issues/472)) ([2cf7e6b](https://github.com/ForestAdmin/lumber/commit/2cf7e6bcbe40e762fabf2f038e4e1188c509887f))
+
 ## [3.6.11](https://github.com/ForestAdmin/lumber/compare/v3.6.10...v3.6.11) (2020-09-17)
 
 
