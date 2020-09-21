@@ -86,5 +86,24 @@ describe('services > database analyser > Sequelize', () => {
       expect(result.underscored_no_fields.options.underscored).toStrictEqual(true);
       await sequelizeHelper.close();
     }, 10000);
+
+    it('should handle conflicts between references alias', async () => {
+      expect.assertions(3);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      const expected = await sequelizeHelper.given('duplicatedalias');
+      const result = await performDatabaseAnalysis(databaseConnection);
+
+      const projectReferences = new Set(result.project.references.map(({ as }) => as));
+      expect(projectReferences.size).toBe(expected.project.referencesLength);
+
+      const joinrolesReferences = new Set(result.joinroles.references.map(({ as }) => as));
+      expect(joinrolesReferences.size).toBe(expected.joinroles.referencesLength);
+
+      const rolesReferences = new Set(result.roles.references.map(({ as }) => as));
+      expect(rolesReferences.size).toBe(expected.roles.referencesLength);
+
+      await sequelizeHelper.close();
+    }, 10000);
   });
 });

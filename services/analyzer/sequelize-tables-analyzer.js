@@ -127,7 +127,7 @@ function checkUnicity(primaryKeys, uniqueIndexes, columnName) {
   return { isPrimary, isUnique };
 }
 
-function isAssociationNameExist(existingReferences, newReference) {
+function isAssociationNameAlreadyExist(existingReferences, newReference) {
   return existingReferences.some((reference) => reference.as === newReference.as);
 }
 
@@ -180,8 +180,8 @@ function createReference(
 
   if (isReferenceAlreadyExist(existingsReferences, reference)) return null;
 
-  if (isAssociationNameExist(existingsReferences, reference)) {
-    reference.as = _.camelCase(`${reference.association} ${reference.as}`);
+  if (isAssociationNameAlreadyExist(existingsReferences, reference)) {
+    reference.as = _.camelCase(`${reference.as} ${reference.foreignKey}`);
   }
 
   return reference;
