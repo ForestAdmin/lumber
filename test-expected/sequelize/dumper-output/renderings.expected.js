@@ -62,7 +62,7 @@ module.exports = (sequelize, DataTypes) => {
         name: 'filmKeyNameKey',
         field: 'filmKeyName',
       },
-      targetKey: 'film_target_key',
+      targetKey: 'filmTargetKey',
       as: 'films',
     });
   };

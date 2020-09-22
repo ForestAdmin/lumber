@@ -206,7 +206,7 @@ function Dumper(config) {
     const referencesDefinition = references.map((reference) => ({
       ...reference,
       isBelongsToMany: reference.association === 'belongsToMany',
-      isBelongsTo: reference.association === 'belongsTo',
+      targetKey: _.camelCase(reference.targetKey),
     }));
 
     copyHandleBarsTemplate({
