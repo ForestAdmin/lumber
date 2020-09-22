@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS doubleref;
+
 CREATE TABLE doubleref (
   car_no INT NOT NULL,
   CONSTRAINT doubleref_pkey PRIMARY KEY (car_no),

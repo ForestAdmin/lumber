@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS doubleref;
+
 CREATE TABLE doubleref (
   car_no INT NOT NULL,
   FOREIGN KEY (car_no)  REFERENCES cars(id),
