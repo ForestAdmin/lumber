@@ -124,7 +124,7 @@ function checkUnicity(primaryKeys, uniqueIndexes, columnName) {
       indexColumnName.length === 1 && indexColumnName.includes(columnName));
 
   const isPrimary = _.isEqual([columnName], primaryKeys);
-  return { isPrimary, isUnique };
+  return isPrimary || isUnique;
 }
 
 function isAssociationNameAlreadyExist(existingReferences, newReference) {
@@ -197,6 +197,31 @@ async function analyzeTable(table, config) {
   };
 }
 
+function createBelongsToReference(referenceTable, tableReferences, constraint) {
+  const referenceColumnName = constraint.foreignColumnName;
+  const referencePrimaryKeys = referenceTable.primaryKeys;
+  const referenceUniqueConstraint = referenceTable.constraints
+    .find(({ columnType }) => columnType === 'UNIQUE');
+  const referenceUniqueIndexes = referenceUniqueConstraint
+    ? referenceUniqueConstraint.uniqueIndexes
+    : null;
+  const isReferencePrimaryOrUnique = checkUnicity(
+    referencePrimaryKeys,
+    referenceUniqueIndexes,
+    referenceColumnName,
+  );
+
+  if (isReferencePrimaryOrUnique) {
+    return createReference(
+      null,
+      tableReferences,
+      ASSOCIATION_TYPE_BELONGS_TO,
+      constraint,
+    );
+  }
+  return null;
+}
+
 // NOTICE: Use the foreign key and reference properties to determine the associations
 //         and push them as references of the table.
 function createAllReferences(databaseSchema, schemaGenerated) {
@@ -216,60 +241,55 @@ function createAllReferences(databaseSchema, schemaGenerated) {
       const { columnName } = constraint;
       const uniqueIndexes = constraint.uniqueIndexes || null;
 
-      const { isPrimary, isUnique } = checkUnicity(primaryKeys, uniqueIndexes, columnName);
+      const isPrimaryOrUnique = checkUnicity(primaryKeys, uniqueIndexes, columnName);
 
       const referenceTableName = constraint.foreignTableName;
-      const referenceColumnName = constraint.foreignColumnName;
 
       if (isJunction) {
-        const manyToManyKeys = _.filter(foreignKeysWithExistingTable,
-          (otherKey) => otherKey.columnName !== constraint.columnName);
+        const manyToManyKeys = foreignKeysWithExistingTable
+          .filter((otherKey) => otherKey.columnName !== constraint.columnName);
 
         manyToManyKeys.forEach((manyToManyKey) => {
-          const reference = createReference(
-            referenceTableName,
-            references[referenceTableName],
-            ASSOCIATION_TYPE_BELONGS_TO_MANY,
-            constraint,
-            manyToManyKey,
+          references[referenceTableName].push(
+            createReference(
+              referenceTableName,
+              references[referenceTableName],
+              ASSOCIATION_TYPE_BELONGS_TO_MANY,
+              constraint,
+              manyToManyKey,
+            ),
           );
-          if (reference) references[referenceTableName].push(reference);
         });
       } else {
-        const reference = createReference(
-          referenceTableName,
-          references[referenceTableName],
-          (isPrimary || isUnique) ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
-          constraint,
+        references[referenceTableName].push(
+          createReference(
+            referenceTableName,
+            references[referenceTableName],
+            isPrimaryOrUnique ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
+            constraint,
+          ),
         );
-        if (reference) references[referenceTableName].push(reference);
       }
 
-      const referencePrimaryKeys = databaseSchema[referenceTableName].primaryKeys;
-      const referenceUniqueConstraint = databaseSchema[referenceTableName].constraints
-        .find(({ columnType }) => columnType === 'UNIQUE');
-      const referenceUniqueIndexes = referenceUniqueConstraint
-        ? referenceUniqueConstraint.uniqueIndexes
-        : null;
-      const referenceUnicity = checkUnicity(
-        referencePrimaryKeys,
-        referenceUniqueIndexes,
-        referenceColumnName,
-      );
-
-      if (referenceUnicity.isPrimary || referenceUnicity.isUnique) {
-        const reference = createReference(
-          null,
+      references[tableName].push(
+        createBelongsToReference(
+          databaseSchema[referenceTableName],
           references[tableName],
-          ASSOCIATION_TYPE_BELONGS_TO,
           constraint,
-        );
-        if (reference) references[tableName].push(reference);
-      }
+        ),
+      );
     });
   });
 
-  return references;
+  // remove null references
+  return Object.entries(references)
+    .reduce(
+      (accumulator, [tableName, tableReferences]) => {
+        accumulator[tableName] = tableReferences.filter(Boolean);
+        return accumulator;
+      },
+      {},
+    );
 }
 
 async function createTableSchema({
