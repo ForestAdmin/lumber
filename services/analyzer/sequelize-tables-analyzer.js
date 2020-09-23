@@ -129,12 +129,13 @@ function checkUnicity(primaryKeys, uniqueIndexes, columnName) {
 }
 
 function associationNameAlreadyExists(existingReferences, newReference) {
-  return existingReferences.some((reference) => reference.as === newReference.as);
+  return existingReferences.some((reference) => reference && reference.as === newReference.as);
 }
 
 function referenceAlreadyExists(existingReferences, newReference) {
   return existingReferences.some((reference) => (
-    reference.ref === newReference.ref
+    reference
+    && reference.ref === newReference.ref
     && reference.association === newReference.association
     && reference.foreignKey === newReference.foreignKey
   ));

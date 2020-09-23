@@ -72,7 +72,7 @@ describe('services > database analyser > Sequelize', () => {
       await sequelizeHelper.dropAndCreate('cars');
       const expected = await sequelizeHelper.given('doubleref');
       const result = await performDatabaseAnalysis(databaseConnection);
-      expect(result.doubleref).toStrictEqual(expected.doubleref);
+      expect(result.doubleref.references).toHaveLength(expected.doubleref.referencesLength);
       await sequelizeHelper.close();
     }, 10000);
 
