@@ -1,3 +1,10 @@
+## [3.7.1](https://github.com/ForestAdmin/lumber/compare/v3.7.0...v3.7.1) (2020-09-23)
+
+
+### Bug Fixes
+
+* **generate:** fix association alias duplication ([#473](https://github.com/ForestAdmin/lumber/issues/473)) ([81766b8](https://github.com/ForestAdmin/lumber/commit/81766b8cd2a5c1b1bbc93e4bcd60b8d7902816aa))
+
 # [3.7.0](https://github.com/ForestAdmin/lumber/compare/v3.6.11...v3.7.0) (2020-09-21)
 
 
