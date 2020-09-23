@@ -28,18 +28,16 @@ module.exports = (sequelize, DataTypes) => {
     {{#if reference.isBelongsToMany}}
       through: '{{reference.through}}',
       foreignKey: '{{reference.foreignKey}}',
-      otherKey: '{{reference.otherKey}}',{{#if reference.as}}
-      as: '{{reference.as}}',{{/if}}
+      otherKey: '{{reference.otherKey}}',
     {{else}}
       foreignKey: {
         name: '{{reference.foreignKeyName}}',
         field: '{{reference.foreignKey}}',
-      },{{#if reference.targetKey }}
-      target: {
-        name: '{{reference.targetKey}}',{{#if reference.targetKeyColumnUnconventional}}
-        field: '{{reference.targetKey}}',{{/if}}
-      },{{/if}}{{#if reference.as}}
-      as: '{{reference.as}}',{{/if}}
+      },{{#if reference.targetKey}}
+      targetKey: '{{reference.targetKey}}',{{/if}}
+    {{/if}}
+    {{#if reference.as}}
+      as: '{{reference.as}}',
     {{/if}}
     });
     {{/each}}

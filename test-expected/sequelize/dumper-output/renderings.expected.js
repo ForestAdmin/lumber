@@ -54,9 +54,7 @@ module.exports = (sequelize, DataTypes) => {
         name: 'otherKey',
         field: 'other',
       },
-      target: {
-        name: 'otherId',
-      },
+      targetKey: 'otherId',
       as: 'team2',
     });
     Renderings.belongsTo(models.film, {
@@ -64,10 +62,7 @@ module.exports = (sequelize, DataTypes) => {
         name: 'filmKeyNameKey',
         field: 'filmKeyName',
       },
-      target: {
-        name: 'film_target_key',
-        field: 'film_target_key',
-      },
+      targetKey: 'filmTargetKey',
       as: 'films',
     });
   };

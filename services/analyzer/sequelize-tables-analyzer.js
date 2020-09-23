@@ -124,11 +124,31 @@ function checkUnicity(primaryKeys, uniqueIndexes, columnName) {
       indexColumnName.length === 1 && indexColumnName.includes(columnName));
 
   const isPrimary = _.isEqual([columnName], primaryKeys);
-  return { isPrimary, isUnique };
+
+  return isPrimary || isUnique;
+}
+
+function associationNameAlreadyExists(existingReferences, newReference) {
+  return existingReferences.some((reference) => reference && reference.as === newReference.as);
+}
+
+function referenceAlreadyExists(existingReferences, newReference) {
+  return existingReferences.some((reference) => (
+    reference
+    && reference.ref === newReference.ref
+    && reference.association === newReference.association
+    && reference.foreignKey === newReference.foreignKey
+  ));
 }
 
 // NOTICE: Format the references depending on the type of the association
-function createReference(tableName, association, foreignKey, manyToManyForeignKey) {
+function createReference(
+  tableName,
+  existingsReferences,
+  association,
+  foreignKey,
+  manyToManyForeignKey,
+) {
   const foreignKeyName = _.camelCase(foreignKey.columnName);
   const reference = {
     foreignKey: foreignKey.columnName,
@@ -139,6 +159,9 @@ function createReference(tableName, association, foreignKey, manyToManyForeignKe
   if (association === ASSOCIATION_TYPE_BELONGS_TO) {
     reference.ref = foreignKey.foreignTableName;
     reference.as = formatAliasName(foreignKey.columnName);
+    if (foreignKey.foreignColumnName !== 'id') {
+      reference.targetKey = foreignKey.foreignColumnName;
+    }
   } else if (association === ASSOCIATION_TYPE_BELONGS_TO_MANY) {
     reference.ref = manyToManyForeignKey.foreignTableName;
     reference.otherKey = manyToManyForeignKey.columnName;
@@ -157,8 +180,10 @@ function createReference(tableName, association, foreignKey, manyToManyForeignKe
     reference.as = _.camelCase(formater(`${prefix}${foreignKey.tableName}`));
   }
 
-  if (foreignKey.foreignColumnName !== 'id') {
-    reference.targetKey = foreignKey.foreignColumnName;
+  if (referenceAlreadyExists(existingsReferences, reference)) return null;
+
+  if (associationNameAlreadyExists(existingsReferences, reference)) {
+    reference.as = _.camelCase(`${reference.as} ${reference.foreignKey}`);
   }
 
   return reference;
@@ -172,6 +197,31 @@ async function analyzeTable(table, config) {
     constraints: await tableConstraintsGetter.perform(table),
     primaryKeys: await analyzePrimaryKeys(schema),
   };
+}
+
+function createBelongsToReference(referenceTable, tableReferences, constraint) {
+  const referenceColumnName = constraint.foreignColumnName;
+  const referencePrimaryKeys = referenceTable.primaryKeys;
+  const referenceUniqueConstraint = referenceTable.constraints
+    .find(({ columnType }) => columnType === 'UNIQUE');
+  const referenceUniqueIndexes = referenceUniqueConstraint
+    ? referenceUniqueConstraint.uniqueIndexes
+    : null;
+  const isReferencePrimaryOrUnique = checkUnicity(
+    referencePrimaryKeys,
+    referenceUniqueIndexes,
+    referenceColumnName,
+  );
+
+  if (isReferencePrimaryOrUnique) {
+    return createReference(
+      null,
+      tableReferences,
+      ASSOCIATION_TYPE_BELONGS_TO,
+      constraint,
+    );
+  }
+  return null;
 }
 
 // NOTICE: Use the foreign key and reference properties to determine the associations
@@ -193,19 +243,19 @@ function createAllReferences(databaseSchema, schemaGenerated) {
       const { columnName } = constraint;
       const uniqueIndexes = constraint.uniqueIndexes || null;
 
-      const { isPrimary, isUnique } = checkUnicity(primaryKeys, uniqueIndexes, columnName);
+      const isPrimaryOrUnique = checkUnicity(primaryKeys, uniqueIndexes, columnName);
 
       const referenceTableName = constraint.foreignTableName;
-      const referenceColumnName = constraint.foreignColumnName;
 
       if (isJunction) {
-        const manyToManyKeys = _.filter(foreignKeysWithExistingTable,
-          (otherKey) => otherKey.columnName !== constraint.columnName);
+        const manyToManyKeys = foreignKeysWithExistingTable
+          .filter((otherKey) => otherKey.columnName !== constraint.columnName);
 
         manyToManyKeys.forEach((manyToManyKey) => {
           references[referenceTableName].push(
             createReference(
               referenceTableName,
+              references[referenceTableName],
               ASSOCIATION_TYPE_BELONGS_TO_MANY,
               constraint,
               manyToManyKey,
@@ -216,37 +266,32 @@ function createAllReferences(databaseSchema, schemaGenerated) {
         references[referenceTableName].push(
           createReference(
             referenceTableName,
-            (isPrimary || isUnique) ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
+            references[referenceTableName],
+            isPrimaryOrUnique ? ASSOCIATION_TYPE_HAS_ONE : ASSOCIATION_TYPE_HAS_MANY,
             constraint,
           ),
         );
       }
 
-      const referencePrimaryKeys = databaseSchema[referenceTableName].primaryKeys;
-      const referenceUniqueConstraint = databaseSchema[referenceTableName].constraints
-        .find(({ columnType }) => columnType === 'UNIQUE');
-      const referenceUniqueIndexes = referenceUniqueConstraint
-        ? referenceUniqueConstraint.uniqueIndexes
-        : null;
-      const referenceUnicity = checkUnicity(
-        referencePrimaryKeys,
-        referenceUniqueIndexes,
-        referenceColumnName,
+      references[tableName].push(
+        createBelongsToReference(
+          databaseSchema[referenceTableName],
+          references[tableName],
+          constraint,
+        ),
       );
-
-      if (referenceUnicity.isPrimary || referenceUnicity.isUnique) {
-        references[tableName].push(
-          createReference(
-            null,
-            ASSOCIATION_TYPE_BELONGS_TO,
-            constraint,
-          ),
-        );
-      }
     });
   });
 
-  return references;
+  // remove null references
+  return Object.entries(references)
+    .reduce(
+      (accumulator, [tableName, tableReferences]) => {
+        accumulator[tableName] = tableReferences.filter(Boolean);
+        return accumulator;
+      },
+      {},
+    );
 }
 
 async function createTableSchema({
