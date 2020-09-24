@@ -14,7 +14,8 @@ const databaseOptions = {
 };
 
 if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
-  if (process.env.DATABASE_REJECT_UNAUTHORIZED === false) {
+  const rejectUnauthorized = process.env.DATABASE_REJECT_UNAUTHORIZED;
+  if (rejectUnauthorized && (JSON.parse(rejectUnauthorized.toLowerCase()) === false)) {
     databaseOptions.dialectOptions.ssl = { rejectUnauthorized: false };
   } else {
     databaseOptions.dialectOptions.ssl = true;
