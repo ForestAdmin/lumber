@@ -1,3 +1,10 @@
+## [3.7.2](https://github.com/ForestAdmin/lumber/compare/v3.7.1...v3.7.2) (2020-09-24)
+
+
+### Bug Fixes
+
+* fix rejectUnauthorized handling ([#474](https://github.com/ForestAdmin/lumber/issues/474)) ([9e91eb2](https://github.com/ForestAdmin/lumber/commit/9e91eb277b47ad9572360ab263b2e983b89480b0))
+
 ## [3.7.1](https://github.com/ForestAdmin/lumber/compare/v3.7.0...v3.7.1) (2020-09-23)
 
 
