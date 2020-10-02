@@ -309,12 +309,8 @@ function Dumper(config) {
       source: 'app/docker-compose.hbs',
       target: 'docker-compose.yml',
       context: {
-        appName: config.appName,
         containerName: _.snakeCase(config.appName),
-        hostname: config.appHostname || 'http://localhost',
-        port: config.appPort || DEFAULT_PORT,
         databaseUrl,
-        ssl: config.ssl || 'false',
         dbSchema: config.dbSchema,
         forestUrl: process.env.FOREST_URL,
         network: (isLinuxBasedOs() && isDatabaseLocal()) ? 'host' : null,

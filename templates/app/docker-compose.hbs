@@ -9,12 +9,12 @@ services:
 {{/if}}
     container_name: {{ containerName }}
     environment:
-      - APPLICATION_PORT={{ port }}
+      - APPLICATION_PORT=${APPLICATION_PORT}
       - DATABASE_URL={{ databaseUrl }}
 {{#if dbSchema }}
       - DATABASE_SCHEMA=${DATABASE_SCHEMA}
 {{/if}}
-      - DATABASE_SSL={{ ssl }}
+      - DATABASE_SSL=${DATABASE_SSL}
       - FOREST_AUTH_SECRET=${FOREST_AUTH_SECRET}
       - FOREST_ENV_SECRET=${FOREST_ENV_SECRET}
 {{#if forestUrl }}
@@ -22,6 +22,6 @@ services:
       - FOREST_URL={{ forestUrl }}
 {{/if}}
     ports:
-      - "{{ port }}:{{ port }}"
+      - "${APPLICATION_PORT}:${APPLICATION_PORT}"
     volumes:
       - ./:/usr/src/app
