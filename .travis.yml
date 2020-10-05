@@ -20,8 +20,14 @@ jobs:
       name: Tests (Node 10)
       node_js: 10
     - script: sleep 15; yarn test
-      before_install: docker-compose up -d
       name: Tests (Node LTS)
+      # NOTICE: Handles code coverage reporting to Code Climate
+      before_install:
+        - docker-compose up -d
+        - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        - chmod +x ./cc-test-reporter
+      after_script:
+        - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
     - stage: Build & Publish
       if: branch = master AND type != pull_request
       script: skip
