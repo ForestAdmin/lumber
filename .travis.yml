@@ -19,7 +19,7 @@ jobs:
       before_install: docker-compose up -d
       name: Tests (Node 10)
       node_js: 10
-    - script: sleep 15; yarn test
+    - script: sleep 15; yarn test:coverage
       name: Tests (Node LTS)
       # NOTICE: Handles code coverage reporting to Code Climate
       before_install:
