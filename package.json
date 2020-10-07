@@ -4,8 +4,7 @@
   "version": "3.7.2",
   "main": "lumber.js",
   "scripts": {
-    "lint": "./node_modules/eslint/bin/eslint.js ./*.js .eslint-bin deserializers scripts serializers services test utils",
-    "readme:update-coverage": "yarn test:coverage && node ./scripts/update-coverage.js",
+    "lint": "./node_modules/eslint/bin/eslint.js ./*.js .eslint-bin deserializers serializers services test utils",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage"
   },
@@ -50,7 +49,6 @@
     "@commitlint/cli": "8.3.5",
     "@commitlint/config-conventional": "8.3.4",
     "@commitlint/travis-cli": "8.3.5",
-    "@forestadmin/devops": "2.0.1",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
     "eslint": "6.7.2",

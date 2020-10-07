@@ -23,7 +23,6 @@ module.exports = {
       {
         devDependencies: [
           '.eslint-bin/*.js',
-          'scripts/*.js',
           'test/**/*.js'
         ]
       }
