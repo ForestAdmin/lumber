@@ -56,9 +56,8 @@ describe('services > database analyser > MongoDB', () => {
       await mongoHelper.dropAllCollections();
       await databaseConnection.collection('connect_test').insertOne({ name: 'hello' });
       const doc = await databaseConnection.collection('connect_test').findOne({ name: 'hello' });
-
-      expect(doc.name).toStrictEqual('hello');
       await mongoHelper.close();
+      expect(doc.name).toStrictEqual('hello');
     });
 
     it('should generate a simple model', async () => {

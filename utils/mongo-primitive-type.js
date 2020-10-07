@@ -6,6 +6,7 @@ const { ObjectId } = require('mongodb');
  * @param value
  * @returns {string|null} return
  */
+/* istanbul ignore next */
 function getMongooseTypeFromValue(value) {
   if (typeof value === 'object' && value instanceof Date) {
     return 'Date';
@@ -32,6 +33,7 @@ function getMongooseTypeFromValue(value) {
  * @param value
  * @returns {boolean}
  */
+/* istanbul ignore next */
 function isOfMongooseType(value) {
   return !!getMongooseTypeFromValue(value);
 }
