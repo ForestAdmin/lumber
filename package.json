@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js .eslint-bin deserializers scripts serializers services test utils",
     "readme:update-coverage": "yarn test:coverage && node ./scripts/update-coverage.js",
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage"
   },
   "bin": {
