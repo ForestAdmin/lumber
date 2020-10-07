@@ -41,6 +41,7 @@ const mapReduceOptions = {
 //         The code used here must work with MongoDB lower version supported.
 /* eslint-disable vars-on-top, no-var, no-undef, no-restricted-syntax,
                   sonarjs/cognitive-complexity */
+/* istanbul ignore next */
 function mapCollection() {
   function allItemsAreObjectIDs(array) {
     if (!array.length) return false;
@@ -80,6 +81,8 @@ function mapCollection() {
   }
 }
 /* eslint-enable */
+
+/* istanbul ignore next */
 function reduceCollection(key, analyses) {
   if (hasEmbeddedTypes(analyses)) {
     const formatedAnalysis = { type: 'embedded', schemas: [] };

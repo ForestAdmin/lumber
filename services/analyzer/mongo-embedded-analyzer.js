@@ -4,7 +4,7 @@ const {
 } = require('../../utils/mongo-primitive-type');
 
 /* eslint-disable vars-on-top, no-var, no-use-before-define, no-param-reassign */
-
+/* istanbul ignore next */
 function getMongooseEmbeddedSchema(embeddedObject, handleId = false) {
   if (!embeddedObject) {
     return null;
@@ -32,6 +32,7 @@ function getMongooseEmbeddedSchema(embeddedObject, handleId = false) {
   return schema;
 }
 
+/* istanbul ignore next */
 function getMongooseArraySchema(arrayValue) {
   if (!arrayValue || arrayValue.length === 0 || !Array.isArray(arrayValue)) {
     return null;
@@ -50,6 +51,7 @@ function getMongooseArraySchema(arrayValue) {
   return analyses.length ? analyses : null;
 }
 
+/* istanbul ignore next */
 function getMongooseSchema(value, handleId = false) {
   if (isOfMongooseType(value)) {
     return getMongooseTypeFromValue(value);
@@ -66,6 +68,7 @@ function getMongooseSchema(value, handleId = false) {
   return null;
 }
 
+/* istanbul ignore next */
 function hasEmbeddedTypes(analyses) {
   if (!analyses || !analyses.length) {
     return false;
