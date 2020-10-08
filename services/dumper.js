@@ -305,6 +305,7 @@ function Dumper(config) {
 
   function writeDockerCompose() {
     const databaseUrl = `\${${isLinuxBasedOs() ? 'DATABASE_URL' : 'DOCKER_DATABASE_URL'}}`;
+    const forestUrl = process.env.FOREST_URL ? `\${FOREST_URL-${process.env.FOREST_URL}}` : false;
     copyHandleBarsTemplate({
       source: 'app/docker-compose.hbs',
       target: 'docker-compose.yml',
@@ -312,7 +313,7 @@ function Dumper(config) {
         containerName: _.snakeCase(config.appName),
         databaseUrl,
         dbSchema: config.dbSchema,
-        forestUrl: process.env.FOREST_URL,
+        forestUrl,
         network: (isLinuxBasedOs() && isDatabaseLocal()) ? 'host' : null,
       },
     });
