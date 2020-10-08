@@ -299,7 +299,7 @@ function Dumper(config) {
     copyHandleBarsTemplate({
       source: 'app/Dockerfile.hbs',
       target: 'Dockerfile',
-      context: { port: config.appPort || DEFAULT_PORT },
+      context: {},
     });
   }
 
