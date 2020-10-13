@@ -144,7 +144,7 @@ with an extensive activity log system.
 - [Heetch](https://www.heetch.com)
 - [Lunchr](https://www.lunchr.co)
 - [Pillow](https://www.pillow.com)
-- [Qonto](https://www.qonto.eu)
+- [Qonto](https://www.qonto.com)
 - [Raspberry PI](https://www.raspberrypi.org/)
 - [Shadow](https://shadow.tech)
 - And hundreds more…
