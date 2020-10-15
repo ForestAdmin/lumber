@@ -1,3 +1,10 @@
+# [3.8.0](https://github.com/ForestAdmin/lumber/compare/v3.7.2...v3.8.0) (2020-10-15)
+
+
+### Features
+
+* **security:** use env variables in docker-compose.yml ([#464](https://github.com/ForestAdmin/lumber/issues/464)) ([9674275](https://github.com/ForestAdmin/lumber/commit/96742758f518513b6c6848cce2cd5c5fc9489b9c))
+
 ## [3.7.2](https://github.com/ForestAdmin/lumber/compare/v3.7.1...v3.7.2) (2020-09-24)
 
 
