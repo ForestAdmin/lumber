@@ -143,18 +143,24 @@ function Dumper(config) {
   }
 
   function writeDotEnv() {
+    const context = {
+      databaseUrl: getDatabaseUrl(),
+      ssl: config.ssl || 'false',
+      dbSchema: config.dbSchema,
+      hostname: config.appHostname,
+      port: config.appPort || DEFAULT_PORT,
+      forestEnvSecret: config.forestEnvSecret,
+      forestAuthSecret: config.forestAuthSecret,
+      hasDockerDatabaseUrl: false,
+    };
+    if (!isLinuxBasedOs()) {
+      context.dockerDatabaseUrl = getDatabaseUrl().replace('localhost', 'host.docker.internal');
+      context.hasDockerDatabaseUrl = true;
+    }
     copyHandleBarsTemplate({
       source: 'app/env.hbs',
       target: '.env',
-      context: {
-        databaseUrl: getDatabaseUrl(),
-        ssl: config.ssl || 'false',
-        dbSchema: config.dbSchema,
-        hostname: config.appHostname,
-        port: config.appPort || DEFAULT_PORT,
-        forestEnvSecret: config.forestEnvSecret,
-        forestAuthSecret: config.forestAuthSecret,
-      },
+      context,
     });
   }
 
@@ -283,25 +289,21 @@ function Dumper(config) {
     copyHandleBarsTemplate({
       source: 'app/Dockerfile.hbs',
       target: 'Dockerfile',
-      context: { port: config.appPort || DEFAULT_PORT },
+      context: {},
     });
   }
 
   function writeDockerCompose() {
+    const databaseUrl = `\${${isLinuxBasedOs() ? 'DATABASE_URL' : 'DOCKER_DATABASE_URL'}}`;
+    const forestUrl = process.env.FOREST_URL ? `\${FOREST_URL-${process.env.FOREST_URL}}` : false;
     copyHandleBarsTemplate({
       source: 'app/docker-compose.hbs',
       target: 'docker-compose.yml',
       context: {
-        appName: config.appName,
         containerName: _.snakeCase(config.appName),
-        hostname: config.appHostname || 'http://localhost',
-        port: config.appPort || DEFAULT_PORT,
-        databaseUrl: isLinuxBasedOs() ? getDatabaseUrl() : getDatabaseUrl().replace('localhost', 'host.docker.internal'),
-        ssl: config.ssl || 'false',
+        databaseUrl,
         dbSchema: config.dbSchema,
-        forestEnvSecret: config.forestEnvSecret,
-        forestAuthSecret: config.forestAuthSecret,
-        forestUrl: process.env.FOREST_URL,
+        forestUrl,
         network: (isLinuxBasedOs() && isDatabaseLocal()) ? 'host' : null,
       },
     });
