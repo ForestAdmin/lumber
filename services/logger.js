@@ -2,7 +2,9 @@ const chalk = require('chalk');
 
 class Logger {
   constructor(silent) {
-    this.silent = silent;
+    this.silent = silent !== undefined
+      ? silent
+      : process.env.NODE_ENV === 'test';
     this.spinner = null;
   }
 
