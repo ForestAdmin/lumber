@@ -26,7 +26,8 @@ if (process.env.CORS_ORIGINS) {
   allowedOrigins = allowedOrigins.concat(process.env.CORS_ORIGINS.split(','));
 }
 
-app.use(cors({
+// Let forest-express handle cors for routes starting by /forest/
+app.use(/^(?!.*\/forest\/).*$/, cors({
   origin: allowedOrigins,
   allowedHeaders: ['Authorization', 'X-Requested-With', 'Content-Type'],
   maxAge: 86400, // NOTICE: 1 day
