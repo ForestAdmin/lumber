@@ -20,18 +20,25 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-let allowedOrigins = [/\.forestadmin\.com$/, 'null'{{#if forestUrl }}, /localhost:\d{4}$/{{/if}}];
+let allowedOrigins = [/\.forestadmin\.com$/{{#if forestUrl }}, /localhost:\d{4}$/{{/if}}];
 
 if (process.env.CORS_ORIGINS) {
   allowedOrigins = allowedOrigins.concat(process.env.CORS_ORIGINS.split(','));
 }
 
-app.use(cors({
+const corsConfig = {
   origin: allowedOrigins,
   allowedHeaders: ['Authorization', 'X-Requested-With', 'Content-Type'],
   maxAge: 86400, // NOTICE: 1 day
   credentials: true,
+};
+
+app.use('/forest/authentication', cors({
+  ...corsConfig,
+  origin: corsConfig.origin.concat('null')
 }));
+
+app.use(cors(corsConfig));
 
 app.use(jwt({
   secret: process.env.FOREST_AUTH_SECRET,
