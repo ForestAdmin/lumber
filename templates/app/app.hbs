@@ -35,6 +35,9 @@ const corsConfig = {
 
 app.use('/forest/authentication', cors({
   ...corsConfig,
+  // The null origin is sent by browsers for redirected AJAX calls
+  // we need to support this in authentication routes because OIDC
+  // redirects to the callback route
   origin: corsConfig.origin.concat('null')
 }));
 
