@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-let allowedOrigins = [/\.forestadmin\.com$/{{#if forestUrl }}, /localhost:\d{4}$/{{/if}}];
+let allowedOrigins = [/\.forestadmin\.com$/, 'null'{{#if forestUrl }}, /localhost:\d{4}$/{{/if}}];
 
 if (process.env.CORS_ORIGINS) {
   allowedOrigins = allowedOrigins.concat(process.env.CORS_ORIGINS.split(','));
