@@ -4,7 +4,7 @@
 ![Coverage](https://img.shields.io/badge/coverage-81%25%0A-critical)
 
 <p align="center">
-  <img src="https://github.com/ForestAdmin/lumber/blob/master/assets/lumber-logo.png?raw=true" alt="Lumber logo">
+  <img src="https://github.com/ForestAdmin/lumber/blob/master/assets/logo-forestadmin.png?raw=true" alt="Forest Admin logo">
 </p>
 
 Lumber is the CLI tool used to install [Forest Admin](https://www.forestadmin.com), the Admin Panel framework.
