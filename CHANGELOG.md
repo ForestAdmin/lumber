@@ -1,3 +1,10 @@
+# [3.9.0](https://github.com/ForestAdmin/lumber/compare/v3.8.0...v3.9.0) (2020-11-02)
+
+
+### Features
+
+* allow calls from redirections ([#484](https://github.com/ForestAdmin/lumber/issues/484)) ([adb723d](https://github.com/ForestAdmin/lumber/commit/adb723d4b6cb3742bcd594559133f2db60bd38a2))
+
 # [3.8.0](https://github.com/ForestAdmin/lumber/compare/v3.7.2...v3.8.0) (2020-10-15)
 
 
