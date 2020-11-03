@@ -156,9 +156,7 @@ function analyzeMongoCollections(databaseConnection) {
         const collectionName = collection && collection.namespace
           && collection.namespace.collection;
 
-        if (!collectionName) return;
-
-        // Ignore system collections and collection without a fullname;
+        // Ignore system collections and collection without a valid name.
         if (!collectionName || isSystemCollection(collection)) {
           return;
         }

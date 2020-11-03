@@ -7,7 +7,7 @@ function isSystemCollection(collection) {
 
 async function findCollectionMatchingSamples(databaseConnection, samples) {
   return P.mapSeries(databaseConnection.collections(), async (collection) => {
-    if (!isSystemCollection(collection)) return null;
+    if (isSystemCollection(collection)) return null;
     const count = await collection.countDocuments({ _id: { $in: samples } });
     if (count) {
       return collection.s.namespace.collection;
