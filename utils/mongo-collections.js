@@ -1,7 +1,14 @@
 const P = require('bluebird');
 
+function getCollectionName(collection) {
+  return collection
+    && collection.s
+    && collection.s.namespace
+    && collection.s.namespace.collection;
+}
+
 function isSystemCollection(collection) {
-  const collectionName = collection && collection.namespace && collection.namespace.collection;
+  const collectionName = getCollectionName(collection);
   return collectionName && collectionName.startsWith('system.');
 }
 
@@ -24,4 +31,5 @@ module.exports = {
   findCollectionMatchingSamples,
   isSystemCollection,
   filterReferenceCollection,
+  getCollectionName,
 };
