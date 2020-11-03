@@ -8,6 +8,7 @@ const {
   getMongooseTypeFromValue,
   isOfMongooseType,
 } = require('../../utils/mongo-primitive-type');
+const { isSystemCollection } = require('../../utils/mongo-collections');
 const {
   getMongooseArraySchema,
   getMongooseEmbeddedSchema,
@@ -155,13 +156,10 @@ function analyzeMongoCollections(databaseConnection) {
         const collectionName = collection && collection.namespace
           && collection.namespace.collection;
 
-        // NOTICE: Defensive programming
-        if (!collectionName) {
-          return;
-        }
+        if (!collectionName) return;
 
-        // NOTICE: Ignore system collections.
-        if (collectionName.startsWith('system.')) {
+        // Ignore system collections and collection without a fullname;
+        if (!collectionName || isSystemCollection(collection)) {
           return;
         }
 
