@@ -1,4 +1,5 @@
 const MongoHelper = require('../../../test-utils/mongo-helper');
+const { DATABASE_URL_MONGODB_MAX } = require('../../../test-utils/database-urls');
 const { describeMongoDatabases } = require('../../../test-utils/multiple-database-version-helper');
 const DatabaseAnalyzer = require('../../../services/analyzer/database-analyzer');
 const simpleModel = require('../../../test-fixtures/mongo/simple-model');
@@ -31,20 +32,25 @@ const expectedSubDocumentsAmbiguousIds = require('../../../test-expected/mongo/d
 const expectedSubDocumentsUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-using-ids.expected');
 const expectedSubDocumentsNotUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-not-using-ids.expected');
 const expectedSubDocumentUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-document-using-ids.expected');
+const expectedComplexModelWithAView = require('../../../test-expected/mongo/db-analysis-output/complex-model-with-a-view.expected');
 
 function getMongoHelper(mongoUrl) {
   return new MongoHelper(mongoUrl);
 }
 
-async function getAnalyzerOutputWithModel(mongoUrl, model) {
+async function getAnalyzerOutput(mongoUrl, callback) {
   const mongoHelper = await getMongoHelper(mongoUrl);
   const databaseConnection = await mongoHelper.connect();
   await mongoHelper.dropAllCollections();
-  await mongoHelper.given(model);
+  await callback(mongoHelper);
   const databaseAnalyzer = new DatabaseAnalyzer(databaseConnection, { dbDialect: 'mongodb' });
   const outputModel = await databaseAnalyzer.perform();
   await mongoHelper.close();
   return outputModel;
+}
+
+async function getAnalyzerOutputWithModel(mongoUrl, model) {
+  return getAnalyzerOutput(mongoUrl, async (mongoHelper) => mongoHelper.given(model));
 }
 
 describe('services > database analyser > MongoDB', () => {
@@ -152,5 +158,23 @@ describe('services > database analyser > MongoDB', () => {
       const outputModel = await getAnalyzerOutputWithModel(mongoUrl, subDocumentsAmbiguousIdsModel);
       expect(outputModel).toStrictEqual(expectedSubDocumentsAmbiguousIds);
     });
+  });
+
+  it('should ignore `system.*` collections created via views using Mongo Database > 3', async () => {
+    expect.assertions(2);
+
+    const outputModel = await getAnalyzerOutput(DATABASE_URL_MONGODB_MAX, async (mongoHelper) => {
+      await mongoHelper.given(complexModel);
+      await mongoHelper.db.createCollection('myView', { viewOn: 'films' });
+
+      // Expect that system.views collection is actually present in database:
+      // the purpose of this test is to ensure it has not been imported nor analyzed.
+      // Still, listCollections() returns unauthorized views only since 4.0.
+      expect((await mongoHelper.db.listCollections().toArray())
+        .find((collection) => collection.name === 'system.views')).not.toBeUndefined();
+    });
+
+    // The output is expected to contain the view but not its system.view attached table.
+    expect(outputModel).toStrictEqual(expectedComplexModelWithAView);
   });
 });
