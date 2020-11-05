@@ -37,7 +37,12 @@ class MongoHelper {
 
   async dropAllCollections() {
     const collections = await this.db.listCollections().toArray();
-    return Promise.all(collections.map(({ name }) => this.db.collection(name).drop()));
+    return Promise.all(collections.map(({ name }) => {
+      // System collections are not droppable…
+      if (name.startsWith('system.')) return null;
+      // …other collections are.
+      return this.db.collection(name).drop();
+    }));
   }
 }
 
