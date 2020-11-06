@@ -1,6 +1,7 @@
 const rimraf = require('rimraf');
 const fs = require('fs');
-
+const sinon = require('sinon');
+const os = require('os');
 const simpleModel = require('../../../test-expected/sequelize/db-analysis-output/customers.expected.json');
 const belongsToModel = require('../../../test-expected/sequelize/db-analysis-output/addresses.expected.json');
 const otherAssociationsModel = require('../../../test-expected/sequelize/db-analysis-output/users.expected.json');
@@ -96,14 +97,43 @@ describe('services > dumper > sequelize', () => {
     cleanOutput();
   });
 
-  it('should generate the env file', async () => {
-    expect.assertions(1);
-    const dumper = await getDumper();
-    await dumper.dump(simpleModel);
-    const generatedFile = fs.readFileSync('./test-output/sequelize/.env', 'utf8');
-    const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/env.expected', 'utf-8');
+  describe('when generating the env file on various OS', () => {
+    it('should generate the env file on Linux', async () => {
+      expect.assertions(1);
 
-    expect(generatedFile).toStrictEqual(expectedFile);
-    cleanOutput();
+      // Pretend we are on Linux.
+      const osStub = sinon.stub(os, 'platform');
+      osStub.returns('linux');
+
+      const dumper = await getDumper();
+      await dumper.dump(simpleModel);
+
+      osStub.restore();
+
+      const generatedFile = fs.readFileSync('./test-output/sequelize/.env', 'utf8');
+      const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/env.linux.expected', 'utf-8');
+
+      expect(generatedFile).toStrictEqual(expectedFile);
+      cleanOutput();
+    });
+
+    it('should generate the env file on macOS', async () => {
+      expect.assertions(1);
+
+      // Pretend we are on macOS.
+      const osStub = sinon.stub(os, 'platform');
+      osStub.returns('darwin');
+
+      const dumper = await getDumper();
+      await dumper.dump(simpleModel);
+
+      osStub.restore();
+
+      const generatedFile = fs.readFileSync('./test-output/sequelize/.env', 'utf8');
+      const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/env.darwin.expected', 'utf-8');
+
+      expect(generatedFile).toStrictEqual(expectedFile);
+      cleanOutput();
+    });
   });
 });
