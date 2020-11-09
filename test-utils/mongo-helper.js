@@ -39,7 +39,7 @@ class MongoHelper {
     const collections = await this.db.listCollections().toArray();
     return Promise.all(collections
       // System collections are not droppable…
-      .filter(({ name }) => name.startsWith('system.'))
+      .filter(({ name }) => !name.startsWith('system.'))
       // …other collections are.
       .map(({ name }) => this.db.collection(name).drop()));
   }
