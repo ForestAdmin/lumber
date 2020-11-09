@@ -1,5 +1,9 @@
 const _ = require('lodash');
 const P = require('bluebird');
+const {
+  findCollectionMatchingSamples,
+  filterReferenceCollection,
+} = require('../../utils/mongo-collections');
 
 const OBJECT_ID_ARRAY = '[mongoose.Schema.Types.ObjectId]';
 const SAMPLE_COUNT_TO_FETCH = 10;
@@ -17,22 +21,6 @@ const pickSampleValues = (databaseConnection, collectionName, field) =>
     .toArray()
     .then((samples) => _.map(samples, 'value'));
 
-const findCollectionMatchingSamples = async (databaseConnection, collectionName, samples) =>
-  P.mapSeries(databaseConnection.collections(), async (collection) => {
-    const count = await collection.countDocuments({ _id: { $in: samples } });
-    if (count) {
-      return collection.s.namespace.collection;
-    }
-    return null;
-  }).then((matches) => _.filter(matches, (match) => match));
-
-const filterReferenceCollection = (collectionName, field, referencedCollections) => {
-  if (referencedCollections.length === 1) {
-    return referencedCollections[0];
-  }
-  return null;
-};
-
 const buildReference = (collectionName, referencedCollection, field) => {
   if (referencedCollection) {
     return {
@@ -45,8 +33,8 @@ const buildReference = (collectionName, referencedCollection, field) => {
 
 const detectReference = (databaseConnection, field, collectionName) =>
   pickSampleValues(databaseConnection, collectionName, field)
-    .then((samples) => findCollectionMatchingSamples(databaseConnection, collectionName, samples))
-    .then((matches) => filterReferenceCollection(collectionName, field, matches))
+    .then((samples) => findCollectionMatchingSamples(databaseConnection, samples))
+    .then((matches) => filterReferenceCollection(matches))
     .then((referencedCollection) => buildReference(collectionName, referencedCollection, field));
 
 const detectHasMany = (databaseConnection, fields, collectionName) => {
