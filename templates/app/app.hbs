@@ -14,12 +14,6 @@ const {
 
 const app = express();
 
-app.use(morgan('tiny'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
 let allowedOrigins = [/\.forestadmin\.com$/{{#if forestUrl }}, /localhost:\d{4}$/{{/if}}];
 
 if (process.env.CORS_ORIGINS) {
@@ -33,6 +27,7 @@ const corsConfig = {
   credentials: true,
 };
 
+app.use(morgan('tiny'));
 app.use('/forest/authentication', cors({
   ...corsConfig,
   // The null origin is sent by browsers for redirected AJAX calls
@@ -40,8 +35,11 @@ app.use('/forest/authentication', cors({
   // redirects to the callback route
   origin: corsConfig.origin.concat('null')
 }));
-
 app.use(cors(corsConfig));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(jwt({
   secret: process.env.FOREST_AUTH_SECRET,
