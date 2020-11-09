@@ -1,3 +1,10 @@
+## [3.9.1](https://github.com/ForestAdmin/lumber/compare/v3.9.0...v3.9.1) (2020-11-09)
+
+
+### Bug Fixes
+
+* generate command could fail when analysing relations on MongoDB when having one or more views ([#485](https://github.com/ForestAdmin/lumber/issues/485)) ([517fe36](https://github.com/ForestAdmin/lumber/commit/517fe365a7a226667e0e76aed1bad74d304683a7))
+
 # [3.9.0](https://github.com/ForestAdmin/lumber/compare/v3.8.0...v3.9.0) (2020-11-02)
 
 
