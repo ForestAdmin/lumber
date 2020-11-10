@@ -7,7 +7,6 @@ const Handlebars = require('handlebars');
 const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
 const Sequelize = require('sequelize');
-const { url } = require('inspector');
 const stringUtils = require('../utils/strings');
 const logger = require('./logger');
 const toValidPackageName = require('../utils/to-valid-package-name');

@@ -2,7 +2,6 @@ const fs = require('fs');
 const sinon = require('sinon');
 const os = require('os');
 const rimraf = require('rimraf');
-const { over } = require('lodash');
 const Dumper = require('../../../services/dumper');
 
 const DOCKER_COMPOSE_FILE_LOCATION = './test-output/Linux/docker-compose.yml';
