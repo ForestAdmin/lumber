@@ -7,6 +7,7 @@ const Handlebars = require('handlebars');
 const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
 const Sequelize = require('sequelize');
+const { url } = require('inspector');
 const stringUtils = require('../utils/strings');
 const logger = require('./logger');
 const toValidPackageName = require('../utils/to-valid-package-name');
@@ -142,16 +143,31 @@ function Dumper(config) {
     return databaseUrl.includes('127.0.0.1') || databaseUrl.includes('localhost');
   }
 
+  function isLocalUrl(url) {
+    return /^http:\/\/(?:localhost|127\.0\.0\.1)$/.test(url);
+  }
+
   function writeDotEnv() {
+    const hostUrl = /^https?:\/\//.test(config.appHostname)
+      ? config.appHostname
+      : `http://${config.appHostname}`;
+
+    const port = config.appPort || DEFAULT_PORT;
+
+    const applicationUrl = isLocalUrl(hostUrl)
+      ? `${hostUrl}:${port}`
+      : hostUrl;
+
     const context = {
       databaseUrl: getDatabaseUrl(),
       ssl: config.ssl || 'false',
       dbSchema: config.dbSchema,
       hostname: config.appHostname,
-      port: config.appPort || DEFAULT_PORT,
+      port,
       forestEnvSecret: config.forestEnvSecret,
       forestAuthSecret: config.forestAuthSecret,
       hasDockerDatabaseUrl: false,
+      applicationUrl,
     };
     if (!isLinuxBasedOs()) {
       context.dockerDatabaseUrl = getDatabaseUrl().replace('localhost', 'host.docker.internal');

@@ -2,6 +2,7 @@ const fs = require('fs');
 const sinon = require('sinon');
 const os = require('os');
 const rimraf = require('rimraf');
+const { over } = require('lodash');
 const Dumper = require('../../../services/dumper');
 
 const DOCKER_COMPOSE_FILE_LOCATION = './test-output/Linux/docker-compose.yml';
@@ -11,15 +12,23 @@ function cleanOutput() {
   rimraf.sync('./test-output/mysql');
 }
 
-async function createLinuxDump(isDatabaseLocal = true) {
+/**
+ * @param {{
+ *   dbConnectionUrl?: string;
+ *   appHostname?: string;
+ *   appPort?: number;
+ * }} [overrides]
+ */
+async function createLinuxDump(overrides = {}) {
   const config = {
     appName: 'test-output/Linux',
     dbDialect: 'mysql',
-    dbConnectionUrl: isDatabaseLocal ? 'mysql://localhost:8999' : 'mysql://example.com:8999',
+    dbConnectionUrl: 'mysql://localhost:8999',
     ssl: false,
     dbSchema: 'public',
     appHostname: 'localhost',
     appPort: 1654,
+    ...overrides,
   };
 
   const dumper = await new Dumper(config);
@@ -73,13 +82,85 @@ describe('services > dumper', () => {
         it('should not use `network` option in the docker-compose file', async () => {
           expect.assertions(1);
 
-          await createLinuxDump(false);
+          await createLinuxDump({ dbConnectionUrl: 'mysql://example.com:8999' });
 
           const dockerComposeFile = fs.readFileSync(DOCKER_COMPOSE_FILE_LOCATION, 'utf-8');
           expect(dockerComposeFile).not.toContain('network');
 
           cleanOutput();
         });
+      });
+    });
+  });
+
+  describe('generation of APPLICATION_URL', () => {
+    /**
+     * @param {{appHostname?: string; appPort?: number}} overrides
+     */
+    async function generateEnvFile(overrides) {
+      await createLinuxDump(overrides);
+
+      return fs.readFileSync(DOT_ENV_FILE_LOCATION, 'utf-8');
+    }
+
+    describe('with an external application url', () => {
+      it('should generate an APPLICATION_URL without the port number', async () => {
+        expect.assertions(1);
+        try {
+          const dotEnvFile = await generateEnvFile({
+            appHostname: 'agent.forestadmin.com',
+          });
+
+          expect(dotEnvFile).toContain('APPLICATION_URL=http://agent.forestadmin.com');
+        } finally {
+          cleanOutput();
+        }
+      });
+
+      it('should generate an APPLICATION_URL with the right protocol and without the port number', async () => {
+        expect.assertions(1);
+
+        try {
+          const dotEnvFile = await generateEnvFile({
+            appHostname: 'https://agent.forestadmin.com',
+          });
+
+          expect(dotEnvFile).toContain('APPLICATION_URL=https://agent.forestadmin.com');
+        } finally {
+          cleanOutput();
+        }
+      });
+    });
+
+    describe('with a local url', () => {
+      it('should append the port number to the url', async () => {
+        expect.assertions(1);
+
+        try {
+          const dotEnvFile = await generateEnvFile({
+            appHostname: 'http://localhost',
+            appPort: 3333,
+          });
+
+          expect(dotEnvFile).toContain('APPLICATION_URL=http://localhost:3333');
+        } finally {
+          cleanOutput();
+        }
+      });
+
+      it('should add the protocol and append the port number', async () => {
+        expect.assertions(1);
+
+        try {
+          const dotEnvFile = await generateEnvFile({
+            appHostname: 'localhost',
+            appPort: 3333,
+          });
+
+          expect(dotEnvFile).toContain('APPLICATION_URL=http://localhost:3333');
+        } finally {
+          cleanOutput();
+        }
       });
     });
   });
