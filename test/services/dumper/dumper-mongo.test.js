@@ -70,6 +70,15 @@ describe('services > dumper > MongoDB', () => {
       expect.assertions(1);
       const indexGeneratedFile = fs.readFileSync('./test-output/mongo/models/index.js', 'utf-8');
       expect(indexGeneratedFile).toStrictEqual(expect.not.stringMatching('databaseOptions.dialectOptions.typeCast'));
+      // cleanOutput();
+    });
+
+    it('should generate a model/index.js file', async () => {
+      expect.assertions(1);
+      const indexGeneratedFile = fs.readFileSync('./test-output/mongo/models/index.js', 'utf-8');
+      const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/index.expected.js', 'utf-8');
+
+      expect(indexGeneratedFile).toStrictEqual(expectedFile);
       cleanOutput();
     });
   });
