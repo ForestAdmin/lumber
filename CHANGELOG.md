@@ -1,3 +1,10 @@
+# [3.10.0](https://github.com/ForestAdmin/lumber/compare/v3.9.1...v3.10.0) (2020-11-12)
+
+
+### Features
+
+* generate a new environment variable with the application's url ([#489](https://github.com/ForestAdmin/lumber/issues/489)) ([09c98c8](https://github.com/ForestAdmin/lumber/commit/09c98c8b59e911fc8a3eed84614746ed0fae55fa))
+
 ## [3.9.1](https://github.com/ForestAdmin/lumber/compare/v3.9.0...v3.9.1) (2020-11-09)
 
 
