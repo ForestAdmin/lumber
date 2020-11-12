@@ -142,16 +142,35 @@ function Dumper(config) {
     return databaseUrl.includes('127.0.0.1') || databaseUrl.includes('localhost');
   }
 
+  function isLocalUrl(url) {
+    return /^http:\/\/(?:localhost|127\.0\.0\.1)$/.test(url);
+  }
+
+  function getPort() {
+    return config.appPort || DEFAULT_PORT;
+  }
+
+  function getApplicationUrl() {
+    const hostUrl = /^https?:\/\//.test(config.appHostname)
+      ? config.appHostname
+      : `http://${config.appHostname}`;
+
+    return isLocalUrl(hostUrl)
+      ? `${hostUrl}:${getPort()}`
+      : hostUrl;
+  }
+
   function writeDotEnv() {
     const context = {
       databaseUrl: getDatabaseUrl(),
       ssl: config.ssl || 'false',
       dbSchema: config.dbSchema,
       hostname: config.appHostname,
-      port: config.appPort || DEFAULT_PORT,
+      port: getPort(),
       forestEnvSecret: config.forestEnvSecret,
       forestAuthSecret: config.forestAuthSecret,
       hasDockerDatabaseUrl: false,
+      applicationUrl: getApplicationUrl(),
     };
     if (!isLinuxBasedOs()) {
       context.dockerDatabaseUrl = getDatabaseUrl().replace('localhost', 'host.docker.internal');
