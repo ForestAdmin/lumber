@@ -11,7 +11,7 @@ module.exports = (mongoose, Mongoose) => {
         model: {
           arrayOfNumber: [Number],
           arrayMixed: [Object],
-          arrayOfObjectIds: [mongoose.Schema.Types.ObjectId],
+          arrayOfObjectIds: [Mongoose.Schema.Types.ObjectId],
           arrayWithComplexObject: [{
             name: String,
             propGroup: {

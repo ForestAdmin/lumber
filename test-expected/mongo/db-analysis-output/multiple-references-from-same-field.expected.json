@@ -18,7 +18,7 @@
     "fields": [
       {
         "name": "author",
-        "type": "mongoose.Schema.Types.ObjectId"
+        "type": "Mongoose.Schema.Types.ObjectId"
       },
       {
         "name": "refersTo",

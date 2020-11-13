@@ -62,7 +62,7 @@ function mapCollection() {
 
   for (var key in this) {
     if (this[key] instanceof ObjectId && key !== '_id') {
-      emit(key, 'mongoose.Schema.Types.ObjectId');
+      emit(key, 'Mongoose.Schema.Types.ObjectId');
     } else if (this[key] instanceof Date) {
       emit(key, 'Date');
     } else if (typeof this[key] === 'boolean') {
@@ -73,7 +73,7 @@ function mapCollection() {
       emit(key, 'Number');
     } else if (typeof this[key] === 'object') {
       if (Array.isArray(this[key]) && allItemsAreObjectIDs(this[key])) {
-        emit(key, '[mongoose.Schema.Types.ObjectId]');
+        emit(key, '[Mongoose.Schema.Types.ObjectId]');
       } else if (key !== '_id') {
         var analysis = getMongooseSchema(this[key]);
         if (analysis) {
