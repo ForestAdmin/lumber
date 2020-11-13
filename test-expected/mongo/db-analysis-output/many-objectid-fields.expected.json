@@ -4,12 +4,12 @@
       {
         "name": "author",
         "ref": "persons",
-        "type": "mongoose.Schema.Types.ObjectId"
+        "type": "Mongoose.Schema.Types.ObjectId"
       },
       {
         "name": "bestActor",
         "ref": "persons",
-        "type": "mongoose.Schema.Types.ObjectId"
+        "type": "Mongoose.Schema.Types.ObjectId"
       },
       {
         "name": "title",
@@ -29,12 +29,12 @@
       {
         "name": "cousin",
         "ref": "persons",
-        "type": "mongoose.Schema.Types.ObjectId"
+        "type": "Mongoose.Schema.Types.ObjectId"
       },
       {
         "name": "dad",
         "ref": "persons",
-        "type": "mongoose.Schema.Types.ObjectId"
+        "type": "Mongoose.Schema.Types.ObjectId"
       },
       {
         "name": "name",
@@ -43,12 +43,12 @@
       {
         "name": "preferredFilm",
         "ref": "films",
-        "type": "mongoose.Schema.Types.ObjectId"
+        "type": "Mongoose.Schema.Types.ObjectId"
       },
       {
         "name": "son",
         "ref": "persons",
-        "type": "mongoose.Schema.Types.ObjectId"
+        "type": "Mongoose.Schema.Types.ObjectId"
       }
     ],
     "options": {

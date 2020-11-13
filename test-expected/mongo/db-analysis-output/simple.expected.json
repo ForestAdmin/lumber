@@ -4,7 +4,7 @@
       {
         "name": "author",
         "ref": "persons",
-        "type": "mongoose.Schema.Types.ObjectId"
+        "type": "Mongoose.Schema.Types.ObjectId"
       },
       {
         "name": "title",

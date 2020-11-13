@@ -5,8 +5,8 @@
 // Learn more here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
 module.exports = (mongoose, Mongoose) => {
   const schema = Mongoose.Schema({
-    'actors': { type: [mongoose.Schema.Types.ObjectId], ref: 'persons' },
-    'author': { type: mongoose.Schema.Types.ObjectId, ref: 'persons' },
+    'actors': { type: [Mongoose.Schema.Types.ObjectId], ref: 'persons' },
+    'author': { type: Mongoose.Schema.Types.ObjectId, ref: 'persons' },
     'title': String,
   }, {
     timestamps: false,

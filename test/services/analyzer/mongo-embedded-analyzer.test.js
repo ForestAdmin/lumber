@@ -14,7 +14,7 @@ const {
   mergeAnalyzedSchemas,
 } = require('../../../services/analyzer/mongo-embedded-analyzer');
 
-const MONGOOSE_SCHEMA_TYPE_OBJECTID = 'mongoose.Schema.Types.ObjectId';
+const MONGOOSE_SCHEMA_TYPE_OBJECTID = 'Mongoose.Schema.Types.ObjectId';
 
 describe('services > Mongo Embedded Analyser', () => {
   describe('analysing', () => {

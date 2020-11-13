@@ -9,7 +9,7 @@
         "name": "propArrayOfObjects",
         "type": [
           {
-            "_id": "mongoose.Schema.Types.ObjectId",
+            "_id": "Mongoose.Schema.Types.ObjectId",
             "sampleValue": "String"
           }
         ]
