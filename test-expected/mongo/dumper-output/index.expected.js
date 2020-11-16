@@ -10,7 +10,7 @@ const databasesConfiguration = [{
   }
 }];
 
-const modelsByDatabase = {};
+const connections = [];
 const db = {};
 
 databasesConfiguration.forEach((databaseInfo) => {
@@ -20,8 +20,8 @@ databasesConfiguration.forEach((databaseInfo) => {
   };
 
   const connection = Mongoose.createConnection(databaseInfo.connection.url, databaseOptions);
+  connections.push(connection);
 
-  modelsByDatabase[databaseInfo.name] = connection;
   const modelsDir = databaseInfo.modelsDir || databaseInfo.name;
   fs
     .readdirSync(path.join(__dirname, modelsDir))
@@ -36,7 +36,7 @@ databasesConfiguration.forEach((databaseInfo) => {
     });
 });
 
-db.mongoose = modelsByDatabase;
-db.Mongoose = Mongoose;
+db.objectMapping = Mongoose;
+db.connections = connections;
 
 module.exports = db;

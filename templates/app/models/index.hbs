@@ -14,7 +14,7 @@ const databasesConfiguration = [{
   }
 }];
 
-const modelsByDatabase = {};
+const connections = [];
 const db = {};
 
 databasesConfiguration.forEach((databaseInfo) => {
@@ -60,8 +60,8 @@ databasesConfiguration.forEach((databaseInfo) => {
   {{else}}
   const connection = new Sequelize(databaseInfo.connection.url, databaseOptions);
   {{/if}}
+  connections.push(connection);
 
-  modelsByDatabase[databaseInfo.name] = connection;
   const modelsDir = databaseInfo.modelsDir || databaseInfo.name;
   fs
     .readdirSync(path.join(__dirname, modelsDir))
@@ -81,11 +81,10 @@ databasesConfiguration.forEach((databaseInfo) => {
 });
 
 {{#if isMongoDB}}
-db.mongoose = modelsByDatabase;
-db.Mongoose = Mongoose;
+db.objectMapping = Mongoose;
 {{else}}
-db.sequelize = modelsByDatabase;
-db.Sequelize = Sequelize;
+db.objectMapping = Sequelize;
 {{/if}}
+db.connections = connections;
 
 module.exports = db;
