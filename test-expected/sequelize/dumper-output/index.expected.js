@@ -10,7 +10,7 @@ const databasesConfiguration = [{
   }
 }];
 
-const connections = [];
+const connections = {};
 const db = {};
 
 databasesConfiguration.forEach((databaseInfo) => {
@@ -29,7 +29,7 @@ databasesConfiguration.forEach((databaseInfo) => {
   }
 
   const connection = new Sequelize(databaseInfo.connection.url, databaseOptions);
-  connections.push(connection);
+  connections[databaseInfo.name] = connection;
 
   const modelsDir = databaseInfo.modelsDir || databaseInfo.name;
   fs
