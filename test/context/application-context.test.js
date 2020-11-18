@@ -72,6 +72,8 @@ describe('context > ApplicationContext', () => {
   it('should apply code via `with` method', () => {
     expect.assertions(1);
     const TestClass = function () {
+      this.calledMethod = () => {};
+
       jest.spyOn(this, 'calledMethod').mockImplementation();
 
       this.testMethod = () => {
