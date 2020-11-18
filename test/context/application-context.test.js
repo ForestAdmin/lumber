@@ -90,4 +90,30 @@ describe('context > ApplicationContext', () => {
 
     expect(testClass.calledMethod).toHaveBeenCalledWith();
   });
+
+  describe('addValue', () => {
+    it('should add the value to the context', () => {
+      expect.assertions(1);
+
+      const context = new ApplicationContext();
+      context.init((givenContext) => givenContext
+        .addValue('theValue', 42));
+
+      expect(context.inject().theValue).toBe(42);
+    });
+  });
+
+  describe('addFunction', () => {
+    it('should add the function to the context', () => {
+      expect.assertions(1);
+
+      function theFunction() {}
+
+      const context = new ApplicationContext();
+      context.init((givenContext) => givenContext
+        .addFunction('theFunction', theFunction));
+
+      expect(context.inject().theFunction).toBe(theFunction);
+    });
+  });
 });
