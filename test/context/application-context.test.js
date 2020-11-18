@@ -1,5 +1,5 @@
-// eslint-disable-next-line max-classes-per-file
-const ApplicationContext = require('../../src/context/application-context');
+/* eslint-disable max-classes-per-file */
+const ApplicationContext = require('../../context/application-context');
 
 describe('context > ApplicationContext', () => {
   it('should call the init function with itself', async () => {
@@ -71,12 +71,12 @@ describe('context > ApplicationContext', () => {
 
   it('should apply code via `with` method', () => {
     expect.assertions(1);
-    const TestClass = class {
-      calledMethod = jest.fn();
+    const TestClass = function () {
+      jest.spyOn(this, 'calledMethod').mockImplementation();
 
-      testMethod() {
+      this.testMethod = () => {
         this.calledMethod();
-      }
+      };
     };
 
     const context = new ApplicationContext();

@@ -2,9 +2,11 @@
  * @template TContext
  */
 class ApplicationContext {
-  /** @private @type {TContext} */
-  // @ts-ignore
-  context = {}
+  constructor() {
+    /** @type {TContext} */
+    // @ts-ignore
+    this.context = {};
+  }
 
   /**
    * @static @private
