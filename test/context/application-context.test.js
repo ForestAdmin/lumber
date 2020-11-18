@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file */
+// eslint-disable-next-line max-classes-per-file
 const ApplicationContext = require('../../context/application-context');
 
 describe('context > ApplicationContext', () => {
