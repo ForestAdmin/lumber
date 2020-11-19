@@ -33,6 +33,7 @@ jobs:
       script: skip
       deploy:
         provider: script
+        skip_cleanup: true
         on:
           branch: master
         script: yarn && npx semantic-release
