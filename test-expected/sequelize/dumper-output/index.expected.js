@@ -44,9 +44,9 @@ databasesConfiguration.forEach((databaseInfo) => {
       }
     });
 
-  Object.keys(models[databaseInfo.name]).forEach((modelName) => {
-    if ('associate' in models[databaseInfo.name][modelName]) {
-      models[databaseInfo.name][modelName].associate(sequelize[databaseInfo.name].models);
+  Object.keys(db).forEach((modelName) => {
+    if ('associate' in db[modelName]) {
+      db[modelName].associate(db);
     }
   });
 });
