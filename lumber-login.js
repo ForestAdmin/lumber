@@ -3,6 +3,12 @@ const inquirer = require('inquirer');
 const logger = require('./services/logger');
 const Authenticator = require('./services/authenticator');
 const { EMAIL_REGEX } = require('./utils/regexs');
+const context = require('./context');
+const initContext = require('./context/init');
+
+initContext(context);
+
+const { oidcAuthenticator, oidcErrorHandler } = context.inject();
 
 program
   .description('Log into Forest Admin API')
@@ -13,21 +19,32 @@ program
 
 (async () => {
   const auth = new Authenticator();
-  let { email } = program;
 
-  if (!email) {
-    ({ email } = await inquirer.prompt([{
-      type: 'input',
-      name: 'email',
-      message: 'What\'s your email address?',
-      validate: (input) => {
-        if (EMAIL_REGEX.test(input)) { return true; }
-        return input ? 'Invalid email' : 'Please enter your email address.';
-      },
-    }]));
+  let { email, token } = program;
+  const { password } = program;
+
+  if (!token && !password) {
+    try {
+      token = await oidcAuthenticator.authenticate();
+    } catch (e) {
+      return oidcErrorHandler.handle(e);
+    }
+  } else {
+    if (!email) {
+      ({ email } = await inquirer.prompt([{
+        type: 'input',
+        name: 'email',
+        message: 'What\'s your email address?',
+        validate: (input) => {
+          if (EMAIL_REGEX.test(input)) { return true; }
+          return input ? 'Invalid email' : 'Please enter your email address.';
+        },
+      }]));
+    }
+
+    token = await auth.loginWithEmailOrTokenArgv({ ...program, email });
   }
 
-  const token = await auth.loginWithEmailOrTokenArgv({ ...program, email });
   auth.saveToken(token);
 
   logger.success('Login successful');
