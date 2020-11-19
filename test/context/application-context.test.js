@@ -71,7 +71,7 @@ describe('context > ApplicationContext', () => {
 
   it('should apply code via `with` method', () => {
     expect.assertions(1);
-    const TestClass = function () {
+    function TestClass() {
       this.calledMethod = () => {};
 
       jest.spyOn(this, 'calledMethod').mockImplementation();
@@ -79,7 +79,7 @@ describe('context > ApplicationContext', () => {
       this.testMethod = () => {
         this.calledMethod();
       };
-    };
+    }
 
     const context = new ApplicationContext();
     context.init((givenContext) => givenContext

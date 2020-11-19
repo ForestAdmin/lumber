@@ -27,7 +27,8 @@ program
     try {
       token = await oidcAuthenticator.authenticate();
     } catch (e) {
-      return oidcErrorHandler.handle(e);
+      await oidcErrorHandler.handle(e);
+      return;
     }
   } else {
     if (!email) {

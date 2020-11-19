@@ -7,6 +7,9 @@ describe('services > Oidc > Authenticator', () => {
       const flow = {
         poll: jest.fn(),
         expired: jest.fn(),
+        verification_uri: 'https://verification.forest',
+        user_code: 'ABC',
+        expires_in: 100,
       };
 
       const client = {
@@ -54,9 +57,6 @@ describe('services > Oidc > Authenticator', () => {
       const tokenSet = {
         access_token: 'THE-TOKEN',
       };
-
-      flow.verification_uri = 'https://verification.forest';
-      flow.user_code = 'ABC';
 
       openIdClient.Issuer.discover.mockReturnValue(Promise.resolve(issuer));
       issuer.Client.register.mockReturnValue(Promise.resolve(client));
@@ -156,8 +156,6 @@ describe('services > Oidc > Authenticator', () => {
       openIdClient.Issuer.discover.mockReturnValue(Promise.resolve(issuer));
       issuer.Client.register.mockReturnValue(Promise.resolve(client));
       client.deviceAuthorization.mockReturnValue(Promise.resolve(flow));
-      flow.verification_uri = 'https://verification.forest';
-      flow.user_code = 'ABC';
       flow.poll.mockReturnValue(Promise.reject(error));
       flow.expired.mockReturnValue(false);
 
@@ -183,9 +181,6 @@ describe('services > Oidc > Authenticator', () => {
       openIdClient.Issuer.discover.mockReturnValue(Promise.resolve(issuer));
       issuer.Client.register.mockReturnValue(Promise.resolve(client));
       client.deviceAuthorization.mockReturnValue(Promise.resolve(flow));
-      flow.verification_uri = 'https://verification.forest';
-      flow.user_code = 'ABC';
-      flow.expires_in = 100;
 
       let reject;
       const flowPromise = new Promise((resolve, internalReject) => {
