@@ -43,12 +43,12 @@ databasesConfiguration.forEach((databaseInfo) => {
         console.error('Model creation error: ' + error);
       }
     });
+});
 
-  Object.keys(db).forEach((modelName) => {
-    if ('associate' in db[modelName]) {
-      db[modelName].associate(db);
-    }
-  });
+Object.keys(db).forEach((modelName) => {
+  if ('associate' in db[modelName]) {
+    db[modelName].associate(db);
+  }
 });
 
 db.objectMapping = Sequelize;
