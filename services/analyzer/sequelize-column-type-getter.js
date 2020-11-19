@@ -123,6 +123,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       case 'MONEY': // MSSQL type
         return 'DOUBLE';
       case 'DATE':
+        return isDialect(DIALECT_POSTGRES) || isDialect(DIALECT_MYSQL) ? 'DATEONLY' : 'DATE';
       case 'DATETIME':
       case typeStartsWith(type, 'TIMESTAMP'):
         return 'DATE';
