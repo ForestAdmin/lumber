@@ -78,15 +78,15 @@ databasesConfiguration.forEach((databaseInfo) => {
         console.error('Model creation error: ' + error);
       }
     });
-  {{#unless isMongoDB}}
-
-  Object.keys(db).forEach((modelName) => {
-    if ('associate' in db[modelName]) {
-      db[modelName].associate(db);
-    }
-  });
-  {{/unless}}
 });
+{{#unless isMongoDB}}
+
+Object.keys(db).forEach((modelName) => {
+  if ('associate' in db[modelName]) {
+    db[modelName].associate(db);
+  }
+});
+{{/unless}}
 
 {{#if isMongoDB}}
 db.objectMapping = Mongoose;
