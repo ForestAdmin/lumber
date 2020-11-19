@@ -23,7 +23,7 @@ databasesConfiguration.forEach((databaseInfo) => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     {{else}}
-    logging: process.env.NODE_ENV === 'development' || !process.env.NODE_ENV ? console.log : false,
+    logging: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? console.log : false,
     pool: { maxConnections: 10, minConnections: 1 },
     dialectOptions: {},
     {{/if}}
@@ -71,13 +71,21 @@ databasesConfiguration.forEach((databaseInfo) => {
         {{#if isMongoDB}}
         const model = require(path.join(__dirname, modelsDir, file))(connection, Mongoose);
         {{else}}
-        const model = connection.import(path.join(__dirname, file));
+        const model = connection.import(path.join(__dirname, modelsDir, file));
         {{/if}}
         db[model.name] = model;
       } catch (error) {
         console.error('Model creation error: ' + error);
       }
     });
+  {{#unless isMongoDB}}
+
+  Object.keys(models[databaseInfo.name]).forEach((modelName) => {
+    if ('associate' in models[databaseInfo.name][modelName]) {
+      models[databaseInfo.name][modelName].associate(sequelize[databaseInfo.name].models);
+    }
+  });
+  {{/unless}}
 });
 
 {{#if isMongoDB}}
