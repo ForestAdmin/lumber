@@ -15,7 +15,7 @@ const db = {};
 
 databasesConfiguration.forEach((databaseInfo) => {
   const databaseOptions = {
-    logging: process.env.NODE_ENV === 'development' || !process.env.NODE_ENV ? console.log : false,
+    logging: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? console.log : false,
     pool: { maxConnections: 10, minConnections: 1 },
     dialectOptions: {},
   };
@@ -37,12 +37,18 @@ databasesConfiguration.forEach((databaseInfo) => {
     .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
     .forEach((file) => {
       try {
-        const model = connection.import(path.join(__dirname, file));
+        const model = connection.import(path.join(__dirname, modelsDir, file));
         db[model.name] = model;
       } catch (error) {
         console.error('Model creation error: ' + error);
       }
     });
+
+  Object.keys(models[databaseInfo.name]).forEach((modelName) => {
+    if ('associate' in models[databaseInfo.name][modelName]) {
+      models[databaseInfo.name][modelName].associate(sequelize[databaseInfo.name].models);
+    }
+  });
 });
 
 db.objectMapping = Sequelize;
