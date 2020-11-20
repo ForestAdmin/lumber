@@ -4,7 +4,7 @@ CREATE TABLE [dbo].reviews (
   user_id INT NOT NULL,
   review_content VARCHAR(255),
   rating INT,
-  published_date DATE,
+  published_date DATETIME,
   CONSTRAINT reviews_pkey PRIMARY KEY (id),
   CONSTRAINT reviews_book_id_fkey FOREIGN KEY (book_id) REFERENCES [dbo].books(id) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT reviews_user_id_fkey FOREIGN KEY (user_id) REFERENCES [dbo].users(id) ON DELETE CASCADE ON UPDATE NO ACTION,
