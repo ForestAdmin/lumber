@@ -56,21 +56,37 @@ describe('services > dumper > MongoDB', () => {
     const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/hasmany.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
-    // cleanOutput();
+    cleanOutput();
   });
 
   describe('handling /models/index.js file', () => {
     it('should not force type casting', async () => {
       expect.assertions(1);
+      const dumper = await getDumper();
+      await dumper.dump(simpleModel);
       const indexGeneratedFile = fs.readFileSync('./test-output/mongo/models/index.js', 'utf-8');
+
       expect(indexGeneratedFile).toStrictEqual(expect.not.stringMatching('databaseOptions.dialectOptions.typeCast'));
-      // cleanOutput();
+      cleanOutput();
     });
 
     it('should generate a model/index.js file', async () => {
       expect.assertions(1);
+      const dumper = await getDumper();
+      await dumper.dump(simpleModel);
       const indexGeneratedFile = fs.readFileSync('./test-output/mongo/models/index.js', 'utf-8');
       const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/index.expected.js', 'utf-8');
+
+      expect(indexGeneratedFile).toStrictEqual(expectedFile);
+      cleanOutput();
+    });
+
+    it('should generate a databases.config.js file', async () => {
+      expect.assertions(1);
+      const dumper = await getDumper();
+      await dumper.dump(simpleModel);
+      const indexGeneratedFile = fs.readFileSync('./test-output/mongo/databases.config.js', 'utf-8');
+      const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/databases.config.expected.js', 'utf-8');
 
       expect(indexGeneratedFile).toStrictEqual(expectedFile);
       cleanOutput();

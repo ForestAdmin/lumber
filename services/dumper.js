@@ -298,6 +298,18 @@ function Dumper(config) {
       target: 'models/index.js',
       context: {
         isMongoDB: dbDialect === 'mongodb',
+      },
+    });
+  }
+
+  function writeDatabasesConfig() {
+    const { dbDialect } = config;
+
+    copyHandleBarsTemplate({
+      source: 'app/databases.config.hbs',
+      target: 'databases.config.js',
+      context: {
+        isMongoDB: dbDialect === 'mongodb',
         isMSSQL: dbDialect === 'mssql',
         isMySQL: dbDialect === 'mysql',
       },
@@ -382,6 +394,7 @@ function Dumper(config) {
     copyTemplate('views/index.hbs', `${path}/views/index.html`);
     copyTemplate('dockerignore.hbs', `${path}/.dockerignore`);
     writeDotEnv();
+    writeDatabasesConfig();
     copyTemplate('gitignore.hbs', `${path}/.gitignore`);
     writeAppJs();
     writeDockerCompose();

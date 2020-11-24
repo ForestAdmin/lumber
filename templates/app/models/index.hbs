@@ -6,59 +6,16 @@ const Mongoose = require('mongoose');
 const Sequelize = require('sequelize');
 {{/if}}
 
-const databasesConfiguration = [{
-  name: 'default',
-  modelsDir: '.',
-  connection: {
-    url: process.env.DATABASE_URL
-  }
-}];
+const databasesConfiguration = require('../databases.config');
 
 const connections = {};
 const db = {};
 
 databasesConfiguration.forEach((databaseInfo) => {
-  const databaseOptions = {
-    {{#if isMongoDB}}
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    {{else}}
-    logging: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? console.log : false,
-    pool: { maxConnections: 10, minConnections: 1 },
-    dialectOptions: {},
-    {{/if}}
-  };
-  {{#if isMySQL}}
-  databaseOptions.dialectOptions.typeCast = (field, useDefaultTypeCasting) => {
-    if ((field.type === "BIT") && (field.length === 1)) {
-      const bytes = field.buffer();
-      return bytes ? bytes[0] === 1 : bytes;
-    }
-
-    return useDefaultTypeCasting();
-  };
-  {{/if}}
-  {{#unless isMongoDB}}
-  if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
-    {{#if isMySQL}}
-    databaseOptions.dialectOptions.ssl = { rejectUnauthorized: true };
-    {{else if isMSSQL}}
-    databaseOptions.dialectOptions.options = { encrypt: true };
-    {{else}}
-    const rejectUnauthorized = process.env.DATABASE_REJECT_UNAUTHORIZED;
-    if (rejectUnauthorized && (JSON.parse(rejectUnauthorized.toLowerCase()) === false)) {
-      databaseOptions.dialectOptions.ssl = { rejectUnauthorized: false };
-    } else {
-      databaseOptions.dialectOptions.ssl = true;
-    }
-{{/if}}
-  }
-  {{/unless}}
-
   {{#if isMongoDB}}
-  const connection = Mongoose.createConnection(databaseInfo.connection.url, databaseOptions);
+  const connection = Mongoose.createConnection(databaseInfo.connection.url, databaseInfo.connection.options);
   {{else}}
-  const connection = new Sequelize(databaseInfo.connection.url, databaseOptions);
+  const connection = new Sequelize(databaseInfo.connection.url, databaseInfo.connection.options);
   {{/if}}
   connections[databaseInfo.name] = connection;
 
@@ -75,7 +32,7 @@ databasesConfiguration.forEach((databaseInfo) => {
         {{/if}}
         db[model.name] = model;
       } catch (error) {
-        console.error('Model creation error: ' + error);
+        console.error(`Model creation error: ${error}`);
       }
     });
 });
