@@ -29,7 +29,7 @@ describe('services > dumper > SQL', () => {
       await dumper.dump({});
     }
 
-    it('should force type casting for boolean in /models/index.js file', async () => {
+    it('should force type casting for boolean in databases.config.js file', async () => {
       expect.assertions(1);
       await dump();
       const indexGeneratedFile = fs.readFileSync('./test-output/mysql/databases.config.js', 'utf-8');
@@ -55,7 +55,7 @@ describe('services > dumper > SQL', () => {
       await dumper.dump({});
     }
 
-    it('should not force type casting in /models/index.js file', async () => {
+    it('should not force type casting in databases.config.js file', async () => {
       expect.assertions(1);
       await dump();
       const indexGeneratedFile = fs.readFileSync('./test-output/mssql/databases.config.js', 'utf-8');
@@ -89,7 +89,7 @@ describe('services > dumper > SQL', () => {
       expect(renderingsGeneratedFile).toStrictEqual(renderingsExpectedFile);
     });
 
-    it('should not force type casting in /models/index.js file', () => {
+    it('should not force type casting in databases.config.js file', () => {
       expect.assertions(1);
       const indexGeneratedFile = fs.readFileSync('./test-output/postgres/databases.config.js', 'utf-8');
 
