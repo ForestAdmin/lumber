@@ -1,3 +1,5 @@
+const path = require('path');
+
 const databaseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -5,7 +7,7 @@ const databaseOptions = {
 
 module.exports = [{
   name: 'default',
-  modelsDir: '../models',
+  modelsDir: path.resolve(__dirname, '../models'),
   connection: {
     url: process.env.DATABASE_URL,
     options: { ...databaseOptions },

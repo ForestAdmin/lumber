@@ -1,3 +1,5 @@
+const path = require('path');
+
 const databaseOptions = {
   logging: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? console.log : false,
   pool: { maxConnections: 10, minConnections: 1 },
@@ -15,7 +17,7 @@ if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase(
 
 module.exports = [{
   name: 'default',
-  modelsDir: '../models',
+  modelsDir: path.resolve(__dirname, '../models'),
   connection: {
     url: process.env.DATABASE_URL,
     options: { ...databaseOptions },

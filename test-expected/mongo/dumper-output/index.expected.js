@@ -13,11 +13,11 @@ databasesConfiguration.forEach((databaseInfo) => {
 
   const modelsDir = databaseInfo.modelsDir || path.join(__dirname, databaseInfo.name);
   fs
-    .readdirSync(path.resolve(modelsDir))
+    .readdirSync(modelsDir)
     .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
     .forEach((file) => {
       try {
-        const model = require(path.resolve(modelsDir, file))(connection, Mongoose);
+        const model = require(path.join(modelsDir, file))(connection, Mongoose);
         db[model.name] = model;
       } catch (error) {
         console.error(`Model creation error: ${error}`);

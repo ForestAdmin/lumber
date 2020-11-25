@@ -21,14 +21,14 @@ databasesConfiguration.forEach((databaseInfo) => {
 
   const modelsDir = databaseInfo.modelsDir || path.join(__dirname, databaseInfo.name);
   fs
-    .readdirSync(path.resolve(modelsDir))
+    .readdirSync(modelsDir)
     .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
     .forEach((file) => {
       try {
         {{#if isMongoDB}}
-        const model = require(path.resolve(modelsDir, file))(connection, Mongoose);
+        const model = require(path.join(modelsDir, file))(connection, Mongoose);
         {{else}}
-        const model = connection.import(path.resolve(modelsDir, file));
+        const model = connection.import(path.join(modelsDir, file));
         {{/if}}
         db[model.name] = model;
       } catch (error) {
