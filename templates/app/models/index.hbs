@@ -19,16 +19,16 @@ databasesConfiguration.forEach((databaseInfo) => {
   {{/if}}
   connections[databaseInfo.name] = connection;
 
-  const modelsDir = databaseInfo.modelsDir || databaseInfo.name;
+  const modelsDir = databaseInfo.modelsDir || path.join(__dirname, databaseInfo.name);
   fs
-    .readdirSync(path.join(__dirname, modelsDir))
+    .readdirSync(path.resolve(modelsDir))
     .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
     .forEach((file) => {
       try {
         {{#if isMongoDB}}
-        const model = require(path.join(__dirname, modelsDir, file))(connection, Mongoose);
+        const model = require(path.resolve(modelsDir, file))(connection, Mongoose);
         {{else}}
-        const model = connection.import(path.join(__dirname, modelsDir, file));
+        const model = connection.import(path.resolve(modelsDir, file));
         {{/if}}
         db[model.name] = model;
       } catch (error) {

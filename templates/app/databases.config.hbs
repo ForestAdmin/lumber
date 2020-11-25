@@ -39,7 +39,7 @@ if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase(
 
 module.exports = [{
   name: 'default',
-  modelsDir: '.',
+  modelsDir: './models',
   connection: {
     url: process.env.DATABASE_URL,
     options: { ...databaseOptions },
