@@ -6,8 +6,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const jwt = require('express-jwt');
 const morgan = require('morgan');
-const { errorHandler, logger } = require('forest-express');
 const {
+  errorHandler,
   ensureAuthenticated,
   PUBLIC_ROUTES,
 } = require('forest-express-{{#if isMongoDB }}mongoose{{else}}sequelize{{/if}}');
@@ -65,6 +65,6 @@ requireAll({
   resolve: (Module) => Module(app),
 });
 
-app.use(errorHandler({ logger }));
+app.use(errorHandler());
 
 module.exports = app;
