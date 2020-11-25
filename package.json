@@ -35,7 +35,7 @@
     "lodash": "4.17.19",
     "mkdirp": "^0.5.1",
     "mongodb": "3.3.0",
-    "mysql2": "2.1.0",
+    "mysql2": "2.2.5",
     "pg": "8.2.1",
     "pluralize": "^8.0.0",
     "saslprep": "1.0.3",
