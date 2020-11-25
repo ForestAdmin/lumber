@@ -5,7 +5,7 @@ const databaseOptions = {
 
 module.exports = [{
   name: 'default',
-  modelsDir: './models',
+  modelsDir: '../models',
   connection: {
     url: process.env.DATABASE_URL,
     options: { ...databaseOptions },

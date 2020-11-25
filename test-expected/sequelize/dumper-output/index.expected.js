@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 
-const databasesConfiguration = require('../databases.config');
+const databasesConfiguration = require('../config/databases');
 
 const connections = {};
 const db = {};

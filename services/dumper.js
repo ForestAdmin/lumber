@@ -35,6 +35,7 @@ function Dumper(config) {
   const viewPath = `${path}/views`;
   const modelsPath = `${path}/models`;
   const middlewaresPath = `${path}/middlewares`;
+  const configPath = `${path}/config`;
 
   function isLinuxBasedOs() {
     return os.platform() === 'linux';
@@ -306,8 +307,8 @@ function Dumper(config) {
     const { dbDialect } = config;
 
     copyHandleBarsTemplate({
-      source: 'app/databases.config.hbs',
-      target: 'databases.config.js',
+      source: 'app/config/databases.hbs',
+      target: 'config/databases.js',
       context: {
         isMongoDB: dbDialect === 'mongodb',
         isMSSQL: dbDialect === 'mssql',
@@ -358,6 +359,7 @@ function Dumper(config) {
       mkdirp(publicPath),
       mkdirp(middlewaresPath),
       mkdirp(modelsPath),
+      mkdirp(configPath),
     ];
 
     await P.all(directories);

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const Mongoose = require('mongoose');
 
-const databasesConfiguration = require('../databases.config');
+const databasesConfiguration = require('../config/databases');
 
 const connections = {};
 const db = {};
