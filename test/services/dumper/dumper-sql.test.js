@@ -35,10 +35,10 @@ describe('services > dumper > SQL', () => {
       await dumper.dump({}, config);
     }
 
-    it('should force type casting for boolean in /models/index.js file', async () => {
+    it('should force type casting for boolean in config/databases.js file', async () => {
       expect.assertions(1);
       await dump();
-      const indexGeneratedFile = fs.readFileSync('./test-output/mysql/models/index.js', 'utf-8');
+      const indexGeneratedFile = fs.readFileSync('./test-output/mysql/config/databases.js', 'utf-8');
 
       expect(indexGeneratedFile).toStrictEqual(expect.stringMatching(TYPE_CAST));
       cleanOutput();
@@ -61,10 +61,10 @@ describe('services > dumper > SQL', () => {
       await dumper.dump({}, config);
     }
 
-    it('should not force type casting in /models/index.js file', async () => {
+    it('should not force type casting in config/databases.js file', async () => {
       expect.assertions(1);
       await dump();
-      const indexGeneratedFile = fs.readFileSync('./test-output/mssql/models/index.js', 'utf-8');
+      const indexGeneratedFile = fs.readFileSync('./test-output/mssql/config/databases.js', 'utf-8');
 
       expect(indexGeneratedFile).toStrictEqual(expect.not.stringMatching(TYPE_CAST));
       cleanOutput();
@@ -95,9 +95,9 @@ describe('services > dumper > SQL', () => {
       expect(renderingsGeneratedFile).toStrictEqual(renderingsExpectedFile);
     });
 
-    it('should not force type casting in /models/index.js file', () => {
+    it('should not force type casting in config/databases.js file', () => {
       expect.assertions(1);
-      const indexGeneratedFile = fs.readFileSync('./test-output/postgres/models/index.js', 'utf-8');
+      const indexGeneratedFile = fs.readFileSync('./test-output/postgres/config/databases.js', 'utf-8');
 
       expect(indexGeneratedFile).toStrictEqual(expect.not.stringMatching(TYPE_CAST));
       cleanOutput();

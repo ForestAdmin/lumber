@@ -313,6 +313,19 @@ class Dumper {
       target: 'models/index.js',
       context: {
         isMongoDB: dbDialect === 'mongodb',
+      },
+    });
+  }
+
+  writeDatabasesConfig(projectPath, config) {
+    const { dbDialect } = config;
+
+    this.copyHandleBarsTemplate({
+      projectPath,
+      source: 'app/config/databases.hbs',
+      target: 'config/databases.js',
+      context: {
+        isMongoDB: dbDialect === 'mongodb',
         isMSSQL: dbDialect === 'mssql',
         isMySQL: dbDialect === 'mysql',
       },
@@ -361,6 +374,7 @@ class Dumper {
     const directories = [
       this.mkdirp(projectPath),
       this.mkdirp(`${projectPath}/routes`),
+      this.mkdirp(`${projectPath}/config`),
       this.mkdirp(`${projectPath}/forest`),
       this.mkdirp(`${projectPath}/public`),
       this.mkdirp(`${projectPath}/views`),
@@ -402,6 +416,7 @@ class Dumper {
     this.copyTemplate(projectPath, 'views/index.hbs', 'views/index.html');
     this.copyTemplate(projectPath, 'dockerignore.hbs', '.dockerignore');
     this.writeDotEnv(projectPath, config);
+    this.writeDatabasesConfig(projectPath, config);
     this.copyTemplate(projectPath, 'gitignore.hbs', '.gitignore');
     this.writeAppJs(projectPath, config);
     this.writeDockerCompose(projectPath, config);

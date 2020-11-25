@@ -2,45 +2,25 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 
-const databasesConfiguration = [{
-  name: 'default',
-  modelsDir: '.',
-  connection: {
-    url: process.env.DATABASE_URL
-  }
-}];
+const databasesConfiguration = require('../config/databases');
 
 const connections = {};
 const db = {};
 
 databasesConfiguration.forEach((databaseInfo) => {
-  const databaseOptions = {
-    logging: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? console.log : false,
-    pool: { maxConnections: 10, minConnections: 1 },
-    dialectOptions: {},
-  };
-  if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
-    const rejectUnauthorized = process.env.DATABASE_REJECT_UNAUTHORIZED;
-    if (rejectUnauthorized && (JSON.parse(rejectUnauthorized.toLowerCase()) === false)) {
-      databaseOptions.dialectOptions.ssl = { rejectUnauthorized: false };
-    } else {
-      databaseOptions.dialectOptions.ssl = true;
-    }
-  }
-
-  const connection = new Sequelize(databaseInfo.connection.url, databaseOptions);
+  const connection = new Sequelize(databaseInfo.connection.url, databaseInfo.connection.options);
   connections[databaseInfo.name] = connection;
 
-  const modelsDir = databaseInfo.modelsDir || databaseInfo.name;
+  const modelsDir = databaseInfo.modelsDir || path.join(__dirname, databaseInfo.name);
   fs
-    .readdirSync(path.join(__dirname, modelsDir))
+    .readdirSync(modelsDir)
     .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
     .forEach((file) => {
       try {
-        const model = connection.import(path.join(__dirname, modelsDir, file));
+        const model = connection.import(path.join(modelsDir, file));
         db[model.name] = model;
       } catch (error) {
-        console.error('Model creation error: ' + error);
+        console.error(`Model creation error: ${error}`);
       }
     });
 });

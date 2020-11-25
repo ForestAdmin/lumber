@@ -17,9 +17,10 @@ const context = require('../../../context');
 const initContext = require('../../../context/init');
 
 initContext(context);
+const injectedContext = context.inject();
 
 function getDumper() {
-  return new Dumper(context.inject());
+  return new Dumper(injectedContext);
 }
 
 const CONFIG = {
@@ -62,21 +63,37 @@ describe('services > dumper > MongoDB', () => {
     const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/hasmany.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
-    // cleanOutput();
+    cleanOutput();
   });
 
   describe('handling /models/index.js file', () => {
     it('should not force type casting', async () => {
       expect.assertions(1);
+      const dumper = await getDumper();
+      await dumper.dump(simpleModel, CONFIG);
       const indexGeneratedFile = fs.readFileSync('./test-output/mongo/models/index.js', 'utf-8');
+
       expect(indexGeneratedFile).toStrictEqual(expect.not.stringMatching('databaseOptions.dialectOptions.typeCast'));
-      // cleanOutput();
+      cleanOutput();
     });
 
     it('should generate a model/index.js file', async () => {
       expect.assertions(1);
+      const dumper = await getDumper();
+      await dumper.dump(simpleModel, CONFIG);
       const indexGeneratedFile = fs.readFileSync('./test-output/mongo/models/index.js', 'utf-8');
       const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/index.expected.js', 'utf-8');
+
+      expect(indexGeneratedFile).toStrictEqual(expectedFile);
+      cleanOutput();
+    });
+
+    it('should generate a config/databases.js file', async () => {
+      expect.assertions(1);
+      const dumper = await getDumper();
+      await dumper.dump(simpleModel, CONFIG);
+      const indexGeneratedFile = fs.readFileSync('./test-output/mongo/config/databases.js', 'utf-8');
+      const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/databases.config.expected.js', 'utf-8');
 
       expect(indexGeneratedFile).toStrictEqual(expectedFile);
       cleanOutput();
