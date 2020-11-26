@@ -1,3 +1,10 @@
+## [3.10.2](https://github.com/ForestAdmin/lumber/compare/v3.10.1...v3.10.2) (2020-11-26)
+
+
+### Bug Fixes
+
+* update mysql driver version ([#501](https://github.com/ForestAdmin/lumber/issues/501)) ([bf20a67](https://github.com/ForestAdmin/lumber/commit/bf20a67a263220dc378cd66e08a66045e93d8944))
+
 ## [3.10.1](https://github.com/ForestAdmin/lumber/compare/v3.10.0...v3.10.1) (2020-11-26)
 
 
