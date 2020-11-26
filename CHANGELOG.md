@@ -1,3 +1,10 @@
+## [3.10.1](https://github.com/ForestAdmin/lumber/compare/v3.10.0...v3.10.1) (2020-11-26)
+
+
+### Bug Fixes
+
+* **models:** properly set type for date only fields ([#496](https://github.com/ForestAdmin/lumber/issues/496)) ([09261d1](https://github.com/ForestAdmin/lumber/commit/09261d1cd9d7d3585d4fa32c20ac42a7f9d4ac7a))
+
 # [3.10.0](https://github.com/ForestAdmin/lumber/compare/v3.9.1...v3.10.0) (2020-11-12)
 
 
