@@ -51,6 +51,7 @@
     "@commitlint/travis-cli": "8.3.5",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
+    "@types/jest": "^26.0.15",
     "eslint": "6.7.2",
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-plugin-import": "2.18.2",
