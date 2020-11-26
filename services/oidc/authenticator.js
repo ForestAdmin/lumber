@@ -11,8 +11,10 @@ class OidcAuthenticator {
     this.env = context.env;
     /** @private @readonly */
     this.process = context.process;
+    /** @private @readonly */
+    this.open = context.open;
 
-    ['openIdClient', 'env', 'process'].forEach((name) => {
+    ['openIdClient', 'env', 'process', 'open'].forEach((name) => {
       if (!this[name]) throw new Error(`Missing dependency ${name}`);
     });
   }
@@ -67,8 +69,10 @@ class OidcAuthenticator {
   async waitForAuthentication(flow) {
     const expiresIn = flow.expires_in;
     try {
-      this.process.stdout.write(`Navigate to the url: ${flow.verification_uri}\n`);
-      this.process.stdout.write(`and enter your verification code: ${flow.user_code}\n`);
+      this.process.stdout.write(`Click on "Log in" on the browser tab which opened automatically or open this link: ${flow.verification_uri}\n`);
+      this.process.stdout.write(`Your confirmation code: ${flow.user_code}\n`);
+
+      await this.open(flow.verification_uri_complete);
 
       return await flow.poll();
     } catch (e) {

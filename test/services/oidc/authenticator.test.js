@@ -8,6 +8,7 @@ describe('services > Oidc > Authenticator', () => {
         poll: jest.fn(),
         expired: jest.fn(),
         verification_uri: 'https://verification.forest',
+        verification_uri_complete: 'https://verification.forest?user_code=ABCD',
         user_code: 'ABC',
         expires_in: 100,
       };
@@ -21,6 +22,8 @@ describe('services > Oidc > Authenticator', () => {
           register: jest.fn(),
         },
       };
+
+      const open = jest.fn();
 
       const context = {
         env: {
@@ -36,6 +39,7 @@ describe('services > Oidc > Authenticator', () => {
             discover: jest.fn().mockReturnValue(issuer),
           },
         },
+        open,
       };
 
       const authenticator = new OidcAuthenticator(context);
@@ -49,9 +53,9 @@ describe('services > Oidc > Authenticator', () => {
     }
 
     it('should successfully authenticate the user', async () => {
-      expect.assertions(6);
+      expect.assertions(7);
       const {
-        authenticator, issuer, client, flow, openIdClient, process,
+        authenticator, issuer, client, flow, openIdClient, process, open,
       } = setupTest();
 
       const tokenSet = {
@@ -78,8 +82,9 @@ describe('services > Oidc > Authenticator', () => {
       expect(client.deviceAuthorization).toHaveBeenCalledWith({
         scopes: ['openid', 'email', 'profile'],
       });
-      expect(process.stdout.write).toHaveBeenNthCalledWith(1, 'Navigate to the url: https://verification.forest\n');
-      expect(process.stdout.write).toHaveBeenNthCalledWith(2, 'and enter your verification code: ABC\n');
+      expect(process.stdout.write).toHaveBeenNthCalledWith(1, 'Click on "Log in" on the browser tab which opened automatically or open this link: https://verification.forest\n');
+      expect(process.stdout.write).toHaveBeenNthCalledWith(2, 'Your confirmation code: ABC\n');
+      expect(open).toHaveBeenCalledWith('https://verification.forest?user_code=ABCD');
     });
 
     it('should throw a specific error when the issuer discovery returned an error', async () => {

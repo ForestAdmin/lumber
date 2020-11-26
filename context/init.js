@@ -1,4 +1,5 @@
 const chalk = require('chalk');
+const open = require('open');
 const openIdClient = require('openid-client');
 const logger = require('../services/logger');
 const OidcAuthenticator = require('../services/oidc/authenticator');
@@ -19,6 +20,7 @@ const terminator = require('../utils/terminator');
  * @typedef {{
  *  openIdClient: import('openid-client');
  *  chalk: import('chalk');
+ *  open: import('open');
  * }} Dependencies
  *
  * @typedef {{
@@ -52,6 +54,7 @@ function initEnv(context) {
 function initDependencies(context) {
   context.addInstance('openIdClient', openIdClient);
   context.addInstance('chalk', chalk);
+  context.addInstance('open', open);
 }
 
 /**
