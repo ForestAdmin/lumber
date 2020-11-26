@@ -4,6 +4,6 @@ create table customers (
   description TEXT,
   is_active BIT(1) DEFAULT 1 NOT NULL,
   paying BIT(1) DEFAULT 0 NOT NULL,
-  created_at DATE NOT NULL,
-  updated_at DATE NOT NULL
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL
 );

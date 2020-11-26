@@ -12,7 +12,7 @@
       {
         "name": "fromDate",
         "nameColumn": "from_date",
-        "type": "DATE",
+        "type": "DATEONLY",
         "primaryKey": false,
         "defaultValue": null,
         "isRequired": true
@@ -22,7 +22,7 @@
         "nameColumn": "to_date",
         "defaultValue": null,
         "primaryKey": false,
-        "type": "DATE",
+        "type": "DATEONLY",
         "isRequired": true
       }
     ],

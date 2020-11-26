@@ -2,5 +2,5 @@ CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(25) NOT NULL,
   enabled BIT(1) DEFAULT 1,
-  last_login DATE NOT NULL
+  last_login DATETIME NOT NULL
 );
