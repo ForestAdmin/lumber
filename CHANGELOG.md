@@ -1,3 +1,10 @@
+## [3.10.3](https://github.com/ForestAdmin/lumber/compare/v3.10.2...v3.10.3) (2020-11-27)
+
+
+### Bug Fixes
+
+* remove forest-express dependency in generated package.json ([#500](https://github.com/ForestAdmin/lumber/issues/500)) ([2a64ef8](https://github.com/ForestAdmin/lumber/commit/2a64ef8bc1dd2ac1170301e35fdabc6a79cc105e))
+
 ## [3.10.2](https://github.com/ForestAdmin/lumber/compare/v3.10.1...v3.10.2) (2020-11-26)
 
 
