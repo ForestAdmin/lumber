@@ -109,6 +109,7 @@ function ColumnTypeGetter(databaseConnection, schema, allowWarning = true) {
       case typeStartsWith(type, 'INT'):
       case typeStartsWith(type, 'SMALLINT'):
       case typeStartsWith(type, 'TINYINT'):
+      case typeStartsWith(type, 'MEDIUMINT'):
         return 'INTEGER';
       case typeStartsWith(type, 'BIGINT'):
         return 'BIGINT';
