@@ -1,3 +1,10 @@
+## [3.10.4](https://github.com/ForestAdmin/lumber/compare/v3.10.3...v3.10.4) (2020-12-01)
+
+
+### Bug Fixes
+
+* handle medium integer type ([#506](https://github.com/ForestAdmin/lumber/issues/506)) ([b145dd5](https://github.com/ForestAdmin/lumber/commit/b145dd56eadd1e7131c4ebe8a7a04d342534171c))
+
 ## [3.10.3](https://github.com/ForestAdmin/lumber/compare/v3.10.2...v3.10.3) (2020-11-27)
 
 
