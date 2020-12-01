@@ -30,7 +30,7 @@ function cleanOutput() {
 describe('services > dumper > sequelize', () => {
   it('should generate a simple model file', async () => {
     expect.assertions(1);
-    const dumper = await getDumper();
+    const dumper = getDumper();
     await dumper.dump(simpleModel);
     const generatedFile = fs.readFileSync('./test-output/sequelize/models/customers.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/customers.expected.js', 'utf-8');
@@ -41,7 +41,7 @@ describe('services > dumper > sequelize', () => {
 
   it('should generate a model file with belongsTo associations', async () => {
     expect.assertions(1);
-    const dumper = await getDumper();
+    const dumper = getDumper();
     await dumper.dump(belongsToModel);
     const generatedFile = fs.readFileSync('./test-output/sequelize/models/addresses.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/addresses.expected.js', 'utf-8');
@@ -52,7 +52,7 @@ describe('services > dumper > sequelize', () => {
 
   it('should generate a model file with hasMany, hasOne and belongsToMany', async () => {
     expect.assertions(1);
-    const dumper = await getDumper();
+    const dumper = getDumper();
     await dumper.dump(otherAssociationsModel);
     const generatedFile = fs.readFileSync('./test-output/sequelize/models/users.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/users.expected.js', 'utf-8');
@@ -63,7 +63,7 @@ describe('services > dumper > sequelize', () => {
 
   it('should still generate a model file when reserved word is used', async () => {
     expect.assertions(2);
-    const dumper = await getDumper();
+    const dumper = getDumper();
     await dumper.dump(exportModel);
     const generatedModelFile = fs.readFileSync('./test-output/sequelize/models/export.js', 'utf8');
     const generatedRouteFile = fs.readFileSync('./test-output/sequelize/routes/export.js', 'utf8');
@@ -77,7 +77,7 @@ describe('services > dumper > sequelize', () => {
 
   it('should generate a model with default values', async () => {
     expect.assertions(1);
-    const dumper = await getDumper();
+    const dumper = getDumper();
     await dumper.dump(defaultValuesModel);
     const generatedFile = fs.readFileSync('./test-output/sequelize/models/default-values.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/default-values.expected.js', 'utf-8');
@@ -88,7 +88,7 @@ describe('services > dumper > sequelize', () => {
 
   it('should generate the model index file', async () => {
     expect.assertions(1);
-    const dumper = await getDumper();
+    const dumper = getDumper();
     await dumper.dump(simpleModel);
     const generatedFile = fs.readFileSync('./test-output/sequelize/models/index.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/index.expected.js', 'utf-8');
@@ -105,7 +105,7 @@ describe('services > dumper > sequelize', () => {
       const osStub = sinon.stub(os, 'platform');
       osStub.returns('linux');
 
-      const dumper = await getDumper();
+      const dumper = getDumper();
       await dumper.dump(simpleModel);
 
       osStub.restore();
@@ -124,7 +124,7 @@ describe('services > dumper > sequelize', () => {
       const osStub = sinon.stub(os, 'platform');
       osStub.returns('darwin');
 
-      const dumper = await getDumper();
+      const dumper = getDumper();
       await dumper.dump(simpleModel);
 
       osStub.restore();

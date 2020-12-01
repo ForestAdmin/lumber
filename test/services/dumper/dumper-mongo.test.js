@@ -31,7 +31,7 @@ function cleanOutput() {
 }
 
 async function getGeneratedFileFromPersonModel(model) {
-  const dumper = await getDumper();
+  const dumper = getDumper();
   await dumper.dump(model);
   return fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
 }
@@ -39,7 +39,7 @@ async function getGeneratedFileFromPersonModel(model) {
 describe('services > dumper > MongoDB', () => {
   it('should generate a simple model file', async () => {
     expect.assertions(1);
-    const dumper = await getDumper();
+    const dumper = getDumper();
     await dumper.dump(simpleModel);
     const generatedFile = fs.readFileSync('./test-output/mongo/models/films.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/simple.expected.js', 'utf-8');
@@ -50,7 +50,7 @@ describe('services > dumper > MongoDB', () => {
 
   it('should generate a model file with hasMany', async () => {
     expect.assertions(1);
-    const dumper = await getDumper();
+    const dumper = getDumper();
     await dumper.dump(hasManyModel);
     const generatedFile = fs.readFileSync('./test-output/mongo/models/films.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/hasmany.expected.js', 'utf-8');

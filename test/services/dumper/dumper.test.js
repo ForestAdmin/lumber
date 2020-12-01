@@ -30,7 +30,7 @@ async function createLinuxDump(overrides = {}) {
     ...overrides,
   };
 
-  const dumper = await new Dumper(config);
+  const dumper = new Dumper(config);
   await dumper.dump({});
 }
 
