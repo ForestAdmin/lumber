@@ -163,4 +163,43 @@ describe('services > dumper', () => {
       });
     });
   });
+
+  describe('getDatabaseUrl', () => {
+    it('should return the connextion string if no dbConnectionUrl is provided', () => {
+      expect.assertions(1);
+
+      const config = {
+        dbDialect: 'mysql',
+        dbPort: 3306,
+        dbUser: 'root',
+        dbPassword: 'password',
+        dbHostname: 'localhost',
+        dbName: 'forest',
+      };
+
+      const dumper = new Dumper(config);
+      const databaseUrl = dumper.getDatabaseUrl();
+
+      expect(databaseUrl).toStrictEqual('mysql://root:password@localhost:3306/forest');
+    });
+
+    it('should remove the port if mongodbSrv is provided', () => {
+      expect.assertions(1);
+
+      const config = {
+        dbDialect: 'mongodb',
+        dbPort: 3306,
+        mongodbSrv: true,
+        dbUser: 'root',
+        dbPassword: 'password',
+        dbHostname: 'localhost',
+        dbName: 'forest',
+      };
+
+      const dumper = new Dumper(config);
+      const databaseUrl = dumper.getDatabaseUrl();
+
+      expect(databaseUrl).toStrictEqual('mongodb+srv://root:password@localhost/forest');
+    });
+  });
 });
