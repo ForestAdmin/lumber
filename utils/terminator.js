@@ -1,7 +1,23 @@
 const logger = require('../services/logger');
 const eventSender = require('../services/event-sender');
 
+/**
+ * @typedef {{
+ *  errorCode: string;
+ *  errorMessage: string;
+ *  context: any;
+ * }} DetailedLog
+ *
+ * @typedef {{
+ *  logs: string[]
+ * }} MultipleMessages
+ */
+
 module.exports = {
+  /**
+   * @param {number} status
+   * @param {DetailedLog | MultipleMessages | DetailedLog & MultipleMessages} log
+   */
   async terminate(status, {
     errorCode, errorMessage, logs, context,
   }) {

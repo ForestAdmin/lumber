@@ -4,12 +4,17 @@ const chalk = require('chalk');
 const fs = require('fs');
 const os = require('os');
 const inquirer = require('inquirer');
+const open = require('open');
+const openIdClient = require('openid-client');
 const Database = require('../services/database');
 const logger = require('../services/logger');
 const terminator = require('../utils/terminator');
 const Api = require('../services/api');
 const Authenticator = require('../services/authenticator');
 const authenticatorHelper = require('../utils/authenticator-helper');
+const OidcAuthenticator = require('../services/oidc/authenticator');
+const OidcErrorHandler = require('../services/oidc/error-handler');
+const messages = require('../utils/messages');
 
 /**
  * @typedef {{
@@ -18,6 +23,7 @@ const authenticatorHelper = require('../utils/authenticator-helper');
  *
  * @typedef {{
  *  env: Env
+ *  process: NodeJS.Process,
  * }} EnvPart
  *
  * @typedef {{
@@ -27,11 +33,14 @@ const authenticatorHelper = require('../utils/authenticator-helper');
  *  inquirer: import('inquirer');
  *  mongodb: import('mongodb');
  *  Sequelize: import('sequelize');
+ *  openIdClient: import('openid-client');
+ *  open: import('open');
  * }} Dependencies
  *
  * @typedef {{
  *  terminator: import('../utils/terminator');
  *  authenticatorHelper: import('../utils/authenticator-helper');
+ *  messages: import('../utils/messages');
  * }} Utils
  *
  * @typedef {{
@@ -39,6 +48,8 @@ const authenticatorHelper = require('../utils/authenticator-helper');
  *  database: import('../services/database');
  *  api: import('../services/api');
  *  authenticator: import('../services/authenticator');
+ *  oidcAuthenticator: import('../services/oidc/authenticator');
+ *  oidcErrorHandler: import('../services/oidc/error-handler');
  * }} Services
  *
  * @typedef {EnvPart & Dependencies & Utils & Services} Context
@@ -50,17 +61,20 @@ const authenticatorHelper = require('../utils/authenticator-helper');
 function initEnv(context) {
   context.addInstance('env', {
     ...process.env,
-    FOREST_URL: process.env.FOREST_URL || 'https://app.forestadmin.com',
+    FOREST_URL: process.env.FOREST_URL || 'https://api.forestadmin.com',
   });
+  context.addInstance('process', process);
 }
 
 /**
  * @param {import('./application-context')} context
  */
 function initDependencies(context) {
+  context.addInstance('openIdClient', openIdClient);
+  context.addInstance('chalk', chalk);
+  context.addInstance('open', open);
   context.addInstance('fs', fs);
   context.addInstance('os', os);
-  context.addInstance('chalk', chalk);
   context.addInstance('inquirer', inquirer);
   context.addInstance('Sequelize', Sequelize);
   context.addInstance('mongodb', mongodb);
@@ -71,6 +85,7 @@ function initDependencies(context) {
  */
 function initUtils(context) {
   context.addInstance('terminator', terminator);
+  context.addInstance('messages', messages);
   context.addInstance('authenticatorHelper', authenticatorHelper);
 }
 
@@ -82,6 +97,8 @@ function initServices(context) {
   context.addClass(Database);
   context.addClass(Api);
   context.addClass(Authenticator);
+  context.addClass(OidcAuthenticator);
+  context.addClass(OidcErrorHandler);
 }
 
 /**

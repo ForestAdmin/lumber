@@ -6,6 +6,12 @@ const initContext = require('./context/init');
 initContext(context);
 
 const { EMAIL_REGEX } = require('./utils/regexs');
+const context = require('./context');
+const initContext = require('./context/init');
+
+initContext(context);
+
+const { oidcAuthenticator, oidcErrorHandler } = context.inject();
 
 const { logger, authenticator } = context.inject();
 
@@ -20,22 +26,35 @@ program
   .parse(process.argv);
 
 (async () => {
-  let { email } = program;
+  const auth = new Authenticator();
 
-  if (!email) {
-    ({ email } = await inquirer.prompt([{
-      type: 'input',
-      name: 'email',
-      message: 'What\'s your email address?',
-      validate: (input) => {
-        if (EMAIL_REGEX.test(input)) { return true; }
-        return input ? 'Invalid email' : 'Please enter your email address.';
-      },
-    }]));
+  let { email, token } = program;
+  const { password } = program;
+
+  if (!token && !password) {
+    try {
+      token = await oidcAuthenticator.authenticate();
+    } catch (e) {
+      await oidcErrorHandler.handle(e);
+      return;
+    }
+  } else {
+    if (!email) {
+      ({ email } = await inquirer.prompt([{
+        type: 'input',
+        name: 'email',
+        message: 'What\'s your email address?',
+        validate: (input) => {
+          if (EMAIL_REGEX.test(input)) { return true; }
+          return input ? 'Invalid email' : 'Please enter your email address.';
+        },
+      }]));
+    }
+
+    token = await auth.loginWithEmailOrTokenArgv({ ...program, email });
   }
 
-  const token = await authenticator.loginWithEmailOrTokenArgv({ ...program, email });
-  authenticator.saveToken(token);
+  auth.saveToken(token);
 
   logger.success('Login successful');
   process.exit(0);
