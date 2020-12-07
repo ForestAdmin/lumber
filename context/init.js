@@ -33,15 +33,14 @@ const messages = require('../utils/messages');
  * }} EnvPart
  *
  * @typedef {{
+ *  openIdClient: import('openid-client');
+ *  chalk: import('chalk');
+ *  open: import('open');
  *  fs: import('fs');
  *  os: import('os');
- *  chalk: import('chalk');
  *  inquirer: import('inquirer');
  *  mongodb: import('mongodb');
  *  Sequelize: import('sequelize');
- *  openIdClient: import('openid-client');
- *  open: import('open');
- *  os: import('os');
  *  superagent: import('superagent');
  * }} Dependencies
  *
