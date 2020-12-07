@@ -92,6 +92,27 @@ class Database {
 
     return this.sequelizeAuthenticate(connection);
   }
+
+  connectFromDatabasesConfig(databasesConfig) {
+    databasesConfig.map((databaseConfig) => {
+      const databaseDialect = this.getDialect(databaseConfig.connection.url);
+      if (databaseDialect === 'mongodb') {
+        return this.mongo.connect(
+          databaseConfig.connection.url,
+          databaseConfig.connection.options,
+        );
+      }
+
+      const sequelizeOptions = {
+        ...databaseConfig.connection.options,
+        logging: false,
+      };
+      return new this.Sequelize(
+        databaseConfig.connection.url,
+        sequelizeOptions,
+      );
+    });
+  }
 }
 
 module.exports = Database;
