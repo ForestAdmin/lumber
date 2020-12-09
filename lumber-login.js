@@ -11,7 +11,7 @@ const initContext = require('./context/init');
 
 initContext(context);
 
-const { oidcAuthenticator, oidcErrorHandler } = context.inject();
+const { oidcAuthenticator, errorHandler } = context.inject();
 
 const { logger, authenticator } = context.inject();
 
@@ -32,12 +32,7 @@ program
   const { password } = program;
 
   if (!token && !password) {
-    try {
-      token = await oidcAuthenticator.authenticate();
-    } catch (e) {
-      await oidcErrorHandler.handle(e);
-      return;
-    }
+    token = await oidcAuthenticator.authenticate();
   } else {
     if (!email) {
       ({ email } = await inquirer.prompt([{
@@ -55,10 +50,8 @@ program
   }
 
   auth.saveToken(token);
-
   logger.success('Login successful');
   process.exit(0);
 })().catch(async (error) => {
-  logger.error(error);
-  process.exit(1);
+  await errorHandler.handle(error);
 });

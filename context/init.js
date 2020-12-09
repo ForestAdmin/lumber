@@ -13,7 +13,7 @@ const Api = require('../services/api');
 const Authenticator = require('../services/authenticator');
 const authenticatorHelper = require('../utils/authenticator-helper');
 const OidcAuthenticator = require('../services/oidc/authenticator');
-const OidcErrorHandler = require('../services/oidc/error-handler');
+const ErrorHandler = require('../services/error-handler');
 const messages = require('../utils/messages');
 
 /**
@@ -49,7 +49,7 @@ const messages = require('../utils/messages');
  *  api: import('../services/api');
  *  authenticator: import('../services/authenticator');
  *  oidcAuthenticator: import('../services/oidc/authenticator');
- *  oidcErrorHandler: import('../services/oidc/error-handler');
+ *  errorHandler: import('../services/error-handler');
  * }} Services
  *
  * @typedef {EnvPart & Dependencies & Utils & Services} Context
@@ -98,7 +98,7 @@ function initServices(context) {
   context.addClass(Api);
   context.addClass(Authenticator);
   context.addClass(OidcAuthenticator);
-  context.addClass(OidcErrorHandler);
+  context.addClass(ErrorHandler);
 }
 
 /**

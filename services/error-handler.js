@@ -1,8 +1,8 @@
-const OidcError = require('./error');
+const LumberError = require('../utils/lumber-error');
 
-class OidcErrorHandler {
+class ErrorHandler {
   /**
-   * @param {import('../../context/init').Context} context
+   * @param {import('../context/init').Context} context
    */
   constructor(context) {
     /** @private @readonly */
@@ -19,7 +19,7 @@ class OidcErrorHandler {
 
   /**
    * @private
-   * @param {OidcError} error
+   * @param {LumberError} error
    * @returns {string[]}
    */
   getMessages(error) {
@@ -41,7 +41,7 @@ class OidcErrorHandler {
    * @param {Error} error
    */
   async handle(error) {
-    if (error instanceof OidcError) {
+    if (error instanceof LumberError) {
       await this.terminator.terminate(1, {
         logs: this.getMessages(error),
       });
@@ -54,4 +54,4 @@ class OidcErrorHandler {
   }
 }
 
-module.exports = OidcErrorHandler;
+module.exports = ErrorHandler;

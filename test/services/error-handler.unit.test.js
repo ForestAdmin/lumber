@@ -1,7 +1,7 @@
-const OidcError = require('../../../services/oidc/error');
-const OidcErrorHandler = require('../../../services/oidc/error-handler');
+const LumberError = require('../../utils/lumber-error');
+const ErrorHandler = require('../../services/error-handler');
 
-describe('service > Oidc > OidcErrorHandler', () => {
+describe('service > Oidc > ErrorHandler', () => {
   function setupTest() {
     const context = {
       terminator: {
@@ -14,7 +14,7 @@ describe('service > Oidc > OidcErrorHandler', () => {
         ERROR_UNEXPECTED: 'Unexpected',
       },
     };
-    const errorHandler = new OidcErrorHandler(context);
+    const errorHandler = new ErrorHandler(context);
 
     return {
       ...context,
@@ -43,7 +43,7 @@ describe('service > Oidc > OidcErrorHandler', () => {
 
         const { errorHandler, terminator } = setupTest();
 
-        errorHandler.handle(new OidcError('The error', new Error('The inner error')));
+        errorHandler.handle(new LumberError('The error', undefined, { reason: 'The inner error' }));
 
         expect(terminator.terminate).toHaveBeenCalledWith(
           1,
@@ -56,7 +56,7 @@ describe('service > Oidc > OidcErrorHandler', () => {
 
         const { errorHandler, terminator } = setupTest();
 
-        errorHandler.handle(new OidcError('The error', undefined, 'possible solution'));
+        errorHandler.handle(new LumberError('The error', undefined, { possibleSolution: 'possible solution' }));
 
         expect(terminator.terminate).toHaveBeenCalledWith(
           1,
