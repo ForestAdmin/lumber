@@ -1,8 +1,11 @@
 const chalk = require('chalk');
-const api = require('./api');
 const KeyGenerator = require('./key-generator');
 const { terminate } = require('../utils/terminator');
 const { ERROR_UNEXPECTED } = require('../utils/messages');
+
+const context = require('../context');
+
+const { api } = context.inject();
 
 function ProjectCreator(sessionToken) {
   this.createProject = async (projectName, config) => {

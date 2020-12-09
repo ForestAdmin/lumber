@@ -1,19 +1,38 @@
-const agent = require('superagent');
 const UserSerializer = require('../serializers/user');
 const UserDeserializer = require('../deserializers/user');
 const ProjectSerializer = require('../serializers/project');
 const ProjectDeserializer = require('../deserializers/project');
 const EnvironmentSerializer = require('../serializers/environment');
 const EnvironmentDeserializer = require('../deserializers/environment');
-const pkg = require('../package.json');
 
 const HEADER_CONTENT_TYPE = 'Content-Type';
 const HEADER_CONTENT_TYPE_JSON = 'application/json';
 const HEADER_FOREST_ORIGIN = 'forest-origin';
 const HEADER_USER_AGENT = 'User-Agent';
 
-function API() {
-  this.endpoint = process.env.FOREST_URL || 'https://api.forestadmin.com';
+/**
+ * @class
+ * @param {import('../context/init').Context} context
+ */
+function Api(context) {
+  const {
+    applicationTokenSerializer,
+    applicationTokenDeserializer,
+    superagent: agent,
+    env,
+    pkg,
+  } = context;
+
+  ['applicationTokenSerializer',
+    'applicationTokenDeserializer',
+    'superagent',
+    'env',
+    'pkg',
+  ].forEach((name) => {
+    if (!context[name]) throw new Error(`Missing dependency ${name}`);
+  });
+
+  this.endpoint = env.FOREST_URL || 'https://api.forestadmin.com';
   this.userAgent = `lumber@${pkg.version}`;
 
   this.isGoogleAccount = async (email) => agent
@@ -93,6 +112,20 @@ function API() {
 
     return newProject;
   };
+
+  /**
+   * @param {import('../serializers/application-token').InputApplicationToken} applicationToken
+   * @param {string} sessionToken
+   * @returns {Promise<import('../deserializers/application-token').ApplicationToken>}
+   */
+  this.createApplicationToken = async (applicationToken, sessionToken) => agent
+    .post(`${this.endpoint}/api/application-tokens`)
+    .set(HEADER_FOREST_ORIGIN, 'Lumber')
+    .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
+    .set(HEADER_USER_AGENT, this.userAgent)
+    .set('Authorization', `Bearer ${sessionToken}`)
+    .send(applicationTokenSerializer.serialize(applicationToken))
+    .then((response) => applicationTokenDeserializer.deserialize(response.body));
 }
 
-module.exports = new API();
+module.exports = Api;

@@ -3,12 +3,14 @@ const fs = require('fs');
 const P = require('bluebird');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
-const api = require('./api');
 const { parseJwt } = require('../utils/authenticator-helper');
 const { EMAIL_REGEX, PASSWORD_REGEX } = require('../utils/regexs');
 const { terminate } = require('../utils/terminator');
 const { ERROR_UNEXPECTED } = require('../utils/messages');
-const logger = require('./logger');
+
+const context = require('../context');
+
+const { api, logger } = context.inject();
 
 function validatePassword(password) {
   if (password) {

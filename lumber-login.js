@@ -8,7 +8,7 @@ const initContext = require('./context/init');
 
 initContext(context);
 
-const { oidcAuthenticator, errorHandler } = context.inject();
+const { oidcAuthenticator, errorHandler, applicationTokenService } = context.inject();
 
 program
   .description('Log into Forest Admin API')
@@ -24,7 +24,8 @@ program
   const { password } = program;
 
   if (!token && !password) {
-    token = await oidcAuthenticator.authenticate();
+    const sessionToken = await oidcAuthenticator.authenticate();
+    token = await applicationTokenService.generateApplicationToken(sessionToken);
   } else {
     if (!email) {
       ({ email } = await inquirer.prompt([{
