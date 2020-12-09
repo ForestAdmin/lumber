@@ -1,23 +1,25 @@
 const openIdClient = require('openid-client');
+const LumberError = require('../../utils/lumber-error');
 
-class OidcError extends Error {
+class OidcError extends LumberError {
   /**
    * @param {string} message
-   * @param {Error|undefined} reason
+   * @param {Error|undefined} origin
    * @param {string} [possibleSolution]
    */
-  constructor(message, reason, possibleSolution) {
-    super(message);
-    this.name = 'OidcError';
-    /** @public @readonly */
-    this.possibleSolution = possibleSolution;
+  constructor(message, origin, possibleSolution) {
+    let reason;
 
-    if (reason instanceof openIdClient.errors.OPError) {
+    if (origin instanceof openIdClient.errors.OPError) {
       /** @public @readonly @type {string} */
-      this.reason = reason.error || reason.message;
-    } else if (reason) {
-      this.reason = reason.message;
+      reason = origin.error || origin.message;
+    } else if (origin) {
+      reason = origin.message;
     }
+
+    super(message, undefined, { reason, possibleSolution });
+
+    this.name = 'OidcError';
   }
 }
 
