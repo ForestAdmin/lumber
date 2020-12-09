@@ -3,7 +3,7 @@ const open = require('open');
 const openIdClient = require('openid-client');
 const logger = require('../services/logger');
 const OidcAuthenticator = require('../services/oidc/authenticator');
-const OidcErrorHandler = require('../services/oidc/error-handler');
+const ErrorHandler = require('../services/error-handler');
 const messages = require('../utils/messages');
 const terminator = require('../utils/terminator');
 
@@ -31,7 +31,7 @@ const terminator = require('../utils/terminator');
  * @typedef {{
  *  logger: import('../services/logger');
  *  oidcAuthenticator: import('../services/oidc/authenticator');
- *  OidcErrorHandler: import('../services/oidc/error-handler');
+ *  errorHandler: import('../services/error-handler');
  * }} Services
  *
  * @typedef {EnvPart & Dependencies & Utils & Services} Context
@@ -71,7 +71,7 @@ function initUtils(context) {
 function initServices(context) {
   context.addInstance('logger', logger);
   context.addClass(OidcAuthenticator);
-  context.addClass(OidcErrorHandler);
+  context.addClass(ErrorHandler);
 }
 
 /**

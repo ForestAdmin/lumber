@@ -1,12 +1,14 @@
+const LumberError = require('./lumber-error');
+
 function createLumberError(name) {
-  function LumberError(message, details) {
-    this.name = name;
-    this.userMessage = message;
-    this.details = details;
-    Error.captureStackTrace(this, this.constructor);
+  class CustomError extends LumberError {
+    constructor(message, details) {
+      super(message, details);
+      this.name = name;
+    }
   }
 
-  return LumberError;
+  return CustomError;
 }
 
 exports.DatabaseAnalyzerError = {
