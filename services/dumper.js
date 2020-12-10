@@ -37,6 +37,18 @@ class Dumper {
     ];
   }
 
+  static getModelsNameSorted(schema) {
+    return Object.keys(schema)
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+  }
+
+  static getSafeReferences(references) {
+    return references.map((reference) => ({
+      ...reference,
+      ref: Dumper.getModelNameFromTableName(reference.ref),
+    }));
+  }
+
   isLinuxBasedOs() {
     return this.os.platform() === 'linux';
   }
@@ -215,7 +227,7 @@ class Dumper {
   }
 
   writeModel(projectPath, config, table, fields, references, options = {}) {
-    const { underscored } = options;
+    const { underscored, dbName } = options;
 
     const fieldsDefinition = fields.map((field) => {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
@@ -247,7 +259,7 @@ class Dumper {
     this.copyHandleBarsTemplate({
       projectPath,
       source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
-      target: `models/${Dumper.tableToFilename(table)}.js`,
+      target: `models${dbName ? `/${dbName}` : ''}/${Dumper.tableToFilename(table)}.js`,
       context: {
         modelName: Dumper.getModelNameFromTableName(table),
         modelVariableName: stringUtils.pascalCase(stringUtils.transformToSafeString(table)),
@@ -384,8 +396,7 @@ class Dumper {
 
     await Promise.all(directories);
 
-    const modelNames = Object.keys(schema)
-      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    const modelNames = Dumper.getModelsNameSorted(schema);
 
     this.writeDatabasesConfig(projectPath, config);
 
@@ -397,10 +408,7 @@ class Dumper {
     this.writeModelsIndex(projectPath, config);
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
-      const safeReferences = references.map((reference) => ({
-        ...reference,
-        ref: Dumper.getModelNameFromTableName(reference.ref),
-      }));
+      const safeReferences = Dumper.getSafeReferences(references);
       this.writeModel(projectPath, config, modelName, fields, safeReferences, options);
     });
 
@@ -424,6 +432,70 @@ class Dumper {
     this.writeDockerfile(projectPath);
     this.writePackageJson(projectPath, config);
     this.copyTemplate(projectPath, 'server.hbs', 'server.js');
+  }
+
+  checkIsLumberProject() {
+    try {
+      if (!this.fs.existsSync(this.routesPath)) throw new Error('No "routes" directory.');
+      if (!this.fs.existsSync(this.forestPath)) throw new Error('No "forest" directory.');
+      if (!this.fs.existsSync(this.modelsPath)) throw new Error('No "models“ directory.');
+    } catch (error) {
+      throw new Error(`We are not able to detect a lumber project file architecture at this path: ${this.path}. ${error}`);
+    }
+  }
+
+  writeForestCollectionIfNotExist(table) {
+    const collectionPath = `forest/${Dumper.tableToFilename(table)}.js`;
+    if (this.fs.existsSync(collectionPath)) {
+      this.logger.log(`  ${this.chalk.yellow('skip')}   ${collectionPath} - already exist.`);
+      return;
+    }
+
+    this.writeForestCollection(table);
+  }
+
+  writeModelIfNotExist(dbName, table, fields, references, options = {}) {
+    const modelPath = `models/${dbName}/${Dumper.tableToFilename(table)}.js`;
+    if (this.fs.existsSync(modelPath)) {
+      this.logger.log(`  ${this.chalk.yellow('skip')}   ${modelPath} - already exist.`);
+      return;
+    }
+
+    this.writeModel(table, fields, references, options);
+  }
+
+  writeRoutelIfNotExist(table) {
+    const routesPath = `routes/${Dumper.tableToFilename(table)}.js`;
+    if (this.fs.existsSync(routesPath)) {
+      this.logger.log(`  ${this.chalk.yellow('skip')}   ${routesPath} - already exist.`);
+      return;
+    }
+
+    this.writeRoute(table);
+  }
+
+  async redump(schemas) {
+    this.checkIsLumberProject();
+
+    Object.entries(schemas).forEach(([dbName, schema]) => {
+      const modelNames = Dumper.getModelsNameSorted(schema);
+
+      modelNames.forEach((modelName) => {
+        const { fields, references, options } = schema[modelName];
+        const safeReferences = Dumper.getSafeReferences(references);
+
+        options.dbName = dbName;
+
+        this.writeForestCollectionIfNotExist(modelName);
+        this.writeModelIfNotExist(dbName, modelName, fields, safeReferences, options);
+        // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
+        //       internal session creation route. As a workaround, we don't generate the route file.
+        // TODO: Remove the if condition, once the routes paths refactored to prevent such conflict.
+        if (modelName !== 'sessions') {
+          this.writeRoutelIfNotExist(modelName);
+        }
+      });
+    });
   }
 }
 

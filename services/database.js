@@ -94,10 +94,12 @@ class Database {
   }
 
   connectFromDatabasesConfig(databasesConfig) {
-    databasesConfig.map((databaseConfig) => {
+    const connections = {};
+
+    databasesConfig.forEach((databaseConfig) => {
       const databaseDialect = this.getDialect(databaseConfig.connection.url);
       if (databaseDialect === 'mongodb') {
-        return this.mongo.connect(
+        connections[databaseConfig.name] = this.mongodb.MongoClient.connect(
           databaseConfig.connection.url,
           databaseConfig.connection.options,
         );
@@ -107,11 +109,13 @@ class Database {
         ...databaseConfig.connection.options,
         logging: false,
       };
-      return new this.Sequelize(
+      connections[databaseConfig.name] = new this.Sequelize(
         databaseConfig.connection.url,
         sequelizeOptions,
       );
     });
+
+    return connections;
   }
 }
 
