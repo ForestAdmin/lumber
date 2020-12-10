@@ -15,16 +15,12 @@ const ASSOCIATION_TYPE_HAS_ONE = 'hasOne';
 
 const FOREIGN_KEY = 'FOREIGN KEY';
 
-let queryInterface;
-let tableConstraintsGetter;
-let columnTypeGetter;
-
 function isUnderscored(fields) {
   return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
     && fields.some((field) => field.nameColumn.includes('_'));
 }
 
-function analyzeFields(table, config) {
+function analyzeFields(queryInterface, table, config) {
   return queryInterface.describeTable(table, { schema: config.dbSchema });
 }
 
@@ -32,7 +28,7 @@ async function analyzePrimaryKeys(schema) {
   return Object.keys(schema).filter((column) => schema[column].primaryKey);
 }
 
-async function showAllTables(databaseConnection, schema) {
+async function showAllTables(queryInterface, databaseConnection, schema) {
   const dbDialect = databaseConnection.getDialect();
 
   if (['mysql', 'mariadb'].includes(dbDialect)) {
@@ -189,8 +185,8 @@ function createReference(
   return reference;
 }
 
-async function analyzeTable(table, config) {
-  const schema = await analyzeFields(table, config);
+async function analyzeTable(queryInterface, tableConstraintsGetter, table, config) {
+  const schema = await analyzeFields(queryInterface, table, config);
 
   return {
     schema,
@@ -294,7 +290,7 @@ function createAllReferences(databaseSchema, schemaGenerated) {
     );
 }
 
-async function createTableSchema({
+async function createTableSchema(columnTypeGetter, {
   schema,
   constraints,
   primaryKeys,
@@ -386,9 +382,9 @@ function fixAliasConflicts(wholeSchema) {
 async function analyzeSequelizeTables(databaseConnection, config, allowWarning) {
   const schemaAllTables = {};
 
-  queryInterface = databaseConnection.getQueryInterface();
-  tableConstraintsGetter = new TableConstraintsGetter(databaseConnection, config.dbSchema);
-  columnTypeGetter = new ColumnTypeGetter(databaseConnection, config.dbSchema || 'public', allowWarning);
+  const queryInterface = databaseConnection.getQueryInterface();
+  const tableConstraintsGetter = new TableConstraintsGetter(databaseConnection, config.dbSchema);
+  const columnTypeGetter = new ColumnTypeGetter(databaseConnection, config.dbSchema || 'public', allowWarning);
 
   if (config.dbSchema) {
     const schemaExists = await queryInterface.sequelize
@@ -410,10 +406,14 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
 
   // Build the db schema.
   const databaseSchema = {};
-  const tableNames = await showAllTables(databaseConnection, config.dbSchema);
+  const tableNames = await showAllTables(queryInterface, databaseConnection, config.dbSchema);
 
   await P.each(tableNames, async (tableName) => {
-    const { schema, constraints, primaryKeys } = await analyzeTable(tableName, config);
+    const {
+      schema,
+      constraints,
+      primaryKeys,
+    } = await analyzeTable(queryInterface, tableConstraintsGetter, tableName, config);
     databaseSchema[tableName] = {
       schema,
       constraints,
@@ -423,7 +423,11 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   });
 
   await P.each(tableNames, async (tableName) => {
-    schemaAllTables[tableName] = await createTableSchema(databaseSchema[tableName], tableName);
+    schemaAllTables[tableName] = await createTableSchema(
+      columnTypeGetter,
+      databaseSchema[tableName],
+      tableName,
+    );
   });
 
   // NOTICE: Fill the references field for each table schema
