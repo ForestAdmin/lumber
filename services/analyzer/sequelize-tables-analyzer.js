@@ -4,7 +4,7 @@ const { plural, singular } = require('pluralize');
 const Sequelize = require('sequelize');
 const ColumnTypeGetter = require('./sequelize-column-type-getter');
 const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
-const { DatabaseAnalyzerError } = require('../../utils/errors');
+const { databaseAnalyzerErrors } = require('../../utils/errors');
 const { terminate } = require('../../utils/terminator');
 const stringUtils = require('../../utils/strings');
 
@@ -446,7 +446,7 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   });
 
   if (_.isEmpty(schemaAllTables)) {
-    throw new DatabaseAnalyzerError.EmptyDatabase('no tables found', {
+    throw new databaseAnalyzerErrors.EmptyDatabase('no tables found', {
       orm: 'sequelize',
       dialect: databaseConnection.getDialect(),
     });
