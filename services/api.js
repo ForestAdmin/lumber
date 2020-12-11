@@ -1,11 +1,9 @@
-const agent = require('superagent');
 const UserSerializer = require('../serializers/user');
 const UserDeserializer = require('../deserializers/user');
 const ProjectSerializer = require('../serializers/project');
 const ProjectDeserializer = require('../deserializers/project');
 const EnvironmentSerializer = require('../serializers/environment');
 const EnvironmentDeserializer = require('../deserializers/environment');
-const pkg = require('../package.json');
 
 const HEADER_CONTENT_TYPE = 'Content-Type';
 const HEADER_CONTENT_TYPE_JSON = 'application/json';
@@ -13,13 +11,31 @@ const HEADER_FOREST_ORIGIN = 'forest-origin';
 const HEADER_USER_AGENT = 'User-Agent';
 
 class Api {
-  constructor() {
-    this.endpoint = process.env.FOREST_URL || 'https://api.forestadmin.com';
-    this.userAgent = `lumber@${pkg.version}`;
+  /**
+   * @param {import('../context/init').Context} context
+   */
+  constructor(context) {
+    this.applicationTokenSerializer = context.applicationTokenSerializer;
+    this.applicationTokenDeserializer = context.applicationTokenDeserializer;
+    this.agent = context.superagent;
+    this.env = context.env;
+    this.pkg = context.pkg;
+
+    ['applicationTokenSerializer',
+      'applicationTokenDeserializer',
+      'agent',
+      'env',
+      'pkg',
+    ].forEach((name) => {
+      if (!this[name]) throw new Error(`Missing dependency ${name}`);
+    });
+
+    this.endpoint = this.env.FOREST_URL || 'https://api.forestadmin.com';
+    this.userAgent = `lumber@${this.pkg.version}`;
   }
 
   async isGoogleAccount(email) {
-    return agent
+    return this.agent
       .get(`${this.endpoint}/api/users/google/${email}`)
       .set(HEADER_FOREST_ORIGIN, 'Lumber')
       .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
@@ -30,7 +46,7 @@ class Api {
   }
 
   async login(email, password) {
-    return agent
+    return this.agent
       .post(`${this.endpoint}/api/sessions`)
       .set(HEADER_FOREST_ORIGIN, 'Lumber')
       .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
@@ -40,7 +56,7 @@ class Api {
   }
 
   async createUser(user) {
-    return agent
+    return this.agent
       .post(`${this.endpoint}/api/users`)
       .set(HEADER_FOREST_ORIGIN, 'Lumber')
       .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
@@ -53,7 +69,7 @@ class Api {
     let newProject;
 
     try {
-      newProject = await agent
+      newProject = await this.agent
         .post(`${this.endpoint}/api/projects`)
         .set(HEADER_FOREST_ORIGIN, 'Lumber')
         .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
@@ -69,7 +85,7 @@ class Api {
           throw error;
         }
 
-        newProject = await agent
+        newProject = await this.agent
           .get(`${this.endpoint}/api/projects/${projectId}`)
           .set('Authorization', `Bearer ${sessionToken}`)
           .set(HEADER_FOREST_ORIGIN, 'Lumber')
@@ -88,7 +104,7 @@ class Api {
     const port = config.appPort || 3310;
     const protocol = hostname.startsWith('http') ? '' : 'http://';
     newProject.defaultEnvironment.apiEndpoint = `${protocol}${hostname}:${port}`;
-    const updatedEnvironment = await agent
+    const updatedEnvironment = await this.agent
       .put(`${this.endpoint}/api/environments/${newProject.defaultEnvironment.id}`)
       .set(HEADER_FOREST_ORIGIN, 'Lumber')
       .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
@@ -100,6 +116,22 @@ class Api {
     newProject.defaultEnvironment.secretKey = updatedEnvironment.secretKey;
 
     return newProject;
+  }
+
+  /**
+   * @param {import('../serializers/application-token').InputApplicationToken} applicationToken
+   * @param {string} sessionToken
+   * @returns {Promise<import('../deserializers/application-token').ApplicationToken>}
+   */
+  async createApplicationToken(applicationToken, sessionToken) {
+    return this.agent
+      .post(`${this.endpoint}/api/application-tokens`)
+      .set(HEADER_FOREST_ORIGIN, 'Lumber')
+      .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
+      .set(HEADER_USER_AGENT, this.userAgent)
+      .set('Authorization', `Bearer ${sessionToken}`)
+      .send(this.applicationTokenSerializer.serialize(applicationToken))
+      .then((response) => this.applicationTokenDeserializer.deserialize(response.body));
   }
 }
 
