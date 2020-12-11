@@ -9,6 +9,8 @@ const { ERROR_UNEXPECTED } = require('../utils/messages');
 
 if (!api) throw new Error('Missing dependency api');
 
+if (!api) throw new Error('Missing dependency api');
+
 function ProjectCreator(sessionToken) {
   this.createProject = async (projectName, config) => {
     try {
