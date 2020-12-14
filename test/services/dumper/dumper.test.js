@@ -165,7 +165,7 @@ describe('services > dumper', () => {
   });
 
   describe('getDatabaseUrl', () => {
-    it('should return the connextion string if no dbConnectionUrl is provided', () => {
+    it('should return the connection string if no dbConnectionUrl is provided', () => {
       expect.assertions(1);
 
       const config = {
