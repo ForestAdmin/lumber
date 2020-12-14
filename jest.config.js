@@ -1,5 +1,4 @@
 module.exports = {
-  // collected
   collectCoverageFrom: [
     '**/*.{js,ts,tsx}',
   ],
