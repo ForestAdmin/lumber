@@ -1,6 +1,6 @@
 const { LumberError, databaseAnalyzerErrors } = require('../../utils/errors');
 
-describe('errors', () => {
+describe('utils > errors', () => {
   describe('lumberError', () => {
     it('should be an instance of Error', () => {
       expect.assertions(1);

@@ -29,7 +29,7 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     }
     return analyze(databaseConnection, config, allowWarning)
       .catch((error) => {
-        if (error.constructor === databaseAnalyzerErrors.EmptyDatabase) {
+        if (error instanceof databaseAnalyzerErrors.EmptyDatabase) {
           return reportEmptyDatabase(error.details.orm, error.details.dialect);
         }
         throw error;
