@@ -1,0 +1,6 @@
+    {{field.name}}: {
+      type: DataTypes.{{{field.type}}},{{#if field.nameColumnUnconventional}}
+      field: '{{field.nameColumn}}',{{/if}}{{#if field.primaryKey}}
+      primaryKey: true,{{/if}}{{#if field.defaultValue}}
+      defaultValue: Sequelize.literal('{{{field.defaultValue}}}'),{{/if}}
+    },

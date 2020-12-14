@@ -15,6 +15,7 @@ initContext(context);
 program
   .version(packagejson.version)
   .command('generate <appName>', 'generate a backend application with an ORM/ODM configured')
+  .command('update', 'Check the differences between your current admin api configuration and your database to generate what is missing')
   .command('login', 'log into Forest Admin API')
   .command('logout', 'log out from Forest Admin API')
   .parse(process.argv);

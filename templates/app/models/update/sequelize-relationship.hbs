@@ -1,0 +1,16 @@
+    {{modelVariableName}}.{{reference.association}}(models.{{reference.ref}}, {
+    {{#if reference.isBelongsToMany}}
+      through: '{{reference.through}}',
+      foreignKey: '{{reference.foreignKey}}',
+      otherKey: '{{reference.otherKey}}',
+    {{else}}
+      foreignKey: {
+        name: '{{reference.foreignKeyName}}',
+        field: '{{reference.foreignKey}}',
+      },{{#if reference.targetKey }}
+      targetKey: '{{reference.targetKey}}',
+    {{/if}}
+    {{#if reference.as}}
+      as: '{{reference.as}}',
+    {{/if}}
+    });

@@ -1,0 +1,1 @@
+  '{{field.name}}': {{#if field.ref}}{ type: {{field.type}}, ref: '{{field.ref}}' }{{else if (isObject field.type)}}{{>renderNested type=field.type level=1}}{{else}}{{field.type}}{{/if}},
