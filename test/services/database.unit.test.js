@@ -131,6 +131,7 @@ describe('services > database', () => {
           },
         },
       };
+
       describe('when connectionUrl is not provided', () => {
         it('should build the connection URL and call mongodb connect', async () => {
           expect.assertions(1);
