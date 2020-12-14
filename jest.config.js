@@ -10,10 +10,7 @@ module.exports = {
     '/.eslint-bin/',
     '/node_modules/',
     '/test/',
-    '/test-expected/',
-    '/test-fixtures/',
-    '/test-output/',
-    '/test-utils/',
+    '/test-*',
     '/*.config.js',
   ],
 
