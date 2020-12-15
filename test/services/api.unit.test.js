@@ -1,43 +1,44 @@
 const Api = require('../../services/api');
 
 describe('services > API', () => {
+  function setup() {
+    const superagent = {
+      post: jest.fn().mockReturnThis(),
+      set: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+      delete: jest.fn().mockReturnThis(),
+    };
+
+    const applicationTokenSerializer = {
+      serialize: jest.fn(),
+    };
+
+    const applicationTokenDeserializer = {
+      deserialize: jest.fn(),
+    };
+
+    const env = {
+      FOREST_URL: 'https://api.test.forestadmin.com',
+    };
+
+    const pkg = {
+      version: '1.2.3',
+    };
+
+    const context = {
+      superagent,
+      applicationTokenDeserializer,
+      applicationTokenSerializer,
+      env,
+      pkg,
+    };
+
+    const api = new Api(context);
+
+    return { ...context, api };
+  }
+
   describe('createApplicationToken', () => {
-    function setup() {
-      const superagent = {
-        post: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        send: jest.fn(),
-      };
-
-      const applicationTokenSerializer = {
-        serialize: jest.fn(),
-      };
-
-      const applicationTokenDeserializer = {
-        deserialize: jest.fn(),
-      };
-
-      const env = {
-        FOREST_URL: 'https://api.test.forestadmin.com',
-      };
-
-      const pkg = {
-        version: '1.2.3',
-      };
-
-      const context = {
-        superagent,
-        applicationTokenDeserializer,
-        applicationTokenSerializer,
-        env,
-        pkg,
-      };
-
-      const api = new Api(context);
-
-      return { ...context, api };
-    }
-
     it('should send a query with the serialized token', async () => {
       expect.assertions(9);
 
@@ -87,6 +88,27 @@ describe('services > API', () => {
         .toHaveBeenCalledWith({ name: 'the token' });
       expect(applicationTokenDeserializer.deserialize)
         .toHaveBeenCalledWith(serializedResponseToken);
+    });
+  });
+
+  describe('deleteApplicationToken', () => {
+    it('should send a query to delete the application token', async () => {
+      expect.assertions(6);
+
+      const {
+        superagent, api,
+      } = setup();
+
+      superagent.send.mockResolvedValue(undefined);
+
+      await api.deleteApplicationToken('TOKEN');
+
+      expect(superagent.delete).toHaveBeenCalledWith('https://api.test.forestadmin.com/api/application-tokens');
+      expect(superagent.set).toHaveBeenCalledWith('forest-origin', 'Lumber');
+      expect(superagent.set).toHaveBeenCalledWith('Content-Type', 'application/json');
+      expect(superagent.set).toHaveBeenCalledWith('User-Agent', 'lumber@1.2.3');
+      expect(superagent.set).toHaveBeenCalledWith('Authorization', 'Bearer TOKEN');
+      expect(superagent.send).toHaveBeenCalledWith();
     });
   });
 });

@@ -11,6 +11,7 @@ describe('services > ApplicationToken', () => {
 
     const api = {
       createApplicationToken: jest.fn(),
+      deleteApplicationToken: jest.fn(),
     };
 
     const context = { api, os };
@@ -48,6 +49,43 @@ describe('services > ApplicationToken', () => {
 
       await expect(applicationTokenService.generateApplicationToken(SESSION_TOKEN))
         .rejects.toBeInstanceOf(UnableToCreateApplicationTokenError);
+    });
+  });
+
+  describe('deleteApplicationToken', () => {
+    it('should call the api to delete the current token', async () => {
+      expect.assertions(1);
+
+      const { api, applicationTokenService } = setup();
+
+      api.deleteApplicationToken.mockResolvedValue(undefined);
+
+      await applicationTokenService.deleteApplicationToken('THE-TOKEN');
+
+      expect(api.deleteApplicationToken).toHaveBeenCalledWith('THE-TOKEN');
+    });
+
+    it('should hide 404 errors, because it indicates that the token is a normal token', async () => {
+      expect.assertions(1);
+
+      const { api, applicationTokenService } = setup();
+
+      api.deleteApplicationToken.mockRejectedValue({ status: 404 });
+
+      await applicationTokenService.deleteApplicationToken('THE-TOKEN');
+
+      expect(api.deleteApplicationToken).toHaveBeenCalledWith('THE-TOKEN');
+    });
+
+    it('should propagate non-404 errors', async () => {
+      expect.assertions(1);
+
+      const { api, applicationTokenService } = setup();
+
+      const error = new Error('the error');
+      api.deleteApplicationToken.mockRejectedValue(error);
+
+      await expect(applicationTokenService.deleteApplicationToken('THE-TOKEN')).rejects.toBe(error);
     });
   });
 });

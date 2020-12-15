@@ -33,6 +33,24 @@ class ApplicationTokenService {
       throw new UnableToCreateApplicationTokenError({ reason: e.message });
     }
   }
+
+  /**
+   * @param {string} token
+   * @returns {Promise<void>}
+   */
+  async deleteApplicationToken(token) {
+    try {
+      await this.api.deleteApplicationToken(token);
+    } catch (error) {
+      if (error.status === 404) {
+        return undefined;
+      }
+
+      throw error;
+    }
+
+    return undefined;
+  }
 }
 
 module.exports = ApplicationTokenService;

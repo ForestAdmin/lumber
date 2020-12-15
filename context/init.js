@@ -7,6 +7,7 @@ const inquirer = require('inquirer');
 const open = require('open');
 const openIdClient = require('openid-client');
 const superagent = require('superagent');
+const { promisify } = require('util');
 const Database = require('../services/database');
 const pkg = require('../package.json');
 const applicationTokenDeserializer = require('../deserializers/application-token');
@@ -20,6 +21,12 @@ const authenticatorHelper = require('../utils/authenticator-helper');
 const OidcAuthenticator = require('../services/oidc/authenticator');
 const ErrorHandler = require('../services/error-handler');
 const messages = require('../utils/messages');
+
+const fsAsync = {
+  readFile: promisify(fs.readFile),
+  stat: promisify(fs.stat),
+  unlink: promisify(fs.unlink),
+};
 
 /**
  * @typedef {{
@@ -42,6 +49,7 @@ const messages = require('../utils/messages');
  *  mongodb: import('mongodb');
  *  Sequelize: import('sequelize');
  *  superagent: import('superagent');
+ *  fsAsync: fsAsync;
  * }} Dependencies
  *
  * @typedef {{
@@ -53,7 +61,6 @@ const messages = require('../utils/messages');
  * @typedef {{
  *  applicationTokenSerializer: import('../serializers/application-token');
  *  applicationTokenDeserializer: import('../deserializers/application-token');
- *  authenticatorHelper: import('../utils/authenticator-helper');
  * }} Serializers
  *
  * @typedef {{
@@ -96,6 +103,7 @@ function initDependencies(context) {
   context.addInstance('superagent', superagent);
   context.addInstance('fs', fs);
   context.addInstance('inquirer', inquirer);
+  context.addInstance('fsAsync', fsAsync);
 }
 
 /**
