@@ -1,6 +1,6 @@
 const analyzeMongoCollections = require('./mongo-collections-analyzer');
 const analyzeSequelizeTables = require('./sequelize-tables-analyzer');
-const { DatabaseAnalyzerError } = require('../../utils/errors');
+const { databaseAnalyzerErrors } = require('../../utils/errors');
 const { terminate } = require('../../utils/terminator');
 
 async function reportEmptyDatabase(orm, dialect) {
@@ -29,7 +29,7 @@ function DatabaseAnalyzer(databaseConnection, config, allowWarning) {
     }
     return analyze(databaseConnection, config, allowWarning)
       .catch((error) => {
-        if (error.constructor === DatabaseAnalyzerError.EmptyDatabase) {
+        if (error instanceof databaseAnalyzerErrors.EmptyDatabase) {
           return reportEmptyDatabase(error.details.orm, error.details.dialect);
         }
         throw error;

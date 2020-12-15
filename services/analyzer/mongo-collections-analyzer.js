@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const P = require('bluebird');
 const logger = require('../logger');
-const { DatabaseAnalyzerError } = require('../../utils/errors');
+const { databaseAnalyzerErrors } = require('../../utils/errors');
 const { detectReferences, applyReferences } = require('./mongo-references-analyzer');
 const { detectHasMany, applyHasMany } = require('./mongo-hasmany-analyzer');
 const {
@@ -148,7 +148,7 @@ function analyzeMongoCollections(databaseConnection) {
   return databaseConnection.collections()
     .then(async (collections) => {
       if (collections.length === 0) {
-        throw new DatabaseAnalyzerError.EmptyDatabase('no collections found', {
+        throw new databaseAnalyzerErrors.EmptyDatabase('no collections found', {
           orm: 'mongoose',
           dialect: 'mongodb',
         });
