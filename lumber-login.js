@@ -2,10 +2,9 @@ const program = require('commander');
 const inquirer = require('inquirer');
 const context = require('./context');
 const initContext = require('./context/init');
+const { EMAIL_REGEX } = require('./utils/regexs');
 
 initContext(context);
-
-const { EMAIL_REGEX } = require('./utils/regexs');
 
 const {
   logger, authenticator, oidcAuthenticator, errorHandler, applicationTokenService,

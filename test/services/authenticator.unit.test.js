@@ -34,6 +34,7 @@ describe('services > Authenticator', () => {
       inquirer,
       fsAsync,
       applicationTokenService,
+      LUMBER_PATH: 'sweet-home/.lumberrc',
     };
 
     const authenticator = new Authenticator(context);
@@ -49,7 +50,7 @@ describe('services > Authenticator', () => {
       it('should delete the lumberrc file and delete the application token', async () => {
         expect.assertions(4);
         const {
-          fsAsync, authenticator, applicationTokenService,
+          fsAsync, authenticator, applicationTokenService, LUMBER_PATH,
         } = setup();
 
         fsAsync.stat.mockReturnValue(undefined);
@@ -59,10 +60,10 @@ describe('services > Authenticator', () => {
 
         await authenticator.logout();
 
-        expect(fsAsync.stat).toHaveBeenCalledWith('sweet-home/.lumberrc');
-        expect(fsAsync.readFile).toHaveBeenCalledWith('sweet-home/.lumberrc', { encoding: 'utf8' });
+        expect(fsAsync.stat).toHaveBeenCalledWith(LUMBER_PATH);
+        expect(fsAsync.readFile).toHaveBeenCalledWith(LUMBER_PATH, { encoding: 'utf8' });
         expect(applicationTokenService.deleteApplicationToken).toHaveBeenCalledWith('TOKEN');
-        expect(fsAsync.unlink).toHaveBeenCalledWith('sweet-home/.lumberrc');
+        expect(fsAsync.unlink).toHaveBeenCalledWith(LUMBER_PATH);
       });
     });
 
@@ -70,7 +71,7 @@ describe('services > Authenticator', () => {
       it('should delete the file without calling the API', async () => {
         expect.assertions(2);
         const {
-          fsAsync, authenticator, applicationTokenService,
+          fsAsync, authenticator, applicationTokenService, LUMBER_PATH,
         } = setup();
 
         fsAsync.stat.mockReturnValue(undefined);
@@ -80,20 +81,22 @@ describe('services > Authenticator', () => {
         await authenticator.logout();
 
         expect(applicationTokenService.deleteApplicationToken).not.toHaveBeenCalled();
-        expect(fsAsync.unlink).toHaveBeenCalledWith('sweet-home/.lumberrc');
+        expect(fsAsync.unlink).toHaveBeenCalledWith(LUMBER_PATH);
       });
     });
 
     describe('when the lumberrc file does not exist', () => {
       it('should write a message indicating that the user is not logged in', async () => {
         expect.assertions(3);
-        const { fsAsync, authenticator, logger } = setup();
+        const {
+          fsAsync, authenticator, logger, LUMBER_PATH,
+        } = setup();
 
         fsAsync.stat.mockRejectedValue({ code: 'ENOENT' });
 
         await authenticator.logout();
 
-        expect(fsAsync.stat).toHaveBeenCalledWith('sweet-home/.lumberrc');
+        expect(fsAsync.stat).toHaveBeenCalledWith(LUMBER_PATH);
         expect(logger.info).toHaveBeenCalledWith('You were not logged in');
         expect(fsAsync.readFile).not.toHaveBeenCalled();
       });
@@ -103,7 +106,7 @@ describe('services > Authenticator', () => {
       it('should delete the file as well', async () => {
         expect.assertions(2);
         const {
-          fsAsync, authenticator, applicationTokenService,
+          fsAsync, authenticator, applicationTokenService, LUMBER_PATH,
         } = setup();
 
         fsAsync.stat.mockReturnValue(undefined);
@@ -114,7 +117,7 @@ describe('services > Authenticator', () => {
 
         await expect(authenticator.logout()).rejects.toBe(error);
 
-        expect(fsAsync.unlink).toHaveBeenCalledWith('sweet-home/.lumberrc');
+        expect(fsAsync.unlink).toHaveBeenCalledWith(LUMBER_PATH);
       });
     });
 
