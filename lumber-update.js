@@ -2,13 +2,16 @@ const chalk = require('chalk');
 const program = require('commander');
 const fs = require('fs');
 const path = require('path');
-const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/analyzer/database-analyzer');
 const spinners = require('./services/spinners');
 const Dumper = require('./services/dumper');
 const { updateErrors, LumberError } = require('./utils/errors');
 const { ERROR_UNEXPECTED } = require('./utils/messages');
 const { terminate } = require('./utils/terminator');
+const context = require('./context');
+const initContext = require('./context/init');
+
+initContext(context);
 
 program
   .description('update your project by generating files that does not currently exist')
@@ -17,6 +20,8 @@ program
   .parse(process.argv);
 
 (async () => {
+  const { database } = context.inject();
+
   const config = path.resolve(program.config);
   if (!fs.existsSync(config)) {
     throw new updateErrors.ConfigFileDoesNotExist(config);
@@ -26,7 +31,7 @@ program
   const databasesConfig = require(config);
 
   let spinner = spinners.add('databases-connection', { text: 'Connecting to your database(s)' });
-  const connections = new Database().connectFromDatabasesConfig(databasesConfig);
+  const connections = database.connectFromDatabasesConfig(databasesConfig);
   spinner.succeed();
 
   spinner = spinners.add('analyse', { text: 'Analyse database(s)' });
@@ -49,6 +54,7 @@ program
   console.info(`Hooray, ${chalk.green('installation success')}!`);
   process.exit(0);
 })().catch(async (error) => {
+  console.log(error);
   const logs = ['Cannot update your project.'];
   if (error instanceof LumberError) {
     logs.push(error.message);
