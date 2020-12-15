@@ -25,7 +25,7 @@ describe('services > dumper > SQL', () => {
         appPort: 1654,
       };
 
-      const dumper = await new Dumper(config);
+      const dumper = new Dumper(config);
       await dumper.dump({});
     }
 
@@ -51,7 +51,7 @@ describe('services > dumper > SQL', () => {
         appPort: 1654,
       };
 
-      const dumper = await new Dumper(config);
+      const dumper = new Dumper(config);
       await dumper.dump({});
     }
 
@@ -77,7 +77,7 @@ describe('services > dumper > SQL', () => {
         appPort: 1654,
       };
 
-      const dumper = await new Dumper(config);
+      const dumper = new Dumper(config);
       await dumper.dump(renderingModel);
     }
 
