@@ -53,6 +53,7 @@ const messages = require('../utils/messages');
  * @typedef {{
  *  applicationTokenSerializer: import('../serializers/application-token');
  *  applicationTokenDeserializer: import('../deserializers/application-token');
+ *  authenticatorHelper: import('../utils/authenticator-helper');
  * }} Serializers
  *
  * @typedef {{
@@ -62,7 +63,6 @@ const messages = require('../utils/messages');
  *  authenticator: import('../services/authenticator');
  *  oidcAuthenticator: import('../services/oidc/authenticator');
  *  errorHandler: import('../services/error-handler');
- *  api: import('../services/api');
  *  applicationTokenService: import('../services/application-token');
  * }} Services
  *
@@ -94,6 +94,8 @@ function initDependencies(context) {
   context.addInstance('Sequelize', Sequelize);
   context.addInstance('mongodb', mongodb);
   context.addInstance('superagent', superagent);
+  context.addInstance('fs', fs);
+  context.addInstance('inquirer', inquirer);
 }
 
 /**
@@ -124,6 +126,7 @@ function initServices(context) {
   context.addClass(OidcAuthenticator);
   context.addClass(ErrorHandler);
   context.addClass(ApplicationTokenService);
+  context.addClass(Authenticator);
 }
 
 /**
