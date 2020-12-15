@@ -1,12 +1,15 @@
 const program = require('commander');
 const chalk = require('chalk');
+const context = require('./context');
+const initContext = require('./context/init');
+
+initContext(context);
+
 const spinners = require('./services/spinners');
 const DatabaseAnalyzer = require('./services/analyzer/database-analyzer');
 const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
-const logger = require('./services/logger');
 const eventSender = require('./services/event-sender');
-const Authenticator = require('./services/authenticator');
 const ProjectCreator = require('./services/project-creator');
 const { terminate } = require('./utils/terminator');
 const { ERROR_UNEXPECTED } = require('./utils/messages');
@@ -14,6 +17,11 @@ const context = require('./context');
 const initContext = require('./context/init');
 
 initContext(context);
+
+const { logger, authenticator } = context.inject();
+
+if (!authenticator) throw new Error('Missing dependency authenticator');
+if (!logger) throw new Error('Missing dependency logger');
 
 program
   .description('Generate a backend application with an ORM/ODM configured')
@@ -36,7 +44,7 @@ program
   [eventSender.appName] = program.args;
 
   const config = await new CommandGenerateConfigGetter(program).perform();
-  const sessionToken = await new Authenticator().loginFromCommandLine(config);
+  const sessionToken = await authenticator.loginFromCommandLine(config);
 
   let schema = {};
 

@@ -12,36 +12,44 @@ const HEADER_CONTENT_TYPE_JSON = 'application/json';
 const HEADER_FOREST_ORIGIN = 'forest-origin';
 const HEADER_USER_AGENT = 'User-Agent';
 
-function API() {
-  this.endpoint = process.env.FOREST_URL || 'https://api.forestadmin.com';
-  this.userAgent = `lumber@${pkg.version}`;
+class Api {
+  constructor() {
+    this.endpoint = process.env.FOREST_URL || 'https://api.forestadmin.com';
+    this.userAgent = `lumber@${pkg.version}`;
+  }
 
-  this.isGoogleAccount = async (email) => agent
-    .get(`${this.endpoint}/api/users/google/${email}`)
-    .set(HEADER_FOREST_ORIGIN, 'Lumber')
-    .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
-    .set(HEADER_USER_AGENT, this.userAgent)
-    .send()
-    .then((response) => response.body.data.isGoogleAccount)
-    .catch(() => false);
+  async isGoogleAccount(email) {
+    return agent
+      .get(`${this.endpoint}/api/users/google/${email}`)
+      .set(HEADER_FOREST_ORIGIN, 'Lumber')
+      .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
+      .set(HEADER_USER_AGENT, this.userAgent)
+      .send()
+      .then((response) => response.body.data.isGoogleAccount)
+      .catch(() => false);
+  }
 
-  this.login = async (email, password) => agent
-    .post(`${this.endpoint}/api/sessions`)
-    .set(HEADER_FOREST_ORIGIN, 'Lumber')
-    .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
-    .set(HEADER_USER_AGENT, this.userAgent)
-    .send({ email, password })
-    .then((response) => response.body.token);
+  async login(email, password) {
+    return agent
+      .post(`${this.endpoint}/api/sessions`)
+      .set(HEADER_FOREST_ORIGIN, 'Lumber')
+      .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
+      .set(HEADER_USER_AGENT, this.userAgent)
+      .send({ email, password })
+      .then((response) => response.body.token);
+  }
 
-  this.createUser = async (user) => agent
-    .post(`${this.endpoint}/api/users`)
-    .set(HEADER_FOREST_ORIGIN, 'Lumber')
-    .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
-    .set(HEADER_USER_AGENT, this.userAgent)
-    .send(new UserSerializer(user))
-    .then((response) => UserDeserializer.deserialize(response.body));
+  async createUser(user) {
+    return agent
+      .post(`${this.endpoint}/api/users`)
+      .set(HEADER_FOREST_ORIGIN, 'Lumber')
+      .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
+      .set(HEADER_USER_AGENT, this.userAgent)
+      .send(new UserSerializer(user))
+      .then((response) => UserDeserializer.deserialize(response.body));
+  }
 
-  this.createProject = async (config, sessionToken, project) => {
+  async createProject(config, sessionToken, project) {
     let newProject;
 
     try {
@@ -92,7 +100,7 @@ function API() {
     newProject.defaultEnvironment.secretKey = updatedEnvironment.secretKey;
 
     return newProject;
-  };
+  }
 }
 
-module.exports = new API();
+module.exports = Api;

@@ -1,8 +1,12 @@
 const chalk = require('chalk');
-const api = require('./api');
+const context = require('../context');
 const KeyGenerator = require('./key-generator');
 const { terminate } = require('../utils/terminator');
 const { ERROR_UNEXPECTED } = require('../utils/messages');
+
+const { api } = context.inject();
+
+if (!api) throw new Error('Missing dependency api');
 
 function ProjectCreator(sessionToken) {
   this.createProject = async (projectName, config) => {
