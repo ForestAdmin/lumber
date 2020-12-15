@@ -1,7 +1,8 @@
 const Sequelize = require('sequelize');
 const mongodb = require('mongodb');
-const logger = require('../services/logger');
 const terminator = require('../utils/terminator');
+const logger = require('../services/logger');
+const Database = require('../services/database');
 
 /**
  * @typedef {{
@@ -14,6 +15,7 @@ const terminator = require('../utils/terminator');
  *
  * @typedef {{
  *  logger: import('../services/logger');
+ *  database: import('../services/database');
  * }} Services
  *
  * @typedef {EnvPart & Services} Context
@@ -49,6 +51,7 @@ function initUtils(context) {
  */
 function initServices(context) {
   context.addInstance('logger', logger);
+  context.addClass(Database);
 }
 
 /**

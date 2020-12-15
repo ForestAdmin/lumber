@@ -1,7 +1,6 @@
 const program = require('commander');
 const chalk = require('chalk');
 const spinners = require('./services/spinners');
-const Database = require('./services/database');
 const DatabaseAnalyzer = require('./services/analyzer/database-analyzer');
 const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
@@ -11,6 +10,10 @@ const Authenticator = require('./services/authenticator');
 const ProjectCreator = require('./services/project-creator');
 const { terminate } = require('./utils/terminator');
 const { ERROR_UNEXPECTED } = require('./utils/messages');
+const context = require('./context');
+const initContext = require('./context/init');
+
+initContext(context);
 
 program
   .description('Generate a backend application with an ORM/ODM configured')
@@ -27,6 +30,8 @@ program
   .parse(process.argv);
 
 (async () => {
+  const { database } = context.inject();
+
   eventSender.command = 'generate';
   [eventSender.appName] = program.args;
 
@@ -35,7 +40,7 @@ program
 
   let schema = {};
 
-  const connectionPromise = new Database().connect(config);
+  const connectionPromise = database.connect(config);
   spinners.add('database-connection', { text: 'Connecting to your database' }, connectionPromise);
   const connection = await connectionPromise;
 
