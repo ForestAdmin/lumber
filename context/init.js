@@ -128,11 +128,10 @@ function initServices(context) {
   context.addInstance('logger', logger);
   context.addClass(Database);
   context.addClass(Api);
+  context.addClass(ApplicationTokenService);
   context.addClass(Authenticator);
   context.addClass(OidcAuthenticator);
   context.addClass(ErrorHandler);
-  context.addClass(ApplicationTokenService);
-  context.addClass(Authenticator);
 }
 
 /**
