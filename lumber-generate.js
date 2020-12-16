@@ -13,10 +13,6 @@ const eventSender = require('./services/event-sender');
 const ProjectCreator = require('./services/project-creator');
 const { terminate } = require('./utils/terminator');
 const { ERROR_UNEXPECTED } = require('./utils/messages');
-const context = require('./context');
-const initContext = require('./context/init');
-
-initContext(context);
 
 const { logger, authenticator } = context.inject();
 
