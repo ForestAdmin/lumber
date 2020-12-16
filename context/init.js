@@ -101,8 +101,6 @@ function initDependencies(context) {
   context.addInstance('Sequelize', Sequelize);
   context.addInstance('mongodb', mongodb);
   context.addInstance('superagent', superagent);
-  context.addInstance('fs', fs);
-  context.addInstance('inquirer', inquirer);
   context.addInstance('fsAsync', fsAsync);
 }
 
