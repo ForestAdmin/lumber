@@ -229,6 +229,15 @@ class Dumper {
   writeModel(projectPath, config, table, fields, references, options = {}) {
     const { underscored, dbName } = options;
 
+    let modelPath = `models/${Dumper.tableToFilename(table)}.js`;
+    if (options.useMultiDatabase) {
+      modelPath = `models/${dbName}/${Dumper.tableToFilename(table)}.js`;
+    }
+    if (this.fs.existsSync(modelPath)) {
+      this.logger.log(`  ${this.chalk.yellow('skip')}   ${modelPath} - already exist.`);
+      return;
+    }
+
     const fieldsDefinition = fields.map((field) => {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
       // NOTICE: sequelize considers column name with parenthesis as raw Attributes
@@ -259,7 +268,7 @@ class Dumper {
     this.copyHandleBarsTemplate({
       projectPath,
       source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
-      target: `models${dbName ? `/${dbName}` : ''}/${Dumper.tableToFilename(table)}.js`,
+      target: modelPath,
       context: {
         modelName: Dumper.getModelNameFromTableName(table),
         modelVariableName: stringUtils.pascalCase(stringUtils.transformToSafeString(table)),
@@ -275,13 +284,19 @@ class Dumper {
   }
 
   writeRoute(projectPath, config, modelName) {
+    const routesPath = `routes/${Dumper.tableToFilename(modelName)}.js`;
+    if (this.fs.existsSync(routesPath)) {
+      this.logger.log(`  ${this.chalk.yellow('skip')}   ${routesPath} - already exist.`);
+      return;
+    }
+
     const modelNameDasherized = _.kebabCase(modelName);
     const readableModelName = _.startCase(modelName);
 
     this.copyHandleBarsTemplate({
       projectPath,
       source: 'app/routes/route.hbs',
-      target: `routes/${Dumper.tableToFilename(modelName)}.js`,
+      target: routesPath,
       context: {
         modelName: Dumper.getModelNameFromTableName(modelName),
         modelNameDasherized,
@@ -293,10 +308,16 @@ class Dumper {
   }
 
   writeForestCollection(projectPath, config, table) {
+    const collectionPath = `forest/${Dumper.tableToFilename(table)}.js`;
+    if (this.fs.existsSync(collectionPath)) {
+      this.logger.log(`  ${this.chalk.yellow('skip')}   ${collectionPath} - already exist.`);
+      return;
+    }
+
     this.copyHandleBarsTemplate({
       projectPath,
       source: 'app/forest/collection.hbs',
-      target: `forest/${Dumper.tableToFilename(table)}.js`,
+      target: collectionPath,
       context: {
         isMongoDB: config.dbDialect === 'mongodb',
         table: Dumper.getModelNameFromTableName(table),
@@ -434,67 +455,50 @@ class Dumper {
     this.copyTemplate(projectPath, 'server.hbs', 'server.js');
   }
 
-  checkIsLumberProject() {
+  checkIsValidLumberProject() {
     try {
       if (!this.fs.existsSync(this.routesPath)) throw new Error('No "routes" directory.');
       if (!this.fs.existsSync(this.forestPath)) throw new Error('No "forest" directory.');
       if (!this.fs.existsSync(this.modelsPath)) throw new Error('No "models“ directory.');
+
+      const packagePath = `${this.path}/package.json`;
+      if (!this.fs.existsSync(packagePath)) throw new Error('No "package.json".');
+
+      const file = this.fs.readFileSync(packagePath, 'utf8');
+      const [,, lianaMajorVersion] = /forest-express-.*((\d).\d.\d)/g.exec(file);
+      if (Number(lianaMajorVersion) < 7) throw new Error('Invalid version of liana');
     } catch (error) {
       throw new Error(`We are not able to detect a lumber project file architecture at this path: ${this.path}. ${error}`);
     }
   }
 
-  writeForestCollectionIfNotExist(table) {
-    const collectionPath = `forest/${Dumper.tableToFilename(table)}.js`;
-    if (this.fs.existsSync(collectionPath)) {
-      this.logger.log(`  ${this.chalk.yellow('skip')}   ${collectionPath} - already exist.`);
-      return;
-    }
+  async redump(databasesSchema, config) {
+    const cwd = process.cwd();
+    const projectPath = config.appName ? `${cwd}/${config.appName}` : cwd;
 
-    this.writeForestCollection(table);
-  }
-
-  writeModelIfNotExist(dbName, table, fields, references, options = {}) {
-    const modelPath = `models/${dbName}/${Dumper.tableToFilename(table)}.js`;
-    if (this.fs.existsSync(modelPath)) {
-      this.logger.log(`  ${this.chalk.yellow('skip')}   ${modelPath} - already exist.`);
-      return;
-    }
-
-    this.writeModel(table, fields, references, options);
-  }
-
-  writeRoutelIfNotExist(table) {
-    const routesPath = `routes/${Dumper.tableToFilename(table)}.js`;
-    if (this.fs.existsSync(routesPath)) {
-      this.logger.log(`  ${this.chalk.yellow('skip')}   ${routesPath} - already exist.`);
-      return;
-    }
-
-    this.writeRoute(table);
-  }
-
-  async redump(schemas) {
-    this.checkIsLumberProject();
-
-    Object.entries(schemas).forEach(([dbName, schema]) => {
+    return databasesSchema.map(({ name, schema }) => {
       const modelNames = Dumper.getModelsNameSorted(schema);
 
-      modelNames.forEach((modelName) => {
+      return Promise.all(modelNames.map(async (modelName) => {
         const { fields, references, options } = schema[modelName];
         const safeReferences = Dumper.getSafeReferences(references);
 
-        options.dbName = dbName;
+        options.dbName = name;
+        options.useMultiDatabase = databasesSchema.length > 1;
 
-        this.writeForestCollectionIfNotExist(modelName);
-        this.writeModelIfNotExist(dbName, modelName, fields, safeReferences, options);
+        if (options.useMultiDatabase) {
+          await this.mkdirp(`models/${name}`);
+        }
+
+        this.writeForestCollection(projectPath, config, modelName);
+        this.writeModel(projectPath, config, modelName, fields, safeReferences, options);
         // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
         //       internal session creation route. As a workaround, we don't generate the route file.
         // TODO: Remove the if condition, once the routes paths refactored to prevent such conflict.
         if (modelName !== 'sessions') {
-          this.writeRoutelIfNotExist(modelName);
+          this.writeRoute(projectPath, config, modelName);
         }
-      });
+      }));
     });
   }
 }

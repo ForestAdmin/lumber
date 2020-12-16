@@ -35,12 +35,16 @@ class Database {
   }
 
   connectToMongodb(options, isSSL) {
-    const connectionOptionsMongoClient = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    };
-    let connectionUrl = options.dbConnectionUrl;
+    let connectionOptionsMongoClient = options.connectionOptions;
+    if (!connectionOptionsMongoClient) {
+      connectionOptionsMongoClient = {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      };
+      if (isSSL) { connectionOptionsMongoClient.ssl = true; }
+    }
 
+    let connectionUrl = options.dbConnectionUrl;
     if (!connectionUrl) {
       connectionUrl = 'mongodb';
       if (options.mongodbSrv) { connectionUrl += '+srv'; }
@@ -50,7 +54,6 @@ class Database {
       connectionUrl += `@${options.dbHostname}`;
       if (!options.mongodbSrv) { connectionUrl += `:${options.dbPort}`; }
       connectionUrl += `/${options.dbName}`;
-      if (isSSL) { connectionOptionsMongoClient.ssl = true; }
     }
 
     return this.mongodb.MongoClient.connect(connectionUrl, connectionOptionsMongoClient)
@@ -58,22 +61,19 @@ class Database {
       .catch((error) => this.handleAuthenticationError(error));
   }
 
-  connect(options) {
-    const isSSL = options.dbSSL || options.ssl;
-    const databaseDialect = this.getDialect(options.dbConnectionUrl, options.dbDialect);
+  connnectToSequelize(databaseDialect, options, isSSL) {
+    let connectionOptionsSequelize = options.connectionOptions;
+    if (!connectionOptionsSequelize) {
+      connectionOptionsSequelize = { logging: false };
 
-    if (databaseDialect === 'mongodb') {
-      return this.connectToMongodb(options, isSSL);
-    }
-
-    const connectionOptionsSequelize = { logging: false };
-
-    if (databaseDialect === 'mssql') {
-      connectionOptionsSequelize.dialectOptions = { options: { encrypt: isSSL } };
-    } else if (isSSL) {
-      // Add SSL options only if the user selected SSL mode.
-      // SSL Cerificate is always trusted during `lumber generate` command to ease their onboarding.
-      connectionOptionsSequelize.dialectOptions = { ssl: { rejectUnauthorized: false } };
+      if (databaseDialect === 'mssql') {
+        connectionOptionsSequelize.dialectOptions = { options: { encrypt: isSSL } };
+      } else if (isSSL) {
+        // Add SSL options only if the user selected SSL mode.
+        // SSL Cerificate is always trusted during `lumber generate` command
+        //  to ease their onboarding.
+        connectionOptionsSequelize.dialectOptions = { ssl: { rejectUnauthorized: false } };
+      }
     }
 
     let connection;
@@ -93,29 +93,34 @@ class Database {
     return this.sequelizeAuthenticate(connection);
   }
 
+  connect(options) {
+    const isSSL = options.dbSSL || options.ssl;
+    const databaseDialect = this.getDialect(options.dbConnectionUrl, options.dbDialect);
+
+    if (databaseDialect === 'mongodb') {
+      return this.connectToMongodb(options, isSSL);
+    }
+
+    return this.connnectToSequelize(databaseDialect, options, isSSL);
+  }
+
   connectFromDatabasesConfig(databasesConfig) {
-    const connections = {};
+    return Promise.all(
+      databasesConfig.map(async (databaseConfig) => {
+        const connectionInstance = await this.connect({
+          dbConnectionUrl: databaseConfig.connection.url,
+          connectionOptions: {
+            ...databaseConfig.connection.options,
+            logging: false,
+          },
+        });
 
-    databasesConfig.forEach((databaseConfig) => {
-      const databaseDialect = this.getDialect(databaseConfig.connection.url);
-      if (databaseDialect === 'mongodb') {
-        connections[databaseConfig.name] = this.mongodb.MongoClient.connect(
-          databaseConfig.connection.url,
-          databaseConfig.connection.options,
-        );
-      }
-
-      const sequelizeOptions = {
-        ...databaseConfig.connection.options,
-        logging: false,
-      };
-      connections[databaseConfig.name] = new this.Sequelize(
-        databaseConfig.connection.url,
-        sequelizeOptions,
-      );
-    });
-
-    return connections;
+        return {
+          ...databaseConfig,
+          connectionInstance,
+        };
+      }),
+    );
   }
 }
 

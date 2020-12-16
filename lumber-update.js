@@ -1,3 +1,4 @@
+require('dotenv').config();
 const chalk = require('chalk');
 const program = require('commander');
 const fs = require('fs');
@@ -21,6 +22,11 @@ program
 
 (async () => {
   const { database } = context.inject();
+  const options = {
+    dbSchema: process.env.DATABASE_SCHEMA,
+  };
+  const dumper = new Dumper(options);
+  dumper.checkIsValidLumberProject();
 
   const config = path.resolve(program.config);
   if (!fs.existsSync(config)) {
@@ -31,26 +37,33 @@ program
   const databasesConfig = require(config);
 
   let spinner = spinners.add('databases-connection', { text: 'Connecting to your database(s)' });
-  const connections = database.connectFromDatabasesConfig(databasesConfig);
+  const databasesConnection = await database.connectFromDatabasesConfig(databasesConfig);
   spinner.succeed();
 
-  spinner = spinners.add('analyse', { text: 'Analyse database(s)' });
-  const databasesSchema = {};
-  await Promise.all(
-    Object.entries(connections)
-      .map(async ([dbName, connection]) => {
-        databasesSchema[dbName] = await new DatabaseAnalyzer(connection, { dbSchema: 'public' }, true).perform();
-        return databasesSchema[dbName];
+  spinner = spinners.add('analyze-databases', { text: 'Analyzing the database(s)' });
+  const databasesSchema = await Promise.all(
+    databasesConnection
+      .map(async (databaseConnection) => {
+        options.dbDialect = database.getDialect(databaseConnection.connection.url);
+
+        const schema = await new DatabaseAnalyzer(
+          databaseConnection.connectionInstance,
+          options,
+          true,
+        ).perform();
+
+        return {
+          ...databaseConnection,
+          schema,
+        };
       }),
   );
   spinner.succeed();
 
   spinner = spinners.add('dumper', { text: 'Generating your files' });
-  const dumper = new Dumper({});
-  await dumper.redump(databasesSchema);
+  await dumper.redump(databasesSchema, options);
   spinner.succeed();
 
-  // console.log(databasesSchema);
   console.info(`Hooray, ${chalk.green('installation success')}!`);
   process.exit(0);
 })().catch(async (error) => {
