@@ -1,14 +1,6 @@
-const os = require('os');
-const fs = require('fs');
 const P = require('bluebird');
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const api = require('./api');
-const { parseJwt } = require('../utils/authenticator-helper');
 const { EMAIL_REGEX, PASSWORD_REGEX } = require('../utils/regexs');
-const { terminate } = require('../utils/terminator');
 const { ERROR_UNEXPECTED } = require('../utils/messages');
-const logger = require('./logger');
 
 function validatePassword(password) {
   if (password) {
@@ -23,41 +15,67 @@ Please make sure it contains at least:\n
   return 'Please, choose a password.';
 }
 
-function Authenticator() {
-  this.pathToLumberrc = `${os.homedir()}/.lumberrc`;
+class Authenticator {
+  /**
+   * @param {import('../context/init').Context} context
+   */
+  constructor({
+    logger, fs, os, chalk, api, terminator, authenticatorHelper,
+    inquirer,
+  }) {
+    this.logger = logger;
+    this.fs = fs;
+    this.os = os;
+    this.chalk = chalk;
+    this.api = api;
+    this.terminator = terminator;
+    this.authenticatorHelper = authenticatorHelper;
+    this.inquirer = inquirer;
 
-  this.saveToken = (token) => fs.writeFileSync(this.pathToLumberrc, token);
+    ['logger', 'fs', 'os', 'chalk',
+      'api', 'terminator', 'authenticatorHelper',
+      'inquirer',
+    ].forEach((name) => {
+      if (!this[name]) throw new Error(`Missing dependency ${name}`);
+    });
 
-  this.isTokenCorrect = (email, token) => {
-    const sessionInfo = parseJwt(token);
+    this.pathToLumberrc = `${os.homedir()}/.lumberrc`;
+  }
+
+  saveToken(token) {
+    return this.fs.writeFileSync(this.pathToLumberrc, token);
+  }
+
+  isTokenCorrect(email, token) {
+    const sessionInfo = this.authenticatorHelper.parseJwt(token);
     if (sessionInfo) {
       if ((sessionInfo.exp * 1000) <= Date.now()) {
-        logger.warn('Your token has expired.');
+        this.logger.warn('Your token has expired.');
         return false;
       }
 
       if (sessionInfo.data.data.attributes.email === email) {
         return true;
       }
-      logger.warn('Your credentials are invalid.');
+      this.logger.warn('Your credentials are invalid.');
     }
     return false;
-  };
+  }
 
-  this.login = async (email, password) => {
-    const sessionToken = await api.login(email, password);
+  async login(email, password) {
+    const sessionToken = await this.api.login(email, password);
     this.saveToken(sessionToken);
     return sessionToken;
-  };
+  }
 
-  this.loginWithGoogle = async (email) => {
+  async loginWithGoogle(email) {
     const endpoint = process.env.FOREST_URL && process.env.FOREST_URL.includes('localhost')
       ? 'http://localhost:4200' : 'https://app.forestadmin.com';
-    const url = chalk.cyan.underline(`${endpoint}/authentication-token`);
-    logger.info(`To authenticate with your Google account, please follow this link and copy the authentication token: ${url}`);
+    const url = this.chalk.cyan.underline(`${endpoint}/authentication-token`);
+    this.logger.info(`To authenticate with your Google account, please follow this link and copy the authentication token: ${url}`);
 
-    logger.pauseSpinner();
-    const { sessionToken } = await inquirer.prompt([{
+    this.logger.pauseSpinner();
+    const { sessionToken } = await this.inquirer.prompt([{
       type: 'password',
       name: 'sessionToken',
       message: 'Enter your Forest Admin authentication token:',
@@ -65,7 +83,7 @@ function Authenticator() {
         const errorMessage = 'Invalid token. Please enter your authentication token.';
         if (!input) { return errorMessage; }
 
-        const sessionInfo = parseJwt(input);
+        const sessionInfo = this.authenticatorHelper.parseJwt(input);
         if (sessionInfo
           && sessionInfo.data.data.attributes.email === email
           && (sessionInfo.exp * 1000) > Date.now()) {
@@ -74,28 +92,30 @@ function Authenticator() {
         return errorMessage;
       },
     }]);
-    logger.continueSpinner();
+    this.logger.continueSpinner();
     this.saveToken(sessionToken);
     return sessionToken;
-  };
+  }
 
-  this.logout = async () => new P((resolve, reject) => {
-    fs.stat(this.pathToLumberrc, (err) => {
-      if (err === null) {
-        fs.unlinkSync(this.pathToLumberrc);
+  async logout() {
+    return new P((resolve, reject) => {
+      this.fs.stat(this.pathToLumberrc, (err) => {
+        if (err === null) {
+          this.fs.unlinkSync(this.pathToLumberrc);
 
-        resolve(true);
-      } else if (err.code === 'ENOENT') {
-        logger.info('Your were not logged in');
+          resolve(true);
+        } else if (err.code === 'ENOENT') {
+          this.logger.info('Your were not logged in');
 
-        resolve(false);
-      } else {
-        reject(err);
-      }
+          resolve(false);
+        } else {
+          reject(err);
+        }
+      });
     });
-  });
+  }
 
-  this.loginWithEmailOrTokenArgv = async (config) => {
+  async loginWithEmailOrTokenArgv(config) {
     try {
       const { email, token } = config;
       let { password } = config;
@@ -104,14 +124,14 @@ function Authenticator() {
         return token;
       }
 
-      const isGoogleAccount = await api.isGoogleAccount(email);
+      const isGoogleAccount = await this.api.isGoogleAccount(email);
       if (isGoogleAccount) {
         return this.loginWithGoogle(email);
       }
 
       if (!password) {
-        logger.pauseSpinner();
-        ({ password } = await inquirer.prompt([{
+        this.logger.pauseSpinner();
+        ({ password } = await this.inquirer.prompt([{
           type: 'password',
           name: 'password',
           message: 'What\'s your Forest Admin password:',
@@ -120,22 +140,22 @@ function Authenticator() {
             return 'Please enter your password.';
           },
         }]));
-        logger.continueSpinner();
+        this.logger.continueSpinner();
       }
 
       return await this.login(email, password);
     } catch (error) {
       const message = error.message === 'Unauthorized'
         ? 'Incorrect email or password.'
-        : `${ERROR_UNEXPECTED} ${chalk.red(error)}`;
+        : `${ERROR_UNEXPECTED} ${this.chalk.red(error)}`;
 
-      return terminate(1, { logs: [message] });
+      return this.terminator.terminate(1, { logs: [message] });
     }
-  };
+  }
 
-  this.createAccount = async () => {
-    logger.info('Create an account:');
-    const authConfig = await inquirer.prompt([{
+  async createAccount() {
+    this.logger.info('Create an account:');
+    const authConfig = await this.inquirer.prompt([{
       type: 'input',
       name: 'firstName',
       message: 'What\'s your first name?',
@@ -167,26 +187,26 @@ function Authenticator() {
     }]);
 
     try {
-      await api.createUser(authConfig);
+      await this.api.createUser(authConfig);
     } catch (error) {
       const message = error.message === 'Conflict'
-        ? `This account already exists. Please, use the command ${chalk.cyan('lumber login')} to login with this account.`
-        : `${ERROR_UNEXPECTED} ${chalk.red(error)}`;
+        ? `This account already exists. Please, use the command ${this.chalk.cyan('lumber login')} to login with this account.`
+        : `${ERROR_UNEXPECTED} ${this.chalk.red(error)}`;
 
-      return terminate(1, { logs: [message] });
+      return this.terminator.terminate(1, { logs: [message] });
     }
 
     const token = await this.login(authConfig.email, authConfig.password);
-    logger.success('\nAccount successfully created.\n');
+    this.logger.success('\nAccount successfully created.\n');
 
     return token;
-  };
+  }
 
-  this.loginFromCommandLine = async (config) => {
+  async loginFromCommandLine(config) {
     const { email, token } = config;
     let sessionToken;
     try {
-      sessionToken = token || fs.readFileSync(this.pathToLumberrc, { encoding: 'utf8' });
+      sessionToken = token || this.fs.readFileSync(this.pathToLumberrc, { encoding: 'utf8' });
       if (!sessionToken && email) {
         throw new Error();
       }
@@ -203,7 +223,7 @@ function Authenticator() {
 
     this.saveToken(sessionToken);
     return sessionToken;
-  };
+  }
 }
 
 module.exports = Authenticator;

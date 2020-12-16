@@ -1,8 +1,15 @@
 const Sequelize = require('sequelize');
 const mongodb = require('mongodb');
-const terminator = require('../utils/terminator');
-const logger = require('../services/logger');
+const chalk = require('chalk');
+const fs = require('fs');
+const os = require('os');
+const inquirer = require('inquirer');
 const Database = require('../services/database');
+const logger = require('../services/logger');
+const terminator = require('../utils/terminator');
+const Api = require('../services/api');
+const Authenticator = require('../services/authenticator');
+const authenticatorHelper = require('../utils/authenticator-helper');
 
 /**
  * @typedef {{
@@ -14,11 +21,27 @@ const Database = require('../services/database');
  * }} EnvPart
  *
  * @typedef {{
+ *  fs: import('fs');
+ *  os: import('os');
+ *  chalk: import('chalk');
+ *  inquirer: import('inquirer');
+ *  mongodb: import('mongodb');
+ *  Sequelize: import('sequelize');
+ * }} Dependencies
+ *
+ * @typedef {{
+ *  terminator: import('../utils/terminator');
+ *  authenticatorHelper: import('../utils/authenticator-helper');
+ * }} Utils
+ *
+ * @typedef {{
  *  logger: import('../services/logger');
  *  database: import('../services/database');
+ *  api: import('../services/api');
+ *  authenticator: import('../services/authenticator');
  * }} Services
  *
- * @typedef {EnvPart & Services} Context
+ * @typedef {EnvPart & Dependencies & Utils & Services} Context
  */
 
 /**
@@ -34,7 +57,11 @@ function initEnv(context) {
 /**
  * @param {import('./application-context')} context
  */
-function initExternals(context) {
+function initDependencies(context) {
+  context.addInstance('fs', fs);
+  context.addInstance('os', os);
+  context.addInstance('chalk', chalk);
+  context.addInstance('inquirer', inquirer);
   context.addInstance('Sequelize', Sequelize);
   context.addInstance('mongodb', mongodb);
 }
@@ -44,6 +71,7 @@ function initExternals(context) {
  */
 function initUtils(context) {
   context.addInstance('terminator', terminator);
+  context.addInstance('authenticatorHelper', authenticatorHelper);
 }
 
 /**
@@ -52,6 +80,8 @@ function initUtils(context) {
 function initServices(context) {
   context.addInstance('logger', logger);
   context.addClass(Database);
+  context.addClass(Api);
+  context.addClass(Authenticator);
 }
 
 /**
@@ -60,7 +90,7 @@ function initServices(context) {
  */
 function initContext(context) {
   initEnv(context);
-  initExternals(context);
+  initDependencies(context);
   initUtils(context);
   initServices(context);
 

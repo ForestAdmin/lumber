@@ -1,8 +1,16 @@
 const program = require('commander');
 const inquirer = require('inquirer');
-const logger = require('./services/logger');
-const Authenticator = require('./services/authenticator');
+const context = require('./context');
+const initContext = require('./context/init');
+
+initContext(context);
+
 const { EMAIL_REGEX } = require('./utils/regexs');
+
+const { logger, authenticator } = context.inject();
+
+if (!logger) throw new Error('Missing dependency logger');
+if (!authenticator) throw new Error('Missing dependency authenticator');
 
 program
   .description('Log into Forest Admin API')
@@ -12,7 +20,6 @@ program
   .parse(process.argv);
 
 (async () => {
-  const auth = new Authenticator();
   let { email } = program;
 
   if (!email) {
@@ -27,8 +34,8 @@ program
     }]));
   }
 
-  const token = await auth.loginWithEmailOrTokenArgv({ ...program, email });
-  auth.saveToken(token);
+  const token = await authenticator.loginWithEmailOrTokenArgv({ ...program, email });
+  authenticator.saveToken(token);
 
   logger.success('Login successful');
   process.exit(0);
