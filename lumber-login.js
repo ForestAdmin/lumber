@@ -6,14 +6,10 @@ const initContext = require('./context/init');
 initContext(context);
 
 const { EMAIL_REGEX } = require('./utils/regexs');
-const context = require('./context');
-const initContext = require('./context/init');
 
-initContext(context);
-
-const { oidcAuthenticator, errorHandler, applicationTokenService } = context.inject();
-
-const { logger, authenticator } = context.inject();
+const {
+  logger, authenticator, oidcAuthenticator, errorHandler, applicationTokenService,
+} = context.inject();
 
 if (!logger) throw new Error('Missing dependency logger');
 if (!authenticator) throw new Error('Missing dependency authenticator');
@@ -26,8 +22,6 @@ program
   .parse(process.argv);
 
 (async () => {
-  const auth = new Authenticator();
-
   let { email, token } = program;
   const { password } = program;
 
@@ -47,10 +41,10 @@ program
       }]));
     }
 
-    token = await auth.loginWithEmailOrTokenArgv({ ...program, email });
+    token = await authenticator.loginWithEmailOrTokenArgv({ ...program, email });
   }
 
-  auth.saveToken(token);
+  authenticator.saveToken(token);
   logger.success('Login successful');
   process.exit(0);
 })().catch(async (error) => {
