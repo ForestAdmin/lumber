@@ -456,20 +456,31 @@ class Dumper {
   }
 
   checkIsValidLumberProject() {
+    const currentPath = process.cwd();
     try {
-      if (!this.fs.existsSync(this.routesPath)) throw new Error('No "routes" directory.');
-      if (!this.fs.existsSync(this.forestPath)) throw new Error('No "forest" directory.');
-      if (!this.fs.existsSync(this.modelsPath)) throw new Error('No "models“ directory.');
-
-      const packagePath = `${this.path}/package.json`;
-      if (!this.fs.existsSync(packagePath)) throw new Error('No "package.json".');
-
-      const file = this.fs.readFileSync(packagePath, 'utf8');
-      const [,, lianaMajorVersion] = /forest-express-.*((\d).\d.\d)/g.exec(file);
-      if (Number(lianaMajorVersion) < 7) throw new Error('Invalid version of liana');
+      if (!this.fs.existsSync(`${currentPath}/routes`)) throw new Error('No "routes" directory.');
+      if (!this.fs.existsSync(`${currentPath}/forest`)) throw new Error('No "forest" directory.');
+      if (!this.fs.existsSync(`${currentPath}/models`)) throw new Error('No "models“ directory.');
     } catch (error) {
-      throw new Error(`We are not able to detect a lumber project file architecture at this path: ${this.path}. ${error}`);
+      throw new Error(`We are not able to detect a lumber project file architecture at this path: ${currentPath}. ${error}`);
     }
+  }
+
+  checkIsLianaCompatible() {
+    const packagePath = `${process.cwd()}/package.json`;
+    if (!this.fs.existsSync(packagePath)) throw new Error('No "package.json".');
+
+    const file = this.fs.readFileSync(packagePath, 'utf8');
+    const [,, lianaMajorVersion] = /forest-express-.*((\d).\d.\d)/g.exec(file);
+    if (Number(lianaMajorVersion) < 7) throw new Error('Invalid version of liana');
+  }
+
+  async createOutputDirectoryIfNotExist(path) {
+    if (this.fs.existsSync(path)) throw new Error('Output directory already exist.');
+    await this.mkdirp(path);
+    await this.mkdirp(`${path}/routes`);
+    await this.mkdirp(`${path}/forest`);
+    await this.mkdirp(`${path}/models`);
   }
 
   async redump(databasesSchema, config) {

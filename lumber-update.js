@@ -5,7 +5,6 @@ const fs = require('fs');
 const path = require('path');
 const DatabaseAnalyzer = require('./services/analyzer/database-analyzer');
 const spinners = require('./services/spinners');
-const Dumper = require('./services/dumper');
 const { updateErrors, LumberError } = require('./utils/errors');
 const { ERROR_UNEXPECTED } = require('./utils/messages');
 const { terminate } = require('./utils/terminator');
@@ -18,15 +17,23 @@ program
   .description('update your project by generating files that does not currently exist')
   .usage('<appName> [options]')
   .option('-c, --config <config-path>', 'Enter the databases configuration file to use', './config/databases.js')
+  .option('-o, --output-directory <output-directory-path>', 'Enter the output directory to export new files into')
   .parse(process.argv);
 
 (async () => {
-  const { database } = context.inject();
+  const { database, dumper } = context.inject();
+  const useOutputDirectory = !!program.outputDirectory;
   const options = {
     dbSchema: process.env.DATABASE_SCHEMA,
+    appName: program.outputDirectory,
   };
-  const dumper = new Dumper(options);
-  dumper.checkIsValidLumberProject();
+  dumper.checkIsLianaCompatible();
+
+  if (useOutputDirectory) {
+    await dumper.createOutputDirectoryIfNotExist();
+  } else {
+    dumper.checkIsValidLumberProject();
+  }
 
   const config = path.resolve(program.config);
   if (!fs.existsSync(config)) {
