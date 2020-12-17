@@ -218,7 +218,7 @@ class Dumper {
     const fieldsDefinition = fields.map((field) => {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
       const nameColumnUnconventional = field.nameColumn !== expectedConventionalColumnName
-        || (underscored && /[1-9]/g.test(field.name));
+        || (underscored && (/[1-9]/g.test(field.name) || field.hasParenthesis));
       const safeDefaultValue = this.getSafeDefaultValue(field);
 
       return {

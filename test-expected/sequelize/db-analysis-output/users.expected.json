@@ -7,7 +7,8 @@
         "type": "STRING",
         "primaryKey": false,
         "defaultValue": null,
-        "isRequired": true
+        "isRequired": true,
+        "hasParenthesis": false
       },
       {
         "name": "enabled",
@@ -15,7 +16,8 @@
         "type": "BOOLEAN",
         "primaryKey": false,
         "defaultValue": true,
-        "isRequired": false
+        "isRequired": false,
+        "hasParenthesis": false
       },
       {
         "name": "lastLogin",
@@ -23,7 +25,8 @@
         "type": "DATE",
         "primaryKey": false,
         "defaultValue": null,
-        "isRequired": true
+        "isRequired": true,
+        "hasParenthesis": false
       }
     ],
     "references": [

@@ -7,7 +7,8 @@
         "type": "INTEGER",
         "primaryKey": true,
         "defaultValue": null,
-        "isRequired": true
+        "isRequired": true,
+        "hasParenthesis": false
       },
       {
         "name": "fromDate",
@@ -15,7 +16,8 @@
         "type": "DATEONLY",
         "primaryKey": false,
         "defaultValue": null,
-        "isRequired": true
+        "isRequired": true,
+        "hasParenthesis": false
       },
       {
         "name": "toDate",
@@ -23,7 +25,8 @@
         "defaultValue": null,
         "primaryKey": false,
         "type": "DATEONLY",
-        "isRequired": true
+        "isRequired": true,
+        "hasParenthesis": false
       }
     ],
     "references": [

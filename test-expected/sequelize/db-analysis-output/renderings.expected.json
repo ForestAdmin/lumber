@@ -6,33 +6,38 @@
         "nameColumn": "createdAt",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "hasParenthesis": false
       },
       {
         "name": "updatedAt",
         "nameColumn": "updatedAt",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "hasParenthesis": false
       },
       {
         "name": "deletedAt",
         "nameColumn": "deletedAt",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "hasParenthesis": false
       },
       {
         "name": "testEnum",
         "nameColumn": "testEnum",
-        "type": "ENUM('LEFT','RIGHT')"
+        "type": "ENUM('LEFT','RIGHT')",
+        "hasParenthesis": false
       },
       {
         "name": "cacheVersion",
         "nameColumn": "cacheVersion",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "hasParenthesis": false
       },
       {
         "name": "sections",
@@ -40,7 +45,8 @@
         "type": "JSONB",
         "primaryKey": false,
         "defaultValueBak": "Sequelize.literal('[{\"name\": \"Dashboard\", \"isVisible\": true}, {\"name\": \"Data\", \"isVisible\": true}]')",
-        "defaultValue": [{"name": "Dashboard", "isVisible": true}, {"name": "Data", "isVisible": true}]
+        "defaultValue": [{"name": "Dashboard", "isVisible": true}, {"name": "Data", "isVisible": true}],
+        "hasParenthesis": false
       },
       {
         "name": "collectionsPositions",
@@ -48,7 +54,8 @@
         "type": "ARRAY(DataTypes.INTEGER)",
         "primaryKey": false,
         "defaultValueBak": "Sequelize.literal('ARRAY[]')",
-        "defaultValue": []
+        "defaultValue": [],
+        "hasParenthesis": false
       }
     ],
     "references": [

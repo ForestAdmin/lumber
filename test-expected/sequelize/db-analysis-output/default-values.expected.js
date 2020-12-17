@@ -8,13 +8,15 @@ module.exports = {
         "nameColumn": "noDefault",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "hasParenthesis": false
       },
       {
         "name": "arrayDefault",
         "nameColumn": "arrayDefault",
         "type": "ARRAY(DataTypes.INTEGER)",
-        "defaultValue": []
+        "defaultValue": [],
+        "hasParenthesis": false
       },
       {
         "name": "booleanDefault",
@@ -22,33 +24,38 @@ module.exports = {
         "type": "BOOLEAN",
         "primaryKey": false,
         "defaultValue": true,
+        "hasParenthesis": false
       },
       {
         "name": "dateConstDefault",
         "nameColumn": "dateConstDefault",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": "1983-05-27"
+        "defaultValue": "1983-05-27",
+        "hasParenthesis": false
       },
       {
         "name": "dateExprDefault",
         "nameColumn": "dateExprDefault",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": Sequelize.literal('now()')
+        "defaultValue": Sequelize.literal('now()'),
+        "hasParenthesis": false
       },
       {
         "name": "enumDefault",
         "nameColumn": "enumDefault",
         "type": "ENUM('LEFT','RIGHT')",
-        "defaultValue": "LEFT"
+        "defaultValue": "LEFT",
+        "hasParenthesis": false
       },
       {
         "name": "intDefault",
         "nameColumn": "intDefault",
         "type": "INT",
         "primaryKey": false,
-        "defaultValue": 42
+        "defaultValue": 42,
+        "hasParenthesis": false
       },
       {
         "name": 'numericWithStringNULLDefault',
@@ -56,6 +63,7 @@ module.exports = {
         "type": 'DOUBLE',
         "primaryKey": false,
         "defaultValue": 'NULL',
+        "hasParenthesis": false
       },
       {
         "name": "jsonDefault",
@@ -75,14 +83,16 @@ module.exports = {
             "key": "last",
             "value": "string value"
           }
-        ]
+        ],
+        "hasParenthesis": false
       },
       {
         "name": "stringDefault",
         "nameColumn": "stringDefault",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": "default value"
+        "defaultValue": "default value",
+        "hasParenthesis": false
       }
     ],
     "references": [

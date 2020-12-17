@@ -322,7 +322,8 @@ async function createTableSchema(columnTypeGetter, {
         defaultValue = Sequelize.literal(defaultValue);
       }
 
-      const name = _.camelCase(columnName);
+      const hasParenthesis = columnName.includes('(') || columnName.includes(')');
+      const name = hasParenthesis ? columnName : _.camelCase(columnName);
       let isRequired = !columnInfo.allowNull;
       if (isTechnicalTimestamp({ name, type })) {
         isRequired = false;
@@ -331,6 +332,7 @@ async function createTableSchema(columnTypeGetter, {
       const field = {
         name,
         nameColumn: columnName,
+        hasParenthesis,
         type,
         primaryKey: columnInfo.primaryKey,
         defaultValue,

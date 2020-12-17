@@ -6,7 +6,8 @@
         "nameColumn": "value",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": null
+        "defaultValue": null,
+        "hasParenthesis": false
       }
     ],
     "references": [
