@@ -1,4 +1,3 @@
-const P = require('bluebird');
 const { EMAIL_REGEX, PASSWORD_REGEX } = require('../utils/regexs');
 const { ERROR_UNEXPECTED } = require('../utils/messages');
 
@@ -21,20 +20,22 @@ class Authenticator {
    */
   constructor({
     logger, fs, os, chalk, api, terminator, authenticatorHelper,
-    inquirer,
+    inquirer, fsAsync, applicationTokenService,
   }) {
     this.logger = logger;
     this.fs = fs;
+    this.fsAsync = fsAsync;
     this.os = os;
     this.chalk = chalk;
     this.api = api;
     this.terminator = terminator;
     this.authenticatorHelper = authenticatorHelper;
     this.inquirer = inquirer;
+    this.applicationTokenService = applicationTokenService;
 
     ['logger', 'fs', 'os', 'chalk',
       'api', 'terminator', 'authenticatorHelper',
-      'inquirer',
+      'inquirer', 'fsAsync', 'applicationTokenService',
     ].forEach((name) => {
       if (!this[name]) throw new Error(`Missing dependency ${name}`);
     });
@@ -98,21 +99,26 @@ class Authenticator {
   }
 
   async logout() {
-    return new P((resolve, reject) => {
-      this.fs.stat(this.pathToLumberrc, (err) => {
-        if (err === null) {
-          this.fs.unlinkSync(this.pathToLumberrc);
+    try {
+      await this.fsAsync.stat(this.pathToLumberrc);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        this.logger.info('You were not logged in');
+        return;
+      }
 
-          resolve(true);
-        } else if (err.code === 'ENOENT') {
-          this.logger.info('Your were not logged in');
+      throw error;
+    }
 
-          resolve(false);
-        } else {
-          reject(err);
-        }
-      });
-    });
+    const token = await this.fsAsync.readFile(this.pathToLumberrc, { encoding: 'utf8' });
+
+    try {
+      if (token) {
+        await this.applicationTokenService.deleteApplicationToken(token.trim());
+      }
+    } finally {
+      await this.fsAsync.unlink(this.pathToLumberrc);
+    }
   }
 
   async loginWithEmailOrTokenArgv(config) {

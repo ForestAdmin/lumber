@@ -2,10 +2,9 @@ const program = require('commander');
 const inquirer = require('inquirer');
 const context = require('./context');
 const initContext = require('./context/init');
+const { EMAIL_REGEX } = require('./utils/regexs');
 
 initContext(context);
-
-const { EMAIL_REGEX } = require('./utils/regexs');
 
 const {
   logger, authenticator, oidcAuthenticator, errorHandler, applicationTokenService,
@@ -13,6 +12,8 @@ const {
 
 if (!logger) throw new Error('Missing dependency logger');
 if (!authenticator) throw new Error('Missing dependency authenticator');
+if (!errorHandler) throw new Error('Missing dependency errorHandler');
+if (!applicationTokenService) throw new Error('Missing dependency applicationTokenService');
 
 program
   .description('Log into Forest Admin API')

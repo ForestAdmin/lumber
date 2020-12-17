@@ -7,6 +7,7 @@ const inquirer = require('inquirer');
 const open = require('open');
 const openIdClient = require('openid-client');
 const superagent = require('superagent');
+const { promisify } = require('util');
 const Database = require('../services/database');
 const pkg = require('../package.json');
 const applicationTokenDeserializer = require('../deserializers/application-token');
@@ -21,6 +22,12 @@ const OidcAuthenticator = require('../services/oidc/authenticator');
 const ErrorHandler = require('../services/error-handler');
 const messages = require('../utils/messages');
 
+const fsAsync = {
+  readFile: promisify(fs.readFile),
+  stat: promisify(fs.stat),
+  unlink: promisify(fs.unlink),
+};
+
 /**
  * @typedef {{
  *   FOREST_URL: string;
@@ -33,16 +40,16 @@ const messages = require('../utils/messages');
  * }} EnvPart
  *
  * @typedef {{
+ *  openIdClient: import('openid-client');
+ *  chalk: import('chalk');
+ *  open: import('open');
  *  fs: import('fs');
  *  os: import('os');
- *  chalk: import('chalk');
  *  inquirer: import('inquirer');
  *  mongodb: import('mongodb');
  *  Sequelize: import('sequelize');
- *  openIdClient: import('openid-client');
- *  open: import('open');
- *  os: import('os');
  *  superagent: import('superagent');
+ *  fsAsync: fsAsync;
  * }} Dependencies
  *
  * @typedef {{
@@ -63,7 +70,6 @@ const messages = require('../utils/messages');
  *  authenticator: import('../services/authenticator');
  *  oidcAuthenticator: import('../services/oidc/authenticator');
  *  errorHandler: import('../services/error-handler');
- *  api: import('../services/api');
  *  applicationTokenService: import('../services/application-token');
  * }} Services
  *
@@ -95,6 +101,7 @@ function initDependencies(context) {
   context.addInstance('Sequelize', Sequelize);
   context.addInstance('mongodb', mongodb);
   context.addInstance('superagent', superagent);
+  context.addInstance('fsAsync', fsAsync);
 }
 
 /**
@@ -121,10 +128,10 @@ function initServices(context) {
   context.addInstance('logger', logger);
   context.addClass(Database);
   context.addClass(Api);
+  context.addClass(ApplicationTokenService);
   context.addClass(Authenticator);
   context.addClass(OidcAuthenticator);
   context.addClass(ErrorHandler);
-  context.addClass(ApplicationTokenService);
 }
 
 /**

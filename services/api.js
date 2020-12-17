@@ -133,6 +133,21 @@ class Api {
       .send(this.applicationTokenSerializer.serialize(applicationToken))
       .then((response) => this.applicationTokenDeserializer.deserialize(response.body));
   }
+
+  /**
+   * @param {import('../serializers/application-token').InputApplicationToken} applicationToken
+   * @param {string} sessionToken
+   * @returns {Promise<import('../deserializers/application-token').ApplicationToken>}
+   */
+  async deleteApplicationToken(applicationToken) {
+    return this.agent
+      .delete(`${this.endpoint}/api/application-tokens`)
+      .set(HEADER_FOREST_ORIGIN, 'Lumber')
+      .set(HEADER_CONTENT_TYPE, HEADER_CONTENT_TYPE_JSON)
+      .set(HEADER_USER_AGENT, this.userAgent)
+      .set('Authorization', `Bearer ${applicationToken}`)
+      .send();
+  }
 }
 
 module.exports = Api;
