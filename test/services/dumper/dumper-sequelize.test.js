@@ -7,6 +7,10 @@ const belongsToModel = require('../../../test-expected/sequelize/db-analysis-out
 const otherAssociationsModel = require('../../../test-expected/sequelize/db-analysis-output/users.expected.json');
 const exportModel = require('../../../test-expected/sequelize/db-analysis-output/export.expected.json');
 const defaultValuesModel = require('../../../test-expected/sequelize/db-analysis-output/default-values.expected.js');
+const parenthesisColumnName = require('../../../test-expected/sequelize/db-analysis-output/parenthesis.expected.json');
+const parenthesisColumnNameUnderscored = require('../../../test-expected/sequelize/db-analysis-output/parenthesis_underscored.expected.json');
+const parenthesisColumnNameUnderscoredTrue = require('../../../test-expected/sequelize/db-analysis-output/parenthesis_underscored_true.expected.json');
+
 
 const Dumper = require('../../../services/dumper');
 
@@ -45,6 +49,39 @@ describe('services > dumper > sequelize', () => {
     await dumper.dump(belongsToModel);
     const generatedFile = fs.readFileSync('./test-output/sequelize/models/addresses.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/addresses.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('should generate a model file with correct parenthesis field and underscored false', async () => {
+    expect.assertions(1);
+    const dumper = getDumper();
+    await dumper.dump(parenthesisColumnName);
+    const generatedFile = fs.readFileSync('./test-output/sequelize/models/parenthesis.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/parenthesis.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('should generate a model file with correct parenthesis field and underscored false', async () => {
+    expect.assertions(1);
+    const dumper = getDumper();
+    await dumper.dump(parenthesisColumnNameUnderscored);
+    const generatedFile = fs.readFileSync('./test-output/sequelize/models/parenthesis-underscored.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/parenthesis_underscored.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('should generate a model file with correct parenthesis field and underscored true', async () => {
+    expect.assertions(1);
+    const dumper = getDumper();
+    await dumper.dump(parenthesisColumnNameUnderscoredTrue);
+    const generatedFile = fs.readFileSync('./test-output/sequelize/models/parenthesis-underscored-true.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/parenthesis_underscored_true.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();

@@ -7,8 +7,7 @@
         "type": "INTEGER",
         "primaryKey": true,
         "defaultValue": null,
-        "isRequired": true,
-        "hasParenthesis": false
+        "isRequired": true
       },
       {
         "name": "street",
@@ -16,8 +15,7 @@
         "type": "STRING",
         "primaryKey": false,
         "defaultValue": null,
-        "isRequired": true,
-        "hasParenthesis": false
+        "isRequired": true
       },
       {
         "name": "city",
@@ -25,8 +23,7 @@
         "type": "STRING",
         "primaryKey": false,
         "defaultValue": null,
-        "isRequired": true,
-        "hasParenthesis": false
+        "isRequired": true
       },
       {
         "name": "state",
@@ -34,8 +31,7 @@
         "type": "STRING",
         "primaryKey": false,
         "defaultValue": null,
-        "isRequired": true,
-        "hasParenthesis": false
+        "isRequired": true
       }
     ],
     "references": [

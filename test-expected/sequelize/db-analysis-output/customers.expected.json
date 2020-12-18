@@ -7,8 +7,7 @@
         "type": "STRING",
         "primaryKey": false,
         "defaultValue": null,
-        "isRequired": true,
-        "hasParenthesis": false
+        "isRequired": true
       },
       {
         "name": "description",
@@ -16,8 +15,7 @@
         "type": "STRING",
         "primaryKey": false,
         "defaultValue": null,
-        "isRequired": false,
-        "hasParenthesis": false
+        "isRequired": false
       },
       {
         "name": "isActive",
@@ -25,8 +23,7 @@
         "type": "BOOLEAN",
         "primaryKey": false,
         "defaultValue": true,
-        "isRequired": true,
-        "hasParenthesis": false
+        "isRequired": true
       },
       {
         "nameColumn": "paying",
@@ -34,8 +31,7 @@
         "name": "paying",
         "primaryKey": false,
         "type": "BOOLEAN",
-        "isRequired": true,
-        "hasParenthesis": false
+        "isRequired": true
       },
       {
         "name": "createdAt",
@@ -43,8 +39,7 @@
         "type": "DATE",
         "primaryKey": false,
         "defaultValue": null,
-        "isRequired": false,
-        "hasParenthesis": false
+        "isRequired": false
       },
       {
         "name": "updatedAt",
@@ -52,8 +47,7 @@
         "type": "DATE",
         "primaryKey": false,
         "defaultValue": null,
-        "isRequired": false,
-        "hasParenthesis": false
+        "isRequired": false
       }
     ],
     "references": [],

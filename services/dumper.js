@@ -217,14 +217,16 @@ class Dumper {
 
     const fieldsDefinition = fields.map((field) => {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
+      const hasParenthesis = field.nameColumn && (field.nameColumn.includes('(') || field.nameColumn.includes(')'));
       const nameColumnUnconventional = field.nameColumn !== expectedConventionalColumnName
-        || (underscored && (/[1-9]/g.test(field.name) || field.hasParenthesis));
+        || (underscored && (/[1-9]/g.test(field.name) || hasParenthesis));
       const safeDefaultValue = this.getSafeDefaultValue(field);
 
       return {
         ...field,
         ref: field.ref && Dumper.getModelNameFromTableName(field.ref),
         nameColumnUnconventional,
+        hasParenthesis,
         safeDefaultValue,
         // NOTICE: needed to keep falsy default values in template
         hasSafeDefaultValue: !_.isNil(safeDefaultValue),

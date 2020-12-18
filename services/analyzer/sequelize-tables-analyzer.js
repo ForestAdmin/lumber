@@ -332,7 +332,6 @@ async function createTableSchema(columnTypeGetter, {
       const field = {
         name,
         nameColumn: columnName,
-        hasParenthesis,
         type,
         primaryKey: columnInfo.primaryKey,
         defaultValue,

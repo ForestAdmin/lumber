@@ -8,62 +8,54 @@ module.exports = {
         "nameColumn": "noDefault",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": null,
-        "hasParenthesis": false
+        "defaultValue": null
       },
       {
         "name": "arrayDefault",
         "nameColumn": "arrayDefault",
         "type": "ARRAY(DataTypes.INTEGER)",
-        "defaultValue": [],
-        "hasParenthesis": false
+        "defaultValue": []
       },
       {
         "name": "booleanDefault",
         "nameColumn": "booleanDefault",
         "type": "BOOLEAN",
         "primaryKey": false,
-        "defaultValue": true,
-        "hasParenthesis": false
+        "defaultValue": true
       },
       {
         "name": "dateConstDefault",
         "nameColumn": "dateConstDefault",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": "1983-05-27",
-        "hasParenthesis": false
+        "defaultValue": "1983-05-27"
       },
       {
         "name": "dateExprDefault",
         "nameColumn": "dateExprDefault",
         "type": "DATE",
         "primaryKey": false,
-        "defaultValue": Sequelize.literal('now()'),
-        "hasParenthesis": false
+        "defaultValue": Sequelize.literal('now()')
       },
       {
         "name": "enumDefault",
         "nameColumn": "enumDefault",
         "type": "ENUM('LEFT','RIGHT')",
-        "defaultValue": "LEFT",
-        "hasParenthesis": false
+        "defaultValue": "LEFT"
       },
       {
         "name": "intDefault",
         "nameColumn": "intDefault",
         "type": "INT",
         "primaryKey": false,
-        "defaultValue": 42,
-        "hasParenthesis": false
+        "defaultValue": 42
       },
       {
         "name": 'numericWithStringNULLDefault',
         "nameColumn": 'numericWithStringNULLDefault',
         "type": 'DOUBLE',
         "primaryKey": false,
-        "defaultValue": 'NULL',
-        "hasParenthesis": false
+        "defaultValue": 'NULL'
       },
       {
         "name": "jsonDefault",
@@ -83,16 +75,14 @@ module.exports = {
             "key": "last",
             "value": "string value"
           }
-        ],
-        "hasParenthesis": false
+        ]
       },
       {
         "name": "stringDefault",
         "nameColumn": "stringDefault",
         "type": "STRING",
         "primaryKey": false,
-        "defaultValue": "default value",
-        "hasParenthesis": false
+        "defaultValue": "default value"
       }
     ],
     "references": [
