@@ -11,7 +11,6 @@ const parenthesisColumnName = require('../../../test-expected/sequelize/db-analy
 const parenthesisColumnNameUnderscored = require('../../../test-expected/sequelize/db-analysis-output/parenthesis_underscored.expected.json');
 const parenthesisColumnNameUnderscoredTrue = require('../../../test-expected/sequelize/db-analysis-output/parenthesis_underscored_true.expected.json');
 
-
 const Dumper = require('../../../services/dumper');
 
 function getDumper() {
@@ -54,7 +53,7 @@ describe('services > dumper > sequelize', () => {
     cleanOutput();
   });
 
-  it('should generate a model file with correct parenthesis field and underscored false', async () => {
+  it('should generate a model file with correct parenthesis field', async () => {
     expect.assertions(1);
     const dumper = getDumper();
     await dumper.dump(parenthesisColumnName);
@@ -65,7 +64,7 @@ describe('services > dumper > sequelize', () => {
     cleanOutput();
   });
 
-  it('should generate a model file with correct parenthesis field and underscored false', async () => {
+  it('should generate a model file with correct parenthesis field and correct underscored fields', async () => {
     expect.assertions(1);
     const dumper = getDumper();
     await dumper.dump(parenthesisColumnNameUnderscored);
