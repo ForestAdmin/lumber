@@ -21,7 +21,7 @@ module.exports = {
         "nameColumn": "booleanDefault",
         "type": "BOOLEAN",
         "primaryKey": false,
-        "defaultValue": true
+        "defaultValue": true,
       },
       {
         "name": "dateConstDefault",
@@ -55,7 +55,7 @@ module.exports = {
         "nameColumn": 'numericWithStringNULLDefault',
         "type": 'DOUBLE',
         "primaryKey": false,
-        "defaultValue": 'NULL'
+        "defaultValue": 'NULL',
       },
       {
         "name": "jsonDefault",
