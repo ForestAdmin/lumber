@@ -29,11 +29,11 @@ jobs:
       after_script:
         - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
     - stage: Build & Publish
-      if: branch = master AND type != pull_request
+      if: branch IN ("master", "beta") AND type != pull_request
       script: skip
       deploy:
         provider: script
         skip_cleanup: true
         on:
-          branch: master
+          all_branches: true
         script: yarn && npx semantic-release
