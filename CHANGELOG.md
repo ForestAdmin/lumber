@@ -1,3 +1,10 @@
+## [3.10.5](https://github.com/ForestAdmin/lumber/compare/v3.10.4...v3.10.5) (2020-12-21)
+
+
+### Bug Fixes
+
+* **sequelize:** fix error when working with column table including parenthesis ([#520](https://github.com/ForestAdmin/lumber/issues/520)) ([79c041b](https://github.com/ForestAdmin/lumber/commit/79c041b8ca6a78db198e71a4b0ec1dbba224acbd))
+
 ## [3.10.4](https://github.com/ForestAdmin/lumber/compare/v3.10.3...v3.10.4) (2020-12-01)
 
 
