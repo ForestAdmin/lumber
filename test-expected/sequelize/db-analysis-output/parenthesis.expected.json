@@ -1,0 +1,31 @@
+{
+  "parenthesis": {
+    "fields": [
+      {
+        "name": "id",
+        "nameColumn": "id",
+        "type": "INTEGER",
+        "primaryKey": true,
+        "defaultValue": null,
+        "isRequired": true
+      },
+      {
+        "name": "Ingredients (Kcal/100g)",
+        "nameColumn": "Ingredients (Kcal/100g)",
+        "type": "STRING",
+        "primaryKey": false,
+        "defaultValue": null,
+        "isRequired": false
+      }
+    ],
+    "references": [],
+    "primaryKeys": ["id"],
+    "options": {
+      "hasIdColumn": false,
+      "hasPrimaryKeys": true,
+      "isJunction": false,
+      "timestamps": false,
+      "underscored": false
+    }
+  }
+}
