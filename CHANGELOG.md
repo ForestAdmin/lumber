@@ -1,3 +1,15 @@
+# [4.0.0-beta.1](https://github.com/ForestAdmin/lumber/compare/v3.10.4...v4.0.0-beta.1) (2020-12-21)
+
+
+### Features
+
+* authenticate without entering a password ([#513](https://github.com/ForestAdmin/lumber/issues/513)) ([fe8d8c3](https://github.com/ForestAdmin/lumber/commit/fe8d8c3b0e1a45430a4b0a86a2f7e2b1a2f5d57a))
+
+
+### BREAKING CHANGES
+
+* by default, the authentication process will redirect to a web page to validate a code.
+
 ## [3.10.4](https://github.com/ForestAdmin/lumber/compare/v3.10.3...v3.10.4) (2020-12-01)
 
 
