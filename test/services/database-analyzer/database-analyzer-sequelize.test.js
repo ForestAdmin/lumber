@@ -132,6 +132,7 @@ describe('services > database analyser > Sequelize', () => {
 
       const sequelizeHelper = new SequelizeHelper();
       const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      await sequelizeHelper.dropAndCreate('only_foreign_keys_and_id');
       const result = await performDatabaseAnalysis(databaseConnection);
 
       await sequelizeHelper.close();
