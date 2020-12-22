@@ -306,6 +306,22 @@ function isOnlyJoinTableWithId(schema, constraints) {
   return !columnWithoutForeignKey;
 }
 
+function getPrimaryKeyDefaultValue(defaultValue) {
+  if (["b'1'", '((1))'].includes(defaultValue)) {
+    return true;
+  }
+
+  if (["b'0'", '((0))'].includes(defaultValue)) {
+    return false;
+  }
+
+  if (typeof defaultValue === 'string' && defaultValue.endsWith(')')) {
+    return Sequelize.literal(defaultValue);
+  }
+
+  return defaultValue;
+}
+
 async function createTableSchema(columnTypeGetter, {
   schema,
   constraints,
@@ -334,13 +350,7 @@ async function createTableSchema(columnTypeGetter, {
       // NOTICE: Handle bit(1) to boolean conversion
       let { defaultValue } = columnInfo;
 
-      if (["b'1'", '((1))'].includes(defaultValue)) {
-        defaultValue = true;
-      } else if (["b'0'", '((0))'].includes(defaultValue)) {
-        defaultValue = false;
-      } else if (typeof defaultValue === 'string' && defaultValue.endsWith(')')) {
-        defaultValue = Sequelize.literal(defaultValue);
-      }
+      defaultValue = getPrimaryKeyDefaultValue(defaultValue);
 
       // NOTICE: sequelize considers column name with parenthesis as raw Attributes
       // do not try to camelCase the name for avoiding sequelize issues
