@@ -327,9 +327,9 @@ async function createTableSchema(columnTypeGetter, {
     const isIdIntegerPrimaryColumn = columnName === 'id'
       && ['INTEGER', 'BIGINT'].includes(type)
       && columnInfo.primaryKey;
-    // NOTICE: But in some case we want to force the id to be still dumped.
+    // NOTICE: But in some cases we want to force the id to be still generated.
     //         For example, Sequelize will not use a default id field on a model
-    //         that has only foreign keys, so if the id primary key is present, we need to handle it.
+    //         that has only foreign keys, so if the id primary key is present, we need to force it.
     const forceIdColumn = isIdIntegerPrimaryColumn && isOnlyJoinTableWithId(schema, constraints);
 
     if (isValidField && (!isIdIntegerPrimaryColumn || forceIdColumn)) {
