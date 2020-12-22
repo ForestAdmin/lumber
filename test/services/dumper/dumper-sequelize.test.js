@@ -5,6 +5,7 @@ const os = require('os');
 const simpleModel = require('../../../test-expected/sequelize/db-analysis-output/customers.expected.json');
 const belongsToModel = require('../../../test-expected/sequelize/db-analysis-output/addresses.expected.json');
 const otherAssociationsModel = require('../../../test-expected/sequelize/db-analysis-output/users.expected.json');
+const joinTableWithIdKey = require('../../../test-expected/sequelize/db-analysis-output/only-foreign-keys-and-id.expected.json')
 const exportModel = require('../../../test-expected/sequelize/db-analysis-output/export.expected.json');
 const defaultValuesModel = require('../../../test-expected/sequelize/db-analysis-output/default-values.expected.js');
 const parenthesisColumnName = require('../../../test-expected/sequelize/db-analysis-output/parenthesis.expected.json');
@@ -171,5 +172,16 @@ describe('services > dumper > sequelize', () => {
       expect(generatedFile).toStrictEqual(expectedFile);
       cleanOutput();
     });
+  });
+
+  it('should generate an id column on join tables with id primary key', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(joinTableWithIdKey);
+    const generatedFile = fs.readFileSync('./test-output/sequelize/models/only-foreign-keys-and-id.js', 'utf8');
+    const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/only-foreign-keys-and-id.expected.js', 'utf-8');
+
+    expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
   });
 });

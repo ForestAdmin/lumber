@@ -16,6 +16,8 @@ const ASSOCIATION_TYPE_HAS_ONE = 'hasOne';
 const FOREIGN_KEY = 'FOREIGN KEY';
 
 function isUnderscored(fields) {
+  if (fields && fields.length === 1 && fields[0].nameColumn === 'id') return true;
+
   return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
     && fields.some((field) => field.nameColumn.includes('_'));
 }
@@ -290,6 +292,22 @@ function createAllReferences(databaseSchema, schemaGenerated) {
     );
 }
 
+function isOnlyJoinTableWithId(schema, constraints) {
+  const idColumn = Object.keys(schema).find((columnName) => columnName === 'id');
+
+  if (!idColumn) return false;
+
+  const possibleForeignColumnNames = Object.keys(schema).filter((columnName) => {
+    return !isTechnicalTimestamp(schema[columnName]) && columnName !== 'id';
+  });
+
+  const columnWithoutForeignKey = possibleForeignColumnNames.find((columnName) => {
+    return !_.find(constraints, { columnName, columnType: FOREIGN_KEY });
+  });
+
+  return !columnWithoutForeignKey ;
+}
+
 async function createTableSchema(columnTypeGetter, {
   schema,
   constraints,
@@ -309,8 +327,12 @@ async function createTableSchema(columnTypeGetter, {
     const isIdIntegerPrimaryColumn = columnName === 'id'
       && ['INTEGER', 'BIGINT'].includes(type)
       && columnInfo.primaryKey;
+    // NOTICE: But in some case we want to force the id to be still dumped.
+    //         For example, Sequelize will not use a default id field on a model
+    //         that has only foreign keys, so if the id primary key is present, we need to handle it.
+    const forceIdColumn = isIdIntegerPrimaryColumn && isOnlyJoinTableWithId(schema, constraints);
 
-    if (isValidField && !isIdIntegerPrimaryColumn) {
+    if (isValidField && (!isIdIntegerPrimaryColumn || forceIdColumn)) {
       // NOTICE: Handle bit(1) to boolean conversion
       let { defaultValue } = columnInfo;
 

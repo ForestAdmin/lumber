@@ -51,6 +51,7 @@ describe('services > database analyser > Sequelize', () => {
       await sequelizeHelper.dropAndCreate('addresses');
       await sequelizeHelper.dropAndCreate('reviews');
       await sequelizeHelper.dropAndCreate('user_books');
+      await sequelizeHelper.dropAndCreate('only_foreign_keys_and_id');
       const result = await performDatabaseAnalysis(databaseConnection);
       await sequelizeHelper.close();
       expect(result.users).toStrictEqual(expected.users);
@@ -84,6 +85,7 @@ describe('services > database analyser > Sequelize', () => {
       const databaseConnection = await sequelizeHelper.connect(connectionUrl);
       await sequelizeHelper.dropAndCreate('sample_table');
       await sequelizeHelper.dropAndCreate('underscored_no_fields');
+      await sequelizeHelper.dropAndCreate('only_foreign_keys_and_id');
       const result = await performDatabaseAnalysis(databaseConnection);
       await sequelizeHelper.close();
       expect(result.underscored_no_fields.options.underscored).toStrictEqual(true);
@@ -125,6 +127,27 @@ describe('services > database analyser > Sequelize', () => {
 
       const rolesReferences = new Set(result.roles.references.map(({ as }) => as));
       expect(rolesReferences.size).toBe(expected.roles.referencesLength);
+    }, TIMEOUT);
+
+    it('should handle id column if present on table having only foreign keys', async () => {
+      expect.assertions(4);
+
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      const result = await performDatabaseAnalysis(databaseConnection);
+
+      console.log(result.only_foreign_keys_and_id);
+
+      await sequelizeHelper.close();
+
+      expect(result.only_foreign_keys_and_id.references).toHaveLength(2);
+
+      const fields = result.only_foreign_keys_and_id.fields;
+      expect(fields.length).toEqual(1);
+
+      const idField = fields[0];
+      expect(idField.name).toEqual('id');
+      expect(idField.primaryKey).toEqual(true);
     }, TIMEOUT);
   });
 });
