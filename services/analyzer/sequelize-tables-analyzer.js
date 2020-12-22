@@ -305,7 +305,7 @@ function isOnlyJoinTableWithId(schema, constraints) {
     return !_.find(constraints, { columnName, columnType: FOREIGN_KEY });
   });
 
-  return !columnWithoutForeignKey ;
+  return !columnWithoutForeignKey;
 }
 
 async function createTableSchema(columnTypeGetter, {
