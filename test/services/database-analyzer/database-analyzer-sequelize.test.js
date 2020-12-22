@@ -51,7 +51,6 @@ describe('services > database analyser > Sequelize', () => {
       await sequelizeHelper.dropAndCreate('addresses');
       await sequelizeHelper.dropAndCreate('reviews');
       await sequelizeHelper.dropAndCreate('user_books');
-      await sequelizeHelper.dropAndCreate('only_foreign_keys_and_id');
       const result = await performDatabaseAnalysis(databaseConnection);
       await sequelizeHelper.close();
       expect(result.users).toStrictEqual(expected.users);
@@ -85,7 +84,6 @@ describe('services > database analyser > Sequelize', () => {
       const databaseConnection = await sequelizeHelper.connect(connectionUrl);
       await sequelizeHelper.dropAndCreate('sample_table');
       await sequelizeHelper.dropAndCreate('underscored_no_fields');
-      await sequelizeHelper.dropAndCreate('only_foreign_keys_and_id');
       const result = await performDatabaseAnalysis(databaseConnection);
       await sequelizeHelper.close();
       expect(result.underscored_no_fields.options.underscored).toStrictEqual(true);
@@ -135,8 +133,6 @@ describe('services > database analyser > Sequelize', () => {
       const sequelizeHelper = new SequelizeHelper();
       const databaseConnection = await sequelizeHelper.connect(connectionUrl);
       const result = await performDatabaseAnalysis(databaseConnection);
-
-      console.log(result.only_foreign_keys_and_id);
 
       await sequelizeHelper.close();
 
