@@ -139,12 +139,12 @@ describe('services > database analyser > Sequelize', () => {
 
       expect(result.only_foreign_keys_and_id.references).toHaveLength(2);
 
-      const fields = result.only_foreign_keys_and_id.fields;
-      expect(fields.length).toEqual(1);
+      const { fields } = result.only_foreign_keys_and_id;
+      expect(fields).toHaveLength(1);
 
       const idField = fields[0];
-      expect(idField.name).toEqual('id');
-      expect(idField.primaryKey).toEqual(true);
+      expect(idField.name).toStrictEqual('id');
+      expect(idField.primaryKey).toStrictEqual(true);
     }, TIMEOUT);
   });
 });

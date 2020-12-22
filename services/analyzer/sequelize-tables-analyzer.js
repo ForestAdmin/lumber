@@ -297,13 +297,11 @@ function isOnlyJoinTableWithId(schema, constraints) {
 
   if (!idColumn) return false;
 
-  const possibleForeignColumnNames = Object.keys(schema).filter((columnName) => {
-    return !isTechnicalTimestamp(schema[columnName]) && columnName !== 'id';
-  });
+  const possibleForeignColumnNames = Object.keys(schema)
+    .filter((columnName) => !isTechnicalTimestamp(schema[columnName]) && columnName !== 'id');
 
-  const columnWithoutForeignKey = possibleForeignColumnNames.find((columnName) => {
-    return !_.find(constraints, { columnName, columnType: FOREIGN_KEY });
-  });
+  const columnWithoutForeignKey = possibleForeignColumnNames
+    .find((columnName) => !_.find(constraints, { columnName, columnType: FOREIGN_KEY }));
 
   return !columnWithoutForeignKey;
 }
