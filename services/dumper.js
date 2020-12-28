@@ -471,7 +471,12 @@ class Dumper {
     if (!this.fs.existsSync(packagePath)) throw new Error('No "package.json".');
 
     const file = this.fs.readFileSync(packagePath, 'utf8');
-    const [,, lianaMajorVersion] = /forest-express-.*((\d).\d.\d)/g.exec(file);
+    const match = /forest-express-.*((\d).\d.\d)/g.exec(file);
+
+    let lianaMajorVersion = 0;
+    if (match) {
+      [,, lianaMajorVersion] = match;
+    }
     if (Number(lianaMajorVersion) < 7) throw new Error('Invalid version of liana');
   }
 

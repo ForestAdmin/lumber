@@ -7,7 +7,6 @@ const DatabaseAnalyzer = require('./services/analyzer/database-analyzer');
 const spinners = require('./services/spinners');
 const { updateErrors, LumberError } = require('./utils/errors');
 const { ERROR_UNEXPECTED } = require('./utils/messages');
-const { terminate } = require('./utils/terminator');
 const context = require('./context');
 const initContext = require('./context/init');
 
@@ -16,20 +15,20 @@ initContext(context);
 program
   .description('update your project by generating files that does not currently exist')
   .usage('<appName> [options]')
-  .option('-c, --config <config-path>', 'Enter the databases configuration file to use', './config/databases.js')
-  .option('-o, --output-directory <output-directory-path>', 'Enter the output directory to export new files into')
+  .option('-c, --config <config-path>', 'the databases configuration file to use', './config/databases.js')
+  .option('-o, --output-directory <output-directory-path>', 'the output directory to export new files into')
   .parse(process.argv);
 
+const { database, dumper, terminator } = context.inject();
+
 (async () => {
-  const { database, dumper } = context.inject();
-  const useOutputDirectory = !!program.outputDirectory;
   const options = {
     dbSchema: process.env.DATABASE_SCHEMA,
     appName: program.outputDirectory,
   };
   dumper.checkIsLianaCompatible();
 
-  if (useOutputDirectory) {
+  if (program.outputDirectory) {
     await dumper.createOutputDirectoryIfNotExist();
   } else {
     dumper.checkIsValidLumberProject();
@@ -71,18 +70,16 @@ program
   await dumper.redump(databasesSchema, options);
   spinner.succeed();
 
-  console.info(`Hooray, ${chalk.green('installation success')}!`);
   process.exit(0);
 })().catch(async (error) => {
-  console.log(error);
   const logs = ['Cannot update your project.'];
   if (error instanceof LumberError) {
     logs.push(error.message);
   } else {
     logs.push(`${ERROR_UNEXPECTED} ${chalk.red(error)}`);
   }
-
-  await terminate(1, {
+  console.log(error);
+  await terminator.terminate(1, {
     logs,
   });
 });
