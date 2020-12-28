@@ -43,13 +43,16 @@ async function getGeneratedFileFromPersonModel(model) {
   return fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
 }
 
+const TEST_OUTPUT_MODEL_FILMS_PATH = './test-output/mongo/models/films.js';
+const TEST_EXPECTED_MODEL_FILMS_PATH = './test-expected/mongo/dumper-output/simple.expected.js';
+
 describe('services > dumper > MongoDB', () => {
   it('should generate a simple model file', async () => {
     expect.assertions(1);
     const dumper = getDumper();
     await dumper.dump(simpleModel, CONFIG);
-    const generatedFile = fs.readFileSync('./test-output/mongo/models/films.js', 'utf8');
-    const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/simple.expected.js', 'utf-8');
+    const generatedFile = fs.readFileSync(TEST_OUTPUT_MODEL_FILMS_PATH, 'utf8');
+    const expectedFile = fs.readFileSync(TEST_EXPECTED_MODEL_FILMS_PATH, 'utf8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();
@@ -59,7 +62,7 @@ describe('services > dumper > MongoDB', () => {
     expect.assertions(1);
     const dumper = getDumper();
     await dumper.dump(hasManyModel, CONFIG);
-    const generatedFile = fs.readFileSync('./test-output/mongo/models/films.js', 'utf8');
+    const generatedFile = fs.readFileSync(TEST_OUTPUT_MODEL_FILMS_PATH, 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/hasmany.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
@@ -179,5 +182,24 @@ describe('services > dumper > MongoDB', () => {
 
     expect(generatedFile).toStrictEqual(expectedFile);
     cleanOutput();
+  });
+
+  describe('on re-dump', () => {
+    it('should recreate files that have been deleted', async () => {
+      expect.assertions(1);
+
+      // Setup test by dumping once to ensure all files exists, then remove a file
+      const dumper = getDumper();
+      await dumper.dump(simpleModel, CONFIG);
+      fs.unlinkSync(TEST_OUTPUT_MODEL_FILMS_PATH);
+
+      dumper.redump([{ name: 'default', schema: simpleModel }], CONFIG);
+      const generatedFile = fs.readFileSync(TEST_OUTPUT_MODEL_FILMS_PATH, 'utf8');
+      const expectedFile = fs.readFileSync(TEST_EXPECTED_MODEL_FILMS_PATH, 'utf8');
+
+      // Then we ensure that the file that were removed exists after a redump
+      expect(generatedFile).toStrictEqual(expectedFile);
+      cleanOutput();
+    });
   });
 });

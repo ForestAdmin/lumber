@@ -51,6 +51,7 @@ describe('services > dumper (unit)', () => {
       },
       fs: {
         writeFileSync: jest.fn(),
+        existsSync: jest.fn().mockReturnValue(false),
       },
     };
     createDumper(context).writeFile(ABSOLUTE_PROJECT_PATH, RELATIVE_FILE_PATH, 'content');

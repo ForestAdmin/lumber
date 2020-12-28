@@ -54,7 +54,14 @@ class Dumper {
   }
 
   writeFile(absoluteProjectPath, relativeFilePath, content) {
-    this.fs.writeFileSync(`${absoluteProjectPath}/${relativeFilePath}`, content);
+    const fileName = `${absoluteProjectPath}/${relativeFilePath}`;
+
+    if (this.fs.existsSync(fileName)) {
+      this.logger.log(`  ${this.chalk.yellow('skip')} ${relativeFilePath} - already exist.`);
+      return;
+    }
+
+    this.fs.writeFileSync(fileName, content);
     this.logger.log(`  ${this.chalk.green('create')} ${relativeFilePath}`);
   }
 
@@ -233,10 +240,6 @@ class Dumper {
     if (options.useMultiDatabase) {
       modelPath = `models/${dbName}/${Dumper.tableToFilename(table)}.js`;
     }
-    if (this.fs.existsSync(modelPath)) {
-      this.logger.log(`  ${this.chalk.yellow('skip')}   ${modelPath} - already exist.`);
-      return;
-    }
 
     const fieldsDefinition = fields.map((field) => {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
@@ -285,10 +288,6 @@ class Dumper {
 
   writeRoute(projectPath, config, modelName) {
     const routesPath = `routes/${Dumper.tableToFilename(modelName)}.js`;
-    if (this.fs.existsSync(routesPath)) {
-      this.logger.log(`  ${this.chalk.yellow('skip')}   ${routesPath} - already exist.`);
-      return;
-    }
 
     const modelNameDasherized = _.kebabCase(modelName);
     const readableModelName = _.startCase(modelName);
@@ -309,10 +308,6 @@ class Dumper {
 
   writeForestCollection(projectPath, config, table) {
     const collectionPath = `forest/${Dumper.tableToFilename(table)}.js`;
-    if (this.fs.existsSync(collectionPath)) {
-      this.logger.log(`  ${this.chalk.yellow('skip')}   ${collectionPath} - already exist.`);
-      return;
-    }
 
     this.copyHandleBarsTemplate({
       projectPath,

@@ -36,12 +36,14 @@ function cleanOutput() {
   rimraf.sync('./test-output/sequelize');
 }
 
+const TEST_OUTPUT_MODEL_CUSTOMERS_PATH = './test-output/sequelize/models/customers.js';
+
 describe('services > dumper > sequelize', () => {
   it('should generate a simple model file', async () => {
     expect.assertions(1);
     const dumper = getDumper();
     await dumper.dump(simpleModel, CONFIG);
-    const generatedFile = fs.readFileSync('./test-output/sequelize/models/customers.js', 'utf8');
+    const generatedFile = fs.readFileSync(TEST_OUTPUT_MODEL_CUSTOMERS_PATH, 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/customers.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
@@ -185,6 +187,25 @@ describe('services > dumper > sequelize', () => {
       const generatedFile = fs.readFileSync('./test-output/sequelize/.env', 'utf8');
       const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/env.darwin.expected', 'utf-8');
 
+      expect(generatedFile).toStrictEqual(expectedFile);
+      cleanOutput();
+    });
+  });
+
+  describe('on re-dump', () => {
+    it('should recreate files that have been deleted', async () => {
+      expect.assertions(1);
+
+      // Setup test by dumping once to ensure all files exists, then remove a file
+      const dumper = getDumper();
+      await dumper.dump(simpleModel, CONFIG);
+      fs.unlinkSync(TEST_OUTPUT_MODEL_CUSTOMERS_PATH);
+
+      dumper.redump([{ name: 'default', schema: simpleModel }], CONFIG);
+      const generatedFile = fs.readFileSync(TEST_OUTPUT_MODEL_CUSTOMERS_PATH, 'utf8');
+      const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/customers.expected.js', 'utf-8');
+
+      // Then we ensure that the file that were removed exists after a redump
       expect(generatedFile).toStrictEqual(expectedFile);
       cleanOutput();
     });

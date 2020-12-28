@@ -14,7 +14,6 @@ initContext(context);
 
 program
   .description('update your project by generating files that does not currently exist')
-  .usage('<appName> [options]')
   .option('-c, --config <config-path>', 'the databases configuration file to use', './config/databases.js')
   .option('-o, --output-directory <output-directory-path>', 'the output directory to export new files into')
   .parse(process.argv);
@@ -78,7 +77,7 @@ const { database, dumper, terminator } = context.inject();
   } else {
     logs.push(`${ERROR_UNEXPECTED} ${chalk.red(error)}`);
   }
-  console.log(error);
+
   await terminator.terminate(1, {
     logs,
   });
