@@ -33,7 +33,7 @@
     "inquirer": "^6.2.0",
     "jsonapi-serializer": "^3.4.1",
     "lodash": "4.17.19",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.4",
     "mongodb": "3.6.3",
     "mysql2": "2.2.5",
     "pg": "8.2.1",
