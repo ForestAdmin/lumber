@@ -404,7 +404,7 @@ class Dumper {
     this.copyTemplate(projectPath, 'gitignore.hbs', '.gitignore');
     this.writeAppJs(projectPath, config);
     this.writeDockerCompose(projectPath, config);
-    this.writeDockerfile(projectPath, config);
+    this.writeDockerfile(projectPath);
     this.writePackageJson(projectPath, config);
     this.copyTemplate(projectPath, 'server.hbs', '/server.js');
   }

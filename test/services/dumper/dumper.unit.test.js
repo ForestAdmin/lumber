@@ -383,4 +383,88 @@ describe('services > dumper (unit)', () => {
       });
     });
   });
+
+  describe('writeModel', () => {
+
+  });
+
+  describe('writeRoute', () => {
+    
+  });
+
+  describe('writeForestCollection', () => {
+    
+  });
+
+  describe('writeAppJs', () => {
+    
+  });
+
+  describe('writeModelsIndex', () => {
+
+  });
+
+  describe('writeDockerfile', () => {
+
+  });
+
+  describe('writeForestAdminMiddleware', () => {
+
+  });
+
+  describe('dump', () => {
+    it('should call all the mandatory functions required to generate a complete project', async () => {
+      expect.assertions(17);
+
+      const dumper = createDumper({
+        os: {
+          platform: () => jest.fn().mockReturnValue('linux'),
+        },
+      });
+      const writeForestCollectionSpy = jest.spyOn(dumper, 'writeForestCollection').mockImplementation();
+      const writeForestAdminMiddlewareSpy = jest.spyOn(dumper, 'writeForestAdminMiddleware').mockImplementation();
+      const writeModelsIndexSpy = jest.spyOn(dumper, 'writeModelsIndex').mockImplementation();
+      const writeModelSpy = jest.spyOn(dumper, 'writeModel').mockImplementation();
+      const writeRouteSpy = jest.spyOn(dumper, 'writeRoute').mockImplementation();
+      const writeDotEnvSpy = jest.spyOn(dumper, 'writeDotEnv').mockImplementation();
+      const writeAppJsSpy = jest.spyOn(dumper, 'writeAppJs').mockImplementation();
+      const writeDockerComposeSpy = jest.spyOn(dumper, 'writeDockerCompose').mockImplementation();
+      const writeDockerfileSpy = jest.spyOn(dumper, 'writeDockerfile').mockImplementation();
+      const writePackageJsonSpy = jest.spyOn(dumper, 'writePackageJson').mockImplementation();
+      const copyTemplateSpy = jest.spyOn(dumper, 'copyTemplate').mockImplementation();
+
+      const schema = {
+        testModel: { fields: {}, references: [], options: {} },
+      };
+      const config = {
+        appName: 'test-output/test-app',
+      };
+      await dumper.dump(schema, config);
+
+      const projectPath = `${process.cwd()}/test-output/test-app`;
+
+      // Files associated with each models of the schema
+      expect(writeModelSpy).toHaveBeenCalledWith(projectPath, config, 'testModel', {}, [], {});
+      expect(writeRouteSpy).toHaveBeenCalledWith(projectPath, config, 'testModel');
+      expect(writeForestCollectionSpy).toHaveBeenCalledWith(projectPath, config, 'testModel');
+
+      // General app files, based on config
+      expect(writeForestAdminMiddlewareSpy).toHaveBeenCalledWith(projectPath, config);
+      expect(writeModelsIndexSpy).toHaveBeenCalledWith(projectPath, config);
+      expect(writeDotEnvSpy).toHaveBeenCalledWith(projectPath, config);
+      expect(writeAppJsSpy).toHaveBeenCalledWith(projectPath, config);
+      expect(writeDockerComposeSpy).toHaveBeenCalledWith(projectPath, config);
+      expect(writeDockerfileSpy).toHaveBeenCalledWith(projectPath);
+      expect(writePackageJsonSpy).toHaveBeenCalledWith(projectPath, config);
+
+      // Copied files
+      expect(copyTemplateSpy).toHaveBeenCalledTimes(6);
+      expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'middlewares/welcome.hbs', 'middlewares/welcome.js');
+      expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'public/favicon.png', 'public/favicon.png');
+      expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'views/index.hbs', 'views/index.html');
+      expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'dockerignore.hbs', '.dockerignore');
+      expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'gitignore.hbs', '.gitignore');
+      expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'server.hbs', '/server.js');
+    });
+  });
 });
