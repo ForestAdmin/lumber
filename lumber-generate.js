@@ -7,14 +7,13 @@ initContext(context);
 
 const spinners = require('./services/spinners');
 const DatabaseAnalyzer = require('./services/analyzer/database-analyzer');
-const Dumper = require('./services/dumper');
 const CommandGenerateConfigGetter = require('./services/command-generate-config-getter');
 const eventSender = require('./services/event-sender');
 const ProjectCreator = require('./services/project-creator');
 const { terminate } = require('./utils/terminator');
 const { ERROR_UNEXPECTED } = require('./utils/messages');
 
-const { logger, authenticator } = context.inject();
+const { logger, authenticator, dumper } = context.inject();
 
 if (!authenticator) throw new Error('Missing dependency authenticator');
 if (!logger) throw new Error('Missing dependency logger');
@@ -62,8 +61,7 @@ program
 
   const spinner = spinners.add('dumper', { text: 'Creating your project files' });
   logger.spinner = spinner;
-  const dumper = new Dumper(config);
-  await dumper.dump(schema);
+  await dumper.dump(schema, config);
   spinner.succeed();
 
   logger.success(`Hooray, ${chalk.green('installation success')}!`);
