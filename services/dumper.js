@@ -9,6 +9,7 @@ class Dumper {
   constructor({
     fs,
     chalk,
+    env,
     os,
     Sequelize,
     Handlebars,
@@ -16,8 +17,8 @@ class Dumper {
     mkdirp,
   }) {
     this.fs = fs;
-    this.fs = fs;
     this.chalk = chalk;
+    this.env = env;
     this.os = os;
     this.Sequelize = Sequelize;
     this.Handlebars = Handlebars;
@@ -298,7 +299,7 @@ class Dumper {
       target: 'app.js',
       context: {
         isMongoDB: config.dbDialect === 'mongodb',
-        forestUrl: process.env.FOREST_URL,
+        forestUrl: this.env.FOREST_URL,
       },
     });
   }
@@ -329,7 +330,7 @@ class Dumper {
 
   writeDockerCompose(projectPath, config) {
     const databaseUrl = `\${${this.isLinuxBasedOs() ? 'DATABASE_URL' : 'DOCKER_DATABASE_URL'}}`;
-    const forestUrl = process.env.FOREST_URL ? `\${FOREST_URL-${process.env.FOREST_URL}}` : false;
+    const forestUrl = this.env.FOREST_URL ? `\${FOREST_URL-${this.env.FOREST_URL}}` : false;
     this.copyHandleBarsTemplate({
       projectPath,
       source: 'app/docker-compose.hbs',

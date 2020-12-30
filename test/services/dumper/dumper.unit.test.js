@@ -208,6 +208,16 @@ describe('services > dumper (unit)', () => {
   });
 
   describe('getDatabaseUrl', () => {
+    it('should return the dbConnectionUrl if provided', () => {
+      expect.assertions(1);
+
+      const config = {
+        dbConnectionUrl: 'mysql://root:password@localhost:3306/forest',
+      };
+
+      expect(Dumper.getDatabaseUrl(config)).toStrictEqual(config.dbConnectionUrl);
+    });
+
     it('should return the connection string if no dbConnectionUrl is provided', () => {
       expect.assertions(1);
 
@@ -215,12 +225,11 @@ describe('services > dumper (unit)', () => {
         dbDialect: 'mysql',
         dbPort: 3306,
         dbUser: 'root',
-        dbPassword: 'password',
         dbHostname: 'localhost',
         dbName: 'forest',
       };
 
-      expect(Dumper.getDatabaseUrl(config)).toStrictEqual('mysql://root:password@localhost:3306/forest');
+      expect(Dumper.getDatabaseUrl(config)).toStrictEqual('mysql://root@localhost:3306/forest');
     });
 
     it('should remove the port if mongodbSrv is provided', () => {
@@ -384,32 +393,92 @@ describe('services > dumper (unit)', () => {
     });
   });
 
-  describe('writeModel', () => {
-
-  });
-
-  describe('writeRoute', () => {
-    
-  });
-
-  describe('writeForestCollection', () => {
-    
-  });
-
-  describe('writeAppJs', () => {
-    
-  });
-
-  describe('writeModelsIndex', () => {
-
-  });
-
   describe('writeDockerfile', () => {
+    it('should call the copyHandleBarsTemplate with an empty context', () => {
+      expect.assertions(1);
 
+      const dumper = createDumper();
+      const copyHandlebarsTemplateSpy = jest.spyOn(dumper, 'copyHandleBarsTemplate').mockImplementation();
+      dumper.writeDockerfile(ABSOLUTE_PROJECT_PATH, { dbDialect: 'mongodb' });
+
+      expect(copyHandlebarsTemplateSpy).toHaveBeenCalledWith({
+        projectPath: ABSOLUTE_PROJECT_PATH,
+        source: 'app/Dockerfile.hbs',
+        target: 'Dockerfile',
+        context: {},
+      });
+    });
+  });
+
+  describe('writeDockerCompose', () => {
+    describe('when an environment variable FOREST_URL is provided', () => {
+      it('should have called copyHandlebarsTemplate with a valid forestUrl is context', () => {
+        expect.assertions(1);
+
+        const dumper = createDumper({
+          env: {
+            FOREST_URL: 'https://something.com',
+          },
+        });
+        jest.spyOn(dumper, 'isLinuxBasedOs').mockReturnValue(true);
+        const copyHandlebarsTemplateSpy = jest.spyOn(dumper, 'copyHandleBarsTemplate').mockImplementation();
+        dumper.writeDockerCompose(ABSOLUTE_PROJECT_PATH, {});
+        const handlebarContext = copyHandlebarsTemplateSpy.mock.calls[0][0].context;
+
+        // eslint-disable-next-line no-template-curly-in-string
+        expect(handlebarContext.forestUrl).toStrictEqual('${FOREST_URL-https://something.com}');
+      });
+    });
+
+    describe('when no environment variable FOREST_URL is provided', () => {
+      it('should have called copyHandlebarsTemplate with a valid forestUrl is context', () => {
+        expect.assertions(1);
+
+        const dumper = createDumper({ env: {} });
+        jest.spyOn(dumper, 'isLinuxBasedOs').mockReturnValue(true);
+        const copyHandlebarsTemplateSpy = jest.spyOn(dumper, 'copyHandleBarsTemplate').mockImplementation();
+        dumper.writeDockerCompose(ABSOLUTE_PROJECT_PATH, {});
+        const handlebarContext = copyHandlebarsTemplateSpy.mock.calls[0][0].context;
+
+        expect(handlebarContext.forestUrl).toStrictEqual(false);
+      });
+    });
   });
 
   describe('writeForestAdminMiddleware', () => {
+    describe('on mongodb', () => {
+      it('should compute the handlebars context', () => {
+        expect.assertions(1);
 
+        const dumper = createDumper();
+        const copyHandlebarsTemplateSpy = jest.spyOn(dumper, 'copyHandleBarsTemplate').mockImplementation();
+        dumper.writeForestAdminMiddleware(ABSOLUTE_PROJECT_PATH, { dbDialect: 'mongodb' });
+
+        expect(copyHandlebarsTemplateSpy).toHaveBeenCalledWith({
+          projectPath: ABSOLUTE_PROJECT_PATH,
+          source: 'app/middlewares/forestadmin.hbs',
+          target: 'middlewares/forestadmin.js',
+          context: { isMongoDB: true },
+        });
+      });
+    });
+
+    describe('on sql based DBS', () => {
+      it('should compute the handlebars context', () => {
+        expect.assertions(1);
+
+        const dumper = createDumper();
+        const copyHandlebarsTemplateSpy = jest.spyOn(dumper, 'copyHandleBarsTemplate').mockImplementation();
+        dumper.writeForestAdminMiddleware(ABSOLUTE_PROJECT_PATH, { dbDialect: 'mysql' });
+
+        expect(copyHandlebarsTemplateSpy).toHaveBeenCalledWith({
+          projectPath: ABSOLUTE_PROJECT_PATH,
+          source: 'app/middlewares/forestadmin.hbs',
+          target: 'middlewares/forestadmin.js',
+          context: { isMongoDB: false },
+        });
+      });
+    });
   });
 
   describe('dump', () => {
@@ -437,11 +506,11 @@ describe('services > dumper (unit)', () => {
         testModel: { fields: {}, references: [], options: {} },
       };
       const config = {
-        appName: 'test-output/test-app',
+        appName: 'test-output/unit-test-dumper',
       };
       await dumper.dump(schema, config);
 
-      const projectPath = `${process.cwd()}/test-output/test-app`;
+      const projectPath = `${process.cwd()}/test-output/unit-test-dumper`;
 
       // Files associated with each models of the schema
       expect(writeModelSpy).toHaveBeenCalledWith(projectPath, config, 'testModel', {}, [], {});
