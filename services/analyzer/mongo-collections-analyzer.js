@@ -1,9 +1,9 @@
-const _ = require('lodash');
 const P = require('bluebird');
 const logger = require('../logger');
 const { databaseAnalyzerErrors } = require('../../utils/errors');
 const { detectReferences, applyReferences } = require('./mongo-references-analyzer');
 const { detectHasMany, applyHasMany } = require('./mongo-hasmany-analyzer');
+const { isUnderscored } = require('../../utils/fields');
 const {
   getMongooseTypeFromValue,
   isOfMongooseType,
@@ -20,11 +20,6 @@ const {
   hasEmbeddedTypes,
   mergeAnalyzedSchemas,
 } = require('./mongo-embedded-analyzer');
-
-function isUnderscored(fields) {
-  return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
-    && fields.some((field) => field.nameColumn.includes('_'));
-}
 
 const mapReduceOptions = {
   out: { inline: 1 },

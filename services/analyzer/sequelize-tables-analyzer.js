@@ -7,6 +7,8 @@ const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
 const { databaseAnalyzerErrors } = require('../../utils/errors');
 const { terminate } = require('../../utils/terminator');
 const stringUtils = require('../../utils/strings');
+const { isUnderscored } = require('../../utils/fields');
+
 
 const ASSOCIATION_TYPE_BELONGS_TO = 'belongsTo';
 const ASSOCIATION_TYPE_BELONGS_TO_MANY = 'belongsToMany';
@@ -14,13 +16,6 @@ const ASSOCIATION_TYPE_HAS_MANY = 'hasMany';
 const ASSOCIATION_TYPE_HAS_ONE = 'hasOne';
 
 const FOREIGN_KEY = 'FOREIGN KEY';
-
-function isUnderscored(fields) {
-  if (fields && fields.length === 1 && fields[0].nameColumn === 'id') return true;
-
-  return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
-    && fields.some((field) => field.nameColumn.includes('_'));
-}
 
 function analyzeFields(queryInterface, table, config) {
   return queryInterface.describeTable(table, { schema: config.dbSchema });
