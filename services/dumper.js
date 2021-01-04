@@ -1,8 +1,7 @@
-const P = require('bluebird');
 const fs = require('fs');
 const os = require('os');
 const _ = require('lodash');
-const mkdirpSync = require('mkdirp');
+const mkdirp = require('mkdirp');
 const Handlebars = require('handlebars');
 const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
@@ -11,8 +10,6 @@ const stringUtils = require('../utils/strings');
 const logger = require('./logger');
 const toValidPackageName = require('../utils/to-valid-package-name');
 require('../handlerbars/loader');
-
-const mkdirp = P.promisify(mkdirpSync);
 
 const DEFAULT_PORT = 3310;
 
@@ -356,7 +353,7 @@ class Dumper {
       mkdirp(this.modelsPath),
     ];
 
-    await P.all(directories);
+    await Promise.all(directories);
 
     const modelNames = Object.keys(schema)
       .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
