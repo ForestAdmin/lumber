@@ -9,7 +9,6 @@ const { terminate } = require('../../utils/terminator');
 const stringUtils = require('../../utils/strings');
 const { isUnderscored } = require('../../utils/fields');
 
-
 const ASSOCIATION_TYPE_BELONGS_TO = 'belongsTo';
 const ASSOCIATION_TYPE_BELONGS_TO_MANY = 'belongsToMany';
 const ASSOCIATION_TYPE_HAS_MANY = 'hasMany';

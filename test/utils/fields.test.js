@@ -1,31 +1,24 @@
 const { isUnderscored } = require('../../utils/fields');
 
 describe('utils > fields', () => {
-  describe('without parameters', () => {
+  describe('without wrong parameters', () => {
     it('should return false', () => {
-      expect.assertions(1);
-      expect(isUnderscored(undefined)).toStrictEqual(false);
-    });
-  });
+      expect.assertions(2);
 
-  describe('with an empty field array', () => {
-    it('should return false', () => {
-      expect.assertions(1);
+      expect(isUnderscored(undefined)).toStrictEqual(false);
       expect(isUnderscored([])).toStrictEqual(false);
     });
   });
 
-  describe('with only one field', () => {
-    describe('when the field is named `id`', () => {
-      it('should return true', () => {
-        expect.assertions(1);
+  describe('with only one field named `id`', () => {
+    it('should return true', () => {
+      expect.assertions(1);
 
-        const fields = [{
-          nameColumn: 'id',
-        }];
+      const fields = [{
+        nameColumn: 'id',
+      }];
 
-        expect(isUnderscored(fields)).toStrictEqual(true);
-      });
+      expect(isUnderscored(fields)).toStrictEqual(true);
     });
   });
 
@@ -45,7 +38,7 @@ describe('utils > fields', () => {
     });
 
     describe('without underscored fields', () => {
-      it('should return true', () => {
+      it('should return false', () => {
         expect.assertions(1);
 
         const fields = [{
