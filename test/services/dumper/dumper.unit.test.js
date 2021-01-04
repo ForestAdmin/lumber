@@ -103,7 +103,7 @@ describe('services > dumper (unit)', () => {
         expect.assertions(1);
 
         expect(() => dumper.copyHandleBarsTemplate({}))
-          .toThrow('Missing argument (source, target, context or projectPath).');
+          .toThrow('Missing argument (projectPath, source, target or context).');
       });
     });
 

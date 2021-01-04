@@ -17,6 +17,7 @@ const { logger, authenticator, dumper } = context.inject();
 
 if (!authenticator) throw new Error('Missing dependency authenticator');
 if (!logger) throw new Error('Missing dependency logger');
+if (!dumper) throw new Error('Missing dependency dumper');
 
 program
   .description('Generate a backend application with an ORM/ODM configured')

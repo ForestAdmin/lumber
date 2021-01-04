@@ -63,7 +63,7 @@ class Dumper {
     );
 
     if (!(source && target && context && projectPath)) {
-      throw new Error('Missing argument (source, target, context or projectPath).');
+      throw new Error('Missing argument (projectPath, source, target or context).');
     }
 
     this.writeFile(projectPath, target, handlebarsTemplate(source)(context));
