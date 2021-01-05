@@ -13,18 +13,24 @@ const subDocumentsNotUsingIds = require('../../../test-expected/mongo/db-analysi
 const subDocumentsUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-documents-using-ids.expected');
 const subDocumentUsingIds = require('../../../test-expected/mongo/db-analysis-output/sub-document-using-ids.expected');
 const Dumper = require('../../../services/dumper');
+const context = require('../../../context');
+const initContext = require('../../../context/init');
+
+initContext(context);
 
 function getDumper() {
-  return new Dumper({
-    appName: 'test-output/mongo',
-    dbDialect: 'mongodb',
-    dbConnectionUrl: 'mongodb://localhost:27017',
-    ssl: false,
-    dbSchema: 'public',
-    appHostname: 'localhost',
-    appPort: 1654,
-  });
+  return new Dumper(context.inject());
 }
+
+const CONFIG = {
+  appName: 'test-output/mongo',
+  dbDialect: 'mongodb',
+  dbConnectionUrl: 'mongodb://localhost:27017',
+  ssl: false,
+  dbSchema: 'public',
+  appHostname: 'localhost',
+  appPort: 1654,
+};
 
 function cleanOutput() {
   rimraf.sync('./test-output/mongo');
@@ -32,7 +38,7 @@ function cleanOutput() {
 
 async function getGeneratedFileFromPersonModel(model) {
   const dumper = getDumper();
-  await dumper.dump(model);
+  await dumper.dump(model, CONFIG);
   return fs.readFileSync('./test-output/mongo/models/persons.js', 'utf8');
 }
 
@@ -40,7 +46,7 @@ describe('services > dumper > MongoDB', () => {
   it('should generate a simple model file', async () => {
     expect.assertions(1);
     const dumper = getDumper();
-    await dumper.dump(simpleModel);
+    await dumper.dump(simpleModel, CONFIG);
     const generatedFile = fs.readFileSync('./test-output/mongo/models/films.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/simple.expected.js', 'utf-8');
 
@@ -51,7 +57,7 @@ describe('services > dumper > MongoDB', () => {
   it('should generate a model file with hasMany', async () => {
     expect.assertions(1);
     const dumper = getDumper();
-    await dumper.dump(hasManyModel);
+    await dumper.dump(hasManyModel, CONFIG);
     const generatedFile = fs.readFileSync('./test-output/mongo/models/films.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/mongo/dumper-output/hasmany.expected.js', 'utf-8');
 

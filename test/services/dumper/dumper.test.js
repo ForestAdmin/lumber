@@ -3,6 +3,11 @@ const sinon = require('sinon');
 const os = require('os');
 const rimraf = require('rimraf');
 const Dumper = require('../../../services/dumper');
+const context = require('../../../context');
+const initContext = require('../../../context/init');
+
+initContext(context);
+const injectedContext = context.inject();
 
 const DOCKER_COMPOSE_FILE_LOCATION = './test-output/Linux/docker-compose.yml';
 const DOT_ENV_FILE_LOCATION = './test-output/Linux/.env';
@@ -30,8 +35,8 @@ async function createLinuxDump(overrides = {}) {
     ...overrides,
   };
 
-  const dumper = new Dumper(config);
-  await dumper.dump({});
+  const dumper = new Dumper(injectedContext);
+  await dumper.dump({}, config);
 }
 
 describe('services > dumper', () => {
@@ -161,45 +166,6 @@ describe('services > dumper', () => {
           cleanOutput();
         }
       });
-    });
-  });
-
-  describe('getDatabaseUrl', () => {
-    it('should return the connection string if no dbConnectionUrl is provided', () => {
-      expect.assertions(1);
-
-      const config = {
-        dbDialect: 'mysql',
-        dbPort: 3306,
-        dbUser: 'root',
-        dbPassword: 'password',
-        dbHostname: 'localhost',
-        dbName: 'forest',
-      };
-
-      const dumper = new Dumper(config);
-      const databaseUrl = dumper.getDatabaseUrl();
-
-      expect(databaseUrl).toStrictEqual('mysql://root:password@localhost:3306/forest');
-    });
-
-    it('should remove the port if mongodbSrv is provided', () => {
-      expect.assertions(1);
-
-      const config = {
-        dbDialect: 'mongodb',
-        dbPort: 3306,
-        mongodbSrv: true,
-        dbUser: 'root',
-        dbPassword: 'password',
-        dbHostname: 'localhost',
-        dbName: 'forest',
-      };
-
-      const dumper = new Dumper(config);
-      const databaseUrl = dumper.getDatabaseUrl();
-
-      expect(databaseUrl).toStrictEqual('mongodb+srv://root:password@localhost/forest');
     });
   });
 });

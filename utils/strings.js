@@ -42,4 +42,8 @@ module.exports = {
     }
     return input;
   },
+
+  transformToCamelCaseSafeString(input) {
+    return this.camelCase(this.transformToSafeString(input));
+  },
 };

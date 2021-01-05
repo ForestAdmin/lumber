@@ -1,73 +1,76 @@
-const fs = require('fs');
-const os = require('os');
 const _ = require('lodash');
-const mkdirp = require('mkdirp');
-const Handlebars = require('handlebars');
-const chalk = require('chalk');
 const { plural, singular } = require('pluralize');
-const Sequelize = require('sequelize');
 const stringUtils = require('../utils/strings');
-const logger = require('./logger');
 const toValidPackageName = require('../utils/to-valid-package-name');
 require('../handlerbars/loader');
 
 const DEFAULT_PORT = 3310;
-
-const DEFAULT_VALUE_TYPES_TO_STRINGIFY = [
-  `${Sequelize.DataTypes.ARRAY}`,
-  `${Sequelize.DataTypes.CITEXT}`,
-  `${Sequelize.DataTypes.DATE}`,
-  `${Sequelize.DataTypes.ENUM}`,
-  `${Sequelize.DataTypes.JSONB}`,
-  `${Sequelize.DataTypes.STRING}`,
-  `${Sequelize.DataTypes.TEXT}`,
-  `${Sequelize.DataTypes.UUID}`,
-];
-
 class Dumper {
-  constructor(config) {
-    this.config = config;
+  constructor({
+    fs,
+    chalk,
+    env,
+    os,
+    Sequelize,
+    Handlebars,
+    logger,
+    mkdirp,
+  }) {
+    this.fs = fs;
+    this.chalk = chalk;
+    this.env = env;
+    this.os = os;
+    this.Sequelize = Sequelize;
+    this.Handlebars = Handlebars;
+    this.logger = logger;
+    this.mkdirp = mkdirp;
 
-    this.path = `${process.cwd()}/${this.config.appName}`;
-    this.routesPath = `${this.path}/routes`;
-    this.forestPath = `${this.path}/forest`;
-    this.publicPath = `${this.path}/public`;
-    this.viewPath = `${this.path}/views`;
-    this.modelsPath = `${this.path}/models`;
-    this.middlewaresPath = `${this.path}/middlewares`;
+    this.DEFAULT_VALUE_TYPES_TO_STRINGIFY = [
+      `${Sequelize.DataTypes.ARRAY}`,
+      `${Sequelize.DataTypes.CITEXT}`,
+      `${Sequelize.DataTypes.DATE}`,
+      `${Sequelize.DataTypes.ENUM}`,
+      `${Sequelize.DataTypes.JSONB}`,
+      `${Sequelize.DataTypes.STRING}`,
+      `${Sequelize.DataTypes.TEXT}`,
+      `${Sequelize.DataTypes.UUID}`,
+    ];
   }
 
-  static isLinuxBasedOs() {
-    return os.platform() === 'linux';
+  isLinuxBasedOs() {
+    return this.os.platform() === 'linux';
   }
 
-  writeFile(filePath, content) {
-    fs.writeFileSync(filePath, content);
-    logger.log(`  ${chalk.green('create')} ${filePath.substring(this.path.length + 1)}`);
+  writeFile(absoluteProjectPath, relativeFilePath, content) {
+    this.fs.writeFileSync(`${absoluteProjectPath}/${relativeFilePath}`, content);
+    this.logger.log(`  ${this.chalk.green('create')} ${relativeFilePath}`);
   }
 
-  copyTemplate(from, to) {
-    const newFrom = `${__dirname}/../templates/app/${from}`;
-    this.writeFile(to, fs.readFileSync(newFrom, 'utf-8'));
+  copyTemplate(absoluteProjectPath, relativeFromPath, relativeToPath) {
+    const newFrom = `${__dirname}/../templates/app/${relativeFromPath}`;
+    this.writeFile(absoluteProjectPath, relativeToPath, this.fs.readFileSync(newFrom, 'utf-8'));
   }
 
-  copyHandleBarsTemplate({ source, target, context }) {
-    function handlebarsTemplate(templatePath) {
-      return Handlebars.compile(
-        fs.readFileSync(`${__dirname}/../templates/${templatePath}`, 'utf-8'),
-        { noEscape: true },
-      );
+  copyHandleBarsTemplate({
+    projectPath,
+    source,
+    target,
+    context,
+  }) {
+    const handlebarsTemplate = (templatePath) => this.Handlebars.compile(
+      this.fs.readFileSync(`${__dirname}/../templates/${templatePath}`, 'utf-8'),
+      { noEscape: true },
+    );
+
+    if (!(source && target && context && projectPath)) {
+      throw new Error('Missing argument (projectPath, source, target or context).');
     }
 
-    if (!(source && target && context)) {
-      throw new Error('Missing argument (source, target or context).');
-    }
-
-    this.writeFile(`${this.path}/${target}`, handlebarsTemplate(source)(context));
+    this.writeFile(projectPath, target, handlebarsTemplate(source)(context));
   }
 
-  writePackageJson() {
-    const orm = this.config.dbDialect === 'mongodb' ? 'mongoose' : 'sequelize';
+  writePackageJson(projectPath, { dbDialect, appName }) {
+    const orm = dbDialect === 'mongodb' ? 'mongoose' : 'sequelize';
     const dependencies = {
       'body-parser': '1.19.0',
       chalk: '~1.1.3',
@@ -83,62 +86,62 @@ class Dumper {
       sequelize: '~5.15.1',
     };
 
-    if (this.config.dbDialect) {
-      if (this.config.dbDialect.includes('postgres')) {
+    if (dbDialect) {
+      if (dbDialect.includes('postgres')) {
         dependencies.pg = '~8.2.2';
-      } else if (this.config.dbDialect === 'mysql') {
+      } else if (dbDialect === 'mysql') {
         dependencies.mysql2 = '~2.2.5';
-      } else if (this.config.dbDialect === 'mssql') {
+      } else if (dbDialect === 'mssql') {
         dependencies.tedious = '^6.4.0';
-      } else if (this.config.dbDialect === 'mongodb') {
+      } else if (dbDialect === 'mongodb') {
         delete dependencies.sequelize;
         dependencies.mongoose = '~5.8.2';
       }
     }
 
     const pkg = {
-      name: toValidPackageName(this.config.appName),
+      name: toValidPackageName(appName),
       version: '0.0.1',
       private: true,
       scripts: { start: 'node ./server.js' },
       dependencies,
     };
 
-    this.writeFile(`${this.path}/package.json`, `${JSON.stringify(pkg, null, 2)}\n`);
+    this.writeFile(projectPath, 'package.json', `${JSON.stringify(pkg, null, 2)}\n`);
   }
 
   static tableToFilename(table) {
     return _.kebabCase(table);
   }
 
-  getDatabaseUrl() {
+  static getDatabaseUrl(config) {
     let connectionString;
 
-    if (this.config.dbConnectionUrl) {
-      connectionString = this.config.dbConnectionUrl;
+    if (config.dbConnectionUrl) {
+      connectionString = config.dbConnectionUrl;
     } else {
-      let protocol = this.config.dbDialect;
-      let port = `:${this.config.dbPort}`;
+      let protocol = config.dbDialect;
+      let port = `:${config.dbPort}`;
       let password = '';
 
-      if (this.config.dbDialect === 'mongodb' && this.config.mongodbSrv) {
+      if (config.dbDialect === 'mongodb' && config.mongodbSrv) {
         protocol = 'mongodb+srv';
         port = '';
       }
 
-      if (this.config.dbPassword) {
+      if (config.dbPassword) {
         // NOTICE: Encode password string in case of special chars.
-        password = `:${encodeURIComponent(this.config.dbPassword)}`;
+        password = `:${encodeURIComponent(config.dbPassword)}`;
       }
 
-      connectionString = `${protocol}://${this.config.dbUser}${password}@${this.config.dbHostname}${port}/${this.config.dbName}`;
+      connectionString = `${protocol}://${config.dbUser}${password}@${config.dbHostname}${port}/${config.dbName}`;
     }
 
     return connectionString;
   }
 
-  isDatabaseLocal() {
-    const databaseUrl = this.getDatabaseUrl();
+  static isDatabaseLocal(config) {
+    const databaseUrl = Dumper.getDatabaseUrl(config);
     return databaseUrl.includes('127.0.0.1') || databaseUrl.includes('localhost');
   }
 
@@ -146,37 +149,39 @@ class Dumper {
     return /^http:\/\/(?:localhost|127\.0\.0\.1)$/.test(url);
   }
 
-  getPort() {
-    return this.config.appPort || DEFAULT_PORT;
+  static getPort(config) {
+    return config.appPort || DEFAULT_PORT;
   }
 
-  getApplicationUrl() {
-    const hostUrl = /^https?:\/\//.test(this.config.appHostname)
-      ? this.config.appHostname
-      : `http://${this.config.appHostname}`;
+  static getApplicationUrl(config) {
+    const hostUrl = /^https?:\/\//.test(config.appHostname)
+      ? config.appHostname
+      : `http://${config.appHostname}`;
 
     return Dumper.isLocalUrl(hostUrl)
-      ? `${hostUrl}:${this.getPort()}`
+      ? `${hostUrl}:${Dumper.getPort(config)}`
       : hostUrl;
   }
 
-  writeDotEnv() {
+  writeDotEnv(projectPath, config) {
+    const databaseUrl = Dumper.getDatabaseUrl(config);
     const context = {
-      databaseUrl: this.getDatabaseUrl(),
-      ssl: this.config.ssl || 'false',
-      dbSchema: this.config.dbSchema,
-      hostname: this.config.appHostname,
-      port: this.getPort(),
-      forestEnvSecret: this.config.forestEnvSecret,
-      forestAuthSecret: this.config.forestAuthSecret,
+      databaseUrl,
+      ssl: config.ssl || 'false',
+      dbSchema: config.dbSchema,
+      hostname: config.appHostname,
+      port: Dumper.getPort(config),
+      forestEnvSecret: config.forestEnvSecret,
+      forestAuthSecret: config.forestAuthSecret,
       hasDockerDatabaseUrl: false,
-      applicationUrl: this.getApplicationUrl(),
+      applicationUrl: Dumper.getApplicationUrl(config),
     };
-    if (!Dumper.isLinuxBasedOs()) {
-      context.dockerDatabaseUrl = this.getDatabaseUrl().replace('localhost', 'host.docker.internal');
+    if (!this.isLinuxBasedOs()) {
+      context.dockerDatabaseUrl = databaseUrl.replace('localhost', 'host.docker.internal');
       context.hasDockerDatabaseUrl = true;
     }
     this.copyHandleBarsTemplate({
+      projectPath,
       source: 'app/env.hbs',
       target: '.env',
       context,
@@ -184,19 +189,19 @@ class Dumper {
   }
 
   static getModelNameFromTableName(table) {
-    return stringUtils.camelCase(stringUtils.transformToSafeString(table));
+    return stringUtils.transformToCamelCaseSafeString(table);
   }
 
-  getSafeDefaultValue(field) {
+  getSafeDefaultValue(dbDialect, field) {
     // NOTICE: in case of SQL dialect, ensure default value is directly usable in template
     //         as a JS value.
     let safeDefaultValue = field.defaultValue;
-    if (this.config.dbDialect !== 'mongodb') {
-      if (typeof safeDefaultValue === 'object' && safeDefaultValue instanceof Sequelize.Utils.Literal) {
+    if (dbDialect !== 'mongodb') {
+      if (typeof safeDefaultValue === 'object' && safeDefaultValue instanceof this.Sequelize.Utils.Literal) {
         safeDefaultValue = `Sequelize.literal('${safeDefaultValue.val}')`;
       } else if (!_.isNil(safeDefaultValue)) {
         if (_.some(
-          DEFAULT_VALUE_TYPES_TO_STRINGIFY,
+          this.DEFAULT_VALUE_TYPES_TO_STRINGIFY,
           // NOTICE: Uses `startsWith` as composite types may vary (eg: `ARRAY(DataTypes.INTEGER)`)
           (dataType) => _.startsWith(field.type, dataType),
         )) {
@@ -209,7 +214,7 @@ class Dumper {
     return safeDefaultValue;
   }
 
-  writeModel(table, fields, references, options = {}) {
+  writeModel(projectPath, config, table, fields, references, options = {}) {
     const { underscored } = options;
 
     const fieldsDefinition = fields.map((field) => {
@@ -220,7 +225,7 @@ class Dumper {
       const hasParenthesis = field.nameColumn && (field.nameColumn.includes('(') || field.nameColumn.includes(')'));
       const nameColumnUnconventional = field.nameColumn !== expectedConventionalColumnName
         || (underscored && (/[1-9]/g.test(field.name) || hasParenthesis));
-      const safeDefaultValue = this.getSafeDefaultValue(field);
+      const safeDefaultValue = this.getSafeDefaultValue(config.dbDialect, field);
 
       return {
         ...field,
@@ -240,7 +245,8 @@ class Dumper {
     }));
 
     this.copyHandleBarsTemplate({
-      source: `app/models/${this.config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
+      projectPath,
+      source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
       target: `models/${Dumper.tableToFilename(table)}.js`,
       context: {
         modelName: Dumper.getModelNameFromTableName(table),
@@ -249,18 +255,19 @@ class Dumper {
         fields: fieldsDefinition,
         references: referencesDefinition,
         ...options,
-        schema: this.config.dbSchema,
-        dialect: this.config.dbDialect,
+        schema: config.dbSchema,
+        dialect: config.dbDialect,
         noId: !options.hasIdColumn && !options.hasPrimaryKeys,
       },
     });
   }
 
-  writeRoute(modelName) {
+  writeRoute(projectPath, config, modelName) {
     const modelNameDasherized = _.kebabCase(modelName);
     const readableModelName = _.startCase(modelName);
 
     this.copyHandleBarsTemplate({
+      projectPath,
       source: 'app/routes/route.hbs',
       target: `routes/${Dumper.tableToFilename(modelName)}.js`,
       context: {
@@ -268,37 +275,40 @@ class Dumper {
         modelNameDasherized,
         modelNameReadablePlural: plural(readableModelName),
         modelNameReadableSingular: singular(readableModelName),
-        isMongoDB: this.config.dbDialect === 'mongodb',
+        isMongoDB: config.dbDialect === 'mongodb',
       },
     });
   }
 
-  writeForestCollection(table) {
+  writeForestCollection(projectPath, config, table) {
     this.copyHandleBarsTemplate({
+      projectPath,
       source: 'app/forest/collection.hbs',
       target: `forest/${Dumper.tableToFilename(table)}.js`,
       context: {
-        isMongoDB: this.config.dbDialect === 'mongodb',
+        isMongoDB: config.dbDialect === 'mongodb',
         table: Dumper.getModelNameFromTableName(table),
       },
     });
   }
 
-  writeAppJs() {
+  writeAppJs(projectPath, config) {
     this.copyHandleBarsTemplate({
+      projectPath,
       source: 'app/app.hbs',
       target: 'app.js',
       context: {
-        isMongoDB: this.config.dbDialect === 'mongodb',
-        forestUrl: process.env.FOREST_URL,
+        isMongoDB: config.dbDialect === 'mongodb',
+        forestUrl: this.env.FOREST_URL,
       },
     });
   }
 
-  writeModelsIndex() {
-    const { dbDialect } = this.config;
+  writeModelsIndex(projectPath, config) {
+    const { dbDialect } = config;
 
     this.copyHandleBarsTemplate({
+      projectPath,
       source: 'app/models/index.hbs',
       target: 'models/index.js',
       context: {
@@ -309,48 +319,53 @@ class Dumper {
     });
   }
 
-  writeDockerfile() {
+  writeDockerfile(projectPath) {
     this.copyHandleBarsTemplate({
+      projectPath,
       source: 'app/Dockerfile.hbs',
       target: 'Dockerfile',
       context: {},
     });
   }
 
-  writeDockerCompose() {
-    const databaseUrl = `\${${Dumper.isLinuxBasedOs() ? 'DATABASE_URL' : 'DOCKER_DATABASE_URL'}}`;
-    const forestUrl = process.env.FOREST_URL ? `\${FOREST_URL-${process.env.FOREST_URL}}` : false;
+  writeDockerCompose(projectPath, config) {
+    const databaseUrl = `\${${this.isLinuxBasedOs() ? 'DATABASE_URL' : 'DOCKER_DATABASE_URL'}}`;
+    const forestUrl = this.env.FOREST_URL ? `\${FOREST_URL-${this.env.FOREST_URL}}` : false;
     this.copyHandleBarsTemplate({
+      projectPath,
       source: 'app/docker-compose.hbs',
       target: 'docker-compose.yml',
       context: {
-        containerName: _.snakeCase(this.config.appName),
+        containerName: _.snakeCase(config.appName),
         databaseUrl,
-        dbSchema: this.config.dbSchema,
+        dbSchema: config.dbSchema,
         forestUrl,
-        network: (Dumper.isLinuxBasedOs() && this.isDatabaseLocal()) ? 'host' : null,
+        network: (this.isLinuxBasedOs() && Dumper.isDatabaseLocal(config)) ? 'host' : null,
       },
     });
   }
 
-  writeForestAdminMiddleware() {
+  writeForestAdminMiddleware(projectPath, config) {
     this.copyHandleBarsTemplate({
+      projectPath,
       source: 'app/middlewares/forestadmin.hbs',
       target: 'middlewares/forestadmin.js',
-      context: { isMongoDB: this.config.dbDialect === 'mongodb' },
+      context: { isMongoDB: config.dbDialect === 'mongodb' },
     });
   }
 
   // NOTICE: Generate files in alphabetical order to ensure a nice generation console logs display.
-  async dump(schema) {
+  async dump(schema, config) {
+    const projectPath = `${process.cwd()}/${config.appName}`;
+
     const directories = [
-      mkdirp(this.path),
-      mkdirp(this.routesPath),
-      mkdirp(this.forestPath),
-      mkdirp(this.viewPath),
-      mkdirp(this.publicPath),
-      mkdirp(this.middlewaresPath),
-      mkdirp(this.modelsPath),
+      this.mkdirp(projectPath),
+      this.mkdirp(`${projectPath}/routes`),
+      this.mkdirp(`${projectPath}/forest`),
+      this.mkdirp(`${projectPath}/public`),
+      this.mkdirp(`${projectPath}/views`),
+      this.mkdirp(`${projectPath}/models`),
+      this.mkdirp(`${projectPath}/middlewares`),
     ];
 
     await Promise.all(directories);
@@ -358,41 +373,41 @@ class Dumper {
     const modelNames = Object.keys(schema)
       .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
-    modelNames.forEach(this.writeForestCollection.bind(this));
+    modelNames.forEach((modelName) => this.writeForestCollection(projectPath, config, modelName));
 
-    this.writeForestAdminMiddleware();
-    this.copyTemplate('middlewares/welcome.hbs', `${this.path}/middlewares/welcome.js`);
+    this.writeForestAdminMiddleware(projectPath, config);
+    this.copyTemplate(projectPath, 'middlewares/welcome.hbs', 'middlewares/welcome.js');
 
-    this.writeModelsIndex();
+    this.writeModelsIndex(projectPath, config);
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
       const safeReferences = references.map((reference) => ({
         ...reference,
         ref: Dumper.getModelNameFromTableName(reference.ref),
       }));
-      this.writeModel(modelName, fields, safeReferences, options);
+      this.writeModel(projectPath, config, modelName, fields, safeReferences, options);
     });
 
-    this.copyTemplate('public/favicon.png', `${this.path}/public/favicon.png`);
+    this.copyTemplate(projectPath, 'public/favicon.png', 'public/favicon.png');
 
     modelNames.forEach((modelName) => {
       // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
       //       internal session creation route. As a workaround, we don't generate the route file.
       // TODO: Remove the if condition, once the routes paths refactored to prevent such conflict.
       if (modelName !== 'sessions') {
-        this.writeRoute(modelName);
+        this.writeRoute(projectPath, config, modelName);
       }
     });
 
-    this.copyTemplate('views/index.hbs', `${this.path}/views/index.html`);
-    this.copyTemplate('dockerignore.hbs', `${this.path}/.dockerignore`);
-    this.writeDotEnv();
-    this.copyTemplate('gitignore.hbs', `${this.path}/.gitignore`);
-    this.writeAppJs();
-    this.writeDockerCompose();
-    this.writeDockerfile();
-    this.writePackageJson();
-    this.copyTemplate('server.hbs', `${this.path}/server.js`);
+    this.copyTemplate(projectPath, 'views/index.hbs', 'views/index.html');
+    this.copyTemplate(projectPath, 'dockerignore.hbs', '.dockerignore');
+    this.writeDotEnv(projectPath, config);
+    this.copyTemplate(projectPath, 'gitignore.hbs', '.gitignore');
+    this.writeAppJs(projectPath, config);
+    this.writeDockerCompose(projectPath, config);
+    this.writeDockerfile(projectPath);
+    this.writePackageJson(projectPath, config);
+    this.copyTemplate(projectPath, 'server.hbs', '/server.js');
   }
 }
 
