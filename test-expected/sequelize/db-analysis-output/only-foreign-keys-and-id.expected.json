@@ -1,0 +1,38 @@
+{
+  "only_foreign_keys_and_id": {
+    "fields":[
+      {
+        "name":"id",
+        "nameColumn":"id",
+        "type":"INTEGER",
+        "primaryKey":true,
+        "defaultValue":null,
+        "isRequired":true
+      }
+    ],
+    "primaryKeys":["id"],
+    "options":{
+      "underscored":true,
+      "timestamps":false,
+      "hasIdColumn":true,
+      "hasPrimaryKeys":true,
+      "isJunction":true
+    },
+    "references":[
+      {
+        "foreignKey":"sample_id",
+        "foreignKeyName":"sampleIdKey",
+        "association":"belongsTo",
+        "ref":"sample_table",
+        "as":"sample"
+      },
+      {
+        "foreignKey":"car_id",
+        "foreignKeyName":"carIdKey",
+        "association":"belongsTo",
+        "ref":"cars",
+        "as":"car"
+      }
+    ]
+  }
+}

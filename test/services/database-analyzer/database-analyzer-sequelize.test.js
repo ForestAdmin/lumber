@@ -126,5 +126,25 @@ describe('services > database analyser > Sequelize', () => {
       const rolesReferences = new Set(result.roles.references.map(({ as }) => as));
       expect(rolesReferences.size).toBe(expected.roles.referencesLength);
     }, TIMEOUT);
+
+    it('should handle id column if present on table having only foreign keys', async () => {
+      expect.assertions(4);
+
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      await sequelizeHelper.dropAndCreate('only_foreign_keys_and_id');
+      const result = await performDatabaseAnalysis(databaseConnection);
+
+      await sequelizeHelper.close();
+
+      expect(result.only_foreign_keys_and_id.references).toHaveLength(2);
+
+      const { fields } = result.only_foreign_keys_and_id;
+      expect(fields).toHaveLength(1);
+
+      const idField = fields[0];
+      expect(idField.name).toStrictEqual('id');
+      expect(idField.primaryKey).toStrictEqual(true);
+    }, TIMEOUT);
   });
 });
