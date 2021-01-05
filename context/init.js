@@ -8,12 +8,15 @@ const open = require('open');
 const openIdClient = require('openid-client');
 const superagent = require('superagent');
 const { promisify } = require('util');
-const Database = require('../services/database');
 const pkg = require('../package.json');
 const applicationTokenDeserializer = require('../deserializers/application-token');
 const applicationTokenSerializer = require('../serializers/application-token');
 const Api = require('../services/api');
 const ApplicationTokenService = require('../services/application-token');
+const mkdirp = require('mkdirp');
+const Handlebars = require('handlebars');
+const Database = require('../services/database');
+const Dumper = require('../services/dumper');
 const logger = require('../services/logger');
 const terminator = require('../utils/terminator');
 const Authenticator = require('../services/authenticator');
@@ -46,10 +49,12 @@ const fsAsync = {
  *  fs: import('fs');
  *  os: import('os');
  *  inquirer: import('inquirer');
+ *  mkdirp: import('mkdirp');
  *  mongodb: import('mongodb');
  *  Sequelize: import('sequelize');
  *  superagent: import('superagent');
  *  fsAsync: fsAsync;
+ *  Handlebars: import('handlebars');
  * }} Dependencies
  *
  * @typedef {{
@@ -66,6 +71,7 @@ const fsAsync = {
  * @typedef {{
  *  logger: import('../services/logger');
  *  database: import('../services/database');
+ *  dumper: import('../services/dumper');
  *  api: import('../services/api');
  *  authenticator: import('../services/authenticator');
  *  oidcAuthenticator: import('../services/oidc/authenticator');
@@ -98,10 +104,12 @@ function initDependencies(context) {
   context.addInstance('fs', fs);
   context.addInstance('os', os);
   context.addInstance('inquirer', inquirer);
+  context.addInstance('mkdirp', mkdirp);
   context.addInstance('Sequelize', Sequelize);
   context.addInstance('mongodb', mongodb);
   context.addInstance('superagent', superagent);
   context.addInstance('fsAsync', fsAsync);
+  context.addInstance('Handlebars', Handlebars);
 }
 
 /**
@@ -127,6 +135,7 @@ function initSerializers(context) {
 function initServices(context) {
   context.addInstance('logger', logger);
   context.addClass(Database);
+  context.addClass(Dumper);
   context.addClass(Api);
   context.addClass(ApplicationTokenService);
   context.addClass(Authenticator);

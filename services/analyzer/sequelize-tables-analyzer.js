@@ -322,7 +322,10 @@ async function createTableSchema(columnTypeGetter, {
         defaultValue = Sequelize.literal(defaultValue);
       }
 
-      const name = _.camelCase(columnName);
+      // NOTICE: sequelize considers column name with parenthesis as raw Attributes
+      // do not try to camelCase the name for avoiding sequelize issues
+      const hasParenthesis = columnName.includes('(') || columnName.includes(')');
+      const name = hasParenthesis ? columnName : _.camelCase(columnName);
       let isRequired = !columnInfo.allowNull;
       if (isTechnicalTimestamp({ name, type })) {
         isRequired = false;

@@ -89,6 +89,26 @@ describe('services > database analyser > Sequelize', () => {
       expect(result.underscored_no_fields.options.underscored).toStrictEqual(true);
     }, TIMEOUT);
 
+    it('should not set underscored to true if parenthesis in column name', async () => {
+      expect.assertions(1);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      await sequelizeHelper.dropAndCreate('parenthesis_table');
+      const result = await performDatabaseAnalysis(databaseConnection);
+      await sequelizeHelper.close();
+      expect(result.parenthesis_table.options.underscored).toStrictEqual(false);
+    }, TIMEOUT);
+
+    it('should not set underscored to true if parenthesis in column name and underscored field', async () => {
+      expect.assertions(1);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      await sequelizeHelper.dropAndCreate('parenthesis_underscored_table');
+      const result = await performDatabaseAnalysis(databaseConnection);
+      await sequelizeHelper.close();
+      expect(result.parenthesis_underscored_table.options.underscored).toStrictEqual(false);
+    }, TIMEOUT);
+
     it('should handle conflicts between references alias', async () => {
       expect.assertions(3);
       const sequelizeHelper = new SequelizeHelper();
