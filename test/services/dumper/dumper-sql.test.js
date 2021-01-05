@@ -2,9 +2,15 @@ const rimraf = require('rimraf');
 const fs = require('fs');
 
 const renderingModel = require('../../../test-expected/sequelize/db-analysis-output/renderings.expected.json');
+const context = require('../../../context');
+const initContext = require('../../../context/init');
+
 const Dumper = require('../../../services/dumper');
 
 const TYPE_CAST = 'databaseOptions.dialectOptions.typeCast';
+
+initContext(context);
+const injectedContext = context.inject();
 
 function cleanOutput() {
   rimraf.sync('./test-output/mssql');
@@ -25,8 +31,8 @@ describe('services > dumper > SQL', () => {
         appPort: 1654,
       };
 
-      const dumper = new Dumper(config);
-      await dumper.dump({});
+      const dumper = new Dumper(injectedContext);
+      await dumper.dump({}, config);
     }
 
     it('should force type casting for boolean in /models/index.js file', async () => {
@@ -51,8 +57,8 @@ describe('services > dumper > SQL', () => {
         appPort: 1654,
       };
 
-      const dumper = new Dumper(config);
-      await dumper.dump({});
+      const dumper = new Dumper(injectedContext);
+      await dumper.dump({}, config);
     }
 
     it('should not force type casting in /models/index.js file', async () => {
@@ -77,8 +83,8 @@ describe('services > dumper > SQL', () => {
         appPort: 1654,
       };
 
-      const dumper = new Dumper(config);
-      await dumper.dump(renderingModel);
+      const dumper = new Dumper(injectedContext);
+      await dumper.dump(renderingModel, config);
     }
 
     it('should generate a model file', async () => {
