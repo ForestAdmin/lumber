@@ -387,6 +387,8 @@ class Dumper {
     const modelNames = Object.keys(schema)
       .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
+    this.writeDatabasesConfig(projectPath, config);
+
     modelNames.forEach((modelName) => this.writeForestCollection(projectPath, config, modelName));
 
     this.writeForestAdminMiddleware(projectPath, config);
@@ -416,13 +418,12 @@ class Dumper {
     this.copyTemplate(projectPath, 'views/index.hbs', 'views/index.html');
     this.copyTemplate(projectPath, 'dockerignore.hbs', '.dockerignore');
     this.writeDotEnv(projectPath, config);
-    this.writeDatabasesConfig(projectPath, config);
     this.copyTemplate(projectPath, 'gitignore.hbs', '.gitignore');
     this.writeAppJs(projectPath, config);
     this.writeDockerCompose(projectPath, config);
     this.writeDockerfile(projectPath);
     this.writePackageJson(projectPath, config);
-    this.copyTemplate(projectPath, 'server.hbs', '/server.js');
+    this.copyTemplate(projectPath, 'server.hbs', 'server.js');
   }
 }
 

@@ -535,7 +535,7 @@ describe('services > dumper (unit)', () => {
       expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'views/index.hbs', 'views/index.html');
       expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'dockerignore.hbs', '.dockerignore');
       expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'gitignore.hbs', '.gitignore');
-      expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'server.hbs', '/server.js');
+      expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'server.hbs', 'server.js');
     });
   });
 });
