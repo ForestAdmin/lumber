@@ -26,22 +26,24 @@ const {
   const options = {
     dbSchema: process.env.DATABASE_SCHEMA,
     appName: program.outputDirectory,
+    isUpdate: true,
   };
   dumper.checkIsLianaCompatible();
 
-  if (program.outputDirectory) {
-    await dumper.createOutputDirectoryIfNotExist(program.outputDirectory);
+  const { outputDirectory } = program;
+  if (outputDirectory && fs.existsSync(outputDirectory)) {
+    throw new updateErrors.OutputDirectoryAlreadyExist(outputDirectory);
   } else {
     dumper.checkIsValidLumberProject();
   }
 
-  const config = path.resolve(program.config);
-  if (!fs.existsSync(config)) {
-    throw new updateErrors.ConfigFileDoesNotExist(config);
+  const configPath = path.resolve(program.config);
+  if (!fs.existsSync(configPath)) {
+    throw new updateErrors.ConfigFileDoesNotExist(configPath);
   }
 
   // eslint-disable-next-line global-require, import/no-dynamic-require
-  const databasesConfig = require(config);
+  const databasesConfig = require(configPath);
 
   let spinner = spinners.add('databases-connection', { text: 'Connecting to your database(s)' });
   const databasesConnection = await database.connectFromDatabasesConfig(databasesConfig);
@@ -67,8 +69,15 @@ const {
   );
   spinner.succeed();
 
+  options.useMultiDatabase = databasesSchema.length > 1;
+
   spinner = spinners.add('dumper', { text: 'Generating your files' });
-  await dumper.redump(databasesSchema, options);
+  await Promise.all(databasesSchema.map(async (databaseSchema) => {
+    const dbName = databaseSchema.name;
+    const subSpinner = spinners.add(`dumper-${dbName}`, { text: `Generating files linked to ${dbName} database` });
+    await dumper.dump(databaseSchema.schema, { ...options, dbName });
+    subSpinner.succeed();
+  }));
   spinner.succeed();
 
   process.exit(0);
