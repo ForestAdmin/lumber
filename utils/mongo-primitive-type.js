@@ -2,7 +2,7 @@ const { ObjectId } = require('mongodb');
 
 /**
  * Retrieves simple mongoose type from value if detectable
- * Simple types are 'Date', 'Boolean', 'Number', 'String', 'mongoose.Schema.Types.ObjectId'
+ * Simple types are 'Date', 'Boolean', 'Number', 'String', 'Mongoose.Schema.Types.ObjectId'
  * @param value
  * @returns {string|null} return
  */
@@ -13,7 +13,7 @@ function getMongooseTypeFromValue(value) {
   }
 
   if (typeof value === 'object' && value instanceof ObjectId) {
-    return 'mongoose.Schema.Types.ObjectId';
+    return 'Mongoose.Schema.Types.ObjectId';
   }
 
   switch (typeof value) {

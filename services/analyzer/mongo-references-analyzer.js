@@ -5,7 +5,7 @@ const {
   filterReferenceCollection,
 } = require('../../utils/mongo-collections');
 
-const OBJECT_ID = 'mongoose.Schema.Types.ObjectId';
+const OBJECT_ID = 'Mongoose.Schema.Types.ObjectId';
 const SAMPLE_COUNT_TO_FETCH = 10;
 
 const pickSampleValues = (databaseConnection, collectionName, field) =>

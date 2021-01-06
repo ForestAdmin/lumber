@@ -5,7 +5,7 @@ const {
   filterReferenceCollection,
 } = require('../../utils/mongo-collections');
 
-const OBJECT_ID_ARRAY = '[mongoose.Schema.Types.ObjectId]';
+const OBJECT_ID_ARRAY = '[Mongoose.Schema.Types.ObjectId]';
 const SAMPLE_COUNT_TO_FETCH = 10;
 const SAMPLE_COUNT_TO_FETCH_ARRAY = 5;
 

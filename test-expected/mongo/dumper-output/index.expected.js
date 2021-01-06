@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Sequelize = require('sequelize');
+const Mongoose = require('mongoose');
 
 const databasesConfiguration = require('../config/databases');
 
@@ -8,7 +8,7 @@ const connections = {};
 const db = {};
 
 databasesConfiguration.forEach((databaseInfo) => {
-  const connection = new Sequelize(databaseInfo.connection.url, databaseInfo.connection.options);
+  const connection = Mongoose.createConnection(databaseInfo.connection.url, databaseInfo.connection.options);
   connections[databaseInfo.name] = connection;
 
   const modelsDir = databaseInfo.modelsDir || path.join(__dirname, databaseInfo.name);
@@ -17,7 +17,7 @@ databasesConfiguration.forEach((databaseInfo) => {
     .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
     .forEach((file) => {
       try {
-        const model = connection.import(path.join(modelsDir, file));
+        const model = require(path.join(modelsDir, file))(connection, Mongoose);
         db[model.name] = model;
       } catch (error) {
         console.error(`Model creation error: ${error}`);
@@ -25,13 +25,7 @@ databasesConfiguration.forEach((databaseInfo) => {
     });
 });
 
-Object.keys(db).forEach((modelName) => {
-  if ('associate' in db[modelName]) {
-    db[modelName].associate(db);
-  }
-});
-
-db.objectMapping = Sequelize;
+db.objectMapping = Mongoose;
 db.connections = connections;
 
 module.exports = db;

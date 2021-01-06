@@ -80,7 +80,7 @@ class Dumper {
       dotenv: '~6.1.0',
       express: '~4.17.1',
       'express-jwt': '5.3.1',
-      [`forest-express-${orm}`]: '^6.0.0',
+      [`forest-express-${orm}`]: '^7.0.0-beta.1',
       morgan: '1.9.1',
       'require-all': '^3.0.0',
       sequelize: '~5.15.1',
@@ -313,6 +313,19 @@ class Dumper {
       target: 'models/index.js',
       context: {
         isMongoDB: dbDialect === 'mongodb',
+      },
+    });
+  }
+
+  writeDatabasesConfig(projectPath, config) {
+    const { dbDialect } = config;
+
+    this.copyHandleBarsTemplate({
+      projectPath,
+      source: 'app/config/databases.hbs',
+      target: 'config/databases.js',
+      context: {
+        isMongoDB: dbDialect === 'mongodb',
         isMSSQL: dbDialect === 'mssql',
         isMySQL: dbDialect === 'mysql',
       },
@@ -361,6 +374,7 @@ class Dumper {
     const directories = [
       this.mkdirp(projectPath),
       this.mkdirp(`${projectPath}/routes`),
+      this.mkdirp(`${projectPath}/config`),
       this.mkdirp(`${projectPath}/forest`),
       this.mkdirp(`${projectPath}/public`),
       this.mkdirp(`${projectPath}/views`),
@@ -372,6 +386,8 @@ class Dumper {
 
     const modelNames = Object.keys(schema)
       .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+    this.writeDatabasesConfig(projectPath, config);
 
     modelNames.forEach((modelName) => this.writeForestCollection(projectPath, config, modelName));
 
@@ -407,7 +423,7 @@ class Dumper {
     this.writeDockerCompose(projectPath, config);
     this.writeDockerfile(projectPath);
     this.writePackageJson(projectPath, config);
-    this.copyTemplate(projectPath, 'server.hbs', '/server.js');
+    this.copyTemplate(projectPath, 'server.hbs', 'server.js');
   }
 }
 

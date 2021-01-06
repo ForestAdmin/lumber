@@ -139,6 +139,17 @@ describe('services > dumper > sequelize', () => {
     cleanOutput();
   });
 
+  it('should generate a config/databases.js file', async () => {
+    expect.assertions(1);
+    const dumper = await getDumper();
+    await dumper.dump(simpleModel, CONFIG);
+    const indexGeneratedFile = fs.readFileSync('./test-output/sequelize/config/databases.js', 'utf-8');
+    const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/databases.config.expected.js', 'utf-8');
+
+    expect(indexGeneratedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
   describe('when generating the env file on various OS', () => {
     it('should generate the env file on Linux', async () => {
       expect.assertions(1);

@@ -17,11 +17,11 @@
                 "Object"
               ],
               "arrayOfObjectIds": [
-                "mongoose.Schema.Types.ObjectId"
+                "Mongoose.Schema.Types.ObjectId"
               ],
               "arrayWithComplexObject": [
                 {
-                  "_id": "mongoose.Schema.Types.ObjectId",
+                  "_id": "Mongoose.Schema.Types.ObjectId",
                   "name": "String",
                   "propGroup": {
                     "answer": "Boolean",
@@ -33,7 +33,7 @@
               ],
               "arrayOfComplexObjects": [
                 {
-                  "_id": "mongoose.Schema.Types.ObjectId",
+                  "_id": "Mongoose.Schema.Types.ObjectId",
                   "propGroup": {
                     "answer": "Boolean",
                     "date": "Date",

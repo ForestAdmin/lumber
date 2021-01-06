@@ -483,7 +483,7 @@ describe('services > dumper (unit)', () => {
 
   describe('dump', () => {
     it('should call all the mandatory functions required to generate a complete project', async () => {
-      expect.assertions(17);
+      expect.assertions(18);
 
       const dumper = createDumper({
         os: {
@@ -497,6 +497,7 @@ describe('services > dumper (unit)', () => {
       const writeRouteSpy = jest.spyOn(dumper, 'writeRoute').mockImplementation();
       const writeDotEnvSpy = jest.spyOn(dumper, 'writeDotEnv').mockImplementation();
       const writeAppJsSpy = jest.spyOn(dumper, 'writeAppJs').mockImplementation();
+      const writeDatabasesConfigSpy = jest.spyOn(dumper, 'writeDatabasesConfig').mockImplementation();
       const writeDockerComposeSpy = jest.spyOn(dumper, 'writeDockerCompose').mockImplementation();
       const writeDockerfileSpy = jest.spyOn(dumper, 'writeDockerfile').mockImplementation();
       const writePackageJsonSpy = jest.spyOn(dumper, 'writePackageJson').mockImplementation();
@@ -521,6 +522,7 @@ describe('services > dumper (unit)', () => {
       expect(writeForestAdminMiddlewareSpy).toHaveBeenCalledWith(projectPath, config);
       expect(writeModelsIndexSpy).toHaveBeenCalledWith(projectPath, config);
       expect(writeDotEnvSpy).toHaveBeenCalledWith(projectPath, config);
+      expect(writeDatabasesConfigSpy).toHaveBeenCalledWith(projectPath, config);
       expect(writeAppJsSpy).toHaveBeenCalledWith(projectPath, config);
       expect(writeDockerComposeSpy).toHaveBeenCalledWith(projectPath, config);
       expect(writeDockerfileSpy).toHaveBeenCalledWith(projectPath);
@@ -533,7 +535,7 @@ describe('services > dumper (unit)', () => {
       expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'views/index.hbs', 'views/index.html');
       expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'dockerignore.hbs', '.dockerignore');
       expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'gitignore.hbs', '.gitignore');
-      expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'server.hbs', '/server.js');
+      expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'server.hbs', 'server.js');
     });
   });
 });
