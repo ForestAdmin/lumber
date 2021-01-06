@@ -183,7 +183,7 @@ describe('services > dumper > sequelize', () => {
   it('should generate an id column on join tables with id primary key', async () => {
     expect.assertions(1);
     const dumper = await getDumper();
-    await dumper.dump(joinTableWithIdKey);
+    await dumper.dump(joinTableWithIdKey, CONFIG);
     const generatedFile = fs.readFileSync('./test-output/sequelize/models/only-foreign-keys-and-id.js', 'utf8');
     const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/only-foreign-keys-and-id.expected.js', 'utf-8');
 
