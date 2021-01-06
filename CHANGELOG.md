@@ -1,3 +1,10 @@
+# [4.0.0-beta.3](https://github.com/ForestAdmin/lumber/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2021-01-06)
+
+
+### Features
+
+* ease multi-database setup by managing mongoose connection like sequelize ([#490](https://github.com/ForestAdmin/lumber/issues/490)) ([cf508cb](https://github.com/ForestAdmin/lumber/commit/cf508cb1f87a465c483086cec467494eb06e3df1))
+
 # [4.0.0-beta.2](https://github.com/ForestAdmin/lumber/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2021-01-05)
 
 
