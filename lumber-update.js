@@ -30,7 +30,7 @@ const {
   dumper.checkIsLianaCompatible();
 
   if (program.outputDirectory) {
-    await dumper.createOutputDirectoryIfNotExist();
+    await dumper.createOutputDirectoryIfNotExist(program.outputDirectory);
   } else {
     dumper.checkIsValidLumberProject();
   }

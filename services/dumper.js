@@ -472,7 +472,7 @@ class Dumper {
     if (match) {
       [,, lianaMajorVersion] = match;
     }
-    if (Number(lianaMajorVersion) < 7) throw new Error('Invalid version of liana');
+    if (Number(lianaMajorVersion) < 7) throw new Error('Invalid version of liana, should be >= 7.0.0');
   }
 
   async createOutputDirectoryIfNotExist(path) {
@@ -487,7 +487,7 @@ class Dumper {
     const cwd = process.cwd();
     const projectPath = config.appName ? `${cwd}/${config.appName}` : cwd;
 
-    return databasesSchema.map(({ name, schema }) => {
+    return Promise.all(databasesSchema.map(({ name, schema }) => {
       const modelNames = Dumper.getModelsNameSorted(schema);
 
       return Promise.all(modelNames.map(async (modelName) => {
@@ -498,7 +498,7 @@ class Dumper {
         options.useMultiDatabase = databasesSchema.length > 1;
 
         if (options.useMultiDatabase) {
-          await this.mkdirp(`models/${name}`);
+          await this.mkdirp(`${projectPath}/models/${name}`);
         }
 
         this.writeForestCollection(projectPath, config, modelName);
@@ -510,7 +510,7 @@ class Dumper {
           this.writeRoute(projectPath, config, modelName);
         }
       }));
-    });
+    }));
   }
 }
 
