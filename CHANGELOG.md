@@ -1,3 +1,10 @@
+## [3.10.6](https://github.com/ForestAdmin/lumber/compare/v3.10.5...v3.10.6) (2021-01-06)
+
+
+### Bug Fixes
+
+* **models:** id primary keys on join tables are now considered and correctly added on generated models ([#524](https://github.com/ForestAdmin/lumber/issues/524)) ([50b25f8](https://github.com/ForestAdmin/lumber/commit/50b25f82d41d27c0b22ff2914720e470c24ad26b))
+
 ## [3.10.5](https://github.com/ForestAdmin/lumber/compare/v3.10.4...v3.10.5) (2020-12-21)
 
 
