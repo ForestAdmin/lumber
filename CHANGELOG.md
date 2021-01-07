@@ -1,3 +1,10 @@
+## [3.10.7](https://github.com/ForestAdmin/lumber/compare/v3.10.6...v3.10.7) (2021-01-07)
+
+
+### Bug Fixes
+
+* incorrect FOREST_URL generated in docker-compose.yml ([#533](https://github.com/ForestAdmin/lumber/issues/533)) ([9d3bf95](https://github.com/ForestAdmin/lumber/commit/9d3bf951ae743082e8ad10525734b37af1643666))
+
 ## [3.10.6](https://github.com/ForestAdmin/lumber/compare/v3.10.5...v3.10.6) (2021-01-06)
 
 
