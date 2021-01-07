@@ -2,7 +2,7 @@ require('dotenv').config();
 const program = require('commander');
 const DatabaseAnalyzer = require('./services/analyzer/database-analyzer');
 const spinners = require('./services/spinners');
-const { updateErrors } = require('./utils/errors');
+const LumberError = require('./utils/lumber-error');
 const context = require('./context');
 const initContext = require('./context/init');
 
@@ -28,18 +28,18 @@ const {
     appName: program.outputDirectory,
     isUpdate: true,
   };
-  dumper.checkIsLianaCompatible();
+  dumper.checkLianaCompatiblityForUpdate();
 
   const { outputDirectory } = program;
   if (outputDirectory && fs.existsSync(outputDirectory)) {
-    throw new updateErrors.OutputDirectoryAlreadyExist(outputDirectory);
+    throw new LumberError(`The output directory "${outputDirectory}" already exist.`);
   } else {
-    dumper.checkIsValidLumberProject();
+    dumper.checkLumberProjectStructure();
   }
 
   const configPath = path.resolve(program.config);
   if (!fs.existsSync(configPath)) {
-    throw new updateErrors.ConfigFileDoesNotExist(configPath);
+    throw new LumberError(`The configuration file "${configPath}" does not exist.`);
   }
 
   // eslint-disable-next-line global-require, import/no-dynamic-require

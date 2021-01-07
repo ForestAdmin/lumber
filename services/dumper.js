@@ -2,6 +2,8 @@ const _ = require('lodash');
 const { plural, singular } = require('pluralize');
 const stringUtils = require('../utils/strings');
 const toValidPackageName = require('../utils/to-valid-package-name');
+const IncompatibleLianaForUpdateError = require('../utils/errors/dumper/incompatible-liana-for-update-error');
+const InvalidLumberProjectStructureError = require('../utils/errors/dumper/invalid-lumber-project-structure-error');
 require('../handlerbars/loader');
 
 const DEFAULT_PORT = 3310;
@@ -463,20 +465,20 @@ class Dumper {
     }
   }
 
-  checkIsValidLumberProject() {
+  checkLumberProjectStructure() {
     const currentPath = process.cwd();
     try {
       if (!this.fs.existsSync(`${currentPath}/routes`)) throw new Error('No "routes" directory.');
       if (!this.fs.existsSync(`${currentPath}/forest`)) throw new Error('No "forest" directory.');
       if (!this.fs.existsSync(`${currentPath}/models`)) throw new Error('No "models“ directory.');
     } catch (error) {
-      throw new Error(`We are not able to detect a lumber project file architecture at this path: ${currentPath}. ${error}`);
+      throw new InvalidLumberProjectStructureError(currentPath, error);
     }
   }
 
-  checkIsLianaCompatible() {
+  checkLianaCompatiblityForUpdate() {
     const packagePath = `${process.cwd()}/package.json`;
-    if (!this.fs.existsSync(packagePath)) throw new Error('No "package.json".');
+    if (!this.fs.existsSync(packagePath)) throw new IncompatibleLianaForUpdateError(`"${packagePath}" not found.`);
 
     const file = this.fs.readFileSync(packagePath, 'utf8');
     const match = /forest-express-.*((\d).\d.\d)/g.exec(file);
@@ -485,7 +487,7 @@ class Dumper {
     if (match) {
       [,, lianaMajorVersion] = match;
     }
-    if (Number(lianaMajorVersion) < 7) throw new Error('Invalid version of liana, should be >= 7.0.0');
+    if (Number(lianaMajorVersion) < 7) throw new IncompatibleLianaForUpdateError('Invalid version of liana, should be >= 7.0.0.');
   }
 }
 
