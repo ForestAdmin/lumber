@@ -56,7 +56,7 @@ const authenticatorHelper = require('../utils/authenticator-helper');
 function initEnv(context) {
   context.addInstance('env', {
     ...process.env,
-    FOREST_URL: process.env.FOREST_URL || 'https://app.forestadmin.com',
+    FOREST_URL: process.env.FOREST_URL || 'https://api.forestadmin.com',
   });
 }
 
