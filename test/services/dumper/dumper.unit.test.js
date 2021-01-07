@@ -10,6 +10,9 @@ const RELATIVE_FILE_PATH = 'some/folder/relative-file.js';
 
 function createDumper(contextOverride = {}) {
   return new Dumper({
+    constants: {
+      DEFAULT_FOREST_URL: 'https://api.someforesturl.com',
+    },
     Sequelize: SequelizeMock,
     chalk,
     mkdirp: () => {},
