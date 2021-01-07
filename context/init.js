@@ -14,6 +14,8 @@ const Api = require('../services/api');
 const Authenticator = require('../services/authenticator');
 const authenticatorHelper = require('../utils/authenticator-helper');
 
+const DEFAULT_FOREST_URL = 'https://api.forestadmin.com';
+
 /**
  * @typedef {{
  *   FOREST_URL: string;
@@ -50,13 +52,19 @@ const authenticatorHelper = require('../utils/authenticator-helper');
  * @typedef {EnvPart & Dependencies & Utils & Services} Context
  */
 
+function initConstants(context) {
+  context.addInstance('constants', {
+    DEFAULT_FOREST_URL,
+  });
+}
+
 /**
  * @param {import('./application-context')} context
  */
 function initEnv(context) {
   context.addInstance('env', {
     ...process.env,
-    FOREST_URL: process.env.FOREST_URL || 'https://app.forestadmin.com',
+    FOREST_URL: process.env.FOREST_URL || DEFAULT_FOREST_URL,
   });
 }
 
@@ -98,6 +106,7 @@ function initServices(context) {
  * @returns {import('./application-context')<Context>}
  */
 function initContext(context) {
+  initConstants(context);
   initEnv(context);
   initDependencies(context);
   initUtils(context);

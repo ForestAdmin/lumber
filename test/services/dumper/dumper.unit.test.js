@@ -8,8 +8,13 @@ const SequelizeMock = {
 const ABSOLUTE_PROJECT_PATH = '/absolute/project/path';
 const RELATIVE_FILE_PATH = 'some/folder/relative-file.js';
 
+const DEFAULT_FOREST_URL = 'https://api.someforesturl.com';
+
 function createDumper(contextOverride = {}) {
   return new Dumper({
+    constants: {
+      DEFAULT_FOREST_URL,
+    },
     Sequelize: SequelizeMock,
     chalk,
     mkdirp: () => {},
@@ -434,7 +439,11 @@ describe('services > dumper (unit)', () => {
       it('should have called copyHandlebarsTemplate with a valid forestUrl is context', () => {
         expect.assertions(1);
 
-        const dumper = createDumper({ env: {} });
+        const dumper = createDumper({
+          env: {
+            FOREST_URL: DEFAULT_FOREST_URL,
+          },
+        });
         jest.spyOn(dumper, 'isLinuxBasedOs').mockReturnValue(true);
         const copyHandlebarsTemplateSpy = jest.spyOn(dumper, 'copyHandleBarsTemplate').mockImplementation();
         dumper.writeDockerCompose(ABSOLUTE_PROJECT_PATH, {});
