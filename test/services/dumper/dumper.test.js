@@ -169,7 +169,6 @@ describe('services > dumper', () => {
     });
 
     describe('using an environment variable FOREST_URL', () => {
-
       async function generateDockerComposeFile(contextOverrides) {
         await createLinuxDump({}, contextOverrides);
 
