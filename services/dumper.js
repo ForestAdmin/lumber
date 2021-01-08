@@ -2,6 +2,8 @@ const _ = require('lodash');
 const { plural, singular } = require('pluralize');
 const stringUtils = require('../utils/strings');
 const toValidPackageName = require('../utils/to-valid-package-name');
+const IncompatibleLianaForUpdateError = require('../utils/errors/dumper/incompatible-liana-for-update-error');
+const InvalidLumberProjectStructureError = require('../utils/errors/dumper/invalid-lumber-project-structure-error');
 require('../handlerbars/loader');
 
 const DEFAULT_PORT = 3310;
@@ -397,38 +399,49 @@ class Dumper {
 
   // NOTICE: Generate files in alphabetical order to ensure a nice generation console logs display.
   async dump(schema, config) {
-    const projectPath = `${process.cwd()}/${config.appName}`;
+    const cwd = process.cwd();
+    const projectPath = config.appName ? `${cwd}/${config.appName}` : cwd;
+    const { isUpdate, useMultiDatabase, dbName } = config;
 
-    const directories = [
-      this.mkdirp(projectPath),
-      this.mkdirp(`${projectPath}/routes`),
-      this.mkdirp(`${projectPath}/config`),
-      this.mkdirp(`${projectPath}/forest`),
-      this.mkdirp(`${projectPath}/public`),
-      this.mkdirp(`${projectPath}/views`),
-      this.mkdirp(`${projectPath}/models`),
-      this.mkdirp(`${projectPath}/middlewares`),
-    ];
+    await this.mkdirp(projectPath);
+    await this.mkdirp(`${projectPath}/routes`);
+    await this.mkdirp(`${projectPath}/forest`);
+    await this.mkdirp(`${projectPath}/models`);
 
-    await Promise.all(directories);
+    if (useMultiDatabase) {
+      await this.mkdirp(`${projectPath}/models/${dbName}`);
+    }
+
+    if (!isUpdate) {
+      await this.mkdirp(`${projectPath}/config`);
+      await this.mkdirp(`${projectPath}/public`);
+      await this.mkdirp(`${projectPath}/views`);
+      await this.mkdirp(`${projectPath}/middlewares`);
+    }
 
     const modelNames = Dumper.getModelsNameSorted(schema);
 
-    this.writeDatabasesConfig(projectPath, config);
+    if (!isUpdate) this.writeDatabasesConfig(projectPath, config);
 
     modelNames.forEach((modelName) => this.writeForestCollection(projectPath, config, modelName));
 
-    this.writeForestAdminMiddleware(projectPath, config);
-    this.copyTemplate(projectPath, 'middlewares/welcome.hbs', 'middlewares/welcome.js');
+    if (!isUpdate) {
+      this.writeForestAdminMiddleware(projectPath, config);
+      this.copyTemplate(projectPath, 'middlewares/welcome.hbs', 'middlewares/welcome.js');
+      this.writeModelsIndex(projectPath, config);
+    }
 
-    this.writeModelsIndex(projectPath, config);
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
       const safeReferences = Dumper.getSafeReferences(references);
+
+      options.dbName = dbName;
+      options.useMultiDatabase = useMultiDatabase;
+
       this.writeModel(projectPath, config, modelName, fields, safeReferences, options);
     });
 
-    this.copyTemplate(projectPath, 'public/favicon.png', 'public/favicon.png');
+    if (!isUpdate) this.copyTemplate(projectPath, 'public/favicon.png', 'public/favicon.png');
 
     modelNames.forEach((modelName) => {
       // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
@@ -439,31 +452,33 @@ class Dumper {
       }
     });
 
-    this.copyTemplate(projectPath, 'views/index.hbs', 'views/index.html');
-    this.copyTemplate(projectPath, 'dockerignore.hbs', '.dockerignore');
-    this.writeDotEnv(projectPath, config);
-    this.copyTemplate(projectPath, 'gitignore.hbs', '.gitignore');
-    this.writeAppJs(projectPath, config);
-    this.writeDockerCompose(projectPath, config);
-    this.writeDockerfile(projectPath);
-    this.writePackageJson(projectPath, config);
-    this.copyTemplate(projectPath, 'server.hbs', 'server.js');
+    if (!isUpdate) {
+      this.copyTemplate(projectPath, 'views/index.hbs', 'views/index.html');
+      this.copyTemplate(projectPath, 'dockerignore.hbs', '.dockerignore');
+      this.writeDotEnv(projectPath, config);
+      this.copyTemplate(projectPath, 'gitignore.hbs', '.gitignore');
+      this.writeAppJs(projectPath, config);
+      this.writeDockerCompose(projectPath, config);
+      this.writeDockerfile(projectPath);
+      this.writePackageJson(projectPath, config);
+      this.copyTemplate(projectPath, 'server.hbs', 'server.js');
+    }
   }
 
-  checkIsValidLumberProject() {
+  checkLumberProjectStructure() {
     const currentPath = process.cwd();
     try {
       if (!this.fs.existsSync(`${currentPath}/routes`)) throw new Error('No "routes" directory.');
       if (!this.fs.existsSync(`${currentPath}/forest`)) throw new Error('No "forest" directory.');
       if (!this.fs.existsSync(`${currentPath}/models`)) throw new Error('No "models“ directory.');
     } catch (error) {
-      throw new Error(`We are not able to detect a lumber project file architecture at this path: ${currentPath}. ${error}`);
+      throw new InvalidLumberProjectStructureError(currentPath, error);
     }
   }
 
-  checkIsLianaCompatible() {
+  checkLianaCompatiblityForUpdate() {
     const packagePath = `${process.cwd()}/package.json`;
-    if (!this.fs.existsSync(packagePath)) throw new Error('No "package.json".');
+    if (!this.fs.existsSync(packagePath)) throw new IncompatibleLianaForUpdateError(`"${packagePath}" not found.`);
 
     const file = this.fs.readFileSync(packagePath, 'utf8');
     const match = /forest-express-.*((\d).\d.\d)/g.exec(file);
@@ -472,45 +487,7 @@ class Dumper {
     if (match) {
       [,, lianaMajorVersion] = match;
     }
-    if (Number(lianaMajorVersion) < 7) throw new Error('Invalid version of liana, should be >= 7.0.0');
-  }
-
-  async createOutputDirectoryIfNotExist(path) {
-    if (this.fs.existsSync(path)) throw new Error('Output directory already exist.');
-    await this.mkdirp(path);
-    await this.mkdirp(`${path}/routes`);
-    await this.mkdirp(`${path}/forest`);
-    await this.mkdirp(`${path}/models`);
-  }
-
-  async redump(databasesSchema, config) {
-    const cwd = process.cwd();
-    const projectPath = config.appName ? `${cwd}/${config.appName}` : cwd;
-
-    return Promise.all(databasesSchema.map(({ name, schema }) => {
-      const modelNames = Dumper.getModelsNameSorted(schema);
-
-      return Promise.all(modelNames.map(async (modelName) => {
-        const { fields, references, options } = schema[modelName];
-        const safeReferences = Dumper.getSafeReferences(references);
-
-        options.dbName = name;
-        options.useMultiDatabase = databasesSchema.length > 1;
-
-        if (options.useMultiDatabase) {
-          await this.mkdirp(`${projectPath}/models/${name}`);
-        }
-
-        this.writeForestCollection(projectPath, config, modelName);
-        this.writeModel(projectPath, config, modelName, fields, safeReferences, options);
-        // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
-        //       internal session creation route. As a workaround, we don't generate the route file.
-        // TODO: Remove the if condition, once the routes paths refactored to prevent such conflict.
-        if (modelName !== 'sessions') {
-          this.writeRoute(projectPath, config, modelName);
-        }
-      }));
-    }));
+    if (Number(lianaMajorVersion) < 7) throw new IncompatibleLianaForUpdateError('Invalid version of liana, should be >= 7.0.0.');
   }
 }
 

@@ -201,7 +201,7 @@ describe('services > dumper > sequelize', () => {
       await dumper.dump(simpleModel, CONFIG);
       fs.unlinkSync(TEST_OUTPUT_MODEL_CUSTOMERS_PATH);
 
-      dumper.redump([{ name: 'default', schema: simpleModel }], CONFIG);
+      await dumper.dump(simpleModel, { ...CONFIG, isUpdate: true });
       const generatedFile = fs.readFileSync(TEST_OUTPUT_MODEL_CUSTOMERS_PATH, 'utf8');
       const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/customers.expected.js', 'utf-8');
 

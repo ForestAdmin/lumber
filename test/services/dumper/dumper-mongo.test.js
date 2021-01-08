@@ -193,7 +193,7 @@ describe('services > dumper > MongoDB', () => {
       await dumper.dump(simpleModel, CONFIG);
       fs.unlinkSync(TEST_OUTPUT_MODEL_FILMS_PATH);
 
-      dumper.redump([{ name: 'default', schema: simpleModel }], CONFIG);
+      await dumper.dump(simpleModel, { ...CONFIG, isUpdate: true });
       const generatedFile = fs.readFileSync(TEST_OUTPUT_MODEL_FILMS_PATH, 'utf8');
       const expectedFile = fs.readFileSync(TEST_EXPECTED_MODEL_FILMS_PATH, 'utf8');
 

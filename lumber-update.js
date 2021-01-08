@@ -2,7 +2,7 @@ require('dotenv').config();
 const program = require('commander');
 const DatabaseAnalyzer = require('./services/analyzer/database-analyzer');
 const spinners = require('./services/spinners');
-const { updateErrors } = require('./utils/errors');
+const LumberError = require('./utils/lumber-error');
 const context = require('./context');
 const initContext = require('./context/init');
 
@@ -26,22 +26,24 @@ const {
   const options = {
     dbSchema: process.env.DATABASE_SCHEMA,
     appName: program.outputDirectory,
+    isUpdate: true,
   };
-  dumper.checkIsLianaCompatible();
+  dumper.checkLianaCompatiblityForUpdate();
 
-  if (program.outputDirectory) {
-    await dumper.createOutputDirectoryIfNotExist(program.outputDirectory);
+  const { outputDirectory } = program;
+  if (outputDirectory && fs.existsSync(outputDirectory)) {
+    throw new LumberError(`The output directory "${outputDirectory}" already exist.`);
   } else {
-    dumper.checkIsValidLumberProject();
+    dumper.checkLumberProjectStructure();
   }
 
-  const config = path.resolve(program.config);
-  if (!fs.existsSync(config)) {
-    throw new updateErrors.ConfigFileDoesNotExist(config);
+  const configPath = path.resolve(program.config);
+  if (!fs.existsSync(configPath)) {
+    throw new LumberError(`The configuration file "${configPath}" does not exist.`);
   }
 
   // eslint-disable-next-line global-require, import/no-dynamic-require
-  const databasesConfig = require(config);
+  const databasesConfig = require(configPath);
 
   let spinner = spinners.add('databases-connection', { text: 'Connecting to your database(s)' });
   const databasesConnection = await database.connectFromDatabasesConfig(databasesConfig);
@@ -67,8 +69,15 @@ const {
   );
   spinner.succeed();
 
+  options.useMultiDatabase = databasesSchema.length > 1;
+
   spinner = spinners.add('dumper', { text: 'Generating your files' });
-  await dumper.redump(databasesSchema, options);
+  await Promise.all(databasesSchema.map(async (databaseSchema) => {
+    const dbName = databaseSchema.name;
+    const subSpinner = spinners.add(`dumper-${dbName}`, { text: `Generating files linked to ${dbName} database` });
+    await dumper.dump(databaseSchema.schema, { ...options, dbName });
+    subSpinner.succeed();
+  }));
   spinner.succeed();
 
   process.exit(0);

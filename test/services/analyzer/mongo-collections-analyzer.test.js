@@ -1,5 +1,5 @@
 const analyzeMongoCollections = require('../../../services/analyzer/mongo-collections-analyzer');
-const { databaseAnalyzerErrors } = require('../../../utils/errors');
+const EmptyDatabaseError = require('../../../utils/errors/database/empty-database-error');
 
 describe('services > mongoCollectionsAnalyzer', () => {
   describe('analyzeMongoCollections', () => {
@@ -10,7 +10,7 @@ describe('services > mongoCollectionsAnalyzer', () => {
         collections: jest.fn().mockResolvedValue([]),
       };
 
-      const error = new databaseAnalyzerErrors.EmptyDatabase('no collections found');
+      const error = new EmptyDatabaseError('no collections found');
 
       await expect(analyzeMongoCollections(databaseConnectionMock)).rejects.toThrow(error);
     });

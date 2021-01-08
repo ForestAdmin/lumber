@@ -1,5 +1,5 @@
 const analyzeSequelizeTables = require('../../../services/analyzer/sequelize-tables-analyzer');
-const { databaseAnalyzerErrors } = require('../../../utils/errors');
+const EmptyDatabaseError = require('../../../utils/errors/database/empty-database-error');
 
 describe('services > sequelizeTablesAnalyzer', () => {
   describe('analyzeSequelizeTables', () => {
@@ -13,7 +13,7 @@ describe('services > sequelizeTablesAnalyzer', () => {
         getDialect: jest.fn().mockReturnValue('mysql'),
       };
 
-      const error = new databaseAnalyzerErrors.EmptyDatabase('no tables found');
+      const error = new EmptyDatabaseError('no tables found');
 
       await expect(analyzeSequelizeTables(databaseConnectionMock, {})).rejects.toThrow(error);
     });
