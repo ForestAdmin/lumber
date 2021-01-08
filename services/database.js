@@ -122,6 +122,17 @@ class Database {
       }),
     );
   }
+
+  isDatabasesCompatibleFromConfig(databasesConfig) {
+    const databasesDialect = databasesConfig.map(
+      (databaseConfig) => this.getDialect(databaseConfig.connection.url),
+    );
+
+    const hasMongoDb = databasesDialect.some((dialect) => dialect === 'mongodb');
+    const hasAnotherDbType = databasesDialect.some((dialect) => dialect !== 'mongodb');
+
+    return !(hasMongoDb && hasAnotherDbType);
+  }
 }
 
 module.exports = Database;

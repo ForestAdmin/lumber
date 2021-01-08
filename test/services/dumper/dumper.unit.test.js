@@ -735,7 +735,9 @@ describe('services > dumper (unit)', () => {
       });
 
       expect(() => dumper.checkLianaCompatiblityForUpdate())
-        .toThrow(new IncompatibleLianaForUpdateError('Invalid version of liana, should be >= 7.0.0.'));
+        .toThrow(new IncompatibleLianaForUpdateError(
+          'Your project is not compatible with the `lumber update` command. You need to use an agent version greater than 7.0.0.',
+        ));
     });
 
     it('should throw an error when liana version is not found on package.json', () => {
@@ -749,7 +751,9 @@ describe('services > dumper (unit)', () => {
       });
 
       expect(() => dumper.checkLianaCompatiblityForUpdate())
-        .toThrow(new IncompatibleLianaForUpdateError('Invalid version of liana, should be >= 7.0.0.'));
+        .toThrow(new IncompatibleLianaForUpdateError(
+          'Your project is not compatible with the `lumber update` command. You need to use an agent version greater than 7.0.0.',
+        ));
     });
   });
 });

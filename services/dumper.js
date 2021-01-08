@@ -487,7 +487,16 @@ class Dumper {
     if (match) {
       [,, lianaMajorVersion] = match;
     }
-    if (Number(lianaMajorVersion) < 7) throw new IncompatibleLianaForUpdateError('Invalid version of liana, should be >= 7.0.0.');
+    if (Number(lianaMajorVersion) < 7) {
+      throw new IncompatibleLianaForUpdateError(
+        'Your project is not compatible with the `lumber update` command. You need to use an agent version greater than 7.0.0.',
+      );
+    }
+  }
+
+  isMultipleDatabaseStructure() {
+    const files = this.fs.readdirSync(`${process.cwd()}/models`, { withFileTypes: true });
+    return !files.some((file) => file.isFile() && file.name !== 'index.js');
   }
 }
 

@@ -19,6 +19,7 @@ const {
   dumper,
   errorHandler,
   fs,
+  logger,
   path,
 } = context.inject();
 
@@ -44,6 +45,10 @@ const {
 
   // eslint-disable-next-line global-require, import/no-dynamic-require
   const databasesConfig = require(configPath);
+  if (!database.isDatabasesCompatibleFromConfig(configPath)) {
+    // TODO find better wording
+    throw new LumberError('You try to update your project with incompatible databases dialect.');
+  }
 
   let spinner = spinners.add('databases-connection', { text: 'Connecting to your database(s)' });
   const databasesConnection = await database.connectFromDatabasesConfig(databasesConfig);
@@ -69,7 +74,7 @@ const {
   );
   spinner.succeed();
 
-  options.useMultiDatabase = databasesSchema.length > 1;
+  options.useMultiDatabase = databasesConfig.length > 1;
 
   spinner = spinners.add('dumper', { text: 'Generating your files' });
   await Promise.all(databasesSchema.map(async (databaseSchema) => {
@@ -79,6 +84,11 @@ const {
     subSpinner.succeed();
   }));
   spinner.succeed();
+
+  if (!outputDirectory && options.useMultiDatabase && !dumper.isMultipleDatabaseStructure()) {
+    logger.warn('It looks like you are switching from a single to multiple databases.');
+    logger.log('You will need to move the models files from your existing database to the dedicated folder, or simply remove them.');
+  }
 
   process.exit(0);
 })().catch(async (error) => {
