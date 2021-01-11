@@ -494,7 +494,7 @@ class Dumper {
     }
   }
 
-  isMultipleDatabaseStructure() {
+  hasMultipleDatabaseStructure() {
     const files = this.fs.readdirSync(`${process.cwd()}/models`, { withFileTypes: true });
     return !files.some((file) => file.isFile() && file.name !== 'index.js');
   }

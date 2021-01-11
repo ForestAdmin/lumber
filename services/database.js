@@ -123,7 +123,7 @@ class Database {
     );
   }
 
-  isDatabasesCompatibleFromConfig(databasesConfig) {
+  areAllDatabasesOfTheSameType(databasesConfig) {
     const databasesDialect = databasesConfig.map(
       (databaseConfig) => this.getDialect(databaseConfig.connection.url),
     );
