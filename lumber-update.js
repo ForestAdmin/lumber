@@ -76,11 +76,9 @@ const {
   options.useMultiDatabase = databasesSchema.length > 1;
 
   spinner = spinners.add('dumper', { text: 'Generating your files' });
-  await Promise.all(databasesSchema.map(async (databaseSchema) => {
+  await Promise.all(databasesSchema.map((databaseSchema) => {
     const dbName = databaseSchema.name;
-    const subSpinner = spinners.add(`dumper-${dbName}`, { text: `Generating files linked to ${dbName} database` });
-    await dumper.dump(databaseSchema.schema, { ...options, dbName });
-    subSpinner.succeed();
+    return dumper.dump(databaseSchema.schema, { ...options, dbName });
   }));
   spinner.succeed();
 
