@@ -107,12 +107,14 @@ class Database {
   connectFromDatabasesConfig(databasesConfig) {
     return Promise.all(
       databasesConfig.map(async (databaseConfig) => {
+        const dialect = this.getDialect(databaseConfig.connection.url);
+
+        const connectionOptions = { ...databaseConfig.connection.options };
+        if (dialect !== 'mongodb') connectionOptions.logging = false;
+
         const connectionInstance = await this.connect({
           dbConnectionUrl: databaseConfig.connection.url,
-          connectionOptions: {
-            ...databaseConfig.connection.options,
-            logging: false,
-          },
+          connectionOptions,
         });
 
         return {
