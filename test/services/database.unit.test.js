@@ -350,4 +350,93 @@ describe('services > database', () => {
       });
     });
   });
+
+  describe('connectFromDatabasesConfig', () => {
+    const database = setupDatabase();
+    const connectSpy = jest.spyOn(database, 'connect').mockImplementation(({ dbConnectionUrl }) => ({
+      url: dbConnectionUrl,
+    }));
+
+    const databaseUrl1 = 'mysql://user:password@forest:3306/db';
+    const databaseConfig1 = {
+      connection: {
+        url: databaseUrl1,
+        options: {},
+      },
+    };
+    const databaseUrl2 = 'postgres://user:password@forest:3323/mydb';
+    const databaseConfig2 = {
+      connection: {
+        url: databaseUrl2,
+        options: {},
+      },
+    };
+    const databasesConfig = [databaseConfig1, databaseConfig2];
+
+    it('should call the connect function with the rigth parameters', async () => {
+      expect.assertions(3);
+
+      await database.connectFromDatabasesConfig(databasesConfig);
+
+      expect(connectSpy).toHaveBeenCalledTimes(2);
+      expect(connectSpy).toHaveBeenCalledWith({
+        dbConnectionUrl: databaseUrl1,
+        connectionOptions: { logging: false },
+      });
+      expect(connectSpy).toHaveBeenCalledWith({
+        dbConnectionUrl: databaseUrl2,
+        connectionOptions: { logging: false },
+      });
+    });
+
+    it('should return databases config and connection instance', async () => {
+      expect.assertions(1);
+
+      const databasesConnections = await database.connectFromDatabasesConfig(databasesConfig);
+
+      expect(databasesConnections).toStrictEqual([{
+        ...databaseConfig1,
+        connectionInstance: { url: databaseUrl1 },
+      }, {
+        ...databaseConfig2,
+        connectionInstance: { url: databaseUrl2 },
+      }]);
+    });
+  });
+
+  describe('areAllDatabasesOfTheSameType', () => {
+    it('should return true if databases are of the same type', () => {
+      expect.assertions(1);
+
+      const database = setupDatabase();
+      const databasesConfig = [{
+        connection: {
+          url: 'mysql://user:password@forest:3306/db',
+        },
+      }, {
+        connection: {
+          url: 'postgres://user:password@forest:3323/mydb',
+        },
+      }];
+
+      expect(database.areAllDatabasesOfTheSameType(databasesConfig)).toStrictEqual(true);
+    });
+
+    it('should return false if databases are not of the same type', () => {
+      expect.assertions(1);
+
+      const database = setupDatabase();
+      const databasesConfig = [{
+        connection: {
+          url: 'mysql://user:password@forest:3306/mydb',
+        },
+      }, {
+        connection: {
+          url: 'mongodb://user:password@forest:27017/mydb',
+        },
+      }];
+
+      expect(database.areAllDatabasesOfTheSameType(databasesConfig)).toStrictEqual(false);
+    });
+  });
 });

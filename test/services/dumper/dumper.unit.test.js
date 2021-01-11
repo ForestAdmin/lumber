@@ -756,6 +756,49 @@ describe('services > dumper (unit)', () => {
         ));
     });
   });
-});
 
-// TODO dump with isUpdate
+  describe('hasMultipleDatabaseStructure', () => {
+    it('should return false if models folder dos not have only folder', () => {
+      expect.assertions(1);
+
+      const mockedFiles = [{
+        name: 'index.js',
+        isFile: () => true,
+      }, {
+        name: 'user.js',
+        isFile: () => true,
+      }, {
+        name: 'databaseFolder',
+        isFile: () => false,
+      }];
+
+      const dumper = createDumper({
+        fs: {
+          readdirSync: jest.fn().mockReturnValue(mockedFiles),
+        },
+      });
+
+      expect(dumper.hasMultipleDatabaseStructure()).toStrictEqual(false);
+    });
+
+    it('should return true if models folder have only folder', () => {
+      expect.assertions(1);
+
+      const mockedFiles = [{
+        name: 'index.js',
+        isFile: () => true,
+      }, {
+        name: 'databaseFolder',
+        isFile: () => false,
+      }];
+
+      const dumper = createDumper({
+        fs: {
+          readdirSync: jest.fn().mockReturnValue(mockedFiles),
+        },
+      });
+
+      expect(dumper.hasMultipleDatabaseStructure()).toStrictEqual(true);
+    });
+  });
+});

@@ -45,7 +45,7 @@ const {
 
   // eslint-disable-next-line global-require, import/no-dynamic-require
   const databasesConfig = require(configPath);
-  if (!database.areAllDatabasesOfTheSameType(configPath)) {
+  if (!database.areAllDatabasesOfTheSameType(databasesConfig)) {
     throw new LumberError('The `config/databases.js` file contains different databases type.');
   }
 
