@@ -64,17 +64,19 @@ class Database {
   connnectToSequelize(databaseDialect, options, isSSL) {
     let connectionOptionsSequelize = options.connectionOptions;
     if (!connectionOptionsSequelize) {
-      connectionOptionsSequelize = { logging: false };
+      connectionOptionsSequelize = {};
 
       if (databaseDialect === 'mssql') {
         connectionOptionsSequelize.dialectOptions = { options: { encrypt: isSSL } };
       } else if (isSSL) {
         // Add SSL options only if the user selected SSL mode.
         // SSL Cerificate is always trusted during `lumber generate` command
-        //  to ease their onboarding.
+        // to ease their onboarding.
         connectionOptionsSequelize.dialectOptions = { ssl: { rejectUnauthorized: false } };
       }
     }
+
+    connectionOptionsSequelize.logging = false;
 
     let connection;
     if (options.dbConnectionUrl) {
@@ -107,10 +109,7 @@ class Database {
   connectFromDatabasesConfig(databasesConfig) {
     return Promise.all(
       databasesConfig.map(async (databaseConfig) => {
-        const dialect = this.getDialect(databaseConfig.connection.url);
-
         const connectionOptions = { ...databaseConfig.connection.options };
-        if (dialect !== 'mongodb') connectionOptions.logging = false;
 
         const connectionInstance = await this.connect({
           dbConnectionUrl: databaseConfig.connection.url,
