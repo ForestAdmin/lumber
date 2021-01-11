@@ -19,6 +19,7 @@ const {
   dumper,
   errorHandler,
   fs,
+  logger,
   path,
 } = context.inject();
 
@@ -44,6 +45,9 @@ const {
 
   // eslint-disable-next-line global-require, import/no-dynamic-require
   const databasesConfig = require(configPath);
+  if (!database.areAllDatabasesOfTheSameType(databasesConfig)) {
+    throw new LumberError('The `config/databases.js` file contains different databases type.');
+  }
 
   let spinner = spinners.add('databases-connection', { text: 'Connecting to your database(s)' });
   const databasesConnection = await database.connectFromDatabasesConfig(databasesConfig);
@@ -72,13 +76,16 @@ const {
   options.useMultiDatabase = databasesSchema.length > 1;
 
   spinner = spinners.add('dumper', { text: 'Generating your files' });
-  await Promise.all(databasesSchema.map(async (databaseSchema) => {
+  await Promise.all(databasesSchema.map((databaseSchema) => {
     const dbName = databaseSchema.name;
-    const subSpinner = spinners.add(`dumper-${dbName}`, { text: `Generating files linked to ${dbName} database` });
-    await dumper.dump(databaseSchema.schema, { ...options, dbName });
-    subSpinner.succeed();
+    return dumper.dump(databaseSchema.schema, { ...options, dbName });
   }));
   spinner.succeed();
+
+  if (!outputDirectory && options.useMultiDatabase && !dumper.hasMultipleDatabaseStructure()) {
+    logger.warn('It looks like you are switching from a single to a multiple databases.');
+    logger.log('You will need to move the models files from your existing database to the dedicated folder, or simply remove them.');
+  }
 
   process.exit(0);
 })().catch(async (error) => {

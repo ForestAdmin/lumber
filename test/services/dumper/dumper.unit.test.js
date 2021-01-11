@@ -735,7 +735,9 @@ describe('services > dumper (unit)', () => {
       });
 
       expect(() => dumper.checkLianaCompatiblityForUpdate())
-        .toThrow(new IncompatibleLianaForUpdateError('Invalid version of liana, should be >= 7.0.0.'));
+        .toThrow(new IncompatibleLianaForUpdateError(
+          'Your project is not compatible with the `lumber update` command. You need to use an agent version greater than 7.0.0.',
+        ));
     });
 
     it('should throw an error when liana version is not found on package.json', () => {
@@ -749,9 +751,54 @@ describe('services > dumper (unit)', () => {
       });
 
       expect(() => dumper.checkLianaCompatiblityForUpdate())
-        .toThrow(new IncompatibleLianaForUpdateError('Invalid version of liana, should be >= 7.0.0.'));
+        .toThrow(new IncompatibleLianaForUpdateError(
+          'Your project is not compatible with the `lumber update` command. You need to use an agent version greater than 7.0.0.',
+        ));
+    });
+  });
+
+  describe('hasMultipleDatabaseStructure', () => {
+    it('should return false if models folder contains some js files', () => {
+      expect.assertions(1);
+
+      const mockedFiles = [{
+        name: 'index.js',
+        isFile: () => true,
+      }, {
+        name: 'user.js',
+        isFile: () => true,
+      }, {
+        name: 'databaseFolder',
+        isFile: () => false,
+      }];
+
+      const dumper = createDumper({
+        fs: {
+          readdirSync: jest.fn().mockReturnValue(mockedFiles),
+        },
+      });
+
+      expect(dumper.hasMultipleDatabaseStructure()).toStrictEqual(false);
+    });
+
+    it('should return true if models folder contains only subfolders', () => {
+      expect.assertions(1);
+
+      const mockedFiles = [{
+        name: 'index.js',
+        isFile: () => true,
+      }, {
+        name: 'databaseFolder',
+        isFile: () => false,
+      }];
+
+      const dumper = createDumper({
+        fs: {
+          readdirSync: jest.fn().mockReturnValue(mockedFiles),
+        },
+      });
+
+      expect(dumper.hasMultipleDatabaseStructure()).toStrictEqual(true);
     });
   });
 });
-
-// TODO dump with isUpdate
