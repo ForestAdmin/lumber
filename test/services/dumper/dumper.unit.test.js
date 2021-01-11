@@ -758,7 +758,7 @@ describe('services > dumper (unit)', () => {
   });
 
   describe('hasMultipleDatabaseStructure', () => {
-    it('should return false if models folder dos not have only folder', () => {
+    it('should return false if models folder contains some js files', () => {
       expect.assertions(1);
 
       const mockedFiles = [{
@@ -781,7 +781,7 @@ describe('services > dumper (unit)', () => {
       expect(dumper.hasMultipleDatabaseStructure()).toStrictEqual(false);
     });
 
-    it('should return true if models folder have only folder', () => {
+    it('should return true if models folder contains only subfolders', () => {
       expect.assertions(1);
 
       const mockedFiles = [{

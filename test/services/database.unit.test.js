@@ -373,7 +373,7 @@ describe('services > database', () => {
     };
     const databasesConfig = [databaseConfig1, databaseConfig2];
 
-    it('should call the connect function with the rigth parameters', async () => {
+    it('should call the connect function with the right parameters', async () => {
       expect.assertions(3);
 
       await database.connectFromDatabasesConfig(databasesConfig);
@@ -389,7 +389,7 @@ describe('services > database', () => {
       });
     });
 
-    it('should return databases config and connection instance', async () => {
+    it('should return databases config and connections instances', async () => {
       expect.assertions(1);
 
       const databasesConnections = await database.connectFromDatabasesConfig(databasesConfig);
