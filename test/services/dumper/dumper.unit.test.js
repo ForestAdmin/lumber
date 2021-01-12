@@ -610,7 +610,6 @@ describe('services > dumper (unit)', () => {
       const config = {
         isUpdate: true,
         useMultiDatabase: true,
-        dbName: 'test',
         modelsExportPath: 'test',
       };
       await dumper.dump(schema, config);
