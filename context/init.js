@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const mongodb = require('mongodb');
 const chalk = require('chalk');
 const fs = require('fs');
+const path = require('path');
 const os = require('os');
 const inquirer = require('inquirer');
 const open = require('open');
@@ -102,6 +103,7 @@ function initDependencies(context) {
   context.addInstance('chalk', chalk);
   context.addInstance('open', open);
   context.addInstance('fs', fs);
+  context.addInstance('path', path);
   context.addInstance('os', os);
   context.addInstance('inquirer', inquirer);
   context.addInstance('mkdirp', mkdirp);

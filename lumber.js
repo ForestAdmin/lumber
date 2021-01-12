@@ -17,4 +17,5 @@ program
   .command('generate <appName>', 'generate a backend application with an ORM/ODM configured')
   .command('login', 'log into Forest Admin API')
   .command('logout', 'log out from Forest Admin API')
+  .command('update', 'update your project by generating files that does not currently exist')
   .parse(process.argv);

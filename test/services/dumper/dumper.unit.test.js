@@ -1,5 +1,7 @@
 const chalk = require('chalk');
 const Dumper = require('../../../services/dumper');
+const InvalidLumberProjectStructureError = require('../../../utils/errors/dumper/invalid-lumber-project-structure-error');
+const IncompatibleLianaForUpdateError = require('../../../utils/errors/dumper/incompatible-liana-for-update-error');
 
 const SequelizeMock = {
   DataTypes: {},
@@ -45,28 +47,57 @@ describe('services > dumper (unit)', () => {
   });
 
   describe('writeFile', () => {
-    const context = {
-      logger: {
-        log: jest.fn(),
-      },
-      fs: {
-        writeFileSync: jest.fn(),
-      },
-    };
-    createDumper(context).writeFile(ABSOLUTE_PROJECT_PATH, RELATIVE_FILE_PATH, 'content');
+    describe('when file does not exists', () => {
+      const context = {
+        logger: {
+          log: jest.fn(),
+        },
+        fs: {
+          writeFileSync: jest.fn(),
+          existsSync: jest.fn().mockReturnValue(false),
+        },
+      };
+      createDumper(context).writeFile(ABSOLUTE_PROJECT_PATH, RELATIVE_FILE_PATH, 'content');
 
-    it('should call writeFileSync to write the file', () => {
-      expect.assertions(2);
+      it('should call writeFileSync to write the file', () => {
+        expect.assertions(2);
 
-      expect(context.fs.writeFileSync).toHaveBeenCalledTimes(1);
-      expect(context.fs.writeFileSync).toHaveBeenCalledWith(`${ABSOLUTE_PROJECT_PATH}/${RELATIVE_FILE_PATH}`, 'content');
+        expect(context.fs.writeFileSync).toHaveBeenCalledTimes(1);
+        expect(context.fs.writeFileSync).toHaveBeenCalledWith(`${ABSOLUTE_PROJECT_PATH}/${RELATIVE_FILE_PATH}`, 'content');
+      });
+
+      it('should call the logger to display a create log message', () => {
+        expect.assertions(2);
+
+        expect(context.logger.log).toHaveBeenCalledTimes(1);
+        expect(context.logger.log).toHaveBeenCalledWith(`  ${chalk.green('create')} ${RELATIVE_FILE_PATH}`);
+      });
     });
 
-    it('should call the logger to display a log message', () => {
-      expect.assertions(2);
+    describe('when file exists', () => {
+      const context = {
+        logger: {
+          log: jest.fn(),
+        },
+        fs: {
+          writeFileSync: jest.fn(),
+          existsSync: jest.fn().mockReturnValue(true),
+        },
+      };
+      createDumper(context).writeFile(ABSOLUTE_PROJECT_PATH, RELATIVE_FILE_PATH, 'content');
 
-      expect(context.logger.log).toHaveBeenCalledTimes(1);
-      expect(context.logger.log).toHaveBeenCalledWith(`  ${chalk.green('create')} ${RELATIVE_FILE_PATH}`);
+      it('should not write the file', () => {
+        expect.assertions(1);
+
+        expect(context.fs.writeFileSync).not.toHaveBeenCalled();
+      });
+
+      it('should call the logger to display a skip log message', () => {
+        expect.assertions(2);
+
+        expect(context.logger.log).toHaveBeenCalledTimes(1);
+        expect(context.logger.log).toHaveBeenCalledWith(`  ${chalk.yellow('skip')} ${RELATIVE_FILE_PATH} - already exist.`);
+      });
     });
   });
 
@@ -483,12 +514,14 @@ describe('services > dumper (unit)', () => {
 
   describe('dump', () => {
     it('should call all the mandatory functions required to generate a complete project', async () => {
-      expect.assertions(18);
+      expect.assertions(27);
 
+      const mkdirpMock = jest.fn();
       const dumper = createDumper({
         os: {
           platform: () => jest.fn().mockReturnValue('linux'),
         },
+        mkdirp: mkdirpMock,
       });
       const writeForestCollectionSpy = jest.spyOn(dumper, 'writeForestCollection').mockImplementation();
       const writeForestAdminMiddlewareSpy = jest.spyOn(dumper, 'writeForestAdminMiddleware').mockImplementation();
@@ -513,6 +546,16 @@ describe('services > dumper (unit)', () => {
 
       const projectPath = `${process.cwd()}/test-output/unit-test-dumper`;
 
+      expect(mkdirpMock).toHaveBeenCalledTimes(8);
+      expect(mkdirpMock).toHaveBeenCalledWith(projectPath);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/routes`);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/forest`);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/models`);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/config`);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/public`);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/views`);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/middlewares`);
+
       // Files associated with each models of the schema
       expect(writeModelSpy).toHaveBeenCalledWith(projectPath, config, 'testModel', {}, [], {});
       expect(writeRouteSpy).toHaveBeenCalledWith(projectPath, config, 'testModel');
@@ -536,6 +579,226 @@ describe('services > dumper (unit)', () => {
       expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'dockerignore.hbs', '.dockerignore');
       expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'gitignore.hbs', '.gitignore');
       expect(copyTemplateSpy).toHaveBeenCalledWith(projectPath, 'server.hbs', 'server.js');
+    });
+
+    it('should call all the mandatory functions required to update project', async () => {
+      expect.assertions(18);
+
+      const mkdirpMock = jest.fn();
+      const dumper = createDumper({
+        os: {
+          platform: () => jest.fn().mockReturnValue('linux'),
+        },
+        mkdirp: mkdirpMock,
+      });
+      const writeForestCollectionSpy = jest.spyOn(dumper, 'writeForestCollection').mockImplementation();
+      const writeForestAdminMiddlewareSpy = jest.spyOn(dumper, 'writeForestAdminMiddleware').mockImplementation();
+      const writeModelsIndexSpy = jest.spyOn(dumper, 'writeModelsIndex').mockImplementation();
+      const writeModelSpy = jest.spyOn(dumper, 'writeModel').mockImplementation();
+      const writeRouteSpy = jest.spyOn(dumper, 'writeRoute').mockImplementation();
+      const writeDotEnvSpy = jest.spyOn(dumper, 'writeDotEnv').mockImplementation();
+      const writeAppJsSpy = jest.spyOn(dumper, 'writeAppJs').mockImplementation();
+      const writeDatabasesConfigSpy = jest.spyOn(dumper, 'writeDatabasesConfig').mockImplementation();
+      const writeDockerComposeSpy = jest.spyOn(dumper, 'writeDockerCompose').mockImplementation();
+      const writeDockerfileSpy = jest.spyOn(dumper, 'writeDockerfile').mockImplementation();
+      const writePackageJsonSpy = jest.spyOn(dumper, 'writePackageJson').mockImplementation();
+      const copyTemplateSpy = jest.spyOn(dumper, 'copyTemplate').mockImplementation();
+
+      const schema = {
+        testModel: { fields: {}, references: [], options: {} },
+      };
+      const config = {
+        isUpdate: true,
+        useMultiDatabase: true,
+        modelsExportPath: 'test',
+      };
+      await dumper.dump(schema, config);
+
+      const projectPath = process.cwd();
+
+      expect(mkdirpMock).toHaveBeenCalledTimes(5);
+      expect(mkdirpMock).toHaveBeenCalledWith(projectPath);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/routes`);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/forest`);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/models`);
+      expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/models/test`);
+
+      // Files associated with each models of the schema
+      expect(writeModelSpy).toHaveBeenCalledWith(projectPath, config, 'testModel', {}, [], {});
+      expect(writeRouteSpy).toHaveBeenCalledWith(projectPath, config, 'testModel');
+      expect(writeForestCollectionSpy).toHaveBeenCalledWith(projectPath, config, 'testModel');
+
+      // General app files, based on config
+      expect(writeForestAdminMiddlewareSpy).not.toHaveBeenCalled();
+      expect(writeModelsIndexSpy).not.toHaveBeenCalled();
+      expect(writeDotEnvSpy).not.toHaveBeenCalled();
+      expect(writeDatabasesConfigSpy).not.toHaveBeenCalled();
+      expect(writeAppJsSpy).not.toHaveBeenCalled();
+      expect(writeDockerComposeSpy).not.toHaveBeenCalled();
+      expect(writeDockerfileSpy).not.toHaveBeenCalled();
+      expect(writePackageJsonSpy).not.toHaveBeenCalled();
+
+      // Copied files
+      expect(copyTemplateSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('checkLumberProjectStructure', () => {
+    it('should not throw an error when structure is correct', () => {
+      expect.assertions(1);
+
+      const dumper = createDumper({
+        fs: {
+          existsSync: jest.fn().mockReturnValue(true),
+        },
+      });
+
+      expect(() => dumper.checkLumberProjectStructure()).not.toThrow();
+    });
+
+    it('should throw an error when missing routes folder', () => {
+      expect.assertions(1);
+
+      const dumper = createDumper({
+        fs: {
+          existsSync: jest.fn().mockImplementation((path) => !path.includes('routes')),
+        },
+      });
+
+      expect(() => dumper.checkLumberProjectStructure())
+        .toThrow(InvalidLumberProjectStructureError);
+    });
+
+    it('should throw an error when missing forest folder', () => {
+      expect.assertions(1);
+
+      const dumper = createDumper({
+        fs: {
+          existsSync: jest.fn().mockImplementation((path) => !path.includes('forest')),
+        },
+      });
+
+      expect(() => dumper.checkLumberProjectStructure())
+        .toThrow(InvalidLumberProjectStructureError);
+    });
+
+    it('should throw an error when missing models folder', () => {
+      expect.assertions(1);
+
+      const dumper = createDumper({
+        fs: {
+          existsSync: jest.fn().mockImplementation((path) => !path.includes('models')),
+        },
+      });
+
+      expect(() => dumper.checkLumberProjectStructure())
+        .toThrow(InvalidLumberProjectStructureError);
+    });
+  });
+
+  describe('checkLianaCompatiblityForUpdate', () => {
+    it('should not throw an error when liana is compatible', () => {
+      expect.assertions(1);
+
+      const dumper = createDumper({
+        fs: {
+          existsSync: jest.fn().mockReturnValue(true),
+          readFileSync: jest.fn().mockReturnValue('forest-express-sequelize: ^7.0.0,'),
+        },
+      });
+
+      expect(() => dumper.checkLianaCompatiblityForUpdate()).not.toThrow();
+    });
+
+    it('should throw an error when package.json does not exist', () => {
+      expect.assertions(1);
+
+      const dumper = createDumper({
+        fs: {
+          existsSync: jest.fn().mockReturnValue(false),
+        },
+      });
+
+      const packagePath = `${process.cwd()}/package.json`;
+      expect(() => dumper.checkLianaCompatiblityForUpdate())
+        .toThrow(new IncompatibleLianaForUpdateError(`"${packagePath}" not found.`));
+    });
+
+    it('should throw an error when liana version is less than 7', () => {
+      expect.assertions(1);
+
+      const dumper = createDumper({
+        fs: {
+          existsSync: jest.fn().mockReturnValue(true),
+          readFileSync: jest.fn().mockReturnValue('forest-express-sequelize: ^6.0.0,'),
+        },
+      });
+
+      expect(() => dumper.checkLianaCompatiblityForUpdate())
+        .toThrow(new IncompatibleLianaForUpdateError(
+          'Your project is not compatible with the `lumber update` command. You need to use an agent version greater than 7.0.0.',
+        ));
+    });
+
+    it('should throw an error when liana version is not found on package.json', () => {
+      expect.assertions(1);
+
+      const dumper = createDumper({
+        fs: {
+          existsSync: jest.fn().mockReturnValue(true),
+          readFileSync: jest.fn().mockReturnValue(''),
+        },
+      });
+
+      expect(() => dumper.checkLianaCompatiblityForUpdate())
+        .toThrow(new IncompatibleLianaForUpdateError(
+          'Your project is not compatible with the `lumber update` command. You need to use an agent version greater than 7.0.0.',
+        ));
+    });
+  });
+
+  describe('hasMultipleDatabaseStructure', () => {
+    it('should return false if models folder contains some js files', () => {
+      expect.assertions(1);
+
+      const mockedFiles = [{
+        name: 'index.js',
+        isFile: () => true,
+      }, {
+        name: 'user.js',
+        isFile: () => true,
+      }, {
+        name: 'databaseFolder',
+        isFile: () => false,
+      }];
+
+      const dumper = createDumper({
+        fs: {
+          readdirSync: jest.fn().mockReturnValue(mockedFiles),
+        },
+      });
+
+      expect(dumper.hasMultipleDatabaseStructure()).toStrictEqual(false);
+    });
+
+    it('should return true if models folder contains only subfolders', () => {
+      expect.assertions(1);
+
+      const mockedFiles = [{
+        name: 'index.js',
+        isFile: () => true,
+      }, {
+        name: 'databaseFolder',
+        isFile: () => false,
+      }];
+
+      const dumper = createDumper({
+        fs: {
+          readdirSync: jest.fn().mockReturnValue(mockedFiles),
+        },
+      });
+
+      expect(dumper.hasMultipleDatabaseStructure()).toStrictEqual(true);
     });
   });
 });
