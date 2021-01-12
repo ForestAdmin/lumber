@@ -1,3 +1,10 @@
+# [4.0.0-beta.4](https://github.com/ForestAdmin/lumber/compare/v4.0.0-beta.3...v4.0.0-beta.4) (2021-01-12)
+
+
+### Features
+
+* **update:** add lumber update command ([#527](https://github.com/ForestAdmin/lumber/issues/527)) ([d8f1eaf](https://github.com/ForestAdmin/lumber/commit/d8f1eafc952a74f6483bdc05661dbb2bcde59e3f))
+
 # [4.0.0-beta.3](https://github.com/ForestAdmin/lumber/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2021-01-06)
 
 
