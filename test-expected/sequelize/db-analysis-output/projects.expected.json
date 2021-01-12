@@ -1,0 +1,34 @@
+{
+  "projects": {
+    "fields": [
+      {
+        "name": "name",
+        "nameColumn": "name",
+        "type": "STRING",
+        "primaryKey": false,
+        "defaultValue": null,
+        "isRequired": false
+      }
+    ],
+    "primaryKeys": [
+      "id"
+    ],
+    "options": {
+      "underscored": false,
+      "timestamps": false,
+      "hasIdColumn": true,
+      "hasPrimaryKeys": true,
+      "isJunction": false
+    },
+    "references": [
+      {
+        "foreignKey": "owner_id",
+        "foreignKeyName": "ownerIdKey",
+        "association": "belongsTo",
+        "ref": "owners",
+        "as": "owner",
+        "targetKey": "owner_id"
+      }
+    ]
+  }
+}

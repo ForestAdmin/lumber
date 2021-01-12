@@ -4,6 +4,8 @@ const sinon = require('sinon');
 const os = require('os');
 const simpleModel = require('../../../test-expected/sequelize/db-analysis-output/customers.expected.json');
 const belongsToModel = require('../../../test-expected/sequelize/db-analysis-output/addresses.expected.json');
+const simpleModelNonPrimary = require('../../../test-expected/sequelize/db-analysis-output/owners.expected.json');
+const belongsToModelNonPrimary = require('../../../test-expected/sequelize/db-analysis-output/projects.expected.json');
 const otherAssociationsModel = require('../../../test-expected/sequelize/db-analysis-output/users.expected.json');
 const exportModel = require('../../../test-expected/sequelize/db-analysis-output/export.expected.json');
 const defaultValuesModel = require('../../../test-expected/sequelize/db-analysis-output/default-values.expected.js');
@@ -50,6 +52,22 @@ describe('services > dumper > sequelize', () => {
     const expectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/addresses.expected.js', 'utf-8');
 
     expect(generatedFile).toStrictEqual(expectedFile);
+    cleanOutput();
+  });
+
+  it('should generate a model file with belongsTo associations and sourceKey/targetKey', async () => {
+    expect.assertions(2);
+    const dumper = getDumper();
+    await dumper.dump(simpleModelNonPrimary);
+    await dumper.dump(belongsToModelNonPrimary);
+
+    const ownersGeneratedFile = fs.readFileSync('./test-output/sequelize/models/owners.js', 'utf8');
+    const ownersExpectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/owners.expected.js', 'utf-8');
+    const projectsGeneratedFile = fs.readFileSync('./test-output/sequelize/models/projects.js', 'utf8');
+    const projectsExpectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/projects.expected.js', 'utf-8');
+
+    expect(ownersGeneratedFile).toStrictEqual(ownersExpectedFile);
+    expect(projectsGeneratedFile).toStrictEqual(projectsExpectedFile);
     cleanOutput();
   });
 
