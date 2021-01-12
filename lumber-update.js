@@ -78,10 +78,11 @@ const {
   options.useMultiDatabase = databasesSchema.length > 1;
 
   spinner = spinners.add('dumper', { text: 'Generating your files' });
-  await Promise.all(databasesSchema.map((databaseSchema) => {
-    const dbName = databaseSchema.name;
-    return dumper.dump(databaseSchema.schema, { ...options, dbName });
-  }));
+  await Promise.all(databasesSchema.map((databaseSchema) =>
+    dumper.dump(databaseSchema.schema, {
+      ...options,
+      modelsExportPath: path.relative('models', databaseSchema.modelsDir),
+    })));
   spinner.succeed();
 
   if (!outputDirectory && options.useMultiDatabase && !dumper.hasMultipleDatabaseStructure()) {
