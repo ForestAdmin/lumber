@@ -9,14 +9,15 @@ const initContext = require('./context/init');
 initContext(context);
 
 program
-  .description('update your project by generating files that does not currently exist')
-  .option('-c, --config <config-path>', 'the databases configuration file to use', './config/databases.js')
-  .option('-o, --output-directory <output-directory-path>', 'the output directory to export new files into')
+  .description('Update your project by generating files that does not currently exist')
+  .option('-c, --config <config-path>', 'The databases configuration file to use', './config/databases.js')
+  .option('-o, --output-directory <output-directory-path>', 'The output directory to export new files into')
   .parse(process.argv);
 
 const {
   database,
   dumper,
+  env,
   errorHandler,
   fs,
   logger,
@@ -25,17 +26,18 @@ const {
 
 (async () => {
   const options = {
-    dbSchema: process.env.DATABASE_SCHEMA,
+    dbSchema: env.DATABASE_SCHEMA,
     appName: program.outputDirectory,
     isUpdate: true,
   };
+
   dumper.checkLianaCompatiblityForUpdate();
 
   const { outputDirectory } = program;
-  if (outputDirectory && fs.existsSync(outputDirectory)) {
-    throw new LumberError(`The output directory "${outputDirectory}" already exist.`);
-  } else {
+  if (!outputDirectory) {
     dumper.checkLumberProjectStructure();
+  } else if (fs.existsSync(outputDirectory)) {
+    throw new LumberError(`The output directory "${outputDirectory}" already exist.`);
   }
 
   const configPath = path.resolve(program.config);
@@ -46,7 +48,7 @@ const {
   // eslint-disable-next-line global-require, import/no-dynamic-require
   const databasesConfig = require(configPath);
   if (!database.areAllDatabasesOfTheSameType(databasesConfig)) {
-    throw new LumberError('The `config/databases.js` file contains different databases type.');
+    throw new LumberError(`The "${configPath}" file contains different databases types.`);
   }
 
   let spinner = spinners.add('databases-connection', { text: 'Connecting to your database(s)' });

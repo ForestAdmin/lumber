@@ -381,11 +381,11 @@ describe('services > database', () => {
       expect(connectSpy).toHaveBeenCalledTimes(2);
       expect(connectSpy).toHaveBeenCalledWith({
         dbConnectionUrl: databaseUrl1,
-        connectionOptions: { logging: false },
+        connectionOptions: {},
       });
       expect(connectSpy).toHaveBeenCalledWith({
         dbConnectionUrl: databaseUrl2,
-        connectionOptions: { logging: false },
+        connectionOptions: {},
       });
     });
 
