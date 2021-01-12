@@ -69,7 +69,6 @@ const {
 
         return {
           ...databaseConnection,
-          modelsExportPath: databaseConnection.modelsDir,
           schema,
         };
       }),
@@ -82,7 +81,7 @@ const {
   await Promise.all(databasesSchema.map((databaseSchema) =>
     dumper.dump(databaseSchema.schema, {
       ...options,
-      modelsExportPath: path.relative('models', databaseSchema.modelsExportPath),
+      modelsExportPath: path.relative('models', databaseSchema.modelsDir),
     })));
   spinner.succeed();
 
