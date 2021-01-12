@@ -236,11 +236,10 @@ class Dumper {
   }
 
   writeModel(projectPath, config, table, fields, references, options = {}) {
-    const { underscored, dbName } = options;
-
+    const { underscored } = options;
     let modelPath = `models/${Dumper.tableToFilename(table)}.js`;
-    if (options.useMultiDatabase) {
-      modelPath = `models/${dbName}/${Dumper.tableToFilename(table)}.js`;
+    if (config.useMultiDatabase) {
+      modelPath = `models/${config.modelsExportPath}/${Dumper.tableToFilename(table)}.js`;
     }
 
     const fieldsDefinition = fields.map((field) => {
@@ -401,7 +400,7 @@ class Dumper {
   async dump(schema, config) {
     const cwd = process.cwd();
     const projectPath = config.appName ? `${cwd}/${config.appName}` : cwd;
-    const { isUpdate, useMultiDatabase, dbName } = config;
+    const { isUpdate, useMultiDatabase, modelsExportPath } = config;
 
     await this.mkdirp(projectPath);
     await this.mkdirp(`${projectPath}/routes`);
@@ -409,7 +408,7 @@ class Dumper {
     await this.mkdirp(`${projectPath}/models`);
 
     if (useMultiDatabase) {
-      await this.mkdirp(`${projectPath}/models/${dbName}`);
+      await this.mkdirp(`${projectPath}/models/${modelsExportPath}`);
     }
 
     if (!isUpdate) {
@@ -434,9 +433,6 @@ class Dumper {
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
       const safeReferences = Dumper.getSafeReferences(references);
-
-      options.dbName = dbName;
-      options.useMultiDatabase = useMultiDatabase;
 
       this.writeModel(projectPath, config, modelName, fields, safeReferences, options);
     });

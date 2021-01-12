@@ -611,6 +611,7 @@ describe('services > dumper (unit)', () => {
         isUpdate: true,
         useMultiDatabase: true,
         dbName: 'test',
+        modelsExportPath: 'test',
       };
       await dumper.dump(schema, config);
 
@@ -624,7 +625,7 @@ describe('services > dumper (unit)', () => {
       expect(mkdirpMock).toHaveBeenCalledWith(`${projectPath}/models/test`);
 
       // Files associated with each models of the schema
-      expect(writeModelSpy).toHaveBeenCalledWith(projectPath, config, 'testModel', {}, [], { dbName: 'test', useMultiDatabase: true });
+      expect(writeModelSpy).toHaveBeenCalledWith(projectPath, config, 'testModel', {}, [], {});
       expect(writeRouteSpy).toHaveBeenCalledWith(projectPath, config, 'testModel');
       expect(writeForestCollectionSpy).toHaveBeenCalledWith(projectPath, config, 'testModel');
 
