@@ -65,7 +65,7 @@ describe('services > dumper > sequelize', () => {
   it('should generate a model file with belongsTo associations and sourceKey/targetKey', async () => {
     expect.assertions(2);
     const dumper = getDumper();
-    await dumper.dump({ ...simpleModelNonPrimary, ...belongsToModelNonPrimary });
+    await dumper.dump({ ...simpleModelNonPrimary, ...belongsToModelNonPrimary }, CONFIG);
 
     const ownersGeneratedFile = fs.readFileSync('./test-output/sequelize/models/owners.js', 'utf8');
     const ownersExpectedFile = fs.readFileSync('./test-expected/sequelize/dumper-output/owners.expected.js', 'utf-8');
