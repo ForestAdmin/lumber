@@ -1,3 +1,11 @@
+## [3.10.8](https://github.com/ForestAdmin/lumber/compare/v3.10.7...v3.10.8) (2021-01-13)
+
+
+### Bug Fixes
+
+* fix tests for handle foreign key toward non primary key ([#537](https://github.com/ForestAdmin/lumber/issues/537)) ([0c2ee15](https://github.com/ForestAdmin/lumber/commit/0c2ee15bc2200de352b1af58eb5624c990c961c0))
+* handle foreign key toward non primary key ([#525](https://github.com/ForestAdmin/lumber/issues/525)) ([e765af6](https://github.com/ForestAdmin/lumber/commit/e765af6e6943b4e05d800d08cb2560afd3d28ab0))
+
 ## [3.10.7](https://github.com/ForestAdmin/lumber/compare/v3.10.6...v3.10.7) (2021-01-07)
 
 
