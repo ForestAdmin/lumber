@@ -169,6 +169,9 @@ function createReference(
       ? ''
       : `${formatAliasName(foreignKeyName)}_`;
 
+    if (foreignKey.foreignColumnName !== 'id') {
+      reference.sourceKey = foreignKey.foreignColumnName;
+    }
     reference.as = _.camelCase(formater(`${prefix}${foreignKey.tableName}`));
   }
 
@@ -195,7 +198,7 @@ function createBelongsToReference(referenceTable, tableReferences, constraint) {
   const referenceColumnName = constraint.foreignColumnName;
   const referencePrimaryKeys = referenceTable.primaryKeys;
   const referenceUniqueConstraint = referenceTable.constraints
-    .find(({ columnType }) => columnType === 'UNIQUE');
+    .find(({ columnType }) => ['UNIQUE', 'PRIMARY KEY'].includes(columnType));
   const referenceUniqueIndexes = referenceUniqueConstraint
     ? referenceUniqueConstraint.uniqueIndexes
     : null;

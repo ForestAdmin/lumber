@@ -244,6 +244,7 @@ class Dumper {
       ...reference,
       isBelongsToMany: reference.association === 'belongsToMany',
       targetKey: _.camelCase(reference.targetKey),
+      sourceKey: _.camelCase(reference.sourceKey),
     }));
 
     this.copyHandleBarsTemplate({

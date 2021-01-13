@@ -34,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
         name: '{{reference.foreignKeyName}}',
         field: '{{reference.foreignKey}}',
       },{{#if reference.targetKey}}
-      targetKey: '{{reference.targetKey}}',{{/if}}
+      targetKey: '{{reference.targetKey}}',{{/if}}{{#if reference.sourceKey}}
+      sourceKey: '{{reference.sourceKey}}',{{/if}}
     {{/if}}
     {{#if reference.as}}
       as: '{{reference.as}}',

@@ -42,6 +42,18 @@ describe('services > database analyser > Sequelize', () => {
       expect(result.addresses).toStrictEqual(expected.addresses);
     }, TIMEOUT);
 
+    it('should generate a model with a belongsTo association and sourceKey/targetKey', async () => {
+      expect.assertions(2);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      const expectedOwners = await sequelizeHelper.given('owners');
+      const expectedProjects = await sequelizeHelper.given('projects');
+      const result = await performDatabaseAnalysis(databaseConnection);
+      await sequelizeHelper.close();
+      expect(result.owners).toStrictEqual(expectedOwners.owners);
+      expect(result.projects).toStrictEqual(expectedProjects.projects);
+    }, TIMEOUT);
+
     it('should generate a model with hasOne, hasMany and belongsToMany associations', async () => {
       expect.assertions(1);
       const sequelizeHelper = new SequelizeHelper();
