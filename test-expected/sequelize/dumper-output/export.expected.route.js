@@ -40,7 +40,7 @@ router.get('/modelExport/count', permissionMiddlewareCreator.list(), (request, r
 });
 
 // Get a Export
-router.get('/modelExport/:recordId', permissionMiddlewareCreator.details(), (request, response, next) => {
+router.get('/modelExport/:recordId(?!count)', permissionMiddlewareCreator.details(), (request, response, next) => {
   // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/routes/default-routes#get-a-record
   next();
 });
