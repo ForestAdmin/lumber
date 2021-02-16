@@ -428,7 +428,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@commitlint/cli@11.0.0", "@commitlint/cli@^11.0.0":
+"@commitlint/cli@11.0.0":
   version "11.0.0"
   resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-11.0.0.tgz#698199bc52afed50aa28169237758fa14a67b5d3"
   integrity sha512-YWZWg1DuqqO5Zjh7vUOeSX76vm0FFyz4y0cpGMFhrhvUi5unc4IVfCXZ6337R9zxuBtmveiRuuhQqnRRer+13g==
@@ -558,15 +558,6 @@
   integrity sha512-O0nFU8o+Ws+py5pfMQIuyxOtfR/kwtr5ybqTvR+C2lUPer2x6lnQU+OnfD7hPM+A+COIUZWx10mYQvkR3MmtAA==
   dependencies:
     find-up "^5.0.0"
-
-"@commitlint/travis-cli@11.0.0":
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/@commitlint/travis-cli/-/travis-cli-11.0.0.tgz#cd0f25274e98daaf68732e53991b74347cde91b4"
-  integrity sha512-ZohGBnXeXv8hcba13fNz0HaCGy3CA4bz1A0PbyqwAzJA6Q85lBvLf1Wa78+Yxwo+PCZx85Vt8tpSrooHaHf2SA==
-  dependencies:
-    "@babel/runtime" "^7.11.2"
-    "@commitlint/cli" "^11.0.0"
-    execa "^4.0.0"
 
 "@commitlint/types@^11.0.0":
   version "11.0.0"
