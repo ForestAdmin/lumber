@@ -38,6 +38,9 @@ jobs:
     strategy:
       matrix:
         node: ['10', '14']
+        include:
+          - node: '14'
+            withCoverage: ${{ true }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -52,12 +55,12 @@ jobs:
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       - name: Start docker container
         run: docker-compose up -d; sleep 15
-      - name: Test Node 10
-        if: matrix.node == '10'
+      - name: Test with Node ${{ matrix.node }}
+        if: !matrix.withCoverage
         run: yarn test
-      - name: Test Node 14 & Send coverage
+      - name: Test with Node ${{ matrix.node }} & Send coverage
         uses: paambaati/codeclimate-action@v2.7.4
-        if: matrix.node == '14'
+        if: matrix.withCoverage
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
