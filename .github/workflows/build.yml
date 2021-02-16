@@ -56,7 +56,7 @@ jobs:
       - name: Start docker container
         run: docker-compose up -d; sleep 15
       - name: Test with Node ${{ matrix.node }}
-        if: !matrix.withCoverage
+        if: '!${{matrix.withCoverage}}'
         run: yarn test
       - name: Test with Node ${{ matrix.node }} & Send coverage
         uses: paambaati/codeclimate-action@v2.7.4
