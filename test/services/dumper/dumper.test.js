@@ -23,7 +23,7 @@ function cleanOutput() {
  *   appPort?: number;
  * }} [overrides]
  */
-async function createLinuxDump(overrides = {}) {
+async function createLinuxDump(optionsOverrides = {}, injectedContextOverrides = {}) {
   const config = {
     appName: 'test-output/Linux',
     dbDialect: 'mysql',
@@ -32,10 +32,10 @@ async function createLinuxDump(overrides = {}) {
     dbSchema: 'public',
     appHostname: 'localhost',
     appPort: 1654,
-    ...overrides,
+    ...optionsOverrides,
   };
 
-  const dumper = new Dumper(injectedContext);
+  const dumper = new Dumper({ ...injectedContext, ...injectedContextOverrides });
   await dumper.dump({}, config);
 }
 
@@ -165,6 +165,47 @@ describe('services > dumper', () => {
         } finally {
           cleanOutput();
         }
+      });
+    });
+
+    describe('using an environment variable FOREST_URL', () => {
+      async function generateDockerComposeFile(contextOverrides) {
+        await createLinuxDump({}, contextOverrides);
+
+        return fs.readFileSync(DOCKER_COMPOSE_FILE_LOCATION, 'utf-8');
+      }
+
+      describe('when the variable is defined', () => {
+        it('should add the FOREST_URL definition in docker-compose file', async () => {
+          expect.assertions(1);
+
+          try {
+            const dockerComposeFile = await generateDockerComposeFile({
+              env: {
+                FOREST_URL: 'https://api.something.com',
+              },
+            });
+
+            // eslint-disable-next-line no-template-curly-in-string
+            expect(dockerComposeFile).toContain('FOREST_URL=${FOREST_URL-https://api.something.com}');
+          } finally {
+            cleanOutput();
+          }
+        });
+      });
+
+      describe('when the variable is not defined', () => {
+        it('should not add the FOREST_URL definition in docker-compose file', async () => {
+          expect.assertions(1);
+
+          try {
+            const dockerComposeFile = await generateDockerComposeFile();
+
+            expect(dockerComposeFile).not.toContain('FOREST_URL');
+          } finally {
+            cleanOutput();
+          }
+        });
       });
     });
   });

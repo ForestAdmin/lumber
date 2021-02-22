@@ -40,7 +40,7 @@ router.get('/{{ modelName }}/count', permissionMiddlewareCreator.list(), (reques
 });
 
 // Get a {{ modelNameReadableSingular }}
-router.get('/{{ modelName }}/:recordId', permissionMiddlewareCreator.details(), (request, response, next) => {
+router.get('/{{ modelName }}/:recordId(?!count)', permissionMiddlewareCreator.details(), (request, response, next) => {
   // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/routes/default-routes#get-a-record
   next();
 });

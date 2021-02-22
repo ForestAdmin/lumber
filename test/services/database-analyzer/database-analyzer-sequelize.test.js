@@ -42,6 +42,18 @@ describe('services > database analyser > Sequelize', () => {
       expect(result.addresses).toStrictEqual(expected.addresses);
     }, TIMEOUT);
 
+    it('should generate a model with a belongsTo association and sourceKey/targetKey', async () => {
+      expect.assertions(2);
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      const expectedOwners = await sequelizeHelper.given('owners');
+      const expectedProjects = await sequelizeHelper.given('projects');
+      const result = await performDatabaseAnalysis(databaseConnection);
+      await sequelizeHelper.close();
+      expect(result.owners).toStrictEqual(expectedOwners.owners);
+      expect(result.projects).toStrictEqual(expectedProjects.projects);
+    }, TIMEOUT);
+
     it('should generate a model with hasOne, hasMany and belongsToMany associations', async () => {
       expect.assertions(1);
       const sequelizeHelper = new SequelizeHelper();
@@ -125,6 +137,26 @@ describe('services > database analyser > Sequelize', () => {
 
       const rolesReferences = new Set(result.roles.references.map(({ as }) => as));
       expect(rolesReferences.size).toBe(expected.roles.referencesLength);
+    }, TIMEOUT);
+
+    it('should handle id column if present on table having only foreign keys', async () => {
+      expect.assertions(4);
+
+      const sequelizeHelper = new SequelizeHelper();
+      const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+      await sequelizeHelper.dropAndCreate('only_foreign_keys_and_id');
+      const result = await performDatabaseAnalysis(databaseConnection);
+
+      await sequelizeHelper.close();
+
+      expect(result.only_foreign_keys_and_id.references).toHaveLength(2);
+
+      const { fields } = result.only_foreign_keys_and_id;
+      expect(fields).toHaveLength(1);
+
+      const idField = fields[0];
+      expect(idField.name).toStrictEqual('id');
+      expect(idField.primaryKey).toStrictEqual(true);
     }, TIMEOUT);
   });
 });

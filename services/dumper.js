@@ -11,6 +11,7 @@ class Dumper {
   constructor({
     fs,
     chalk,
+    constants,
     env,
     os,
     Sequelize,
@@ -20,6 +21,7 @@ class Dumper {
   }) {
     this.fs = fs;
     this.chalk = chalk;
+    this.constants = constants;
     this.env = env;
     this.os = os;
     this.Sequelize = Sequelize;
@@ -267,6 +269,7 @@ class Dumper {
       ...reference,
       isBelongsToMany: reference.association === 'belongsToMany',
       targetKey: _.camelCase(reference.targetKey),
+      sourceKey: _.camelCase(reference.sourceKey),
     }));
 
     this.copyHandleBarsTemplate({
@@ -372,7 +375,7 @@ class Dumper {
 
   writeDockerCompose(projectPath, config) {
     const databaseUrl = `\${${this.isLinuxBasedOs() ? 'DATABASE_URL' : 'DOCKER_DATABASE_URL'}}`;
-    const forestUrl = this.env.FOREST_URL ? `\${FOREST_URL-${this.env.FOREST_URL}}` : false;
+    const forestUrl = this.env.FOREST_URL !== this.constants.DEFAULT_FOREST_URL ? `\${FOREST_URL-${this.env.FOREST_URL}}` : false;
     this.copyHandleBarsTemplate({
       projectPath,
       source: 'app/docker-compose.hbs',
