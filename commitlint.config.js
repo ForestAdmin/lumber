@@ -3,17 +3,21 @@
 //         so authorizing 4+5 = 9 characters more on master for the max header length should work
 //         until we reach PR #99999.
 
-let maxHeaderLength = 100;
+let maxLineLength = 100;
 
 const prExtrasChars = 9;
 
 const isPushEvent = process.env.GITHUB_EVENT_NAME === 'push';
 
 if (isPushEvent) {
-  maxHeaderLength += prExtrasChars;
+  maxLineLength += prExtrasChars;
 }
 
 module.exports = {
   extends: ['@commitlint/config-conventional'],
-  rules: { 'header-max-length': [2, 'always', maxHeaderLength] },
+  rules: {
+    'header-max-length': [1, 'always', maxLineLength],
+    'body-max-line-length': [1, 'always', maxLineLength],
+    'footer-max-line-length': [1, 'always', maxLineLength],
+  },
 };
