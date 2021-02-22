@@ -6,6 +6,7 @@ on:
       - master
       - beta
   pull_request:
+  workflow_dispatch:
 
 jobs:
   lint:
