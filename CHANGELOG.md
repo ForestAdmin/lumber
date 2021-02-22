@@ -1,3 +1,15 @@
+# [4.0.0-beta.5](https://github.com/ForestAdmin/lumber/compare/v4.0.0-beta.4...v4.0.0-beta.5) (2021-02-22)
+
+
+### Bug Fixes
+
+* remove merge error ([aec7593](https://github.com/ForestAdmin/lumber/commit/aec75934045b8b0e9d608967a2f4ebea309f62aa))
+* **view-list:** fix bad records count in view list if the record details access is forbidden ([#539](https://github.com/ForestAdmin/lumber/issues/539)) ([1f6f6c7](https://github.com/ForestAdmin/lumber/commit/1f6f6c7b491e33c7dd52d886a0ea7303d53b0bb6))
+* fix tests for handle foreign key toward non primary key ([#537](https://github.com/ForestAdmin/lumber/issues/537)) ([0c2ee15](https://github.com/ForestAdmin/lumber/commit/0c2ee15bc2200de352b1af58eb5624c990c961c0))
+* handle foreign key toward non primary key ([#525](https://github.com/ForestAdmin/lumber/issues/525)) ([e765af6](https://github.com/ForestAdmin/lumber/commit/e765af6e6943b4e05d800d08cb2560afd3d28ab0))
+* incorrect FOREST_URL generated in docker-compose.yml ([#533](https://github.com/ForestAdmin/lumber/issues/533)) ([9d3bf95](https://github.com/ForestAdmin/lumber/commit/9d3bf951ae743082e8ad10525734b37af1643666))
+* **models:** id primary keys on join tables are now considered and correctly added on generated models ([#524](https://github.com/ForestAdmin/lumber/issues/524)) ([50b25f8](https://github.com/ForestAdmin/lumber/commit/50b25f82d41d27c0b22ff2914720e470c24ad26b))
+
 ## [3.10.9](https://github.com/ForestAdmin/lumber/compare/v3.10.8...v3.10.9) (2021-02-10)
 
 
