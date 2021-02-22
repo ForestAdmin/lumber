@@ -1,3 +1,10 @@
+## [3.10.9](https://github.com/ForestAdmin/lumber/compare/v3.10.8...v3.10.9) (2021-02-10)
+
+
+### Bug Fixes
+
+* **view-list:** fix bad records count in view list if the record details access is forbidden ([#539](https://github.com/ForestAdmin/lumber/issues/539)) ([1f6f6c7](https://github.com/ForestAdmin/lumber/commit/1f6f6c7b491e33c7dd52d886a0ea7303d53b0bb6))
+
 ## [3.10.8](https://github.com/ForestAdmin/lumber/compare/v3.10.7...v3.10.8) (2021-01-13)
 
 
