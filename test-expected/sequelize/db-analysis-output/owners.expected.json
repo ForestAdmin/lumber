@@ -1,0 +1,42 @@
+{
+  "owners": {
+    "fields": [
+      {
+        "name": "name",
+        "nameColumn": "name",
+        "type": "STRING",
+        "primaryKey": false,
+        "defaultValue": null,
+        "isRequired": false
+      },
+      {
+        "name": "ownerId",
+        "nameColumn": "owner_id",
+        "type": "INTEGER",
+        "primaryKey": false,
+        "defaultValue": null,
+        "isRequired": true
+      }
+    ],
+    "primaryKeys": [
+      "id"
+    ],
+    "options": {
+      "underscored": true,
+      "timestamps": false,
+      "hasIdColumn": true,
+      "hasPrimaryKeys": true,
+      "isJunction": false
+    },
+    "references": [
+      {
+        "foreignKey": "owner_id",
+        "foreignKeyName": "ownerIdKey",
+        "association": "hasMany",
+        "ref": "projects",
+        "sourceKey": "owner_id",
+        "as": "projects"
+      }
+    ]
+  }
+}

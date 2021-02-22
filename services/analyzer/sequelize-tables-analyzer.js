@@ -7,6 +7,7 @@ const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
 const EmptyDatabaseError = require('../../utils/errors/database/empty-database-error');
 const { terminate } = require('../../utils/terminator');
 const stringUtils = require('../../utils/strings');
+const { isUnderscored } = require('../../utils/fields');
 
 const ASSOCIATION_TYPE_BELONGS_TO = 'belongsTo';
 const ASSOCIATION_TYPE_BELONGS_TO_MANY = 'belongsToMany';
@@ -14,11 +15,6 @@ const ASSOCIATION_TYPE_HAS_MANY = 'hasMany';
 const ASSOCIATION_TYPE_HAS_ONE = 'hasOne';
 
 const FOREIGN_KEY = 'FOREIGN KEY';
-
-function isUnderscored(fields) {
-  return fields.every((field) => field.nameColumn === _.snakeCase(field.nameColumn))
-    && fields.some((field) => field.nameColumn.includes('_'));
-}
 
 function analyzeFields(queryInterface, table, config) {
   return queryInterface.describeTable(table, { schema: config.dbSchema });
@@ -173,6 +169,9 @@ function createReference(
       ? ''
       : `${formatAliasName(foreignKeyName)}_`;
 
+    if (foreignKey.foreignColumnName !== 'id') {
+      reference.sourceKey = foreignKey.foreignColumnName;
+    }
     reference.as = _.camelCase(formater(`${prefix}${foreignKey.tableName}`));
   }
 
@@ -199,7 +198,7 @@ function createBelongsToReference(referenceTable, tableReferences, constraint) {
   const referenceColumnName = constraint.foreignColumnName;
   const referencePrimaryKeys = referenceTable.primaryKeys;
   const referenceUniqueConstraint = referenceTable.constraints
-    .find(({ columnType }) => columnType === 'UNIQUE');
+    .find(({ columnType }) => ['UNIQUE', 'PRIMARY KEY'].includes(columnType));
   const referenceUniqueIndexes = referenceUniqueConstraint
     ? referenceUniqueConstraint.uniqueIndexes
     : null;
@@ -290,6 +289,36 @@ function createAllReferences(databaseSchema, schemaGenerated) {
     );
 }
 
+function isOnlyJoinTableWithId(schema, constraints) {
+  const idColumn = Object.keys(schema).find((columnName) => columnName === 'id');
+
+  if (!idColumn) return false;
+
+  const possibleForeignColumnNames = Object.keys(schema)
+    .filter((columnName) => !isTechnicalTimestamp(schema[columnName]) && columnName !== 'id');
+
+  const columnWithoutForeignKey = possibleForeignColumnNames
+    .find((columnName) => !_.find(constraints, { columnName, columnType: FOREIGN_KEY }));
+
+  return !columnWithoutForeignKey;
+}
+
+function getPrimaryKeyDefaultValue(defaultValue) {
+  if (["b'1'", '((1))'].includes(defaultValue)) {
+    return true;
+  }
+
+  if (["b'0'", '((0))'].includes(defaultValue)) {
+    return false;
+  }
+
+  if (typeof defaultValue === 'string' && defaultValue.endsWith(')')) {
+    return Sequelize.literal(defaultValue);
+  }
+
+  return defaultValue;
+}
+
 async function createTableSchema(columnTypeGetter, {
   schema,
   constraints,
@@ -309,18 +338,16 @@ async function createTableSchema(columnTypeGetter, {
     const isIdIntegerPrimaryColumn = columnName === 'id'
       && ['INTEGER', 'BIGINT'].includes(type)
       && columnInfo.primaryKey;
+    // NOTICE: But in some cases we want to force the id to be still generated.
+    //         For example, Sequelize will not use a default id field on a model
+    //         that has only foreign keys, so if the id primary key is present, we need to force it.
+    const forceIdColumn = isIdIntegerPrimaryColumn && isOnlyJoinTableWithId(schema, constraints);
 
-    if (isValidField && !isIdIntegerPrimaryColumn) {
+    if (isValidField && (!isIdIntegerPrimaryColumn || forceIdColumn)) {
       // NOTICE: Handle bit(1) to boolean conversion
       let { defaultValue } = columnInfo;
 
-      if (["b'1'", '((1))'].includes(defaultValue)) {
-        defaultValue = true;
-      } else if (["b'0'", '((0))'].includes(defaultValue)) {
-        defaultValue = false;
-      } else if (typeof defaultValue === 'string' && defaultValue.endsWith(')')) {
-        defaultValue = Sequelize.literal(defaultValue);
-      }
+      defaultValue = getPrimaryKeyDefaultValue(defaultValue);
 
       // NOTICE: sequelize considers column name with parenthesis as raw Attributes
       // do not try to camelCase the name for avoiding sequelize issues
