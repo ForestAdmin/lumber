@@ -34,8 +34,6 @@ const fsAsync = {
 
 const DEFAULT_FOREST_URL = 'https://api.forestadmin.com';
 
-const DEFAULT_FOREST_URL = 'https://api.forestadmin.com';
-
 /**
  * @typedef {{
  *   FOREST_URL: string;
