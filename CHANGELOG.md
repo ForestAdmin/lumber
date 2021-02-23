@@ -1,3 +1,22 @@
+# [4.0.0](https://github.com/ForestAdmin/lumber/compare/v3.10.9...v4.0.0) (2021-02-23)
+
+
+### Bug Fixes
+
+* remove merge error ([aec7593](https://github.com/ForestAdmin/lumber/commit/aec75934045b8b0e9d608967a2f4ebea309f62aa))
+
+
+### Features
+
+* **update:** add lumber update command ([#527](https://github.com/ForestAdmin/lumber/issues/527)) ([d8f1eaf](https://github.com/ForestAdmin/lumber/commit/d8f1eafc952a74f6483bdc05661dbb2bcde59e3f))
+* authenticate without entering a password ([#513](https://github.com/ForestAdmin/lumber/issues/513)) ([fe8d8c3](https://github.com/ForestAdmin/lumber/commit/fe8d8c3b0e1a45430a4b0a86a2f7e2b1a2f5d57a))
+* ease multi-database setup by managing mongoose connection like sequelize ([#490](https://github.com/ForestAdmin/lumber/issues/490)) ([cf508cb](https://github.com/ForestAdmin/lumber/commit/cf508cb1f87a465c483086cec467494eb06e3df1))
+
+
+### BREAKING CHANGES
+
+* by default, the authentication process will redirect to a web page to validate a code.
+
 # [4.0.0-beta.5](https://github.com/ForestAdmin/lumber/compare/v4.0.0-beta.4...v4.0.0-beta.5) (2021-02-22)
 
 
