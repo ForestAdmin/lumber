@@ -1,4 +1,5 @@
-const { LumberError, databaseAnalyzerErrors } = require('../../utils/errors');
+const LumberError = require('../../utils/lumber-error');
+const EmptyDatabaseError = require('../../utils/errors/database/empty-database-error');
 
 describe('utils > errors', () => {
   describe('lumberError', () => {
@@ -23,7 +24,7 @@ describe('utils > errors', () => {
     it('emptyDatabase should be of type LumberError', () => {
       expect.assertions(1);
 
-      const error = new databaseAnalyzerErrors.EmptyDatabase();
+      const error = new EmptyDatabaseError();
 
       expect(error).toBeInstanceOf(LumberError);
     });

@@ -1,3 +1,6 @@
 const ApplicationContext = require('./application-context');
 
-module.exports = new ApplicationContext();
+/** @type {import('./application-context')<import('./init').Context>} */
+const context = new ApplicationContext();
+
+module.exports = context;

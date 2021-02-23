@@ -24,9 +24,9 @@ describe('utils > Mongo Primitive Type', () => {
       expect(getMongooseTypeFromValue(new Date())).toStrictEqual('Date');
     });
 
-    it('should return `mongoose.Schema.Types.ObjectId`', () => {
+    it('should return `Mongoose.Schema.Types.ObjectId`', () => {
       expect.assertions(1);
-      expect(getMongooseTypeFromValue(new ObjectId('objectIdFake'))).toStrictEqual('mongoose.Schema.Types.ObjectId');
+      expect(getMongooseTypeFromValue(new ObjectId('objectIdFake'))).toStrictEqual('Mongoose.Schema.Types.ObjectId');
     });
 
     it('should return null', () => {

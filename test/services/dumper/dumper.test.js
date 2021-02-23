@@ -13,7 +13,7 @@ const DOCKER_COMPOSE_FILE_LOCATION = './test-output/Linux/docker-compose.yml';
 const DOT_ENV_FILE_LOCATION = './test-output/Linux/.env';
 
 function cleanOutput() {
-  rimraf.sync('./test-output/mysql');
+  rimraf.sync('./test-output/Linux');
 }
 
 /**

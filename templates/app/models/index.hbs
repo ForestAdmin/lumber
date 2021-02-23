@@ -1,97 +1,55 @@
-{{#if isMongoDB}}
-const mongoose = require('mongoose');
-const requireAll = require('require-all');
-
-const models = {};
-
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-
-function filterFile(filename) {
-  if (filename.endsWith('.js') && filename !== 'index.js') {
-    return filename;
-  }
-
-  return false;
-}
-
-const modelsList = requireAll({
-  dirname: __dirname,
-  filter: (filename) => filterFile(filename),
-});
-
-Object.keys(modelsList).forEach((filename) => {
-  const model = modelsList[filename];
-  models[model.modelName] = model;
-});
-
-module.exports = models;
-{{else}}
 const fs = require('fs');
 const path = require('path');
-const Sequelize = require('sequelize');
-
-if (!process.env.DATABASE_URL) {
-  console.error('Cannot connect to the database. Please declare the DATABASE_URL environment variable with the correct database connection string.');
-  process.exit();
-}
-
-const databaseOptions = {
-  logging: process.env.NODE_ENV === 'development' ? console.log : false,
-  pool: { maxConnections: 10, minConnections: 1 },
-  dialectOptions: {},
-};
-
-{{#if isMySQL}}
-databaseOptions.dialectOptions.typeCast = (field, useDefaultTypeCasting) => {
-  if ((field.type === "BIT") && (field.length === 1)) {
-    const bytes = field.buffer();
-    return bytes ? bytes[0] === 1 : bytes;
-  }
-
-  return useDefaultTypeCasting();
-};
-
-{{/if}}
-if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
-{{#if isMySQL}}
-  databaseOptions.dialectOptions.ssl = { rejectUnauthorized: true };
-{{else if isMSSQL}}
-  databaseOptions.dialectOptions.options = { encrypt: true };
+{{#if isMongoDB}}
+const Mongoose = require('mongoose');
 {{else}}
-  const rejectUnauthorized = process.env.DATABASE_REJECT_UNAUTHORIZED;
-  if (rejectUnauthorized && (JSON.parse(rejectUnauthorized.toLowerCase()) === false)) {
-    databaseOptions.dialectOptions.ssl = { rejectUnauthorized: false };
-  } else {
-    databaseOptions.dialectOptions.ssl = true;
-  }
+const Sequelize = require('sequelize');
 {{/if}}
-}
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, databaseOptions);
+const databasesConfiguration = require('../config/databases');
+
+const connections = {};
 const db = {};
 
-fs
-  .readdirSync(__dirname)
-  .filter((file) => {
-    return (file.indexOf('.') !== 0) && (file !== 'index.js');
-  })
-  .forEach((file) => {
-    try {
-      const model = sequelize.import(path.join(__dirname, file));
-      db[model.name] = model;
-    } catch (error) {
-      console.error('Model creation error: ' + error);
-    }
-  });
+databasesConfiguration.forEach((databaseInfo) => {
+  {{#if isMongoDB}}
+  const connection = Mongoose.createConnection(databaseInfo.connection.url, databaseInfo.connection.options);
+  {{else}}
+  const connection = new Sequelize(databaseInfo.connection.url, databaseInfo.connection.options);
+  {{/if}}
+  connections[databaseInfo.name] = connection;
+
+  const modelsDir = databaseInfo.modelsDir || path.join(__dirname, databaseInfo.name);
+  fs
+    .readdirSync(modelsDir)
+    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+    .forEach((file) => {
+      try {
+        {{#if isMongoDB}}
+        const model = require(path.join(modelsDir, file))(connection, Mongoose);
+        {{else}}
+        const model = connection.import(path.join(modelsDir, file));
+        {{/if}}
+        db[model.name] = model;
+      } catch (error) {
+        console.error(`Model creation error: ${error}`);
+      }
+    });
+});
+{{#unless isMongoDB}}
 
 Object.keys(db).forEach((modelName) => {
   if ('associate' in db[modelName]) {
     db[modelName].associate(db);
   }
 });
+{{/unless}}
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+{{#if isMongoDB}}
+db.objectMapping = Mongoose;
+{{else}}
+db.objectMapping = Sequelize;
+{{/if}}
+db.connections = connections;
 
 module.exports = db;
-{{/if}}

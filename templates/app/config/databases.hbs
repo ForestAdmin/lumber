@@ -1,0 +1,49 @@
+const path = require('path');
+
+const databaseOptions = {
+  {{#if isMongoDB}}
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  {{else}}
+  logging: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? console.log : false,
+  pool: { maxConnections: 10, minConnections: 1 },
+  dialectOptions: {},
+  {{/if}}
+};
+{{#if isMySQL}}
+
+databaseOptions.dialectOptions.typeCast = (field, useDefaultTypeCasting) => {
+  if ((field.type === "BIT") && (field.length === 1)) {
+    const bytes = field.buffer();
+    return bytes ? bytes[0] === 1 : bytes;
+  }
+
+  return useDefaultTypeCasting();
+};
+{{/if}}
+{{#unless isMongoDB}}
+
+if (process.env.DATABASE_SSL && JSON.parse(process.env.DATABASE_SSL.toLowerCase())) {
+  {{#if isMySQL}}
+  databaseOptions.dialectOptions.ssl = { rejectUnauthorized: true };
+  {{else if isMSSQL}}
+  databaseOptions.dialectOptions.options = { encrypt: true };
+  {{else}}
+  const rejectUnauthorized = process.env.DATABASE_REJECT_UNAUTHORIZED;
+  if (rejectUnauthorized && (JSON.parse(rejectUnauthorized.toLowerCase()) === false)) {
+    databaseOptions.dialectOptions.ssl = { rejectUnauthorized: false };
+  } else {
+    databaseOptions.dialectOptions.ssl = true;
+  }
+{{/if}}
+}
+{{/unless}}
+
+module.exports = [{
+  name: 'default',
+  modelsDir: path.resolve(__dirname, '../models'),
+  connection: {
+    url: process.env.DATABASE_URL,
+    options: { ...databaseOptions },
+  },
+}];

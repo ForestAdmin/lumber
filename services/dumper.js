@@ -2,6 +2,8 @@ const _ = require('lodash');
 const { plural, singular } = require('pluralize');
 const stringUtils = require('../utils/strings');
 const toValidPackageName = require('../utils/to-valid-package-name');
+const IncompatibleLianaForUpdateError = require('../utils/errors/dumper/incompatible-liana-for-update-error');
+const InvalidLumberProjectStructureError = require('../utils/errors/dumper/invalid-lumber-project-structure-error');
 require('../handlerbars/loader');
 
 const DEFAULT_PORT = 3310;
@@ -39,12 +41,31 @@ class Dumper {
     ];
   }
 
+  static getModelsNameSorted(schema) {
+    return Object.keys(schema)
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+  }
+
+  static getSafeReferences(references) {
+    return references.map((reference) => ({
+      ...reference,
+      ref: Dumper.getModelNameFromTableName(reference.ref),
+    }));
+  }
+
   isLinuxBasedOs() {
     return this.os.platform() === 'linux';
   }
 
   writeFile(absoluteProjectPath, relativeFilePath, content) {
-    this.fs.writeFileSync(`${absoluteProjectPath}/${relativeFilePath}`, content);
+    const fileName = `${absoluteProjectPath}/${relativeFilePath}`;
+
+    if (this.fs.existsSync(fileName)) {
+      this.logger.log(`  ${this.chalk.yellow('skip')} ${relativeFilePath} - already exist.`);
+      return;
+    }
+
+    this.fs.writeFileSync(fileName, content);
     this.logger.log(`  ${this.chalk.green('create')} ${relativeFilePath}`);
   }
 
@@ -82,7 +103,7 @@ class Dumper {
       dotenv: '~6.1.0',
       express: '~4.17.1',
       'express-jwt': '5.3.1',
-      [`forest-express-${orm}`]: '^6.0.0',
+      [`forest-express-${orm}`]: '^7.0.0',
       morgan: '1.9.1',
       'require-all': '^3.0.0',
       sequelize: '~5.15.1',
@@ -218,6 +239,10 @@ class Dumper {
 
   writeModel(projectPath, config, table, fields, references, options = {}) {
     const { underscored } = options;
+    let modelPath = `models/${Dumper.tableToFilename(table)}.js`;
+    if (config.useMultiDatabase) {
+      modelPath = `models/${config.modelsExportPath}/${Dumper.tableToFilename(table)}.js`;
+    }
 
     const fieldsDefinition = fields.map((field) => {
       const expectedConventionalColumnName = underscored ? _.snakeCase(field.name) : field.name;
@@ -250,7 +275,7 @@ class Dumper {
     this.copyHandleBarsTemplate({
       projectPath,
       source: `app/models/${config.dbDialect === 'mongodb' ? 'mongo' : 'sequelize'}-model.hbs`,
-      target: `models/${Dumper.tableToFilename(table)}.js`,
+      target: modelPath,
       context: {
         modelName: Dumper.getModelNameFromTableName(table),
         modelVariableName: stringUtils.pascalCase(stringUtils.transformToSafeString(table)),
@@ -266,13 +291,15 @@ class Dumper {
   }
 
   writeRoute(projectPath, config, modelName) {
+    const routesPath = `routes/${Dumper.tableToFilename(modelName)}.js`;
+
     const modelNameDasherized = _.kebabCase(modelName);
     const readableModelName = _.startCase(modelName);
 
     this.copyHandleBarsTemplate({
       projectPath,
       source: 'app/routes/route.hbs',
-      target: `routes/${Dumper.tableToFilename(modelName)}.js`,
+      target: routesPath,
       context: {
         modelName: Dumper.getModelNameFromTableName(modelName),
         modelNameDasherized,
@@ -284,10 +311,12 @@ class Dumper {
   }
 
   writeForestCollection(projectPath, config, table) {
+    const collectionPath = `forest/${Dumper.tableToFilename(table)}.js`;
+
     this.copyHandleBarsTemplate({
       projectPath,
       source: 'app/forest/collection.hbs',
-      target: `forest/${Dumper.tableToFilename(table)}.js`,
+      target: collectionPath,
       context: {
         isMongoDB: config.dbDialect === 'mongodb',
         table: Dumper.getModelNameFromTableName(table),
@@ -314,6 +343,19 @@ class Dumper {
       projectPath,
       source: 'app/models/index.hbs',
       target: 'models/index.js',
+      context: {
+        isMongoDB: dbDialect === 'mongodb',
+      },
+    });
+  }
+
+  writeDatabasesConfig(projectPath, config) {
+    const { dbDialect } = config;
+
+    this.copyHandleBarsTemplate({
+      projectPath,
+      source: 'app/config/databases.hbs',
+      target: 'config/databases.js',
       context: {
         isMongoDB: dbDialect === 'mongodb',
         isMSSQL: dbDialect === 'mssql',
@@ -359,39 +401,46 @@ class Dumper {
 
   // NOTICE: Generate files in alphabetical order to ensure a nice generation console logs display.
   async dump(schema, config) {
-    const projectPath = `${process.cwd()}/${config.appName}`;
+    const cwd = process.cwd();
+    const projectPath = config.appName ? `${cwd}/${config.appName}` : cwd;
+    const { isUpdate, useMultiDatabase, modelsExportPath } = config;
 
-    const directories = [
-      this.mkdirp(projectPath),
-      this.mkdirp(`${projectPath}/routes`),
-      this.mkdirp(`${projectPath}/forest`),
-      this.mkdirp(`${projectPath}/public`),
-      this.mkdirp(`${projectPath}/views`),
-      this.mkdirp(`${projectPath}/models`),
-      this.mkdirp(`${projectPath}/middlewares`),
-    ];
+    await this.mkdirp(projectPath);
+    await this.mkdirp(`${projectPath}/routes`);
+    await this.mkdirp(`${projectPath}/forest`);
+    await this.mkdirp(`${projectPath}/models`);
 
-    await Promise.all(directories);
+    if (useMultiDatabase) {
+      await this.mkdirp(`${projectPath}/models/${modelsExportPath}`);
+    }
 
-    const modelNames = Object.keys(schema)
-      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    if (!isUpdate) {
+      await this.mkdirp(`${projectPath}/config`);
+      await this.mkdirp(`${projectPath}/public`);
+      await this.mkdirp(`${projectPath}/views`);
+      await this.mkdirp(`${projectPath}/middlewares`);
+    }
+
+    const modelNames = Dumper.getModelsNameSorted(schema);
+
+    if (!isUpdate) this.writeDatabasesConfig(projectPath, config);
 
     modelNames.forEach((modelName) => this.writeForestCollection(projectPath, config, modelName));
 
-    this.writeForestAdminMiddleware(projectPath, config);
-    this.copyTemplate(projectPath, 'middlewares/welcome.hbs', 'middlewares/welcome.js');
+    if (!isUpdate) {
+      this.writeForestAdminMiddleware(projectPath, config);
+      this.copyTemplate(projectPath, 'middlewares/welcome.hbs', 'middlewares/welcome.js');
+      this.writeModelsIndex(projectPath, config);
+    }
 
-    this.writeModelsIndex(projectPath, config);
     modelNames.forEach((modelName) => {
       const { fields, references, options } = schema[modelName];
-      const safeReferences = references.map((reference) => ({
-        ...reference,
-        ref: Dumper.getModelNameFromTableName(reference.ref),
-      }));
+      const safeReferences = Dumper.getSafeReferences(references);
+
       this.writeModel(projectPath, config, modelName, fields, safeReferences, options);
     });
 
-    this.copyTemplate(projectPath, 'public/favicon.png', 'public/favicon.png');
+    if (!isUpdate) this.copyTemplate(projectPath, 'public/favicon.png', 'public/favicon.png');
 
     modelNames.forEach((modelName) => {
       // HACK: If a table name is "sessions" the generated routes will conflict with Forest Admin
@@ -402,15 +451,51 @@ class Dumper {
       }
     });
 
-    this.copyTemplate(projectPath, 'views/index.hbs', 'views/index.html');
-    this.copyTemplate(projectPath, 'dockerignore.hbs', '.dockerignore');
-    this.writeDotEnv(projectPath, config);
-    this.copyTemplate(projectPath, 'gitignore.hbs', '.gitignore');
-    this.writeAppJs(projectPath, config);
-    this.writeDockerCompose(projectPath, config);
-    this.writeDockerfile(projectPath);
-    this.writePackageJson(projectPath, config);
-    this.copyTemplate(projectPath, 'server.hbs', '/server.js');
+    if (!isUpdate) {
+      this.copyTemplate(projectPath, 'views/index.hbs', 'views/index.html');
+      this.copyTemplate(projectPath, 'dockerignore.hbs', '.dockerignore');
+      this.writeDotEnv(projectPath, config);
+      this.copyTemplate(projectPath, 'gitignore.hbs', '.gitignore');
+      this.writeAppJs(projectPath, config);
+      this.writeDockerCompose(projectPath, config);
+      this.writeDockerfile(projectPath);
+      this.writePackageJson(projectPath, config);
+      this.copyTemplate(projectPath, 'server.hbs', 'server.js');
+    }
+  }
+
+  checkLumberProjectStructure() {
+    const currentPath = process.cwd();
+    try {
+      if (!this.fs.existsSync(`${currentPath}/routes`)) throw new Error('No "routes" directory.');
+      if (!this.fs.existsSync(`${currentPath}/forest`)) throw new Error('No "forest" directory.');
+      if (!this.fs.existsSync(`${currentPath}/models`)) throw new Error('No "models“ directory.');
+    } catch (error) {
+      throw new InvalidLumberProjectStructureError(currentPath, error);
+    }
+  }
+
+  checkLianaCompatiblityForUpdate() {
+    const packagePath = `${process.cwd()}/package.json`;
+    if (!this.fs.existsSync(packagePath)) throw new IncompatibleLianaForUpdateError(`"${packagePath}" not found.`);
+
+    const file = this.fs.readFileSync(packagePath, 'utf8');
+    const match = /forest-express-.*((\d).\d.\d)/g.exec(file);
+
+    let lianaMajorVersion = 0;
+    if (match) {
+      [,, lianaMajorVersion] = match;
+    }
+    if (Number(lianaMajorVersion) < 7) {
+      throw new IncompatibleLianaForUpdateError(
+        'Your project is not compatible with the `lumber update` command. You need to use an agent version greater than 7.0.0.',
+      );
+    }
+  }
+
+  hasMultipleDatabaseStructure() {
+    const files = this.fs.readdirSync(`${process.cwd()}/models`, { withFileTypes: true });
+    return !files.some((file) => file.isFile() && file.name !== 'index.js');
   }
 }
 

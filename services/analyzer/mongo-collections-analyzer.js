@@ -1,6 +1,6 @@
 const P = require('bluebird');
 const logger = require('../logger');
-const { databaseAnalyzerErrors } = require('../../utils/errors');
+const EmptyDatabaseError = require('../../utils/errors/database/empty-database-error');
 const { detectReferences, applyReferences } = require('./mongo-references-analyzer');
 const { detectHasMany, applyHasMany } = require('./mongo-hasmany-analyzer');
 const { isUnderscored } = require('../../utils/fields');
@@ -57,7 +57,7 @@ function mapCollection() {
 
   for (var key in this) {
     if (this[key] instanceof ObjectId && key !== '_id') {
-      emit(key, 'mongoose.Schema.Types.ObjectId');
+      emit(key, 'Mongoose.Schema.Types.ObjectId');
     } else if (this[key] instanceof Date) {
       emit(key, 'Date');
     } else if (typeof this[key] === 'boolean') {
@@ -68,7 +68,7 @@ function mapCollection() {
       emit(key, 'Number');
     } else if (typeof this[key] === 'object') {
       if (Array.isArray(this[key]) && allItemsAreObjectIDs(this[key])) {
-        emit(key, '[mongoose.Schema.Types.ObjectId]');
+        emit(key, '[Mongoose.Schema.Types.ObjectId]');
       } else if (key !== '_id') {
         var analysis = getMongooseSchema(this[key]);
         if (analysis) {
@@ -143,7 +143,7 @@ function analyzeMongoCollections(databaseConnection) {
   return databaseConnection.collections()
     .then(async (collections) => {
       if (collections.length === 0) {
-        throw new databaseAnalyzerErrors.EmptyDatabase('no collections found', {
+        throw new EmptyDatabaseError('no collections found', {
           orm: 'mongoose',
           dialect: 'mongodb',
         });

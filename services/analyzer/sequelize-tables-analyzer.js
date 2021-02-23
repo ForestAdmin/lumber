@@ -4,7 +4,7 @@ const { plural, singular } = require('pluralize');
 const Sequelize = require('sequelize');
 const ColumnTypeGetter = require('./sequelize-column-type-getter');
 const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
-const { databaseAnalyzerErrors } = require('../../utils/errors');
+const EmptyDatabaseError = require('../../utils/errors/database/empty-database-error');
 const { terminate } = require('../../utils/terminator');
 const stringUtils = require('../../utils/strings');
 const { isUnderscored } = require('../../utils/fields');
@@ -476,7 +476,7 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   });
 
   if (_.isEmpty(schemaAllTables)) {
-    throw new databaseAnalyzerErrors.EmptyDatabase('no tables found', {
+    throw new EmptyDatabaseError('no tables found', {
       orm: 'sequelize',
       dialect: databaseConnection.getDialect(),
     });

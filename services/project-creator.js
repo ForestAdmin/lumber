@@ -1,10 +1,11 @@
 const chalk = require('chalk');
 const context = require('../context');
+
+const { api } = context.inject();
+
 const KeyGenerator = require('./key-generator');
 const { terminate } = require('../utils/terminator');
 const { ERROR_UNEXPECTED } = require('../utils/messages');
-
-const { api } = context.inject();
 
 if (!api) throw new Error('Missing dependency api');
 
