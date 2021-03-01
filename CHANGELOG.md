@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/ForestAdmin/lumber/compare/v4.0.0...v4.0.1) (2021-03-01)
+
+
+### Bug Fixes
+
+* fix models import error on mongo model index ([#552](https://github.com/ForestAdmin/lumber/issues/552)) ([1df1f91](https://github.com/ForestAdmin/lumber/commit/1df1f91885dca0aa87edcf2fde72a03c0bdd4c13))
+
 # [4.0.0](https://github.com/ForestAdmin/lumber/compare/v3.10.9...v4.0.0) (2021-02-23)
 
 
