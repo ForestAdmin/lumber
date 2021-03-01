@@ -18,7 +18,7 @@ databasesConfiguration.forEach((databaseInfo) => {
     .forEach((file) => {
       try {
         const model = require(path.join(modelsDir, file))(connection, Mongoose);
-        db[model.name] = model;
+        db[model.modelName] = model;
       } catch (error) {
         console.error(`Model creation error: ${error}`);
       }

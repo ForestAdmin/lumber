@@ -27,10 +27,11 @@ databasesConfiguration.forEach((databaseInfo) => {
       try {
         {{#if isMongoDB}}
         const model = require(path.join(modelsDir, file))(connection, Mongoose);
+        db[model.modelName] = model;
         {{else}}
         const model = connection.import(path.join(modelsDir, file));
-        {{/if}}
         db[model.name] = model;
+        {{/if}}
       } catch (error) {
         console.error(`Model creation error: ${error}`);
       }
