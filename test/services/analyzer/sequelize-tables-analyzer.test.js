@@ -7,6 +7,8 @@ describe('services > sequelizeTablesAnalyzer', () => {
       expect.assertions(1);
 
       const databaseConnectionMock = {
+        QueryTypes: {},
+        query: jest.fn().mockReturnValue([]),
         getQueryInterface: jest.fn().mockReturnValue({
           showAllTables: jest.fn().mockResolvedValue([]),
         }),
