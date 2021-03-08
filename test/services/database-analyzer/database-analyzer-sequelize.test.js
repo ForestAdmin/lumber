@@ -32,6 +32,19 @@ describe('services > database analyser > Sequelize', () => {
       expect(result.customers).toStrictEqual(expected.customers);
     }, TIMEOUT);
 
+    if (dialect === 'postgres') {
+      it('should generate a model with default values', async () => {
+        expect.assertions(1);
+        const sequelizeHelper = new SequelizeHelper();
+        const databaseConnection = await sequelizeHelper.connect(connectionUrl);
+        const expected = await sequelizeHelper.given('default_values');
+        const result = await performDatabaseAnalysis(databaseConnection);
+        await sequelizeHelper.close();
+
+        expect(result.default_values).toStrictEqual(expected.default_values);
+      }, TIMEOUT);
+    }
+
     it('should generate a model with a belongsTo association', async () => {
       expect.assertions(1);
       const sequelizeHelper = new SequelizeHelper();
