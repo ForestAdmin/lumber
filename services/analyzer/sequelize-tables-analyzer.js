@@ -42,8 +42,66 @@ async function getDefaultSchema(connection, userProvidedSchema) {
   return 'public';
 }
 
-function analyzeFields(queryInterface, table, config) {
-  return queryInterface.describeTable(table, { schema: config.dbSchema });
+/**
+ * Convert SQL expression to Javascript value when possible.
+ * Otherwise, default to using Sequelize.literal(...) which will always work.
+ */
+function parseSqlDefault(expression) {
+  const falses = ['false', 'FALSE', 'b\'0\'', '((0))'];
+  const trues = ['true', 'TRUE', 'b\'1\'', '((1))'];
+
+  let result;
+  if (!expression || expression === 'NULL' || expression.startsWith('NULL::')) {
+    result = null;
+  } else if (falses.includes(expression)) {
+    result = false;
+  } else if (trues.includes(expression)) {
+    result = true;
+  } else if (/^'(.*)'::jsonb?$/i.test(expression)) {
+    const [, content] = expression.match(/^'(.*)'::(.*)$/i);
+    result = JSON.parse(content);
+  } else if (/^'(.*)'::[a-z ]+$/i.test(expression)) { // arrays not allowed
+    const [, content] = expression.match(/^'(.*)'::(.*)$/i);
+    result = content;
+  } else if (/^-?\d+(\.\d+)?$/.test(expression)) {
+    result = parseFloat(expression);
+  } else if (/^'.*'$/.test(expression)) {
+    result = expression.substr(1, expression.length - 2);
+  } else {
+    result = Sequelize.literal(expression); // always works
+  }
+
+  return result;
+}
+
+/** Retrieve the description of the fields in a given table. */
+async function analyzeFields(queryInterface, tableName, config) {
+  // There is a bug in sequelize/dialects/mysql/query-generator#describe
+  // Sequelize queries over `[schema].[table]` instead of `[schema]`.`[table]`
+  // => Don't provide the schema when using mysql/mariadb
+  const dialect = queryInterface.sequelize.getDialect();
+  const workaroundConfig = ['mysql', 'mariadb'].includes(dialect) ? {} : { schema: config.dbSchema };
+  const columnsByName = await queryInterface.describeTable(tableName, workaroundConfig);
+
+  // There is a bug when parsing default values sequelize/dialects/postgres/query.js#run()
+  // Sequelize simply remove quotes and truncates after '::' to convert SQL expressions to JS.
+  // => Fetch the real default value from the information schema
+  const getDefaultsQuery = `
+    SELECT column_name as colname, column_default as coldefault
+    FROM information_schema.columns
+    WHERE table_schema = ? AND table_name = ?
+  `;
+
+  const rows = await queryInterface.sequelize.query(getDefaultsQuery, {
+    type: queryInterface.sequelize.QueryTypes.SELECT,
+    replacements: [config.dbSchema, tableName],
+  });
+
+  rows.forEach((row) => {
+    columnsByName[row.colname].defaultValue = parseSqlDefault(row.coldefault);
+  });
+
+  return columnsByName;
 }
 
 async function analyzePrimaryKeys(schema) {
@@ -322,22 +380,6 @@ function isOnlyJoinTableWithId(schema, constraints) {
   return !columnWithoutForeignKey;
 }
 
-function getPrimaryKeyDefaultValue(defaultValue) {
-  if (["b'1'", '((1))'].includes(defaultValue)) {
-    return true;
-  }
-
-  if (["b'0'", '((0))'].includes(defaultValue)) {
-    return false;
-  }
-
-  if (typeof defaultValue === 'string' && defaultValue.endsWith(')')) {
-    return Sequelize.literal(defaultValue);
-  }
-
-  return defaultValue;
-}
-
 async function createTableSchema(columnTypeGetter, {
   schema,
   constraints,
@@ -363,11 +405,6 @@ async function createTableSchema(columnTypeGetter, {
     const forceIdColumn = isIdIntegerPrimaryColumn && isOnlyJoinTableWithId(schema, constraints);
 
     if (isValidField && (!isIdIntegerPrimaryColumn || forceIdColumn)) {
-      // NOTICE: Handle bit(1) to boolean conversion
-      let { defaultValue } = columnInfo;
-
-      defaultValue = getPrimaryKeyDefaultValue(defaultValue);
-
       // NOTICE: sequelize considers column name with parenthesis as raw Attributes
       // do not try to camelCase the name for avoiding sequelize issues
       const hasParenthesis = columnName.includes('(') || columnName.includes(')');
@@ -382,7 +419,7 @@ async function createTableSchema(columnTypeGetter, {
         nameColumn: columnName,
         type,
         primaryKey: columnInfo.primaryKey,
-        defaultValue,
+        defaultValue: columnInfo.defaultValue,
         isRequired,
       };
 
