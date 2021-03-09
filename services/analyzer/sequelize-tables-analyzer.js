@@ -27,7 +27,7 @@ async function getDefaultSchema(connection, userProvidedSchema) {
     mssql: 'SELECT SCHEMA_NAME() AS default_schema',
     mysql: 'SELECT DATABASE() AS default_schema',
     mariadb: 'SELECT DATABASE() AS default_schema',
-    postgres: 'SELECT current_schema() AS default_schema',
+    postgres: 'SELECT CURRENT_SCHEMA() AS default_schema',
   };
 
   if (queries[dialect]) {
@@ -51,24 +51,34 @@ function parseSqlDefault(expression) {
   const trues = ['true', 'TRUE', 'b\'1\'', '((1))'];
 
   let result;
-  if (!expression || expression === 'NULL' || expression.startsWith('NULL::')) {
-    result = null;
-  } else if (falses.includes(expression)) {
-    result = false;
-  } else if (trues.includes(expression)) {
-    result = true;
-  } else if (/^'(.*)'::jsonb?$/i.test(expression)) {
-    const [, content] = expression.match(/^'(.*)'::(.*)$/i);
-    result = JSON.parse(content);
-  } else if (/^'(.*)'::[a-z ]+$/i.test(expression)) { // arrays not allowed
-    const [, content] = expression.match(/^'(.*)'::(.*)$/i);
-    result = content;
-  } else if (/^-?\d+(\.\d+)?$/.test(expression)) {
-    result = parseFloat(expression);
-  } else if (/^'.*'$/.test(expression)) {
-    result = expression.substr(1, expression.length - 2);
-  } else {
-    result = Sequelize.literal(expression); // always works
+  try {
+    if (!expression || expression === 'NULL' || expression.startsWith('NULL::')) {
+      result = null;
+    } else if (falses.includes(expression)) {
+      result = false;
+    } else if (trues.includes(expression)) {
+      result = true;
+    } else if (/^-?\d+(\.\d+)?$/.test(expression)) {
+      result = Number.parseFloat(expression);
+      if (result.toString() !== expression) {
+        throw new Error('Bignum overflowing javascript precision');
+      }
+    } else if (/^'.*'$/.test(expression)) {
+      result = expression.substr(1, expression.length - 2);
+    } else if (/^'.*'::jsonb?$/i.test(expression)) {
+      // Special case for json/jsonb
+      const [, content] = expression.match(/^'(.*)'::jsonb?$/i);
+      result = JSON.parse(content);
+    } else if (/^'.*'::[a-z ]+$/i.test(expression)) {
+      // Catches types containing only alpha and spaces (int, varchar, timestamp with timezone, ...)
+      // This excludes arrays or other compound types (int[], ...).
+      const [, content] = expression.match(/^'(.*)'::[a-z ]+$/i);
+      result = content;
+    } else {
+      throw new Error('SQL Expression does not match any pattern');
+    }
+  } catch (e) {
+    result = Sequelize.literal(expression);
   }
 
   return result;
@@ -485,7 +495,7 @@ async function analyzeSequelizeTables(connection, config, allowWarning) {
   }
 
   // If dbSchema was not provided by user, get default one.
-  const myConfig = {
+  const configWithSchema = {
     ...config,
     dbSchema: await getDefaultSchema(connection, config.dbSchema),
   };
@@ -494,24 +504,24 @@ async function analyzeSequelizeTables(connection, config, allowWarning) {
   const schemaAllTables = {};
   const queryInterface = connection.getQueryInterface();
   const databaseSchema = {};
-  const tableNames = await showAllTables(queryInterface, connection, myConfig.dbSchema);
-  const tableConstraintsGetter = new TableConstraintsGetter(connection, myConfig.dbSchema);
+  const tableNames = await showAllTables(queryInterface, connection, configWithSchema.dbSchema);
+  const constraintsGetter = new TableConstraintsGetter(connection, configWithSchema.dbSchema);
 
   await P.each(tableNames, async (tableName) => {
     const {
       schema,
       constraints,
       primaryKeys,
-    } = await analyzeTable(queryInterface, tableConstraintsGetter, tableName, myConfig);
+    } = await analyzeTable(queryInterface, constraintsGetter, tableName, configWithSchema);
     databaseSchema[tableName] = {
-      schema,
-      constraints,
-      primaryKeys,
-      references: [],
+      schema, constraints, primaryKeys, references: [],
     };
   });
 
-  const columnTypeGetter = new ColumnTypeGetter(connection, myConfig.dbSchema, allowWarning);
+  const columnTypeGetter = new ColumnTypeGetter(
+    connection, configWithSchema.dbSchema, allowWarning,
+  );
+
   await P.each(tableNames, async (tableName) => {
     schemaAllTables[tableName] = await createTableSchema(
       columnTypeGetter,
