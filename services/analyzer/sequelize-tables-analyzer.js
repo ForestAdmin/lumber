@@ -36,7 +36,8 @@ async function getDefaultSchema(connection, userProvidedSchema) {
       { type: connection.QueryTypes.SELECT },
     );
 
-    return rows.length ? rows[0].default_schema : 'public';
+    return rows.length && rows[0].default_schema
+      ? rows[0].default_schema : 'public';
   }
 
   return 'public';
