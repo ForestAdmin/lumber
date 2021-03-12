@@ -49,7 +49,6 @@ async function analyzeFields(queryInterface, tableName, config) {
   let columnsByName;
 
   // Workaround bug in sequelize/dialects/mysql/query-generator#describe
-  // Sequelize queries over `[schema].[table]` instead of `[schema]`.`[table]`
   // => Don't provide the schema when using mysql/mariadb
   if (['mysql', 'mariadb'].includes(dialect)) {
     columnsByName = await queryInterface.describeTable(tableName, {});
@@ -57,9 +56,8 @@ async function analyzeFields(queryInterface, tableName, config) {
     columnsByName = await queryInterface.describeTable(tableName, { schema: config.dbSchema });
   }
 
-  // Workaround bug in sequelize/dialects/postgres/query.js#run()
-  // Sequelize simply remove quotes and truncates after '::' to convert SQL expressions to JS.
-  // => Fetch the real default value from the information schema
+  // Workaround bug in sequelize/dialects/(postgres|mssql)/query.js#run()
+  // => Fetch the unmodified default value from the information schema
   if (dialect === 'postgres' || dialect === 'mssql') {
     const getDefaultsQuery = `
       SELECT column_name as colname, column_default as coldefault
@@ -71,7 +69,6 @@ async function analyzeFields(queryInterface, tableName, config) {
       type: queryInterface.sequelize.QueryTypes.SELECT,
       replacements: [config.dbSchema, tableName],
     });
-
     rows.forEach((row) => {
       columnsByName[row.colname].defaultValue = row.coldefault;
     });
@@ -80,7 +77,6 @@ async function analyzeFields(queryInterface, tableName, config) {
   Object.values(columnsByName).forEach((column) => {
     const myColumn = column; // Workaround pedantic linter.
     const defaultValue = new DefaultValueExpression(dialect, column.type, column.defaultValue);
-
     myColumn.defaultValue = defaultValue.parse();
   });
 
