@@ -1,8 +1,8 @@
 const P = require('bluebird');
 const _ = require('lodash');
 const { plural, singular } = require('pluralize');
-const Sequelize = require('sequelize');
 const ColumnTypeGetter = require('./sequelize-column-type-getter');
+const DefaultValueExpression = require('./sequelize-default-value');
 const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
 const EmptyDatabaseError = require('../../utils/errors/database/empty-database-error');
 const { terminate } = require('../../utils/terminator');
@@ -42,73 +42,45 @@ async function getDefaultSchema(connection, userProvidedSchema) {
   return 'public';
 }
 
-/**
- * Convert SQL expression to Javascript value when possible.
- * Otherwise, default to using Sequelize.literal(...) which will always work.
- */
-function parseSqlDefault(expression) {
-  const falses = ['false', 'FALSE', 'b\'0\'', '((0))'];
-  const trues = ['true', 'TRUE', 'b\'1\'', '((1))'];
-
-  let result;
-  try {
-    if (!expression || expression === 'NULL' || expression.startsWith('NULL::')) {
-      result = null;
-    } else if (falses.includes(expression)) {
-      result = false;
-    } else if (trues.includes(expression)) {
-      result = true;
-    } else if (/^-?\d+(\.\d+)?$/.test(expression)) {
-      result = Number.parseFloat(expression);
-      if (result.toString() !== expression) {
-        throw new Error('Bignum overflowing javascript precision');
-      }
-    } else if (/^'.*'$/.test(expression)) {
-      result = expression.substr(1, expression.length - 2);
-    } else if (/^'.*'::jsonb?$/i.test(expression)) {
-      // Special case for json/jsonb
-      const [, content] = expression.match(/^'(.*)'::jsonb?$/i);
-      result = JSON.parse(content);
-    } else if (/^'.*'::[a-z ]+$/i.test(expression)) {
-      // Catches types containing only alpha and spaces (int, varchar, timestamp with timezone, ...)
-      // This excludes arrays or other compound types (int[], ...).
-      const [, content] = expression.match(/^'(.*)'::[a-z ]+$/i);
-      result = content;
-    } else {
-      throw new Error('SQL Expression does not match any pattern');
-    }
-  } catch (e) {
-    result = Sequelize.literal(expression);
-  }
-
-  return result;
-}
-
 /** Retrieve the description of the fields in a given table. */
 async function analyzeFields(queryInterface, tableName, config) {
-  // There is a bug in sequelize/dialects/mysql/query-generator#describe
+  const dialect = queryInterface.sequelize.getDialect();
+  let columnsByName;
+
+  // Workaround bug in sequelize/dialects/mysql/query-generator#describe
   // Sequelize queries over `[schema].[table]` instead of `[schema]`.`[table]`
   // => Don't provide the schema when using mysql/mariadb
-  const dialect = queryInterface.sequelize.getDialect();
-  const workaroundConfig = ['mysql', 'mariadb'].includes(dialect) ? {} : { schema: config.dbSchema };
-  const columnsByName = await queryInterface.describeTable(tableName, workaroundConfig);
+  if (['mysql', 'mariadb'].includes(dialect)) {
+    columnsByName = await queryInterface.describeTable(tableName, {});
+  } else {
+    columnsByName = await queryInterface.describeTable(tableName, { schema: config.dbSchema });
+  }
 
-  // There is a bug when parsing default values sequelize/dialects/postgres/query.js#run()
+  // Workaround bug in sequelize/dialects/postgres/query.js#run()
   // Sequelize simply remove quotes and truncates after '::' to convert SQL expressions to JS.
   // => Fetch the real default value from the information schema
-  const getDefaultsQuery = `
-    SELECT column_name as colname, column_default as coldefault
-    FROM information_schema.columns
-    WHERE table_schema = ? AND table_name = ?
-  `;
+  if (dialect === 'postgres' || dialect === 'mssql') {
+    const getDefaultsQuery = `
+      SELECT column_name as colname, column_default as coldefault
+      FROM information_schema.columns
+      WHERE table_schema = ? AND table_name = ?
+    `;
 
-  const rows = await queryInterface.sequelize.query(getDefaultsQuery, {
-    type: queryInterface.sequelize.QueryTypes.SELECT,
-    replacements: [config.dbSchema, tableName],
-  });
+    const rows = await queryInterface.sequelize.query(getDefaultsQuery, {
+      type: queryInterface.sequelize.QueryTypes.SELECT,
+      replacements: [config.dbSchema, tableName],
+    });
 
-  rows.forEach((row) => {
-    columnsByName[row.colname].defaultValue = parseSqlDefault(row.coldefault);
+    rows.forEach((row) => {
+      columnsByName[row.colname].defaultValue = row.coldefault;
+    });
+  }
+
+  Object.values(columnsByName).forEach((column) => {
+    const myColumn = column; // Workaround pedantic linter.
+    const defaultValue = new DefaultValueExpression(dialect, column.type, column.defaultValue);
+
+    myColumn.defaultValue = defaultValue.parse();
   });
 
   return columnsByName;

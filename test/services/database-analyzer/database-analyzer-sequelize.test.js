@@ -1,7 +1,12 @@
+const _ = require('lodash');
 const Sequelize = require('sequelize');
 const SequelizeHelper = require('../../../test-utils/sequelize-helper');
 const { describeSequelizeDatabases } = require('../../../test-utils/multiple-database-version-helper');
 const DatabaseAnalyzer = require('../../../services/analyzer/database-analyzer');
+const databaseUrls = require('../../../test-utils/database-urls');
+const expectedDefaultValuesPostgres = require('../../../test-expected/sequelize/db-analysis-output/default_values.postgres.expected');
+const expectedDefaultValuesMysql = require('../../../test-expected/sequelize/db-analysis-output/default_values.mysql.expected');
+const expectedDefaultValuesMssql = require('../../../test-expected/sequelize/db-analysis-output/default_values.mssql.expected');
 
 const TIMEOUT = 30000;
 
@@ -32,18 +37,36 @@ describe('services > database analyser > Sequelize', () => {
       expect(result.customers).toStrictEqual(expected.customers);
     }, TIMEOUT);
 
-    if (dialect === 'postgres') {
-      it('should generate a model with default values', async () => {
-        expect.assertions(1);
+    it('should generate a model with default values', async () => {
+      expect.assertions(1);
+
+      const defaultsValueExpected = {
+        [databaseUrls.DATABASE_URL_POSTGRESQL_MIN]: _.cloneDeep(expectedDefaultValuesPostgres),
+        [databaseUrls.DATABASE_URL_POSTGRESQL_MAX]: expectedDefaultValuesPostgres,
+        [databaseUrls.DATABASE_URL_MYSQL_MAX]: expectedDefaultValuesMysql,
+        [databaseUrls.DATABASE_URL_MSSQL_MIN]: expectedDefaultValuesMssql,
+        [databaseUrls.DATABASE_URL_MSSQL_MAX]: expectedDefaultValuesMssql,
+      };
+
+      defaultsValueExpected[databaseUrls.DATABASE_URL_POSTGRESQL_MIN]
+        .default_values
+        .fields[9].defaultValue.val = 'now()';
+
+      // eslint-disable-next-line jest/no-if
+      if (defaultsValueExpected[connectionUrl]) {
         const sequelizeHelper = new SequelizeHelper();
         const databaseConnection = await sequelizeHelper.connect(connectionUrl);
-        const expected = await sequelizeHelper.given('default_values');
+
+        const expected = defaultsValueExpected[connectionUrl];
+        await sequelizeHelper.dropAndCreate('default_values');
         const result = await performDatabaseAnalysis(databaseConnection);
         await sequelizeHelper.close();
 
         expect(result.default_values).toStrictEqual(expected.default_values);
-      }, TIMEOUT);
-    }
+      } else {
+        expect(true).toStrictEqual(true);
+      }
+    }, TIMEOUT);
 
     it('should generate a model with a belongsTo association', async () => {
       expect.assertions(1);

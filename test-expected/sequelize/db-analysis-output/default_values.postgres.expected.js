@@ -40,7 +40,7 @@ module.exports = {
         nameColumn: "str_cst",
         type: "STRING",
         primaryKey: false,
-        defaultValue: 'constant',
+        defaultValue: 'co\'nst\'ant',
         isRequired: false,
       },
       {
@@ -80,7 +80,7 @@ module.exports = {
         nameColumn: "date_expr1",
         type: "DATE",
         primaryKey: false,
-        defaultValue: Sequelize.literal("now()"),
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
         isRequired: false,
       },
       {
@@ -98,6 +98,22 @@ module.exports = {
         primaryKey: false,
         defaultValue: Sequelize.literal("timezone('utc'::text, now())"),
         isRequired: false,
+      },
+      {
+        defaultValue: null,
+        isRequired: false,
+        name: "enumCst1",
+        nameColumn: "enum_cst1",
+        primaryKey: false,
+        type: "ENUM(\n        'a',\n        'b',\n        'c',\n      )",
+      },
+      {
+        defaultValue: 'a',
+        isRequired: false,
+        name: "enumCst2",
+        nameColumn: "enum_cst2",
+        primaryKey: false,
+        type: "ENUM(\n        'a',\n        'b',\n        'c',\n      )",
       },
       {
         name: "arrayCst1",

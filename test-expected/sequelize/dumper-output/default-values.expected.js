@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     strCst: {
       type: DataTypes.STRING,
       field: 'str_cst',
-      defaultValue: "constant",
+      defaultValue: "co'nst'ant",
     },
     strExpr: {
       type: DataTypes.STRING,
@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
     dateExpr1: {
       type: DataTypes.DATE,
       field: 'date_expr1',
-      defaultValue: Sequelize.literal('now()'),
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
     dateExpr2: {
       type: DataTypes.DATE,
@@ -61,6 +61,23 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       field: 'date_expr3',
       defaultValue: Sequelize.literal('timezone(\'utc\'::text, now())'),
+    },
+    enumCst1: {
+      type: DataTypes.ENUM(
+        'a',
+        'b',
+        'c',
+      ),
+      field: 'enum_cst1',
+    },
+    enumCst2: {
+      type: DataTypes.ENUM(
+        'a',
+        'b',
+        'c',
+      ),
+      field: 'enum_cst2',
+      defaultValue: "a",
     },
     arrayCst1: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
