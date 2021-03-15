@@ -10,6 +10,22 @@ const expectedDefaultValuesMssql = require('../../../test-expected/sequelize/db-
 
 const TIMEOUT = 30000;
 
+// For convenience when writing the tests, index analyzer output by connectionUrl
+const defaultsValueExpected = {
+  [databaseUrls.DATABASE_URL_POSTGRESQL_MIN]: _.cloneDeep(expectedDefaultValuesPostgres),
+  [databaseUrls.DATABASE_URL_POSTGRESQL_MAX]: expectedDefaultValuesPostgres,
+  [databaseUrls.DATABASE_URL_MYSQL_MAX]: expectedDefaultValuesMysql,
+  [databaseUrls.DATABASE_URL_MSSQL_MIN]: expectedDefaultValuesMssql,
+  [databaseUrls.DATABASE_URL_MSSQL_MAX]: expectedDefaultValuesMssql,
+};
+
+// Expected output for PostgresMin and PostgresMax differ only by one value.
+// CURRENT_TIMESTAMP() is an alias of NOW() in Postgres 9, but not anymore in up-to-date versions.
+// => patch the difference here, instead of duplicating the file.
+defaultsValueExpected[databaseUrls.DATABASE_URL_POSTGRESQL_MIN]
+  .default_values
+  .fields[9].defaultValue.val = 'now()';
+
 describe('services > database analyser > Sequelize', () => {
   describeSequelizeDatabases(({ connectionUrl, dialect }) => () => {
     function performDatabaseAnalysis(connection) {
@@ -39,18 +55,6 @@ describe('services > database analyser > Sequelize', () => {
 
     it('should generate a model with default values', async () => {
       expect.assertions(1);
-
-      const defaultsValueExpected = {
-        [databaseUrls.DATABASE_URL_POSTGRESQL_MIN]: _.cloneDeep(expectedDefaultValuesPostgres),
-        [databaseUrls.DATABASE_URL_POSTGRESQL_MAX]: expectedDefaultValuesPostgres,
-        [databaseUrls.DATABASE_URL_MYSQL_MAX]: expectedDefaultValuesMysql,
-        [databaseUrls.DATABASE_URL_MSSQL_MIN]: expectedDefaultValuesMssql,
-        [databaseUrls.DATABASE_URL_MSSQL_MAX]: expectedDefaultValuesMssql,
-      };
-
-      defaultsValueExpected[databaseUrls.DATABASE_URL_POSTGRESQL_MIN]
-        .default_values
-        .fields[9].defaultValue.val = 'now()';
 
       // eslint-disable-next-line jest/no-if
       if (defaultsValueExpected[connectionUrl]) {

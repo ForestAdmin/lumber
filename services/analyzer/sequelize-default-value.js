@@ -12,7 +12,7 @@ class DefaultValueExpression {
   }
 
   parse() {
-    if (!this.expression) {
+    if (this.expression === null || this.expression === undefined) {
       return null;
     }
 

@@ -75,9 +75,9 @@ async function analyzeFields(queryInterface, tableName, config) {
   }
 
   Object.values(columnsByName).forEach((column) => {
-    const myColumn = column; // Workaround pedantic linter.
     const defaultValue = new DefaultValueExpression(dialect, column.type, column.defaultValue);
-    myColumn.defaultValue = defaultValue.parse();
+    // eslint-disable-next-line no-param-reassign
+    column.defaultValue = defaultValue.parse();
   });
 
   return columnsByName;
