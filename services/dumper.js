@@ -28,17 +28,6 @@ class Dumper {
     this.Handlebars = Handlebars;
     this.logger = logger;
     this.mkdirp = mkdirp;
-
-    this.DEFAULT_VALUE_TYPES_TO_STRINGIFY = [
-      `${Sequelize.DataTypes.ARRAY}`,
-      `${Sequelize.DataTypes.CITEXT}`,
-      `${Sequelize.DataTypes.DATE}`,
-      `${Sequelize.DataTypes.ENUM}`,
-      `${Sequelize.DataTypes.JSONB}`,
-      `${Sequelize.DataTypes.STRING}`,
-      `${Sequelize.DataTypes.TEXT}`,
-      `${Sequelize.DataTypes.UUID}`,
-    ];
   }
 
   static getModelsNameSorted(schema) {
@@ -215,28 +204,6 @@ class Dumper {
     return stringUtils.transformToCamelCaseSafeString(table);
   }
 
-  getSafeDefaultValue(dbDialect, field) {
-    // NOTICE: in case of SQL dialect, ensure default value is directly usable in template
-    //         as a JS value.
-    let safeDefaultValue = field.defaultValue;
-    if (dbDialect !== 'mongodb') {
-      if (typeof safeDefaultValue === 'object' && safeDefaultValue instanceof this.Sequelize.Utils.Literal) {
-        safeDefaultValue = `Sequelize.literal('${safeDefaultValue.val}')`;
-      } else if (!_.isNil(safeDefaultValue)) {
-        if (_.some(
-          this.DEFAULT_VALUE_TYPES_TO_STRINGIFY,
-          // NOTICE: Uses `startsWith` as composite types may vary (eg: `ARRAY(DataTypes.INTEGER)`)
-          (dataType) => _.startsWith(field.type, dataType),
-        )) {
-          safeDefaultValue = JSON.stringify(safeDefaultValue);
-        } else if (`${safeDefaultValue}`.toUpperCase() === 'NULL') {
-          safeDefaultValue = '"NULL"';
-        }
-      }
-    }
-    return safeDefaultValue;
-  }
-
   writeModel(projectPath, config, table, fields, references, options = {}) {
     const { underscored } = options;
     let modelPath = `models/${Dumper.tableToFilename(table)}.js`;
@@ -252,16 +219,18 @@ class Dumper {
       const hasParenthesis = field.nameColumn && (field.nameColumn.includes('(') || field.nameColumn.includes(')'));
       const nameColumnUnconventional = field.nameColumn !== expectedConventionalColumnName
         || (underscored && (/[1-9]/g.test(field.name) || hasParenthesis));
-      const safeDefaultValue = this.getSafeDefaultValue(config.dbDialect, field);
 
       return {
         ...field,
         ref: field.ref && Dumper.getModelNameFromTableName(field.ref),
         nameColumnUnconventional,
         hasParenthesis,
-        safeDefaultValue,
-        // NOTICE: needed to keep falsy default values in template
-        hasSafeDefaultValue: !_.isNil(safeDefaultValue),
+
+        // Only output default value when non-null
+        hasSafeDefaultValue: !_.isNil(field.defaultValue),
+        safeDefaultValue: field.defaultValue instanceof this.Sequelize.Utils.Literal
+          ? `Sequelize.literal('${field.defaultValue.val.replace(/'/g, '\\\'')}')`
+          : JSON.stringify(field.defaultValue),
       };
     });
 
@@ -484,7 +453,7 @@ class Dumper {
 
     let lianaMajorVersion = 0;
     if (match) {
-      [,, lianaMajorVersion] = match;
+      [, , lianaMajorVersion] = match;
     }
     if (Number(lianaMajorVersion) < 7) {
       throw new IncompatibleLianaForUpdateError(

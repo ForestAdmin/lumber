@@ -41,10 +41,17 @@ class SequelizeHelper {
   }
 
   async given(tableName) {
-    const expectedFilename = path.join(__dirname, `../test-expected/sequelize/db-analysis-output/${tableName}.expected.json`);
+    const expectedFilename = path.join(__dirname, `../test-expected/sequelize/db-analysis-output/${tableName}.expected`);
+
     await this.dropAndCreate(tableName);
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    return require(expectedFilename);
+
+    try {
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      return require(`${expectedFilename}.json`);
+    } catch (e) {
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      return require(expectedFilename);
+    }
   }
 
   async dropAndCreate(tableName) {

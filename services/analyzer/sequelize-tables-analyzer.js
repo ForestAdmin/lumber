@@ -1,8 +1,8 @@
 const P = require('bluebird');
 const _ = require('lodash');
 const { plural, singular } = require('pluralize');
-const Sequelize = require('sequelize');
 const ColumnTypeGetter = require('./sequelize-column-type-getter');
+const DefaultValueExpression = require('./sequelize-default-value');
 const TableConstraintsGetter = require('./sequelize-table-constraints-getter');
 const EmptyDatabaseError = require('../../utils/errors/database/empty-database-error');
 const { terminate } = require('../../utils/terminator');
@@ -16,14 +16,78 @@ const ASSOCIATION_TYPE_HAS_ONE = 'hasOne';
 
 const FOREIGN_KEY = 'FOREIGN KEY';
 
-function analyzeFields(queryInterface, table, config) {
-  return queryInterface.describeTable(table, { schema: config.dbSchema });
+/** Queries database for default schema name */
+async function getDefaultSchema(connection, userProvidedSchema) {
+  if (userProvidedSchema) {
+    return userProvidedSchema;
+  }
+
+  const dialect = connection.getDialect();
+  const queries = {
+    mssql: 'SELECT SCHEMA_NAME() AS default_schema',
+    mysql: 'SELECT DATABASE() AS default_schema',
+    mariadb: 'SELECT DATABASE() AS default_schema',
+    postgres: 'SELECT CURRENT_SCHEMA() AS default_schema',
+  };
+
+  if (queries[dialect]) {
+    const rows = await connection.query(
+      queries[dialect],
+      { type: connection.QueryTypes.SELECT },
+    );
+
+    return rows.length && rows[0].default_schema
+      ? rows[0].default_schema : 'public';
+  }
+
+  return 'public';
+}
+
+/** Retrieve the description of the fields in a given table. */
+async function analyzeFields(queryInterface, tableName, config) {
+  const dialect = queryInterface.sequelize.getDialect();
+  let columnsByName;
+
+  // Workaround bug in sequelize/dialects/mysql/query-generator#describe
+  // => Don't provide the schema when using mysql/mariadb
+  if (['mysql', 'mariadb'].includes(dialect)) {
+    columnsByName = await queryInterface.describeTable(tableName, {});
+  } else {
+    columnsByName = await queryInterface.describeTable(tableName, { schema: config.dbSchema });
+  }
+
+  // Workaround bug in sequelize/dialects/(postgres|mssql)/query.js#run()
+  // => Fetch the unmodified default value from the information schema
+  if (dialect === 'postgres' || dialect === 'mssql') {
+    const getDefaultsQuery = `
+      SELECT column_name as colname, column_default as coldefault
+      FROM information_schema.columns
+      WHERE table_schema = ? AND table_name = ?
+    `;
+
+    const rows = await queryInterface.sequelize.query(getDefaultsQuery, {
+      type: queryInterface.sequelize.QueryTypes.SELECT,
+      replacements: [config.dbSchema, tableName],
+    });
+    rows.forEach((row) => {
+      columnsByName[row.colname].defaultValue = row.coldefault;
+    });
+  }
+
+  Object.values(columnsByName).forEach((column) => {
+    const defaultValue = new DefaultValueExpression(dialect, column.type, column.defaultValue);
+    // eslint-disable-next-line no-param-reassign
+    column.defaultValue = defaultValue.parse();
+  });
+
+  return columnsByName;
 }
 
 async function analyzePrimaryKeys(schema) {
   return Object.keys(schema).filter((column) => schema[column].primaryKey);
 }
 
+/** Retrieve table names from the provided schema. */
 async function showAllTables(queryInterface, databaseConnection, schema) {
   const dbDialect = databaseConnection.getDialect();
 
@@ -31,20 +95,12 @@ async function showAllTables(queryInterface, databaseConnection, schema) {
     return queryInterface.showAllTables();
   }
 
-  let realSchema = schema;
-  if (!realSchema) {
-    if (dbDialect === 'mssql') {
-      [{ default_schema: realSchema }] = await queryInterface.sequelize.query('SELECT SCHEMA_NAME() as default_schema', { type: queryInterface.sequelize.QueryTypes.SELECT });
-    } else {
-      realSchema = 'public';
-    }
-  }
-
-  return queryInterface.sequelize.query(
+  const tables = await queryInterface.sequelize.query(
     'SELECT table_name as table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = ? AND table_type LIKE \'%TABLE\' AND table_name != \'spatial_ref_sys\'',
-    { type: queryInterface.sequelize.QueryTypes.SELECT, replacements: [realSchema] },
-  )
-    .then((results) => results.map((table) => table.table_name));
+    { type: queryInterface.sequelize.QueryTypes.SELECT, replacements: [schema] },
+  );
+
+  return tables.map((table) => table.table_name);
 }
 
 function hasTimestamps(fields) {
@@ -303,22 +359,6 @@ function isOnlyJoinTableWithId(schema, constraints) {
   return !columnWithoutForeignKey;
 }
 
-function getPrimaryKeyDefaultValue(defaultValue) {
-  if (["b'1'", '((1))'].includes(defaultValue)) {
-    return true;
-  }
-
-  if (["b'0'", '((0))'].includes(defaultValue)) {
-    return false;
-  }
-
-  if (typeof defaultValue === 'string' && defaultValue.endsWith(')')) {
-    return Sequelize.literal(defaultValue);
-  }
-
-  return defaultValue;
-}
-
 async function createTableSchema(columnTypeGetter, {
   schema,
   constraints,
@@ -344,11 +384,6 @@ async function createTableSchema(columnTypeGetter, {
     const forceIdColumn = isIdIntegerPrimaryColumn && isOnlyJoinTableWithId(schema, constraints);
 
     if (isValidField && (!isIdIntegerPrimaryColumn || forceIdColumn)) {
-      // NOTICE: Handle bit(1) to boolean conversion
-      let { defaultValue } = columnInfo;
-
-      defaultValue = getPrimaryKeyDefaultValue(defaultValue);
-
       // NOTICE: sequelize considers column name with parenthesis as raw Attributes
       // do not try to camelCase the name for avoiding sequelize issues
       const hasParenthesis = columnName.includes('(') || columnName.includes(')');
@@ -363,7 +398,7 @@ async function createTableSchema(columnTypeGetter, {
         nameColumn: columnName,
         type,
         primaryKey: columnInfo.primaryKey,
-        defaultValue,
+        defaultValue: columnInfo.defaultValue,
         isRequired,
       };
 
@@ -409,23 +444,17 @@ function fixAliasConflicts(wholeSchema) {
   });
 }
 
-async function analyzeSequelizeTables(databaseConnection, config, allowWarning) {
-  const schemaAllTables = {};
-
-  const queryInterface = databaseConnection.getQueryInterface();
-  const tableConstraintsGetter = new TableConstraintsGetter(databaseConnection, config.dbSchema);
-  const columnTypeGetter = new ColumnTypeGetter(databaseConnection, config.dbSchema || 'public', allowWarning);
-
+async function analyzeSequelizeTables(connection, config, allowWarning) {
+  // User provided a schema, check if it exists
   if (config.dbSchema) {
-    const schemaExists = await queryInterface.sequelize
-      .query(
-        'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?;',
-        { type: queryInterface.sequelize.QueryTypes.SELECT, replacements: [config.dbSchema] },
-      )
-      .then((result) => !!result.length);
+    const schemas = await connection.query(
+      'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?;',
+      { type: connection.QueryTypes.SELECT, replacements: [config.dbSchema] },
+    );
 
-    if (!schemaExists) {
+    if (!schemas.length) {
       const message = 'This schema does not exists.';
+
       return terminate(1, {
         errorCode: 'database_authentication_error',
         errorMessage: message,
@@ -434,23 +463,33 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
     }
   }
 
+  // If dbSchema was not provided by user, get default one.
+  const configWithSchema = {
+    ...config,
+    dbSchema: await getDefaultSchema(connection, config.dbSchema),
+  };
+
   // Build the db schema.
+  const schemaAllTables = {};
+  const queryInterface = connection.getQueryInterface();
   const databaseSchema = {};
-  const tableNames = await showAllTables(queryInterface, databaseConnection, config.dbSchema);
+  const tableNames = await showAllTables(queryInterface, connection, configWithSchema.dbSchema);
+  const constraintsGetter = new TableConstraintsGetter(connection, configWithSchema.dbSchema);
 
   await P.each(tableNames, async (tableName) => {
     const {
       schema,
       constraints,
       primaryKeys,
-    } = await analyzeTable(queryInterface, tableConstraintsGetter, tableName, config);
+    } = await analyzeTable(queryInterface, constraintsGetter, tableName, configWithSchema);
     databaseSchema[tableName] = {
-      schema,
-      constraints,
-      primaryKeys,
-      references: [],
+      schema, constraints, primaryKeys, references: [],
     };
   });
+
+  const columnTypeGetter = new ColumnTypeGetter(
+    connection, configWithSchema.dbSchema, allowWarning,
+  );
 
   await P.each(tableNames, async (tableName) => {
     schemaAllTables[tableName] = await createTableSchema(
@@ -478,7 +517,7 @@ async function analyzeSequelizeTables(databaseConnection, config, allowWarning) 
   if (_.isEmpty(schemaAllTables)) {
     throw new EmptyDatabaseError('no tables found', {
       orm: 'sequelize',
-      dialect: databaseConnection.getDialect(),
+      dialect: connection.getDialect(),
     });
   }
 

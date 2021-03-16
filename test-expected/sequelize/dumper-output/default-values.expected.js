@@ -5,47 +5,102 @@ module.exports = (sequelize, DataTypes) => {
   // This section contains the fields of your model, mapped to your table's columns.
   // Learn more here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
   const DefaultValues = sequelize.define('defaultValues', {
-    noDefault: {
-      type: DataTypes.STRING,
-    },
-    arrayDefault: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      defaultValue: [],
-    },
-    booleanDefault: {
+    boolNull: {
       type: DataTypes.BOOLEAN,
+      field: 'bool_null',
+    },
+    boolCst: {
+      type: DataTypes.BOOLEAN,
+      field: 'bool_cst',
       defaultValue: true,
     },
-    dateConstDefault: {
-      type: DataTypes.DATE,
-      defaultValue: "1983-05-27",
-    },
-    dateExprDefault: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.literal('now()'),
-    },
-    enumDefault: {
-      type: DataTypes.ENUM('LEFT','RIGHT'),
-      defaultValue: "LEFT",
-    },
-    intDefault: {
-      type: DataTypes.INT,
+    intCst: {
+      type: DataTypes.INTEGER,
+      field: 'int_cst',
       defaultValue: 42,
     },
-    numericWithStringNULLDefault: {
-      type: DataTypes.DOUBLE,
-      defaultValue: "NULL",
-    },
-    jsonDefault: {
-      type: DataTypes.JSONB,
-      defaultValue: [{"key":"one","isValid":true},{"key":"another","count":21},{"key":"last","value":"string value"}],
-    },
-    stringDefault: {
+    strNull: {
       type: DataTypes.STRING,
-      defaultValue: "default value",
+      field: 'str_null',
+    },
+    strCst: {
+      type: DataTypes.STRING,
+      field: 'str_cst',
+      defaultValue: "co'nst'ant",
+    },
+    strExpr: {
+      type: DataTypes.STRING,
+      field: 'str_expr',
+      defaultValue: Sequelize.literal('upper((\'Hello\'::text || \'World\'::text))'),
+    },
+    dateNull: {
+      type: DataTypes.DATE,
+      field: 'date_null',
+    },
+    dateCst1: {
+      type: DataTypes.DATE,
+      field: 'date_cst1',
+      defaultValue: "2010-01-01 00:00:00",
+    },
+    dateCst2: {
+      type: DataTypes.DATE,
+      field: 'date_cst2',
+      defaultValue: "1983-05-27 00:00:00",
+    },
+    dateExpr1: {
+      type: DataTypes.DATE,
+      field: 'date_expr1',
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+    },
+    dateExpr2: {
+      type: DataTypes.DATE,
+      field: 'date_expr2',
+      defaultValue: Sequelize.literal('now()'),
+    },
+    dateExpr3: {
+      type: DataTypes.DATE,
+      field: 'date_expr3',
+      defaultValue: Sequelize.literal('timezone(\'utc\'::text, now())'),
+    },
+    enumCst1: {
+      type: DataTypes.ENUM(
+        'a',
+        'b',
+        'c',
+      ),
+      field: 'enum_cst1',
+    },
+    enumCst2: {
+      type: DataTypes.ENUM(
+        'a',
+        'b',
+        'c',
+      ),
+      field: 'enum_cst2',
+      defaultValue: "a",
+    },
+    arrayCst1: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      field: 'array_cst1',
+      defaultValue: Sequelize.literal('\'{25000,25000,27000,27000}\'::integer[]'),
+    },
+    arrayCst2: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      field: 'array_cst2',
+      defaultValue: Sequelize.literal('ARRAY[25000, 25000, 27000, 27000]'),
+    },
+    jsonCst: {
+      type: DataTypes.JSON,
+      field: 'json_cst',
+      defaultValue: {"a":1,"b":2},
+    },
+    jsonbCst: {
+      type: DataTypes.JSONB,
+      field: 'jsonb_cst',
+      defaultValue: {"a":1,"b":2},
     },
   }, {
-    tableName: 'defaultValues',
+    tableName: 'default_values',
     timestamps: false,
     schema: process.env.DATABASE_SCHEMA,
   });
