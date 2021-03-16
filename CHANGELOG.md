@@ -1,3 +1,10 @@
+## [4.0.2](https://github.com/ForestAdmin/lumber/compare/v4.0.1...v4.0.2) (2021-03-16)
+
+
+### Bug Fixes
+
+* **analyzer:** work around sequelize bugs on default values ([#554](https://github.com/ForestAdmin/lumber/issues/554)) ([ff90d38](https://github.com/ForestAdmin/lumber/commit/ff90d388e9a4b2c4142d93d2385a1882fc47fa53))
+
 ## [4.0.1](https://github.com/ForestAdmin/lumber/compare/v4.0.0...v4.0.1) (2021-03-01)
 
 
