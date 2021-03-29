@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/ForestAdmin/lumber/compare/v4.0.2...v4.1.0) (2021-03-29)
+
+
+### Features
+
+* **context:** accept all headers to transmit forest context url in each data request ([#555](https://github.com/ForestAdmin/lumber/issues/555)) ([148fb77](https://github.com/ForestAdmin/lumber/commit/148fb771bf8e03b1a7b166baaac35d6fde06bfaa))
+
 ## [4.0.2](https://github.com/ForestAdmin/lumber/compare/v4.0.1...v4.0.2) (2021-03-16)
 
 
