@@ -10,6 +10,7 @@ services:
     container_name: {{ containerName }}
     environment:
       - APPLICATION_PORT=${APPLICATION_PORT}
+      - APPLICATION_URL=${APPLICATION_URL}
       - DATABASE_URL={{ databaseUrl }}
 {{#if dbSchema }}
       - DATABASE_SCHEMA=${DATABASE_SCHEMA}
