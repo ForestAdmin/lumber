@@ -60,7 +60,7 @@
     "eslint-plugin-sonarjs": "0.5.0",
     "git-hooks": "1.1.10",
     "husky": "4.2.3",
-    "jest": "26.0.1",
+    "jest": "26.6.3",
     "rimraf": "3.0.0",
     "semantic-release": "17.4.2",
     "semantic-release-slack-bot": "1.6.2",
