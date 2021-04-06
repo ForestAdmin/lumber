@@ -1,3 +1,10 @@
+## [4.1.6](https://github.com/ForestAdmin/lumber/compare/v4.1.5...v4.1.6) (2021-04-06)
+
+
+### Bug Fixes
+
+* **security:** patch node-notifier dependency vulnerabilities ([#563](https://github.com/ForestAdmin/lumber/issues/563)) ([872a655](https://github.com/ForestAdmin/lumber/commit/872a655e293c792cf5c9ea97be1042a580c6dba3))
+
 ## [4.1.5](https://github.com/ForestAdmin/lumber/compare/v4.1.4...v4.1.5) (2021-04-06)
 
 
