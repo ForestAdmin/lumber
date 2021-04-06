@@ -1,3 +1,10 @@
+## [4.1.4](https://github.com/ForestAdmin/lumber/compare/v4.1.3...v4.1.4) (2021-04-06)
+
+
+### Bug Fixes
+
+* **security:** patch axios dependency vulnerabilities ([#561](https://github.com/ForestAdmin/lumber/issues/561)) ([80e515a](https://github.com/ForestAdmin/lumber/commit/80e515aafbf130d7ac92c57b4f83c2a0d6c247d8))
+
 ## [4.1.3](https://github.com/ForestAdmin/lumber/compare/v4.1.2...v4.1.3) (2021-04-06)
 
 
