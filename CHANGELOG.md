@@ -1,3 +1,10 @@
+## [4.1.7](https://github.com/ForestAdmin/lumber/compare/v4.1.6...v4.1.7) (2021-04-06)
+
+
+### Bug Fixes
+
+* **security:** patch xmldom dependency vulnerabilities ([#564](https://github.com/ForestAdmin/lumber/issues/564)) ([6ee5c7d](https://github.com/ForestAdmin/lumber/commit/6ee5c7d826174966f033b6204e59489100876712))
+
 ## [4.1.6](https://github.com/ForestAdmin/lumber/compare/v4.1.5...v4.1.6) (2021-04-06)
 
 
