@@ -1,3 +1,10 @@
+## [4.1.5](https://github.com/ForestAdmin/lumber/compare/v4.1.4...v4.1.5) (2021-04-06)
+
+
+### Bug Fixes
+
+* **security:** patch marked dependency vulnerabilities ([#562](https://github.com/ForestAdmin/lumber/issues/562)) ([089f473](https://github.com/ForestAdmin/lumber/commit/089f473a7fbe22eedd5821b3a01b7a23d92b4664))
+
 ## [4.1.4](https://github.com/ForestAdmin/lumber/compare/v4.1.3...v4.1.4) (2021-04-06)
 
 
