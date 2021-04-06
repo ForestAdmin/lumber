@@ -62,7 +62,7 @@
     "husky": "4.2.3",
     "jest": "26.0.1",
     "rimraf": "3.0.0",
-    "semantic-release": "17.3.0",
+    "semantic-release": "17.4.2",
     "semantic-release-slack-bot": "1.6.2",
     "simple-git": "1.126.0",
     "sinon": "7.5.0"
