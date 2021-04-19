@@ -5159,9 +5159,9 @@ jest@26.6.3:
     jest-cli "^26.6.3"
 
 jose@^2.0.2:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/jose/-/jose-2.0.3.tgz#9c931ab3e13e2d16a5b9e6183e60b2fc40a8e1b8"
-  integrity sha512-L+RlDgjO0Tk+Ki6/5IXCSEnmJCV8iMFZoBuEgu2vPQJJ4zfG/k3CAqZUMKDYNRHIDyy0QidJpOvX0NgpsAqFlw==
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/jose/-/jose-2.0.5.tgz#29746a18d9fff7dcf9d5d2a6f62cb0c7cd27abd3"
+  integrity sha512-BAiDNeDKTMgk4tvD0BbxJ8xHEHBZgpeRZ1zGPPsitSyMgjoMWiLGYAE7H7NpP5h0lPppQajQs871E8NHUrzVPA==
   dependencies:
     "@panva/asn1.js" "^1.0.0"
 
