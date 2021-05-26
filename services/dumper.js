@@ -91,7 +91,7 @@ class Dumper {
       debug: '~4.0.1',
       dotenv: '~6.1.0',
       express: '~4.17.1',
-      'express-jwt': '5.3.1',
+      'express-jwt': '6.0.0',
       [`forest-express-${orm}`]: '^7.0.0',
       morgan: '1.9.1',
       'require-all': '^3.0.0',
