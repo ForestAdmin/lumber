@@ -1,3 +1,10 @@
+## [4.1.8](https://github.com/ForestAdmin/lumber/compare/v4.1.7...v4.1.8) (2021-05-31)
+
+
+### Bug Fixes
+
+* express-jwt vulnerability ([#569](https://github.com/ForestAdmin/lumber/issues/569)) ([ebb5f0a](https://github.com/ForestAdmin/lumber/commit/ebb5f0a76956c1ed1eaf043448ce72893c062ed2))
+
 ## [4.1.7](https://github.com/ForestAdmin/lumber/compare/v4.1.6...v4.1.7) (2021-04-06)
 
 
