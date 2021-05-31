@@ -43,6 +43,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(jwt({
   secret: process.env.FOREST_AUTH_SECRET,
   credentialsRequired: false,
+  algorithms: ['HS256'],
 }));
 
 app.use('/forest', (request, response, next) => {
