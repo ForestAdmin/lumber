@@ -706,17 +706,58 @@ describe('services > dumper (unit)', () => {
   });
 
   describe('checkLianaCompatiblityForUpdate', () => {
-    it('should not throw an error when liana is compatible', () => {
-      expect.assertions(1);
+    describe('when liana is compatible', () => {
+      it('should not throw with liana vertion 7.0.0', () => {
+        expect.assertions(1);
 
-      const dumper = createDumper({
-        fs: {
-          existsSync: jest.fn().mockReturnValue(true),
-          readFileSync: jest.fn().mockReturnValue('forest-express-sequelize: ^7.0.0,'),
-        },
+        const dumper = createDumper({
+          fs: {
+            existsSync: jest.fn().mockReturnValue(true),
+            readFileSync: jest.fn().mockReturnValue('forest-express-sequelize: ^7.0.0,'),
+          },
+        });
+
+        expect(() => dumper.checkLianaCompatiblityForUpdate()).not.toThrow();
       });
 
-      expect(() => dumper.checkLianaCompatiblityForUpdate()).not.toThrow();
+      it('should not throw with liana vertion 7.0.11', () => {
+        expect.assertions(1);
+
+        const dumper = createDumper({
+          fs: {
+            existsSync: jest.fn().mockReturnValue(true),
+            readFileSync: jest.fn().mockReturnValue('forest-express-sequelize: ^7.0.11,'),
+          },
+        });
+
+        expect(() => dumper.checkLianaCompatiblityForUpdate()).not.toThrow();
+      });
+
+      it('should not throw with liana vertion 7.11.0', () => {
+        expect.assertions(1);
+
+        const dumper = createDumper({
+          fs: {
+            existsSync: jest.fn().mockReturnValue(true),
+            readFileSync: jest.fn().mockReturnValue('forest-express-sequelize: ^7.11.0,'),
+          },
+        });
+
+        expect(() => dumper.checkLianaCompatiblityForUpdate()).not.toThrow();
+      });
+
+      it('should not throw with liana vertion 11.0.0', () => {
+        expect.assertions(1);
+
+        const dumper = createDumper({
+          fs: {
+            existsSync: jest.fn().mockReturnValue(true),
+            readFileSync: jest.fn().mockReturnValue('forest-express-sequelize: ^11.0.0,'),
+          },
+        });
+
+        expect(() => dumper.checkLianaCompatiblityForUpdate()).not.toThrow();
+      });
     });
 
     it('should throw an error when package.json does not exist', () => {
