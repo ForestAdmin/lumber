@@ -707,7 +707,7 @@ describe('services > dumper (unit)', () => {
 
   describe('checkLianaCompatiblityForUpdate', () => {
     describe('when liana is compatible', () => {
-      it('should not throw with liana vertion 7.0.0', () => {
+      it('should not throw with liana version 7.0.0', () => {
         expect.assertions(1);
 
         const dumper = createDumper({
@@ -720,7 +720,7 @@ describe('services > dumper (unit)', () => {
         expect(() => dumper.checkLianaCompatiblityForUpdate()).not.toThrow();
       });
 
-      it('should not throw with liana vertion 7.0.11', () => {
+      it('should not throw with liana version 7.0.11', () => {
         expect.assertions(1);
 
         const dumper = createDumper({
@@ -733,7 +733,7 @@ describe('services > dumper (unit)', () => {
         expect(() => dumper.checkLianaCompatiblityForUpdate()).not.toThrow();
       });
 
-      it('should not throw with liana vertion 7.11.0', () => {
+      it('should not throw with liana version 7.11.0', () => {
         expect.assertions(1);
 
         const dumper = createDumper({
@@ -746,7 +746,7 @@ describe('services > dumper (unit)', () => {
         expect(() => dumper.checkLianaCompatiblityForUpdate()).not.toThrow();
       });
 
-      it('should not throw with liana vertion 11.0.0', () => {
+      it('should not throw with liana version 11.0.0', () => {
         expect.assertions(1);
 
         const dumper = createDumper({
