@@ -8,7 +8,7 @@ module.exports = (mongoose, Mongoose) => {
     'name': String,
     'propArrayOfObjects': [{
       _id: false,
-      sampleValue: String,
+      'sample Value': String,
     }],
   }, {
     timestamps: false,
