@@ -1,3 +1,10 @@
+## [4.1.9](https://github.com/ForestAdmin/lumber/compare/v4.1.8...v4.1.9) (2021-06-17)
+
+
+### Bug Fixes
+
+* fix liana version check for lumber update command ([#574](https://github.com/ForestAdmin/lumber/issues/574)) ([497174c](https://github.com/ForestAdmin/lumber/commit/497174c47623f3b9ade73682b212e2ba03d73201))
+
 ## [4.1.8](https://github.com/ForestAdmin/lumber/compare/v4.1.7...v4.1.8) (2021-05-31)
 
 
