@@ -9,6 +9,7 @@ module.exports = (mongoose, Mongoose) => {
     'propArrayOfObjects': [{
       _id: false,
       sampleValue: String,
+      'complex name': String,
     }],
   }, {
     timestamps: false,
