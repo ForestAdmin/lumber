@@ -14,5 +14,5 @@ describe('wrap-quotes', () => {
     expect(wrapQuotes('special-name')).toBe('\'special-name\'');
     expect(wrapQuotes('@specialname')).toBe('\'@specialname\'');
     expect(wrapQuotes('1234')).toBe('\'1234\'');
-  })
+  });
 });
