@@ -7,6 +7,7 @@ const persons = [
     propArrayOfObjects: [
       {
         sampleValue: 'sample',
+        'complex name': 'sample',
       },
     ],
   },
