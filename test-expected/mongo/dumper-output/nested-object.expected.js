@@ -7,10 +7,10 @@ module.exports = (mongoose, Mongoose) => {
   const schema = Mongoose.Schema({
     'name': String,
     'propGroup': {
-      answer: Boolean,
-      date: Date,
-      number: Number,
-      sentence: String,
+      'answer': Boolean,
+      'date': Date,
+      'number': Number,
+      'sentence': String,
     },
   }, {
     timestamps: false,

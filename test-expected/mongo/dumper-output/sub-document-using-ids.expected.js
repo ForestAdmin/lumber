@@ -7,7 +7,7 @@ module.exports = (mongoose, Mongoose) => {
   const schema = Mongoose.Schema({
     'name': String,
     'propArrayOfObjects': [{
-      sampleValue: String,
+      'sampleValue': String,
       'complex name': String,
     }],
   }, {
