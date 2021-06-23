@@ -16,7 +16,7 @@ Handlebars.registerPartial(
 {{indent (sum ../level 1) @key}}: {{this}},
 {{/if}}
 {{else}}
-{{indent (sum ../level 1) @key}}: {{>renderNested type=this level=(sum ../level 1)}},
+{{indent (sum ../level 1) (wq @key)}}: {{>renderNested type=this level=(sum ../level 1)}},
 {{/if}}
 {{/each}}
 {{indent level '}'}}

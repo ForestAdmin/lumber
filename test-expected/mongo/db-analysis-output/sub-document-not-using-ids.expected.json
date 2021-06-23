@@ -10,7 +10,8 @@
         "type": [
           {
             "_id": false,
-            "sampleValue": "String"
+            "sampleValue": "String",
+            "complex name": "String"
           }
         ]
       }

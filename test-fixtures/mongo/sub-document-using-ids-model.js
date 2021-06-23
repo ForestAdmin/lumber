@@ -8,6 +8,7 @@ const persons = [
       {
         _id: ObjectID(),
         sampleValue: 'sample value',
+        'complex name': 'sample',
       },
     ],
   },

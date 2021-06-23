@@ -8,7 +8,8 @@ module.exports = (mongoose, Mongoose) => {
     'name': String,
     'propArrayOfObjects': [{
       // _id: false, Ambiguous usage of _ids, we could not detect if subDocuments use _id or not.
-      sampleValue: String,
+      'sampleValue': String,
+      'complex name': String,
     }],
   }, {
     timestamps: false,

@@ -10,7 +10,8 @@
         "type": [
           {
             "_id": "ambiguous",
-            "sampleValue": "String"
+            "sampleValue": "String",
+            "complex name": "String"
           }
         ]
       }

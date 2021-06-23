@@ -7,8 +7,8 @@ module.exports = (mongoose, Mongoose) => {
   const schema = Mongoose.Schema({
     'name': String,
     'propArrayOfObjects': [{
-      one: String,
-      two: String,
+      'one': String,
+      'two': String,
     }],
   }, {
     timestamps: false,

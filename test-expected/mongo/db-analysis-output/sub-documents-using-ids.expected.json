@@ -10,7 +10,8 @@
         "type": [
           {
             "_id": "Mongoose.Schema.Types.ObjectId",
-            "sampleValue": "String"
+            "sampleValue": "String",
+            "complex name": "String"
           }
         ]
       }

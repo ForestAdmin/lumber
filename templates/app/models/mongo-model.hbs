@@ -6,7 +6,7 @@ module.exports = (mongoose, Mongoose) => {
   // Learn more here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
   const schema = Mongoose.Schema({
   {{#each fields as |field|}}
-    '{{field.name}}': {{#if field.ref}}{ type: {{field.type}}, ref: '{{field.ref}}' }{{else if (isObject field.type)}}{{>renderNested type=field.type level=2}}{{else}}{{field.type}}{{/if}},
+    {{wq field.name}}: {{#if field.ref}}{ type: {{field.type}}, ref: '{{field.ref}}' }{{else if (isObject field.type)}}{{>renderNested type=field.type level=2}}{{else}}{{field.type}}{{/if}},
   {{/each}}
   }, {
     timestamps: {{timestamps}},
