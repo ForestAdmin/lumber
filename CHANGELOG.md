@@ -1,3 +1,10 @@
+## [4.1.10](https://github.com/ForestAdmin/lumber/compare/v4.1.9...v4.1.10) (2021-06-23)
+
+
+### Bug Fixes
+
+* **mongoose:** wrap with quotes invalid js identifiers in sub documents properties ([#578](https://github.com/ForestAdmin/lumber/issues/578)) ([2342568](https://github.com/ForestAdmin/lumber/commit/23425685b852a881957540f66ea3a239aadd5c2e))
+
 ## [4.1.9](https://github.com/ForestAdmin/lumber/compare/v4.1.8...v4.1.9) (2021-06-17)
 
 
