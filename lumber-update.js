@@ -25,6 +25,8 @@ const {
 } = context.inject();
 
 (async () => {
+  logger.warn('Lumber is now deprecated. Please use Forest CLI, https://github.com/ForestAdmin/toolbelt, instead.');
+
   const options = {
     dbSchema: env.DATABASE_SCHEMA,
     appName: program.outputDirectory,
