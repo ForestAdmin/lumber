@@ -8,6 +8,8 @@
   <img src="https://github.com/ForestAdmin/lumber/blob/master/assets/logo-forestadmin.png?raw=true" alt="Forest Admin logo">
 </p>
 
+> ⚠️ Lumber is now deprecated. Please use [Forest CLI](https://github.com/ForestAdmin/toolbelt) instead. ⚠️
+
 Lumber is the CLI tool used to install [Forest Admin](https://www.forestadmin.com), the Admin Panel framework.
 Forest Admin has been designed with scalability in mind to fit requirements from small projects to mature companies.
 

@@ -34,6 +34,8 @@ program
   .parse(process.argv);
 
 (async () => {
+  logger.warn('Lumber is now deprecated. Please use Forest CLI, https://github.com/ForestAdmin/toolbelt, instead.');
+
   const { database } = context.inject();
 
   eventSender.command = 'generate';
