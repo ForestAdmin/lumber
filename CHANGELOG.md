@@ -1,3 +1,10 @@
+# [4.2.0](https://github.com/ForestAdmin/lumber/compare/v4.1.10...v4.2.0) (2021-07-19)
+
+
+### Features
+
+* add deprecation warning to use forest cli instead ([#582](https://github.com/ForestAdmin/lumber/issues/582)) ([694f099](https://github.com/ForestAdmin/lumber/commit/694f099e3ec8e00a9f675d63c55369b9abba2b6e))
+
 ## [4.1.10](https://github.com/ForestAdmin/lumber/compare/v4.1.9...v4.1.10) (2021-06-23)
 
 
