@@ -401,7 +401,10 @@ async function createTableSchema(columnTypeGetter, {
         defaultValue: columnInfo.defaultValue,
         isRequired,
       };
-
+      if (columnInfo.primaryKey && columnInfo.autoIncrement) {
+        field.autoIncrement= true;
+      }
+      
       fields.push(field);
     }
   });
